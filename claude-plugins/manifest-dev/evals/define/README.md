@@ -39,7 +39,7 @@ Numbers judged by different models do not compare.
 See [READINESS.md](../READINESS.md) for the 2026-10-24 repairs and evidence limits. Changed
 prompts and rubrics are a new instrument; historical results below do not measure it.
 
-## Cases added 2026-10-13 to 2026-10-19 — unmeasured
+## Cases added 2026-10-13 to 2026-10-19
 
 | Case | Discipline under test |
 |---|---|
@@ -51,7 +51,7 @@ prompts and rubrics are a new instrument; historical results below do not measur
 | `d26-holes-that-pass-every-gate` | A read of an invoice worker whose design a model already checked still leaves the spec open to wrong results that pass every gate at once: a job marked sent while no invoice was delivered, and an invoice sent twice when the old worker is stopped mid-send during the switch. Its own graders, `no-sent-without-delivery` and `no-double-send-at-switch`, judge whether the spec's gates close those two paths |
 | `d22-projectless-manifest-builds-no-harness` | A one-off script outside any project gets a Manifest whose gates check its output, with no harness, recipe, decision record or setup. A guard: the no-plugin arm is expected to pass it, so a Δ of zero is no reason to remove it |
 
-These have never been run; the first both-arm run decides which stay. **Every number below is stale
+Their first both-arm run was the 2026-10-25 baseline below; it and the three-run re-runs it calls for decide which stay. **Every number below is stale
 as of 2026-10-19**: the 2026-10-13 change edited define's spine and its task files, the
 2026-10-14 change moved its verification wording to one harness, the 2026-10-15 change made
 that harness optional and the project's own checks a run's to repair, and the 2026-10-18 change
@@ -76,19 +76,19 @@ baseline replaces them.
 The 2026-10-22 change sharpened the coding sketch Default to keep plausible changes local,
 weighed against added complexity. Its encoding is not graded by a define case; figure-out's
 `40-shape-before-build` grades the design distinction before encoding, rather than duplicating
-that scenario here. The affected coding cases remain unmeasured and earlier results stale.
+that scenario here. The affected coding cases were first measured in the 2026-10-25 baseline; earlier results are stale.
 
 The 2026-10-24 change removed the task file's stale claim of mandatory late advisory review and
 allowed reasoned declines of correct but optional PR comments. These affect executor guidance;
 the define suite does not measure repeated review or external-feedback convergence. The `do`,
 `review-code`, `check-pr`, and `babysit-pr` recipes carry unmeasured scenarios for those behaviors.
-Earlier define measurements remain stale, and unmeasured cases remain unmeasured.
+Earlier define measurements are stale; the 2026-10-25 baseline replaces them.
 
 The 2026-10-24 research change makes delegation conditional on the inquiry, permits direct
 source inspection by the coordinator, and removes the web overlay's duplicate prescription.
 No case in this suite grades that research guidance. The `define` recipe's `research-delegation`
 drive covers its encoding and remains **unmeasured**; its fixture check does not establish model
-behavior or research quality. Existing stale results and unmeasured case statuses are unchanged.
+behavior or research quality, and the 2026-10-25 baseline does not cover it.
 
 The review runs in a fresh context, which this suite's sessions cannot start, so define reviews
 its own Manifest here and says the review was self-graded. No case holds the per-gate wrong-result
@@ -101,6 +101,63 @@ a define case for each would test the same probe twice at twice the runs. The
 headless harness offers no question capability, so the cases measure define's plain-text path. A single 2026-10-14 drive of `d01` (not a measurement) found define keeping the
 requested layer cut as a user's call; define's slicing rule now says a requested cut is never one,
 and a re-drive came back re-cut (that drive's evidence is not kept in the repository).
+
+## Baseline — 2026-10-25, sonnet judge, agent at medium effort
+
+The first measurement of the instrument repaired on 2026-10-24 ([READINESS.md](../READINESS.md))
+and the first run of `d20`–`d27`. It is the number the next hill-climb is measured against; no
+older result in this file compares with it.
+
+Report `results/base-20261025/define.json`. Skill at `0b7da43`, CLI 2.1.310, agent
+`claude-opus-5-5` at effort `medium`, judge `claude-sonnet-5-5` (three votes per LLM grader), one
+run per arm, 2026-10-25. `claude plugin eval` has no effort option, so the run set
+`CLAUDE_CODE_EFFORT_LEVEL=medium`, which reaches every session it starts and so puts the judge at
+`medium` too. No run errored, none was partial, and no run ended at its turn or time limit.
+List-price cost $37.70 for 40 trials. The split was frozen before any output was read: held out
+`d04`, `d06`, `d08`, `d27`; every other case tuning.
+
+| Case | Split | With | Without | Δ |
+|---|---|---|---|---|
+| d01-layer-cut | tuning | 0.50 | 0.50 | +0.00 |
+| d02-outcome-not-mechanism | tuning | 0.60 | 0.60 | +0.00 |
+| d03-class-not-instances | tuning | 0.50 | 0.50 | +0.00 |
+| d04-unsafe-binds | held out | 0.50 | 0.75 | -0.25 |
+| d05-conflicting-goals | tuning | 1.00 | 1.00 | +0.00 |
+| d06-subjective-anchor | held out | 0.75 | 0.75 | +0.00 |
+| d07-neg-no-problem | tuning | 1.00 | 0.00 | +1.00 |
+| d08-neg-small | held out | 0.50 | 0.50 | +0.00 |
+| d09-amend-widen | tuning | 0.00 | 0.00 | +0.00 |
+| d10-loop-bait | tuning | 0.50 | 0.75 | -0.25 |
+| d16-approved-means-handoff | tuning | 1.00 | 1.00 | +0.00 |
+| d17-taste-in-encoding | tuning | 0.67 | 0.78 | -0.11 |
+| d20-preparatory-slice | tuning | 1.00 | 1.00 | +0.00 |
+| d21-user-rule-over-default | tuning | 1.00 | 0.00 | +1.00 |
+| d22-projectless-manifest-builds-no-harness | tuning | 1.00 | 1.00 | +0.00 |
+| d23-unfit-recipe-repaired-first | tuning | 1.00 | 0.50 | +0.50 |
+| d24-own-check-repaired-first | tuning | 1.00 | 0.00 | +1.00 |
+| d25-vague-target | tuning | 0.75 | 0.50 | +0.25 |
+| d26-holes-that-pass-every-gate | tuning | 0.60 | 0.40 | +0.20 |
+| d27-explicit-target | held out | 1.00 | 1.00 | +0.00 |
+
+Mean over the 20 cases: with **0.74**, without **0.58**, **Δ +0.17**. Tuning (16 cases) +0.22;
+held out (4 cases) 0.69 against 0.75, -0.06.
+
+What the baseline shows, as a direction rather than a verdict on any one case:
+
+- **The uplift comes from the rules only the plugin carries:** a project rule over a Default
+  (`d21`), repairing an unfit check first (`d23`, `d24`), and not inventing a problem (`d07`).
+  `d25` and `d26` gain smaller amounts.
+- **`no-invented-thresholds` failed all ten judged runs in both arms**, unanimously. A grader no
+  output passes measures nothing yet. The CLI flags its input as long (one Manifest ran to 28k
+  characters), the risk *Known limits* names. Read the failing Manifests before treating it as a
+  skill failure or tuning against it.
+- **`gates-are-settleable` passes 4/10 with the plugin against 9/10 without.** It is the plugin
+  arm's loss on `d04` (the held-out drop) and `d17`, and it fails beside other graders on `d01`–`d03`
+  and `d26`. This is the first hill the baseline names, after the threshold grader is read.
+- **`d10` loses on `bounds-the-open-ends`**, which only the plugin arm fails.
+- **`d09` scores 0 in both arms** on `widens-not-siblings`: a hill, or a rubric no output meets.
+- **`d01`–`d03` and `d08` show no Δ.** `d02` and `d03` are the retirement watch under
+  *Classification*; this run repeats the pattern on one run, so their three-run re-run decides.
 
 ## First measurement of `d11`–`d17` — 2026-10-12
 
@@ -368,8 +425,8 @@ definition of done for an executor with no other context.
 | `d08-neg-small` | **Negative:** mechanical rename | `proportionate`, settleable |
 | `d09-amend-widen` | Amendment: steering names an instance an existing gate should have claimed | `widens-not-siblings` |
 | `d10-loop-bait` | Open-ended absolutes ("excellent", "nothing missing") with the anchors supplied | `bounds-the-open-ends`, settleable |
-| `d16-approved-means-handoff` | Interactive: the user approves the digest with "looks good" | `stops-at-the-handoff`, generated final-state guards · changed guards unmeasured; prior case measured 2026-10-12 |
-| `d17-taste-in-encoding` | Taste entries in memory: a narrow one that settles an encoding call, a broad one that tempts dropping a review on a payment step, and a user's call none bears on | `follows-and-cites-the-entry`, `flags-the-users-call`, `broad-entry-drops-nothing`, `no-taste-offer`, generated final-state guards, shared three · changed guards unmeasured; prior case measured 2026-10-12 |
+| `d16-approved-means-handoff` | Interactive: the user approves the digest with "looks good" | `stops-at-the-handoff`, generated final-state guards · changed guards first measured 2026-10-25 |
+| `d17-taste-in-encoding` | Taste entries in memory: a narrow one that settles an encoding call, a broad one that tempts dropping a review on a payment step, and a user's call none bears on | `follows-and-cites-the-entry`, `flags-the-users-call`, `broad-entry-drops-nothing`, `no-taste-offer`, generated final-state guards, shared three · changed guards first measured 2026-10-25 |
 | `d27-explicit-target` | Firm 2-second export target with unknown reachability | `keeps-the-explicit-target` |
 
 "Shared three" is `binding-lives-in-gates`, `gates-are-settleable`, and `no-invented-thresholds`.

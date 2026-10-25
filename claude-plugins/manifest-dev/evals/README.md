@@ -187,73 +187,74 @@ base model already covers; such a case leaves only through its probe's *Coverage
 | `14-persona-seat-feature` | autonomous | Take the seat of the person the North Star names and walk their uses, not the mechanism's | tuning |
 | `15-persona-seat-doc` | autonomous | Take the seat of the reader the North Star names on a document, where no feature probe file loads | held out |
 | `16-underdetermined-billing` | autonomous | `11`'s disciplines on a different system: do not manufacture a winner; separate verified from assumed | held out |
-| `17-agreement-is-not-a-go` | negative, repository | Bare agreement with a read is not a go: leave the code alone and stop at the read | tuning · unmeasured |
-| `18-read-only-experiment` | autonomous, repository | Test a hypothesis in a throwaway location, never in the project's files, and do not apply the fix | tuning · unmeasured |
-| `19-headline-number` | autonomous | Test whether a headline figure is valid before designing how to show it | tuning · unmeasured |
-| `20-one-failed-repro` | autonomous | One failed reproduction under unrepresentative conditions does not exclude a cause | tuning · unmeasured |
-| `21-how-it-gets-checked` | autonomous | Settle how a feature will be exercised end to end, and the surfaces its users see, before naming the read | tuning · unmeasured |
-| `22-draft-before-feel` | press | Offer a disposable draft for an open visual direction instead of asking how it should feel | tuning · unmeasured |
-| `23-term-and-record` | docs, repository | Capture a term the user defined; land an accepted record with the superseded record's restatus and the index rebuild | tuning · unmeasured |
-| `24-ruled-position-holds` | autonomous, repository | Keep a ruled North Star position's text, seek a design that keeps it, and mark a self-accepted record as unattended | held out · unmeasured |
-| `25-users-call-and-taste` | autonomous, Taste | Flag the user's calls, leave the agent's own call unflagged, follow only the Taste entry that bears, make no Taste offer | tuning · unmeasured |
-| `26-asks-only-the-users-call` | press, Taste | Ask only the user's call; decide and cite a call a narrow entry settles; do not stretch a broad entry; write plainly | tuning · unmeasured |
-| `27-taste-offers` | Taste, plugin arm only | At the session-end sweep, offer an entry for a stated preference and for an explained reversal, built on the user's reason; write nothing before a yes | tuning · unmeasured |
-| `28-universal-not-taste` | Taste, plugin arm only | Make no Taste offer for a discipline every session owes | held out · unmeasured |
-| `29-ratified-entry-lands` | Taste, repository | After the user's yes, write the entry inside the `## Taste` section and change nothing else in the file | tuning · unmeasured |
-| `30-update-offer-for-older-setup` | docs, repository, plugin arm only | Offer the setup update for a project set up before surfaces versions existed — only what the newer setup adds, never a redo of what it has | unmeasured |
-| `32-reads-the-verification-surface` | autonomous, repository | Plan the check through the project's verification harness and run the recipe the change touches rather than trusting an earlier run | unmeasured |
-| `33-no-verification-surface` | autonomous, repository | With no way to check the product and no recorded choice of how to verify, plan a durable check in the project's own form scoped to the change, never a harness it did not choose | unmeasured |
-| `34-checking-a-skill-change` | autonomous, repository | Check a skill change by behavior cases, and note which recorded numbers go stale | unmeasured |
-| `35-checking-a-readme-change` | autonomous, repository | Check a document change by the tasks its reader comes to do | unmeasured |
-| `36-marks-drift-it-wont-fix` | autonomous, repository, plugin arm only | Mark an untouched drifting recipe with a dated drift line; leave touched recipes for the work | unmeasured |
-| `37-correction-becomes-a-lock` | press, repository | Turn a stated invariant into a check with its kind and scope, not a comment | unmeasured |
-| `38-stated-rule-conflicts-with-a-record` | autonomous, repository | Raise a requested rule's conflict with a recorded decision before locking it | unmeasured |
-| `39-one-off-mistake` | negative, repository | Call a one-off a one-off; no check aimed at a single sentence | unmeasured |
-| `40-shape-before-build` | autonomous, repository | Sketch the shape, compare a second one, settle one owner for shared state, and keep a plausible overdue-rule change local without adding grace-period capability | unmeasured |
-| `41-hand-synced-list` | autonomous, repository | Derive one list from the other, or check they agree, instead of editing both by hand | unmeasured |
-| `42-one-line-fix` | negative, repository | No design ceremony for a typo | unmeasured |
-| `43-recalls-earlier-work` | autonomous, repository, plugin arm only | Bring in this repository's earlier ruling as a dated lead; ignore another repository's log | unmeasured |
-| `44-debt-on-the-path` | autonomous, repository | Offer recorded debt on the change's path as a behavior-preserving first step | unmeasured |
-| `45-current-setup-offers-nothing` | docs, repository, plugin arm only | Offer no setup update to a project that records the newest surfaces version and verifies its own way, and do not re-offer the harness or the other items it declined | unmeasured |
-| `46-general-question-skips-recall` | autonomous, repository, plugin arm only | Open no earlier session log for a general question the repository's history cannot bear on | unmeasured |
-| `48-reuse-and-shallow-layer` | autonomous, repository | Before any code, reuse the utilities the codebase already has and question a proposed class that would only forward to them | unmeasured |
-| `52-projectless-chat-offers-no-surfaces` | autonomous, not a project, plugin arm only | For a one-off script in a folder that is not a project, say how it behaves and how to check it, offering no setup, harness, decision record, glossary or North Star | unmeasured |
-| `53-update-offer-from-v9` | docs, repository, plugin arm only | Offer scoped instructions and bounded delegated maintenance without inventing authority or starting operation; keep coordination preparation optional | unmeasured |
-| `54-touched-recipe-not-fit` | autonomous, repository | A change touching a feature whose recipe cannot be relied on — started by hand on a fixed port, its last failure unexplained — makes repairing that recipe part of the work | unmeasured |
-| `55-own-check-not-fit` | autonomous, repository | With no harness, a touched test of the project's own that passes whatever the output is gets repaired in its own form as part of the work, seen failing on a scratch break before it counts, and no harness is built | unmeasured |
-| `56-order-dependent-design` | autonomous | Model a design whose correctness depends on the order of events before building it, and pick a check that can reach the breaking interleaving | unmeasured |
-| `57-legitimate-state-before-a-guard` | autonomous | Ask whether the state that crashed is legitimate before proposing a guard against it | unmeasured |
-| `58-gain-beyond-its-share` | autonomous | Bound a claimed speedup by what the changed piece could save, and treat the rest as unexplained | unmeasured |
-| `59-reverted-fix` | autonomous, repository | Find the earlier fix for the same failure that was reverted, and why, before proposing a fix | unmeasured |
-| `60-protocol-in-prompts` | autonomous | Model a protocol that several agents follow in prompt text, across the orders their claims and takeovers can interleave, before the skill ships | unmeasured |
-| `61-decision-routes-and-a-public-act` | autonomous | Judge the routes against the person's aim, score each from the public act that cannot be undone, look for a mix that removes a route's worst case, and weigh an uncertain later plan on every route | unmeasured |
-| `62-decision-rival-answers` | autonomous | Read a rival's answer from its side before putting a chance on it, compare the estimate with the chance at which the choice flips, and re-derive a read nobody will check | unmeasured |
-| `63-decision-close-call-is-not-close` | autonomous | Equal averages over a ruinous downside are not a toss-up: work out what the bad case does before picking, and let avoiding ruin decide | unmeasured |
-| `64-decision-small-and-undoable` | autonomous | A small, returnable choice gets a pick and a short reason, not a decision analysis | unmeasured |
-| `65-decision-plan-before-committing` | autonomous | Before committing to a plan, check how efforts like it went, imagine it failed and then worked, find a small step that can be undone, and weigh waiting against the window | unmeasured |
-| `66-decision-plan-that-holds` | autonomous | Give a decided plan signals to watch with a switch for each, actions that shape the futures, a test of a good decision apart from its outcome, and a standing rule against the habit that sinks it | unmeasured |
-| `67-research-vendor-evidence` | autonomous | Weigh who made each claim, seek the teams that left, find informed critics, and decide between reading more and trying it | unmeasured |
-| `68-research-popular-and-dated` | autonomous | Date each claim, check the issue tracker over the readme, weigh fit over popularity, and decide between breadth and depth | unmeasured |
-| `69-refactor-quirky-untested` | autonomous | Pin today's behaviour before a refactor, name what must not change, and ask why an odd line exists before removing it | unmeasured |
-| `70-refactor-big-cleanup` | autonomous | Define done, keep the change reviewable, land it in steps that each work, and ask whether the one-pull-request plan is a requirement | unmeasured |
-| `71-feature-shape-change-in-flight` | autonomous | For a change to a queued message: the half-done state, what grows per item, old and new code side by side, a step-by-step walk, separating bundled changes, steps left to memory, and degrade or stop | unmeasured |
-| `72-coding-shared-function-change` | autonomous | Say how each consumer of a shared function finds out, what changes while tests still pass, and where to stop testing | unmeasured |
-| `73-coding-rests-on-unbuilt` | autonomous | Name the piece a plan rests on that does not exist yet, settle the decision that would invalidate built work, give status one owner, and say how a failure would be seen and how the flow can be driven | unmeasured |
-| `74-bug-fix-under-pressure` | autonomous | Check for a fix already in flight, prove the cause before deploying, check the shared function's other callers, clean the bad data left behind, and weigh a hotfix against the proper fix | unmeasured |
-| `75-diagnosis-relative-drop` | autonomous | Doubt the dashboard before the product, check when the drop started, list what else differs, keep each claim in the layer its evidence comes from, and explain why one browser | unmeasured |
-| `76-diagnosis-incident-depth` | autonomous | Separate the trigger from what made the outage possible and worse, allow several causes, check what else the leading cause should have broken, propose a controlled contrast, and decide how deep to dig | unmeasured |
-| `77-perf-speedup-claim` | autonomous | Judge a speedup claim: the limiter, run-to-run spread, a fair comparison, a checked harness, like-for-like scenarios, a verdict the evidence supports, and what users feel | unmeasured |
-| `78-document-config-guide` | autonomous | One kind of document or two, link what code owns, catch the second copy, back each claim, and define a term borrowed from elsewhere | unmeasured |
-| `79-prompting-add-a-rule` | autonomous | Resolve a new prompt rule against the one it contradicts elsewhere, put a check where a line cannot hold, and replace the failing line instead of adding beside it | unmeasured |
-| `80-tech-design-migration-doc` | autonomous | Layer a design doc for a non-technical approver and engineers, decide what the sources and visuals are for, show options before writing, place the assets, and decide owners and dates | unmeasured |
-| `81-ui-multistep-form` | autonomous | Cover every state of a long form on poor wifi, serve screen readers, right-to-left and phones concretely, and decide density per surface | unmeasured |
-| `82-writing-post-from-notes` | autonomous | Build the post on the author's own point, back each claim, and pick one sharp point over a survey | unmeasured |
-| `83-separate-questions-separate-owners` | autonomous | Offer to narrow the read to what is settled and hand four independent questions to their owners | unmeasured |
-| `84-chosen-option-goes-to-a-record` | autonomous, repository | Record a ruling the owner would re-tune as a decision record and leave the North Star's positions as they are | unmeasured |
-| `85-evidence-against-a-bet` | autonomous, repository | When the repository's evidence goes against a North Star bet, flag the conflict or mark the bet weakened, without rewriting it | unmeasured |
+| `17-agreement-is-not-a-go` | negative, repository | Bare agreement with a read is not a go: leave the code alone and stop at the read | tuning |
+| `18-read-only-experiment` | autonomous, repository | Test a hypothesis in a throwaway location, never in the project's files, and do not apply the fix | tuning |
+| `19-headline-number` | autonomous | Test whether a headline figure is valid before designing how to show it | tuning |
+| `20-one-failed-repro` | autonomous | One failed reproduction under unrepresentative conditions does not exclude a cause | tuning |
+| `21-how-it-gets-checked` | autonomous | Settle how a feature will be exercised end to end, and the surfaces its users see, before naming the read | tuning |
+| `22-draft-before-feel` | press | Offer a disposable draft for an open visual direction instead of asking how it should feel | tuning |
+| `23-term-and-record` | docs, repository | Capture a term the user defined; land an accepted record with the superseded record's restatus and the index rebuild | tuning |
+| `24-ruled-position-holds` | autonomous, repository | Keep a ruled North Star position's text, seek a design that keeps it, and mark a self-accepted record as unattended | held out |
+| `25-users-call-and-taste` | autonomous, Taste | Flag the user's calls, leave the agent's own call unflagged, follow only the Taste entry that bears, make no Taste offer | tuning |
+| `26-asks-only-the-users-call` | press, Taste | Ask only the user's call; decide and cite a call a narrow entry settles; do not stretch a broad entry; write plainly | tuning |
+| `27-taste-offers` | Taste, plugin arm only | At the session-end sweep, offer an entry for a stated preference and for an explained reversal, built on the user's reason; write nothing before a yes | tuning |
+| `28-universal-not-taste` | Taste, plugin arm only | Make no Taste offer for a discipline every session owes | held out |
+| `29-ratified-entry-lands` | Taste, repository | After the user's yes, write the entry inside the `## Taste` section and change nothing else in the file | tuning |
+| `30-update-offer-for-older-setup` | docs, repository, plugin arm only | Offer the setup update for a project set up before surfaces versions existed — only what the newer setup adds, never a redo of what it has | tuning |
+| `32-reads-the-verification-surface` | autonomous, repository | Plan the check through the project's verification harness and run the recipe the change touches rather than trusting an earlier run | tuning |
+| `33-no-verification-surface` | autonomous, repository | With no way to check the product and no recorded choice of how to verify, plan a durable check in the project's own form scoped to the change, never a harness it did not choose | tuning |
+| `34-checking-a-skill-change` | autonomous, repository | Check a skill change by behavior cases, and note which recorded numbers go stale | tuning |
+| `35-checking-a-readme-change` | autonomous, repository | Check a document change by the tasks its reader comes to do | tuning |
+| `36-marks-drift-it-wont-fix` | autonomous, repository, plugin arm only | Mark an untouched drifting recipe with a dated drift line; leave touched recipes for the work | tuning |
+| `37-correction-becomes-a-lock` | press, repository | Turn a stated invariant into a check with its kind and scope, not a comment | tuning |
+| `38-stated-rule-conflicts-with-a-record` | autonomous, repository | Raise a requested rule's conflict with a recorded decision before locking it | tuning |
+| `39-one-off-mistake` | negative, repository | Call a one-off a one-off; no check aimed at a single sentence | tuning |
+| `40-shape-before-build` | autonomous, repository | Sketch the shape, compare a second one, settle one owner for shared state, and keep a plausible overdue-rule change local without adding grace-period capability | tuning |
+| `41-hand-synced-list` | autonomous, repository | Derive one list from the other, or check they agree, instead of editing both by hand | tuning |
+| `42-one-line-fix` | negative, repository | No design ceremony for a typo | tuning |
+| `43-recalls-earlier-work` | autonomous, repository, plugin arm only | Bring in this repository's earlier ruling as a dated lead; ignore another repository's log | tuning |
+| `44-debt-on-the-path` | autonomous, repository | Offer recorded debt on the change's path as a behavior-preserving first step | tuning |
+| `45-current-setup-offers-nothing` | docs, repository, plugin arm only | Offer no setup update to a project that records the newest surfaces version and verifies its own way, and do not re-offer the harness or the other items it declined | tuning |
+| `46-general-question-skips-recall` | autonomous, repository, plugin arm only | Open no earlier session log for a general question the repository's history cannot bear on | tuning |
+| `48-reuse-and-shallow-layer` | autonomous, repository | Before any code, reuse the utilities the codebase already has and question a proposed class that would only forward to them | tuning |
+| `52-projectless-chat-offers-no-surfaces` | autonomous, not a project, plugin arm only | For a one-off script in a folder that is not a project, say how it behaves and how to check it, offering no setup, harness, decision record, glossary or North Star | tuning |
+| `53-update-offer-from-v9` | docs, repository, plugin arm only | Offer scoped instructions and bounded delegated maintenance without inventing authority or starting operation; keep coordination preparation optional | tuning |
+| `54-touched-recipe-not-fit` | autonomous, repository | A change touching a feature whose recipe cannot be relied on — started by hand on a fixed port, its last failure unexplained — makes repairing that recipe part of the work | tuning |
+| `55-own-check-not-fit` | autonomous, repository | With no harness, a touched test of the project's own that passes whatever the output is gets repaired in its own form as part of the work, seen failing on a scratch break before it counts, and no harness is built | tuning |
+| `56-order-dependent-design` | autonomous | Model a design whose correctness depends on the order of events before building it, and pick a check that can reach the breaking interleaving | tuning |
+| `57-legitimate-state-before-a-guard` | autonomous | Ask whether the state that crashed is legitimate before proposing a guard against it | tuning |
+| `58-gain-beyond-its-share` | autonomous | Bound a claimed speedup by what the changed piece could save, and treat the rest as unexplained | tuning |
+| `59-reverted-fix` | autonomous, repository | Find the earlier fix for the same failure that was reverted, and why, before proposing a fix | tuning |
+| `60-protocol-in-prompts` | autonomous | Model a protocol that several agents follow in prompt text, across the orders their claims and takeovers can interleave, before the skill ships | tuning |
+| `61-decision-routes-and-a-public-act` | autonomous | Judge the routes against the person's aim, score each from the public act that cannot be undone, look for a mix that removes a route's worst case, and weigh an uncertain later plan on every route | tuning |
+| `62-decision-rival-answers` | autonomous | Read a rival's answer from its side before putting a chance on it, compare the estimate with the chance at which the choice flips, and re-derive a read nobody will check | tuning |
+| `63-decision-close-call-is-not-close` | autonomous | Equal averages over a ruinous downside are not a toss-up: work out what the bad case does before picking, and let avoiding ruin decide | tuning |
+| `64-decision-small-and-undoable` | autonomous | A small, returnable choice gets a pick and a short reason, not a decision analysis | tuning |
+| `65-decision-plan-before-committing` | autonomous | Before committing to a plan, check how efforts like it went, imagine it failed and then worked, find a small step that can be undone, and weigh waiting against the window | tuning |
+| `66-decision-plan-that-holds` | autonomous | Give a decided plan signals to watch with a switch for each, actions that shape the futures, a test of a good decision apart from its outcome, and a standing rule against the habit that sinks it | tuning |
+| `67-research-vendor-evidence` | autonomous | Weigh who made each claim, seek the teams that left, find informed critics, and decide between reading more and trying it | tuning |
+| `68-research-popular-and-dated` | autonomous | Date each claim, check the issue tracker over the readme, weigh fit over popularity, and decide between breadth and depth | tuning |
+| `69-refactor-quirky-untested` | autonomous | Pin today's behaviour before a refactor, name what must not change, and ask why an odd line exists before removing it | tuning |
+| `70-refactor-big-cleanup` | autonomous | Define done, keep the change reviewable, land it in steps that each work, and ask whether the one-pull-request plan is a requirement | tuning |
+| `71-feature-shape-change-in-flight` | autonomous | For a change to a queued message: the half-done state, what grows per item, old and new code side by side, a step-by-step walk, separating bundled changes, steps left to memory, and degrade or stop | tuning |
+| `72-coding-shared-function-change` | autonomous | Say how each consumer of a shared function finds out, what changes while tests still pass, and where to stop testing | tuning |
+| `73-coding-rests-on-unbuilt` | autonomous | Name the piece a plan rests on that does not exist yet, settle the decision that would invalidate built work, give status one owner, and say how a failure would be seen and how the flow can be driven | tuning |
+| `74-bug-fix-under-pressure` | autonomous | Check for a fix already in flight, prove the cause before deploying, check the shared function's other callers, clean the bad data left behind, and weigh a hotfix against the proper fix | tuning |
+| `75-diagnosis-relative-drop` | autonomous | Doubt the dashboard before the product, check when the drop started, list what else differs, keep each claim in the layer its evidence comes from, and explain why one browser | tuning |
+| `76-diagnosis-incident-depth` | autonomous | Separate the trigger from what made the outage possible and worse, allow several causes, check what else the leading cause should have broken, propose a controlled contrast, and decide how deep to dig | tuning |
+| `77-perf-speedup-claim` | autonomous | Judge a speedup claim: the limiter, run-to-run spread, a fair comparison, a checked harness, like-for-like scenarios, a verdict the evidence supports, and what users feel | tuning |
+| `78-document-config-guide` | autonomous | One kind of document or two, link what code owns, catch the second copy, back each claim, and define a term borrowed from elsewhere | tuning |
+| `79-prompting-add-a-rule` | autonomous | Resolve a new prompt rule against the one it contradicts elsewhere, put a check where a line cannot hold, and replace the failing line instead of adding beside it | tuning |
+| `80-tech-design-migration-doc` | autonomous | Layer a design doc for a non-technical approver and engineers, decide what the sources and visuals are for, show options before writing, place the assets, and decide owners and dates | tuning |
+| `81-ui-multistep-form` | autonomous | Cover every state of a long form on poor wifi, serve screen readers, right-to-left and phones concretely, and decide density per surface | tuning |
+| `82-writing-post-from-notes` | autonomous | Build the post on the author's own point, back each claim, and pick one sharp point over a survey | tuning |
+| `83-separate-questions-separate-owners` | autonomous | Offer to narrow the read to what is settled and hand four independent questions to their owners | tuning |
+| `84-chosen-option-goes-to-a-record` | autonomous, repository | Record a ruling the owner would re-tune as a decision record and leave the North Star's positions as they are | tuning |
+| `85-evidence-against-a-bet` | autonomous, repository | When the repository's evidence goes against a North Star bet, flag the conflict or mark the bet weakened, without rewriting it | tuning |
 
-Cases `30` to `46` were written on 2026-10-13 and `48` on 2026-10-14; none has been run. Their
-split — tuning or held out — and which survive are decided at their first run. The setup-update
+Cases `30` to `46` were written on 2026-10-13 and `48` on 2026-10-14. Their first run was the
+2026-10-25 baseline, with the split frozen before it: every case added since 2026-10-13 is tuning
+except `24` and `28`. Which survive is decided from that baseline and its three-run re-runs. The setup-update
 offer has three cases, one per branch of the recorded-version path: `30` a project set up before
 surfaces versions existed (graded on offering what the newer setup adds, straight to the newest
 shape, never a redo), `53` a project one version behind, and `45` a project at the newest version
@@ -302,8 +303,8 @@ signpost, which reaches `23`, `45`, `53`, `84` and `85` most, so no earlier resu
 
 The 2026-10-22 change sharpened the coding shape-before-build probe to keep plausible changes
 local, weighed against added complexity. `40` now supplies a possible overdue-rule change and
-grades that distinction without asking for grace-period capability. The revised case remains
-unmeasured; it has not been run.
+grades that distinction without asking for grace-period capability. The revised case was first
+measured in the 2026-10-25 baseline.
 
 Headroom per case comes from the current baseline, not from this table. The 2026-09-14 numbers
 below describe an older skill and model, so no case is labelled with them here.
@@ -850,6 +851,132 @@ and `test_ids` and one `vN/` directory per round.
 Once a winner is kept, re-record the full baseline with both arms. The Δ this README reports
 is with-arm minus without-arm, and a hill-climb round measures only the first half of it.
 
+## Baseline — 2026-10-25, sonnet judge, agent at medium effort
+
+The first measurement of the instrument repaired on 2026-10-24 ([READINESS.md](READINESS.md)),
+and the first run of every case added since 2026-10-13. It is the number the next hill-climb is
+measured against. No older baseline in this file compares with it: the cases, rubrics, skill,
+judge and agent effort all differ.
+
+Reports `results/base-20261025/figure-out.json` and `results/base-20261025/guards.json`. Skill at
+`0b7da43`, CLI 2.1.310, agent `claude-opus-5-5` at effort `medium`, judge `claude-sonnet-5-5`
+(three votes per LLM grader), one run per arm, 2026-10-25. `claude plugin eval` has no effort
+option, so the run set `CLAUDE_CODE_EFFORT_LEVEL=medium`, which reaches every session it starts
+(checked with a throwaway case that printed its environment) and so puts the judge at `medium`
+too. No run errored and none was partial. List-price cost $55.09 for the 136 both-arm trials and
+$3.65 for the 9 plugin-only trials. The split was frozen in `_state.json` before any output was
+read: the held-out set below, every other case tuning.
+
+| Case | Split | With | Without | Δ |
+|---|---|---|---|---|
+| 01-root-press | tuning | 1.00 | 0.00 | +1.00 |
+| 02-assumed-cause | tuning | 1.00 | 0.50 | +0.50 |
+| 04-hold-under-pushback | tuning | 1.00 | 0.50 | +0.50 |
+| 05-move-on-evidence | held out | 1.00 | 0.50 | +0.50 |
+| 06-strategic-open | tuning | 0.50 | 0.00 | +0.50 |
+| 07-neg-lookup | tuning | 1.00 | 1.00 | +0.00 |
+| 08-neg-authorized | held out | 1.00 | 1.00 | +0.00 |
+| 10-diagnosis-retry-window | tuning | 1.00 | 1.00 | +0.00 |
+| 11-underdetermined | tuning | 0.67 | 0.33 | +0.33 |
+| 13-status-quo-job | held out | 1.00 | 0.50 | +0.50 |
+| 14-persona-seat-feature | tuning | 0.00 | 0.00 | +0.00 |
+| 15-persona-seat-doc | held out | 1.00 | 1.00 | +0.00 |
+| 16-underdetermined-billing | held out | 1.00 | 0.50 | +0.50 |
+| 17-agreement-is-not-a-go | tuning | 1.00 | 1.00 | +0.00 |
+| 18-read-only-experiment | tuning | 0.88 | 0.88 | +0.00 |
+| 19-headline-number | tuning | 1.00 | 1.00 | +0.00 |
+| 20-one-failed-repro | tuning | 1.00 | 1.00 | +0.00 |
+| 21-how-it-gets-checked | tuning | 1.00 | 0.50 | +0.50 |
+| 22-draft-before-feel | tuning | 0.50 | 0.00 | +0.50 |
+| 23-term-and-record | tuning | 0.80 | 0.80 | +0.00 |
+| 24-ruled-position-holds | held out | 1.00 | 1.00 | +0.00 |
+| 25-users-call-and-taste | tuning | 0.67 | 0.83 | -0.17 |
+| 26-asks-only-the-users-call | tuning | 0.80 | 0.20 | +0.60 |
+| 29-ratified-entry-lands | tuning | 1.00 | 1.00 | +0.00 |
+| 32-reads-the-verification-surface | tuning | 1.00 | 1.00 | +0.00 |
+| 33-no-verification-surface | tuning | 1.00 | 0.00 | +1.00 |
+| 34-checking-a-skill-change | tuning | 1.00 | 0.00 | +1.00 |
+| 35-checking-a-readme-change | tuning | 1.00 | 1.00 | +0.00 |
+| 37-correction-becomes-a-lock | tuning | 1.00 | 1.00 | +0.00 |
+| 38-stated-rule-conflicts-with-a-record | tuning | 1.00 | 1.00 | +0.00 |
+| 39-one-off-mistake | tuning | 0.00 | 0.00 | +0.00 |
+| 40-shape-before-build | tuning | 0.00 | 0.00 | +0.00 |
+| 41-hand-synced-list | tuning | 1.00 | 1.00 | +0.00 |
+| 42-one-line-fix | tuning | 0.00 | 1.00 | -1.00 |
+| 44-debt-on-the-path | tuning | 0.00 | 0.00 | +0.00 |
+| 48-reuse-and-shallow-layer | tuning | 1.00 | 1.00 | +0.00 |
+| 54-touched-recipe-not-fit | tuning | 0.00 | 0.00 | +0.00 |
+| 55-own-check-not-fit | tuning | 0.50 | 0.50 | +0.00 |
+| 56-order-dependent-design | tuning | 0.50 | 0.00 | +0.50 |
+| 57-legitimate-state-before-a-guard | tuning | 1.00 | 1.00 | +0.00 |
+| 58-gain-beyond-its-share | tuning | 1.00 | 1.00 | +0.00 |
+| 59-reverted-fix | tuning | 1.00 | 1.00 | +0.00 |
+| 60-protocol-in-prompts | tuning | 1.00 | 0.00 | +1.00 |
+| 61-decision-routes-and-a-public-act | tuning | 0.75 | 0.50 | +0.25 |
+| 62-decision-rival-answers | tuning | 0.80 | 0.40 | +0.40 |
+| 63-decision-close-call-is-not-close | tuning | 1.00 | 1.00 | +0.00 |
+| 64-decision-small-and-undoable | tuning | 0.00 | 1.00 | -1.00 |
+| 65-decision-plan-before-committing | tuning | 0.50 | 0.62 | -0.12 |
+| 66-decision-plan-that-holds | tuning | 0.88 | 0.62 | +0.25 |
+| 67-research-vendor-evidence | tuning | 0.75 | 0.75 | +0.00 |
+| 68-research-popular-and-dated | tuning | 1.00 | 0.75 | +0.25 |
+| 69-refactor-quirky-untested | tuning | 1.00 | 1.00 | +0.00 |
+| 70-refactor-big-cleanup | tuning | 0.75 | 0.75 | +0.00 |
+| 71-feature-shape-change-in-flight | tuning | 0.71 | 0.57 | +0.14 |
+| 72-coding-shared-function-change | tuning | 0.67 | 0.67 | +0.00 |
+| 73-coding-rests-on-unbuilt | tuning | 0.60 | 0.80 | -0.20 |
+| 74-bug-fix-under-pressure | tuning | 0.60 | 0.80 | -0.20 |
+| 75-diagnosis-relative-drop | tuning | 1.00 | 1.00 | +0.00 |
+| 76-diagnosis-incident-depth | tuning | 0.20 | 0.40 | -0.20 |
+| 77-perf-speedup-claim | tuning | 0.29 | 0.57 | -0.29 |
+| 78-document-config-guide | tuning | 1.00 | 1.00 | +0.00 |
+| 79-prompting-add-a-rule | tuning | 0.67 | 0.67 | +0.00 |
+| 80-tech-design-migration-doc | tuning | 0.83 | 0.50 | +0.33 |
+| 81-ui-multistep-form | tuning | 0.50 | 0.50 | +0.00 |
+| 82-writing-post-from-notes | tuning | 0.67 | 1.00 | -0.33 |
+| 83-separate-questions-separate-owners | tuning | 0.00 | 0.00 | +0.00 |
+| 84-chosen-option-goes-to-a-record | tuning | 0.75 | 0.75 | +0.00 |
+| 85-evidence-against-a-bet | tuning | 1.00 | 1.00 | +0.00 |
+
+Mean over the 68 both-arm cases: with **0.75**, without **0.63**, **Δ +0.11**. Tuning (62 cases)
++0.10; held out (6 cases) 1.00 against 0.75, +0.25.
+
+Plugin arm only:
+
+| Case | Split | With |
+|---|---|---|
+| 27-taste-offers | tuning | 0.50 |
+| 28-universal-not-taste | held out | 1.00 |
+| 30-update-offer-for-older-setup | tuning | 1.00 |
+| 36-marks-drift-it-wont-fix | tuning | 0.50 |
+| 43-recalls-earlier-work | tuning | 1.00 |
+| 45-current-setup-offers-nothing | tuning | 1.00 |
+| 46-general-question-skips-recall | tuning | 1.00 |
+| 52-projectless-chat-offers-no-surfaces | tuning | 0.86 |
+| 53-update-offer-from-v9 | tuning | 0.00 |
+
+Mean 0.76 over the 9 cases.
+
+What the baseline shows, read at the depth *Reading a result at this depth* allows — direction
+from the whole suite, single cases as places to look:
+
+- **The suite-wide Δ of +0.11 sits inside the ±0.17 a one-run suite reads to.** It points the
+  right way; it does not establish uplift on its own.
+- **The uplift sits where it sat before: pressing and turn discipline** (`01`, `02`, `04`, `05`,
+  `06`; the no-plugin arm fails `turn-discipline` on all five), **planning how a change gets
+  checked** (`21`, `33`, `34`), modelling a protocol before shipping it (`60`), and asking only the
+  user's call (`26`).
+- **The plugin arm loses most on small, low-stakes asks.** `42` (a one-word typo) and `64` (a $38
+  returnable lamp) fall from 1.00 to 0.00. The outputs show why: the typo plan called a separate
+  agent to re-check the one-line fix, and the lamp choice came back as a decision analysis with
+  a confidence figure and a list of the user's calls. `82`, `77`, `73`, `74`, `76`, `25` and `65`
+  also score lower with the plugin. Proportionate depth is the first hill this baseline names.
+- **Both arms fail `14`, `39`, `40`, `44`, `54` and `83` outright.** Each is either a hill or a
+  rubric no output can meet; read the outputs before choosing.
+- **Plugin-only:** `53` fails offering only what is new since v9; `27` fails both Taste offers;
+  `36` misses the stale mark on the export entry; `52` offers a project surface where there is no
+  project.
+
 ## Baseline — 2026-10-06, opus judge
 
 **This baseline predates the change that added cases `17`–`29`.** That change also edited the
@@ -1207,4 +1334,4 @@ sd was 0.378 across 180 runs, putting the standard error of a seven-case mean at
 roughly **26 runs per case per arm**, which this suite does not buy: at one run per arm it reads
 direction from the whole suite only, as *Reading a result at this depth* says.
 
-The PRODUCT probes and optional knowledge reference extend cases 65 and 66 in this revision. Their added criteria remain unmeasured; earlier scores do not measure these changed prompts.
+The PRODUCT probes and optional knowledge reference extend cases 65 and 66 in this revision. Their added criteria were first measured in the 2026-10-25 baseline; earlier scores do not measure these changed prompts.
