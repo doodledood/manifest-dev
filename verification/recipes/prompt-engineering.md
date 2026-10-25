@@ -24,7 +24,7 @@ Workload: varies
 
 ### update-current-state
 Run: `scripts/drive-skill.sh prompt-engineering verification/prompts/prompt-engineering-update-current-state.md --tools`
-Proves: the returned skill reads as current state. It carries the requested one-line summary rule. The "Previously…" note and the dated "Per the maintainer" note are gone, and every existing rule remains: grouping, skipping `internal`, linking each pull request, and one past-tense line per entry naming the user-visible effect, which appears once. The vague "short where you can… easy to skim if possible" hedge that the summary rule retires is gone or replaced.
+Proves: the returned skill reads as current state. It carries the requested ten-entry cap with the "and N more" line. The "Previously…" note and the dated "Per the maintainer" note are gone, and every existing rule remains: grouping, skipping `internal`, linking each pull request, and one past-tense line per entry naming the user-visible effect, which appears once. The vague "Keep each group short where you can, if possible" hedge, which the cap settles, is gone.
 Check: read
 Workload: varies
 

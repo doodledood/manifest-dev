@@ -1,4 +1,4 @@
-/manifest-dev-tools:prompt-engineering update this skill so it also writes a one-line summary at the top of every release note. Return the whole updated SKILL.md.
+/manifest-dev-tools:prompt-engineering update this skill so each group lists at most ten entries, with the rest folded into one "and N more" line. Return the whole updated SKILL.md.
 
 ```markdown
 ---
@@ -16,7 +16,7 @@ code change. (Per the maintainer, 2026-09-14: entries say what users notice, not
 
 Skip pull requests labelled `internal`.
 
-Keep the notes short where you can, and try to make them easy to skim if possible.
+Keep each group short where you can, if possible.
 
 Write each entry as one line naming the user-visible effect.
 
