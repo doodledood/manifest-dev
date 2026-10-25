@@ -90,11 +90,11 @@ No case in this suite grades that research guidance. The `define` recipe's `rese
 drive covers its encoding and remains **unmeasured**; its fixture check does not establish model
 behavior or research quality, and the 2026-10-25 baseline does not cover it.
 
-The 2026-10-25 change made every Manifest define writes or amends read as current state — no date
-of a decision or change, who decided what only in Known Assumptions, an amendment deleting what
-it replaces — and gave every amendment the fresh-context review. It reaches every case that
-writes a spec, whose earlier results are stale, and `d09` most, which gains the `current-state`
-grader, unmeasured. The `define` recipe's `current-state-amend` drive covers both the
+The 2026-10-25 current-state change, made after the baseline below, made every Manifest define
+writes or amends read as current state — no date of a decision or change, who decided what only
+in Known Assumptions, an amendment deleting what it replaces — and gave every amendment the
+fresh-context review. It reaches every case that writes a spec, whose results, the baseline's
+included, are stale, and `d09` most, which gains the `current-state` grader, unmeasured. The `define` recipe's `current-state-amend` drive covers both the
 current-state amendment and its review on the fresh-context path, and remains **unmeasured**.
 
 The review runs in a fresh context, which this suite's sessions cannot start, so define reviews
