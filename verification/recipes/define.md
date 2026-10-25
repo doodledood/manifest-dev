@@ -79,7 +79,13 @@ Workload: varies
 
 ### amend
 Run: `scripts/drive-skill.sh define verification/prompts/define-amend.md`
-Proves: only the named items change; IDs of the others are untouched (diff the file).
+Proves: only the named items change; IDs of the others are untouched and none is reused (diff the file). Before the handoff, a fresh context reviewed the amendment, or the reply says the review was self-graded.
+Check: read
+Workload: varies
+
+### current-state-amend
+Run: `scripts/drive-skill.sh define verification/prompts/define-current-state-amend.md`
+Proves: the amended `manifest.md` reads as current state. It carries no date that records when something was decided or changed, and no note of who decided what outside Known Assumptions — the notes in Intent, the Approach and the untouched INV-G2 included. The plain-text rule is gone from every section, with no text saying it changed, and ASM-1 is replaced rather than joined by a second entry. Reactions are covered by AC-1.1 rewritten to state the class (every kind of item the activity feed shows), with no gate whose region is reactions alone. Every untouched gate keeps its ID, and no reference names an ID that no longer exists. Intent, the Approach and the Deliverable describe the HTML digest. No Known Assumption only records how a review finding was handled. Before the handoff, a fresh context reviewed the amendment, or the reply says the review was self-graded.
 Check: read
 Workload: varies
 

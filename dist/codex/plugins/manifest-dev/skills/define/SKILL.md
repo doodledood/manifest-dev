@@ -15,7 +15,7 @@ Encode the conversation's shared understanding as a Manifest at
 writable temp path only if home is not writable); how you interview is yours. No
 shared understanding in the transcript → invoke `figure-out` first, propagating
 `--autonomous` when the caller is unattended. A manifest path in the arguments
-means amend: targeted changes only, IDs stable, no renumbering.
+means amend, as *Amendment* below describes.
 
 Project surfaces — setup and its update, the verification harness and its recipes, decision
 records, the glossary, the North Star — belong to a project: a repository or working folder
@@ -88,7 +88,8 @@ any revision or removal verbatim, and apply it only on the user's explicit yes
 to that text. An unattended session makes no offer.
 
 Carry the prior Read's useful rationale, intended progress, circumstances, trade-offs and
-uncertainties into Intent, Approach and Assumptions; encode retained decisions and other binding
+uncertainties into Intent, Approach and Assumptions, as reasoning that holds now rather than the
+Read's provenance notes and dates; encode retained decisions and other binding
 authority limits in gates. The Manifest is finite work, not the project's permanent direction record.
 
 The Manifest is the acceptance contract — what the user accepts as "I'd ship the
@@ -102,6 +103,15 @@ That gives a floor that isn't ceremony:
 
 - Follow the schema in `references/SCHEMA.md` exactly — it is what the executor
   parses, and it carries the ceiling invariant every manifest ships verbatim.
+- **Write the current state.** A reader who was not in the session reads the Manifest top to
+  bottom and has the current task, with nothing to piece together — after every amendment as on
+  the first draft. Gates, Intent, Initial Approach and Process Guidance state only what holds
+  now: no date that records when something was decided or changed, no note of who decided what,
+  nothing about what an item used to say. A why may name the requirement a value comes from,
+  never who decided it or when. Who decided what — a user's call or an `(auto)` choice, the
+  alternative not taken and the reason — is stated once, in Known Assumptions, without those
+  dates; the `(auto)` mark after an item's ID is the one pointer to it. What changed, when and
+  why belongs in the figure-out log and `/do`'s Execution Log, never in the Manifest.
 - Open Intent with the **Problem**: one specific story of what breaks or grates
   today, the baseline everything else is pitched against. A session that cannot
   name a pain has found a stop signal, not an empty field — return to figure-out,
@@ -165,8 +175,9 @@ That gives a floor that isn't ceremony:
   no bar, the threshold is the behavior it does state — a pass/fail property, a
   command, a named reference — not a number made up to look measurable. A
   specific the user did not give enters only when derived from a stated
-  requirement and said so in its why, or as a choice: an `(auto)` `ASM-*`
-  carrying the value and its reason, cited by the gate; otherwise cut it. The
+  requirement, its why naming that requirement, or as a choice: an `(auto)`
+  `ASM-*` carrying the value and its reason, the gate stating the value plainly;
+  otherwise cut it. The
   ones that slip in sit inside a larger check — a tolerance, sample size, or run
   length; a second pass bar beside the stated one; a sign-off; an artifact beyond
   the change itself, such as a runbook or design doc — so reread every gate body
@@ -312,9 +323,17 @@ kind, is the superseded schema — stop and require fresh generation, without
 passing the incompatible Manifest as an amendment input. Never translate,
 migrate, or partially preserve it, and offer no migration path.
 
-Otherwise apply targeted changes only, preserving unaffected items verbatim. No
-amendments log — git is history.
+Otherwise change only what the amendment reaches, and leave the whole file
+reading as current state (*Write the current state*, above).
 
+- **Replace, don't add.** Delete what the amendment replaces rather than keeping
+  it beside the new text, and replace a Known Assumption it supersedes rather
+  than adding a second. A deleted item's ID is retired, never reused, and nothing
+  is renumbered. Items the amendment does not touch keep their text and IDs,
+  except that a date recording when something was decided or changed, a note of
+  who decided what, or text about what an item used to say is removed wherever it
+  sits: removing it changes no requirement. Then search the Manifest for each
+  deleted ID and resolve every reference to it.
 - **Reconcile the frame, not just the leaves.** An amendment that widens scope or
   changes a stated rule leaves Intent, the Architecture, the order rationale and
   any scope-bounding guidance describing the older, smaller task — and they read
@@ -324,8 +343,9 @@ amendments log — git is history.
 - **An instance report names the gate that missed it.** Steering arrives as
   instances, and the reflex is a criterion per instance. Ask first which gate
   should already have caught it: where one claims the class and missed it, its
-  region was drawn narrower than the class — widen that gate rather than adding a
-  sibling beside it.
+  region was drawn narrower than the class — rewrite that gate so its body states
+  the whole class, rather than adding a sibling beside it or a clause for the
+  instance.
 - **An amendment that changes a decision produces a gate.** Adding work and
   reversing a rule the system already states are different amendments; the second
   needs its own Acceptance Criterion. Edited prose notes a decision but checks
@@ -341,27 +361,36 @@ amendments log — git is history.
 
 ## Finishing
 
-A new Manifest gets one review in a fresh context before the digest, attended or
-unattended; an amendment gets none. The context that wrote the gates reads them
-as it meant them, which is how an invented number, a dropped point or two gates
-that cannot both hold survive the reread above. Hand a fresh context the paths of
-`references/REVIEW.md` — its brief — this file, `references/SCHEMA.md`, the task
-files this session loaded, the project context file and any loaded memory file
-holding Taste entries, the Manifest, the session record — the figure-out log
-when one exists, and the transcript where the host keeps one the fresh context
-can read, else the conversation passed verbatim — and any model of the design
-built earlier in the session or recorded in a figure-out log the recall above
-found, so the review can extend it. Where no isolated context is
+Every new Manifest and every amendment gets one review in a fresh context before
+the digest, attended or unattended. The context that wrote the gates reads them
+as it meant them, which is how an invented number, a dropped point, two gates
+that cannot both hold, or a note an amendment left behind survive the reread
+above. Hand a fresh context the paths of `references/REVIEW.md` — its brief —
+this file, `references/SCHEMA.md`, the task files this session loaded, the
+project context file and any loaded memory file holding Taste entries, and the
+Manifest; the session record — the path of the figure-out log when one exists,
+and of the transcript where the host keeps one the fresh context can read, else
+the conversation itself, passed verbatim; and any model of the design built
+earlier in the session or recorded in a figure-out log the recall above found,
+so the review can extend it. For an amendment, also hand it the Manifest as it
+stood before, or a diff of the file — never a description of the change — and
+the steering or decision the amendment encodes. Where no isolated context is
 available, review against that brief yourself and say in the digest that the
 review was self-graded. Settle every finding in one pass: fix it, or reject it
-and name it with the reason in the digest (unattended, in an `(auto)` `ASM-*`).
-A fix that changes what the user agreed is a user's call — asked when attended;
-unattended, not applied, so what the user agreed stands and the finding goes in
-an `(auto)` `ASM-*`. A hole is a result the stated Intent already rejects, so
-close each one whose gate or design decision serves that Intent, attended or
-unattended; only a fix that would change the Intent or the scope is the user's
-call, and unattended its `(auto)` `ASM-*` names the hole as still open. An entry
-that merely accepts a hole the Intent rejects does not settle it. Settle each
+and name it with the reason in the digest. A fix that changes what the user
+agreed — or, on an amendment, the requirement of a gate the amendment did not
+touch — is a user's call: asked when attended; unattended, not applied, so what
+the user agreed stands. An amendment's fixes land in a gate it touched or in
+text that binds nothing: Intent, the Approach, Process Guidance, Known
+Assumptions, a why. Unattended, a new Manifest also records each rejected or
+unapplied finding in an `(auto)` `ASM-*`; an amendment names it in the digest
+only, since Known Assumptions holds each decision or open hole once and never a
+record of how a finding was handled. A hole is a result the stated Intent
+already rejects, so close each one whose gate or design decision serves that
+Intent, attended or unattended; only a fix that would change the Intent or the
+scope is the user's call, and unattended one `(auto)` `ASM-*` names the hole as
+still open, replaced rather than repeated by a later amendment. An entry that
+merely accepts a hole the Intent rejects does not settle it. Settle each
 ambiguity by writing one reading into the gate. No second review follows.
 
 Give a plain-language digest — the pain, the plan, what gets built, the
