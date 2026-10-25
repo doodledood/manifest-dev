@@ -1024,7 +1024,7 @@ sandbox refused before any agent ran.
 | `64-decision-small-and-undoable` | `picks-without-ceremony` | 0/3 | 1/3 |
 | `64-decision-small-and-undoable` | `skill-fired`, `autonomous-flag-passed` | 3/3 | 3/3 |
 
-- **The re-check stopped on both small asks.** Four of the six `v0` replies report a second,
+- **The re-check stopped on both small asks.** Five of the six `v0` replies report a second,
   independent check; none of the six `v1` replies does, and all six note that a wrong answer
   is cheap to undo. This is read from the final replies, not from traces.
 - **The score moved by one run on each case**, 2/6 to 4/6 on the quality graders. At three runs
