@@ -296,7 +296,7 @@ document probe's check names a walk recipe. It reaches `01`, `06`, `22`, `25` an
 
 A second change after that baseline made autonomous mode re-derive and re-classify only reads that
 are costly or hard to undo, and added the *Drivers across branches* probe to `DECISION.md`. It
-reaches every case whose prompt passes `--autonomous` — `10`, `11`, `14`–`16`, `18`–`21`, `24`,
+reaches every other case whose prompt passes `--autonomous` — `10`, `11`, `14`–`16`, `18`–`21`, `24`,
 `25`, `32`–`36`, `38`, `40`, `41`, `43`, `44`, `46`, `48`, `52`, `54`–`63` and `65`–`85` — and the
 interactive decision cases `06`, `26` and `29`. `42` and `64` were re-measured on the changed
 skill (*Hill-climb on proportionate re-checks*, below); `86` is new and unmeasured.
@@ -998,12 +998,14 @@ from the whole suite, single cases as places to look:
 One round on the climb set `42` and `64`, the two cases the 2026-10-25 baseline names as the
 plugin arm's biggest loss. `v0` is the skill at `962f09bd`, the merge base; `v1` is the skill at
 `9ca7e52d`, whose `references/autonomous.md` and `tasks/DECISION.md` are the files this change
-merges: autonomous mode runs the independent re-derivation and the fresh-context classification
-only where the read is costly or hard to undo, and `DECISION.md` gains *Drivers across branches*.
-Plugin arm only, three runs per case, CLI 2.1.310, agent `model: opus` as the cases set it (the
-CLI records no resolved ID; the baseline above, on the same CLI, recorded it as
-`claude-opus-5-5`), judge `sonnet` with three votes per LLM grader, agent effort left at the CLI
-default rather than the baseline's `medium`. Each case ran as one invocation:
+merges. In them, autonomous mode runs the independent re-derivation and the fresh-context
+classification only where the read is costly or hard to undo, and `DECISION.md` gains *Drivers
+across branches*.
+
+Plugin arm only, three runs per case, CLI 2.1.310, judge `sonnet` with three votes per LLM
+grader, agent `model: opus` as the cases set it. The CLI records no resolved model ID; the
+baseline above, on the same CLI, recorded it as `claude-opus-5-5`. Agent effort was left at the
+CLI default, not the baseline's `medium`. Each case ran as one invocation:
 
 ```bash
 scripts/evals/run_eval.sh hc-v0b-<case> <dir>/v0/<case>.json --case <case> --tag figure-out \
@@ -1012,7 +1014,7 @@ python3 scripts/evals/score_rounds.py --state <dir>/_state.json v0=<dir>/v0 v1=<
 ```
 
 `_state.json` held both cases as train and none as test. No run errored and none was partial.
-Reported cost $4.35 for the twelve trials, plus $0.09 of judge cost on a first attempt that the
+Reported cost $4.35 for the 12 trials, plus $0.09 of judge cost on a first attempt that the
 sandbox refused before any agent ran.
 
 | Case | Grader | v0 | v1 |

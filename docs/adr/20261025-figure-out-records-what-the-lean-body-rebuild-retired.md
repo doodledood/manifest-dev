@@ -9,7 +9,7 @@ figure-out
 ## Decided by
 An agent in an unattended run, with no review — under the user's delegation to carry out and
 merge the change that the 2026-10-25 records describe. The delegation covers how this record
-rules on each dropped rule. Through it, no rule comes back into `SKILL.md`.
+rules on each dropped rule. Under it, this record restores no rule to `SKILL.md`.
 
 ## Context
 
@@ -22,14 +22,14 @@ that `SKILL.md` held at `ef9806fa^` and no longer holds, in full or in part.
 
 These rules were found by comparing `SKILL.md` at `ef9806fa^` with the shipped skill files at
 `962f09bd` and reading each Accepted record that has the `figure-out` area or states a
-figure-out rule. Line numbers below are today's, relative to
+figure-out rule. Line numbers below are at `d02a9e25`, relative to
 `claude-plugins/manifest-dev/skills/figure-out/`.
 
 The evidence for the rulings:
 
 - The 2026-10-25 eval baseline and the v0/v1 round on `42` and `64` (suite README, *Baseline —
   2026-10-25* and *Hill-climb on proportionate re-checks*).
-- In-session simulations of the current skill with a restored line and without it. Each
+- In-session simulations of the skill at `962f09bd`, with a restored line and without it. Each
   simulation produced two replies per variant, and two graders per batch graded them blind. These
   are not eval-suite results, and the batches are kept outside the repository.
 
@@ -39,17 +39,17 @@ Each dropped rule gets one ruling:
 
 - **Retired**: it is no longer the project's rule.
 - **Carried elsewhere**: a shipped file states it, at the line named.
-- **Back through this change**.
+- **Back through this change**: this change restores it to a shipped file, at the line named.
 - **Not decided**: no evidence yet supports keeping it or retiring it. A `Revisit when` says what
   would settle it. Until then, it is not in the shipped skill.
 
 | Record | Rule cut | Ruling | Grounds |
 |---|---|---|---|
 | `20260714-figure-out-scales-read-depth-with-stakes-and-reversibility` | Read depth follows what rides on the read, not only fog | Back through this change for autonomous mode (`references/autonomous.md:26-27`, under `20261025-figure-out-re-derives-only-reads-that-are-costly-to-get-wrong`). Not decided for interactive mode | In simulation, a restored spine line left the re-check on every small autonomous ask, because the reference's own rule overrode it. The autonomous edit stopped it, and the eval round agrees (re-check reported in 4 of 6 v0 replies, 0 of 6 v1). No interactive case measures depth by stakes. Revisit when an interactive case fails for depth that does not fit the stakes, in the suite README |
-| `20260606-harden-figure-out-truth-seeking-inline-defer-independent-pass`, `20260606-figure-out-process-trust-vs-define-do-artifact-trust` | Take the outside view (base rates) before locking the read | Carried elsewhere for decisions and plans (`tasks/DECISION.md:10`, *Reference class*). The spine line is not decided | In simulation, without the line, one of four replies on plan estimates lacked a base rate. On a cost choice, the line named the usual answer in 2 of 4 replies, against 0 of 4. With it, the lamp choice (`64`) failed its rubric 2 of 2. Revisit when a read on a plan, estimate or forecast misses a base rate that the user or a later result supplies |
-| `20260606-harden-figure-out-truth-seeking-inline-defer-independent-pass` | Regenerate the rival set as findings open or close ground | Retired. Rival discipline is carried at `SKILL.md:84` and `references/autonomous.md:10` | In simulation, today's prompt added a new rival where findings opened one, in 2 of 2 replies, without the line |
+| `20260606-harden-figure-out-truth-seeking-inline-defer-independent-pass`, `20260606-figure-out-process-trust-vs-define-do-artifact-trust` | Take the outside view (base rates) before locking the read | Carried elsewhere for decisions and plans (`tasks/DECISION.md:10`, *Reference class*). The spine line is not decided | In simulation, without the line, 1 of 4 replies on plan estimates lacked a base rate. On a cost choice, the line named the usual answer in 2 of 4 replies, against 0 of 4. With it, the lamp choice (`64`) failed its rubric 2 of 2. Revisit when a read on a plan, estimate or forecast misses a base rate that the user or a later result supplies |
+| `20260606-harden-figure-out-truth-seeking-inline-defer-independent-pass` | Regenerate the rival set as findings open or close ground | Retired. Rival discipline is carried at `SKILL.md:84` and `references/autonomous.md:10` | In simulation, the prompt at `962f09bd` added a new rival where findings opened one, in 2 of 2 replies, without the line |
 | `20260606-harden-figure-out-truth-seeking-inline-defer-independent-pass` | Corroborating sources must be independent, not echoes of one origin | Not decided. `SKILL.md:83` keeps the check that a citation exists and supports its claim | Nothing tested it. Revisit when a read leans on corroborating sources that turn out to share one origin |
-| `20260611-figure-out-evidence-ledger-and-independent-rederivation` | "Underdetermined" is earned by running every discriminating probe | Carried elsewhere (`references/autonomous.md:10`; `tasks/DIAGNOSIS.md:19`). The interactive spine copy is retired | In two simulated interactive diagnoses, today's prompt refused to name a cause it could not support and found a probe still left to run (2 of 2, twice) |
+| `20260611-figure-out-evidence-ledger-and-independent-rederivation` | "Underdetermined" is earned by running every discriminating probe | Carried elsewhere (`references/autonomous.md:10`; `tasks/DIAGNOSIS.md:19`). The interactive spine copy is retired | In two simulated interactive diagnoses, the prompt at `962f09bd` refused to name a cause it could not support and found a probe still left to run (2 of 2, twice) |
 | `20260611-figure-out-evidence-ledger-and-independent-rederivation` | A judgment read states its trade-off boundary; the anatomy collapses when there are no evidence claims | Not decided. `SKILL.md:14-15` keeps confidence, evidence and overturn conditions | Nothing tested it. Revisit when a judgment read leaves out where its trade-off flips, or a read with no evidence claims carries an empty ledger |
 | `20260611-figure-out-evidence-ledger-and-independent-rederivation` | Re-derivation also runs on request, from gathered evidence only, and may report that the evidence underdetermines | Not decided. The load-bearing trigger and the self-graded disclosure remain in `SKILL.md` | Nothing tested it. Revisit when a user asks for an independent check and does not get one, or a re-derivation collects new evidence |
 | `20260611-figure-out-evidence-ledger-and-independent-rederivation` | Only load-bearing claims carry provenance into the turn; "verified" needs a logged artifact | Not decided. `SKILL.md:79-80` keeps voiced status; `references/LOG.md:37` keeps the artifact rule for the log | Nothing tested it. Revisit when turns carry provenance on every claim, or a claim marked verified has no logged artifact |

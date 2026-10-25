@@ -19,26 +19,28 @@ security first. figure-out marked the parties' settlement and annexation positio
 weight under security, then judged the economy on the tax and housing platforms alone. It never
 counted what settlement building and annexation cost the economy until the user raised it.
 
-In-session simulations of that conversation and of a product choice, graded blind by two
-graders per batch (two replies per variant; not eval-suite results):
+The change was tested in in-session simulations of that conversation and of a product choice.
+Each variant produced two replies, and two graders per batch graded them blind. These are not
+eval-suite results. The line under test is the *Drivers across branches* probe this record adds,
+tried in several places:
 
-- Vote case: with no drivers line, no reply counted the economic effects of the settlement
-  positions (0 of 6); with a drivers line, in each placement tried, every reply did (8 of 8).
-  With the line in `tasks/DECISION.md`, 2 of 2.
+- Vote case: without the probe, no reply counted the economic effects of the settlement
+  positions (0 of 6). With it, in every place tried, every reply did (8 of 8). The 8 include
+  the 2 replies with it in `tasks/DECISION.md`.
 - Product case (support's warning that users would not find how to connect data, against the
-  activation goal of connecting data): with a drivers line, 8 of 8 linked the two; without, 3 of
-  4.
-- Small decision (`64`): the line in `DECISION.md` passed the repository's rubric in 1 of 2
-  replies, against 2 of 2 for the same prompt without it; a line in `SKILL.md`'s spine made small
-  asks about as heavy.
+  activation goal of connecting data): with the probe, 8 of 8 replies linked the two; without
+  it, 3 of 4.
+- Small decision (`64`): with the probe in `DECISION.md`, 1 of 2 replies passed the
+  repository's rubric, against 2 of 2 without it. With a similar line in `SKILL.md`'s spine
+  instead, replies to small asks also grew heavier.
 
 ## Decision
 
 Add a *Drivers across branches* probe to `figure-out/tasks/DECISION.md`, before *States of the
-world*: before judging options against one aim, ask what drives that aim — second-order effects
-and factors the session filed under another branch included — how each option reaches it,
-roughly how large each effect is next to the others, and count each factor against every aim it
-moves. `DECISION.md` now carries 14 blind-spot probes. `86-decision-driver-in-another-branch`
+world*. Before judging options against one aim, it asks what drives that aim, including
+second-order effects and factors the session filed under another branch. It asks how each option
+reaches that aim and roughly how large each effect is next to the others. Then it counts each
+factor against every aim it moves. `DECISION.md` now carries 14 blind-spot probes. `86-decision-driver-in-another-branch`
 is its eval case.
 
 ## Alternatives Considered

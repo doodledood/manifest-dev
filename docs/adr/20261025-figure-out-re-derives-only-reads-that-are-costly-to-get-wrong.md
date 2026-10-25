@@ -25,15 +25,16 @@ $42 lamp with free returns) as the plugin arm's biggest loss: both fall from 1.0
 rebuild of 2026-09-14 had also dropped the dial that scaled a read's depth with what rides on it
 (`20260714-figure-out-scales-read-depth-with-stakes-and-reversibility`).
 
-In-session simulations, graded blind by two graders per batch, measured the change before it
-shipped (two replies per variant; not eval-suite results):
+In-session simulations measured the change before it shipped. Each variant produced two
+replies, and two graders per batch graded them blind. These are not eval-suite results.
 
-- Small asks (`42`, `64`): every reply on today's prompt called for a re-check (4 of 4). With
+- Small asks (`42`, `64`): every reply on the unchanged prompt (`962f09bd`) called for a
+  re-check (4 of 4). With
   the conditional rule, in several variants, no reply did (0 of 16). On `64` the repository's own
-  rubric passed both replies with the change, against 1 of 2 and 0 of 2 for today's prompt in two
+  rubric passed both replies with the change, against 1 of 2 and 0 of 2 for the unchanged prompt in two
   batches.
 - A deep outage diagnosis (`76`): with the change, every reply still called for the re-check
-  (4 of 4) and scored as deep as today's prompt on the case's five graders.
+  (4 of 4) and scored as deep as the unchanged prompt on the case's five graders.
 
 The eval-suite comparison of the unchanged and changed skill on `42` and `64` is recorded in the
 suite README's results section for this change.
