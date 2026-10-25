@@ -19,8 +19,7 @@ the full PR diff. Manifest gates with FAIL/BLOCKED or changed evidence still nee
 evaluation; an unchanged head alone cannot settle them.
 
 Use this checkpoint for later wakes only. A missing checkpoint triggers a fresh
-pass from GitHub state. A new explicit invocation always verifies again under
-SKILL.md's range rule, even at the same head.
+pass from GitHub state.
 
 ## Wait cadence
 
