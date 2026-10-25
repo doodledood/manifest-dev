@@ -332,8 +332,8 @@ reading as current state (*Write the current state*, above).
   is renumbered. Items the amendment does not touch keep their text and IDs,
   except that a date recording when something was decided or changed, a note of
   who decided what, or text about what an item used to say is removed wherever it
-  sits: removing it changes no requirement. The decision such a note records
-  moves, undated, into Known Assumptions — a `User's call:` entry when the user
+  sits: removing it changes no requirement. The decision such a note records,
+  where it still holds, moves, undated, into Known Assumptions — a `User's call:` entry when the user
   made it — unless an entry already records it. Then search the Manifest for each
   deleted ID and resolve every reference to it.
 - **Reconcile the frame, not just the leaves.** An amendment that widens scope or
@@ -382,10 +382,11 @@ review was self-graded. Settle every finding in one pass: fix it, or reject it
 and name it with the reason in the digest. A fix that changes what the user
 agreed — or, on an amendment, the requirement of a gate the amendment did not
 touch — is a user's call: asked when attended; unattended, not applied, so what
-the user agreed stands. Any other fix lands wherever its fault sits. Unattended,
+the user agreed stands. Any other fix changes no requirement, such as removing a note, and lands
+wherever its fault sits. Unattended,
 a new Manifest also records each rejected or unapplied finding in an `(auto)`
-`ASM-*`. An amendment adds no Known Assumption for how its own review's findings
-were handled, so such entries do not pile up with each amendment; its digest
+`ASM-*`. An amendment adds no Known Assumption that only records how a review finding
+was handled, so such entries do not pile up with each amendment; its digest
 lists each rejected or unapplied finding as an open item, for the caller to name
 in its own report. A hole is a result the stated Intent
 already rejects, so close each one whose gate or design decision serves that

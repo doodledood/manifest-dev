@@ -20,6 +20,6 @@ An amended manifest should read as if written today for the current task.
    YES or NO.
 3. Does any section still state that downloads or exports stay in UTC, or carry text saying that
    rule changed ("previously…", "no longer…", "updated to…", "was…")? A Problem that describes
-   today's defect does not count; only a rule or plan that keeps exports in UTC does. YES or NO.
+   today's defect does not count as stating the rule; change text counts wherever it sits. YES or NO.
 
 **Then judge:** PASS if all three are NO. FAIL otherwise.
