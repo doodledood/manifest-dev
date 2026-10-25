@@ -1,10 +1,10 @@
 # Canvas Mode — the walk as a picture, not a document
 
-The canvas **is** the walkthrough, and it is a picture: one persistent, PR-specific system map that the whole walk plays out on. It exists to serve the attention contract (see SKILL.md): the reviewer orients visually, meets one idea at a time, and digs into text, rationale, or code only when they choose to. Every earlier instinct toward a document — prose sections, cards, summaries stacked on summaries — was tried and overloaded real reviewers. Do not regress toward it.
+The canvas **is** the walkthrough, and it is a picture: one persistent, PR-specific system map that the whole walk plays out on. It exists to serve the attention contract (see SKILL.md): the reviewer orients visually, meets one idea at a time, and digs into text, rationale, or code only when they choose to. Prose sections, cards and summaries stacked on summaries overload the reviewer, so none of them carries the walk.
 
 ## Reader model
 
-The reviewer **lives in the repo** (knows the modules, idioms, naming conventions) but has **zero context on this PR**. Codebase vocabulary is shared ground; vocabulary this PR introduces is not. There is no prose primer: the map itself and the first story steps carry all orientation — the intro caption states the problem in one line, map labels establish the cast, and early steps introduce new concepts as the story reaches them. Element blurbs (behind a tap) hold definitions for whoever wants them. Name things by their real codebase identifiers, never invented abstractions.
+SKILL.md's reader model holds. There is no prose primer: the map itself and the first story steps carry all orientation — the intro caption states the problem in one line, map labels establish the cast, and early steps introduce new concepts as the story reaches them. Element blurbs (behind a tap) hold definitions for whoever wants them.
 
 ## Activation gate
 
@@ -45,7 +45,7 @@ Diffs live in a **dismissable side drawer** (backdrop click + Esc + visible ✕ 
 
 ## Lifecycle
 
-**One-shot, opened immediately.** Generate the full canvas once — every step, pin, blurb, and diff embedded — open it, and hand it to the reviewer. No preflight browser verification, no screenshot pass, no approval loop: the artifact optimizes time-to-first-review, and the reviewer is its first viewer. No mid-walk regeneration — local JS owns all pacing, and state (current step, answers, notes, open/closed panels) persists in localStorage across reloads under the artifact's own namespace.
+**One-shot, opened immediately.** Generate the full canvas once — every step, pin, blurb, and diff embedded — open it, and hand it to the reviewer. No preflight browser verification, screenshot pass, agent-side click-through, polish loop, or approval loop: the artifact optimizes time-to-first-review, and the reviewer is its first viewer. No mid-walk regeneration — local JS owns all pacing, and state (current step, answers, notes, open/closed panels) persists in localStorage across reloads under the artifact's own namespace.
 
 Chat stays empty during the walk. The agent re-engages only when the user pastes the **Copy my review** bundle — the consolidated pin answers and free notes with their anchors — which feeds the end-of-walk triage that SKILL.md owns. After posting, the artifact is disposable.
 
@@ -56,17 +56,14 @@ Any canvas-related failure is **non-blocking**:
 - File write fails → warn once, fall back to chat-only walkthrough.
 - Opening fails → use another available delivery surface or provide an accessible file link; if the user cannot receive the interactive page, fall back to chat.
 - Clipboard write fails → the artifact pre-selects the bundle in a visible block (the shell already does this).
-- PR-post failure → keep the drafted plan, surface the API error inline, offer retry.
+- PR-post failure → keep the drafted comments, surface the API error inline, offer retry.
 
 ## Anti-patterns
 
 - **Document creep.** A prose primer, per-changeset cards, boundary-view paragraphs, always-visible topic text — any surface where unrequested text carries the walk. The map and its taps carry everything.
 - **Chat duplicating canvas content.** Don't restate captions, whys, pins, or diff content in chat; chat sees only the final bundle.
-- **Mid-walk regeneration.** The canvas is one-shot; local JS handles pacing.
 - **Generic map.** A template topology with this PR's labels swapped in. The map is derived from this PR's actual components and flows; a reviewer who knows the repo should recognize the system on sight.
 - **Wall of text in a caption.** A caption that needs a second sentence is a caption plus a hidden why, or two steps.
-- **Diff as exposition.** Diff hunks visible by default anywhere. Diffs render only inside the drawer, only on expand.
 - **Full-screen or sticky overlays.** Every layer (sheet, drawer, completion panel) dismisses via Esc and a visible control, and the map remains the ground underneath.
 - **Stale or shared state.** Reusing a previous artifact's localStorage namespace, or letting test interactions ship as saved answers.
 - **Invented abstraction in place of codebase vocabulary.** Pins and blurbs name `notifier`, not "the propagation manager", when `notifier` is what the repo calls it.
-- **Verification theater.** Screenshot passes, agent-side click-throughs, or polish loops before handover — the contract is open-and-review.

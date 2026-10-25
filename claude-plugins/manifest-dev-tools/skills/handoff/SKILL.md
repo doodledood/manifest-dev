@@ -7,7 +7,7 @@ user-invocable: true
 
 Produce a self-contained context payload that lets a fresh agent continue this work without re-deriving or re-learning what this session already established. The argument is what the next session is for — use it to shape what's captured and what's left out.
 
-Capture what's hard-won — anything the new session would have to re-do otherwise. For each item that travels, carry the grounding with it, so the receiver inherits the working state rather than just the conclusion. *Examples (illustrative, not required):* a settled decision travels with the alternatives considered and why this won; a verified fact travels with how it was verified (file:line, command output, doc URL); an open thread travels with what would close it. If a particular handoff isn't structured around decisions, facts, or threads, capture whatever the goal requires — with its grounding.
+Capture what's hard-won — anything the new session would have to re-do otherwise. For each item that travels, carry the grounding with it, so the receiver inherits the working state rather than just the conclusion. *Examples (illustrative, not required):* a settled decision travels with the alternatives considered and why this won; a verified fact travels with how it was verified (file:line, command output, doc URL); an open thread travels with what would close it.
 
 Carry the next session's assigned activity and scope, the source and limits of delegated
 choices, retained decisions, and any accepted artifact/version. Preserve current withdrawals

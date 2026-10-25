@@ -24,9 +24,9 @@ Surface each FAIL or BLOCKED as one voice-compliant comment naming the failing c
 
 ## Judgment pass (additive premise check)
 
-Activate the `review-pr-judgment` skill under the same review organization rule. Use SKILL.md's shared judgment brief — description, conversation, codebase direction, linked-PR context, and full PR-head diff — adding the Manifest's Intent as the stated pain. The same generation gate applies in both modes.
+Activate the `review-pr-judgment` skill under the same review organization rule. Give it the inputs SKILL.md's **Judgment pass** names, adding the Manifest's Intent as the stated pain; SKILL.md's **Once per PR** gate applies unchanged.
 
-Like no-manifest mode, fresh judgment generation is **gated to once per PR** — run it only when no prior **judgment-marked** finding (`<!-- manifest-dev:review-pr judgment -->`) exists on the PR (durable GitHub state, not session memory), so once a question has posted, later passes skip regeneration and never re-nag; advancing an existing judgment thread stays with the per-comment verifier and is not gated. As in no-manifest mode, a silent pass posts no judgment marker, so on an all-green PR the pass may re-run on later rounds — bounded and harmless (it stays silent). **Premise-subsumption does not apply here** — there are no fleet findings to subordinate, since the fleet is skipped in manifest mode.
+**Premise-subsumption does not apply here** — there are no fleet findings to subordinate, since the fleet is skipped in manifest mode.
 
 It is **strictly additive** and never touches the contract:
 

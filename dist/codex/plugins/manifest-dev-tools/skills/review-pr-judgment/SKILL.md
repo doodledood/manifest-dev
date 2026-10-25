@@ -65,7 +65,7 @@ A judgment finding is **not** placed on the defect severity scale (low / medium 
 and **no severity**. **Return shape:** the list of such findings, already collapsed to one per root (below), or an empty list. This is load-bearing, not cosmetic:
 
 - The caller's consolidation step drops Low-severity fleet findings other than defect-class before posting — the **only** place a drop-Low filter exists, and only because it posts publicly. A judgment finding tagged Low would be silently deleted there. So judgment findings are **exempt from the drop-Low filter** and carry their own inclusion rule: **surface if the evidence-gate fired and the PR does not already cover the point.** They are still deduped and merged like any other finding.
-- No other context has a drop-Low filter. Manifest-mode contract verification and `/do` gate verification keep low findings by their own acceptance thresholds; the judgment class is orthogonal to all of that.
+- Manifest-mode contract verification and `/do` gate verification keep low findings by their own acceptance thresholds; the judgment class is orthogonal to all of that.
 
 ## Synthesis — one question per root
 
@@ -77,6 +77,6 @@ Every judgment finding is posted as an author-answerable question through the ex
 
 - **never** blocks a merge, submits `request_changes`, or auto-`approve`s;
 - adds **no** new posting path — findings ride the existing single batched review and hidden self-marker;
-- in **manifest mode**, is strictly additive — the manifest contract's PASS/FAIL is computed exactly as before, untouched by any judgment finding.
+- in **manifest mode**, is strictly additive — the manifest contract's PASS/FAIL is computed exactly as it would be without the pass, untouched by any judgment finding.
 
 If nothing clears the evidence bar, the pass stays silent. Silence is the expected default on a sound change.
