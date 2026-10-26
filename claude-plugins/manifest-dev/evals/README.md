@@ -251,7 +251,9 @@ base model already covers; such a case leaves only through its probe's *Coverage
 | `83-separate-questions-separate-owners` | autonomous | Offer to narrow the read to what is settled and hand four independent questions to their owners | tuning |
 | `84-chosen-option-goes-to-a-record` | autonomous, repository | Record a ruling the owner would re-tune as a decision record and leave the North Star's positions as they are | tuning |
 | `85-evidence-against-a-bet` | autonomous, repository | When the repository's evidence goes against a North Star bet, flag the conflict or mark the bet weakened, without rewriting it | tuning |
-| `86-decision-driver-in-another-branch` | press, `unmeasured` | Count a factor filed under one aim against every other aim it moves before judging the options on the next | tuning |
+| `86-decision-driver-in-another-branch` | press | Count a factor filed under one aim against every other aim it moves before judging the options on the next | tuning |
+| `87-decision-driver-filed-in-passing` | press | `86`'s discipline where the factor was filed as a plain win under costs, with no low weight to flag it | tuning |
+| `88-decision-no-driver-to-carry` | negative, plugin arm only | With no factor that reaches the next aim, invent no link to it and add no cost the user did not raise | tuning |
 
 Cases `30` to `46` were written on 2026-10-13 and `48` on 2026-10-14. Their first run was the
 2026-10-25 baseline, with the split frozen before it: every case added since 2026-10-13 is tuning
@@ -300,6 +302,13 @@ reaches every other case whose prompt passes `--autonomous` — `10`, `11`, `14`
 `25`, `32`–`36`, `38`, `40`, `41`, `43`, `44`, `46`, `48`, `52`, `54`–`63` and `65`–`85` — and the
 interactive decision cases `06`, `26` and `29`. `42` and `64` were re-measured on the changed
 skill (*Hill-climb on proportionate re-checks*, below); `86` is new and unmeasured.
+
+A third change, on 2026-10-26, reworded *Drivers across branches* to ask its question also when a
+factor is filed under one aim, narrowed autonomous mode's "clear every unknown" to the unknowns that
+bear on the read, as deep as what rides on it, and gave `SKILL.md`'s prompt-engineering pointer its
+fallback. It reaches the same cases, and makes the `42` and `64` numbers in *Hill-climb on
+proportionate re-checks* stale. `86`, `87` and `88` were measured on it (*Drivers across branches —
+2026-10-26*, below).
 
 Every recorded number before that baseline was already stale as of 2026-10-21. The 2026-10-13 change edited
 figure-out's spine, its docs-mode and autonomous references, and its task files, the
@@ -425,7 +434,9 @@ being declared a guard. `tests/test_eval_cases.py` fails when a case has no row 
 | `83` | first run decides | New on 2026-10-20: The only case for the offer to narrow a read |
 | `84` | first run decides | New on 2026-10-21: The only case for a ruling the North Star must not take in |
 | `85` | first run decides | New on 2026-10-21: The only case for evidence against a North Star bet |
-| `86` | first run decides | New on 2026-10-25: The only case for a driver filed under another branch |
+| `86` | keep | Uplift +1.00 at three runs on 2026-10-26; the only case for a driver marked a low weight under another branch |
+| `87` | keep | Uplift +0.33 at three runs on 2026-10-26: `86`'s discipline on a product choice, where nothing in the filing marks the factor |
+| `88` | keep | Plugin arm only; a declared guard against the drivers probe over-firing: the no-plugin arm passes by construction. 1 of 3 on its first run, 2026-10-26; its grader is unchecked against one failure |
 
 Retired on 2026-10-15: `12` (floored in both arms, not a declared guard), `47` and `49` (each a
 second older-version case beside `53`, which the version rule now forbids; their straight-to-newest
@@ -699,7 +710,7 @@ file. The row is never deleted while the probe stays.
 | `tasks/DIAGNOSIS.md` | Trade-off: Reproduce first vs trace in place | `20-one-failed-repro/non-repro-is-not-exclusion` |
 | `tasks/DIAGNOSIS.md` | Trade-off: Trigger-depth vs root-depth | `76-diagnosis-incident-depth/keeps-digging-past-the-trigger` |
 | `tasks/DECISION.md` | Fundamental objectives | `61-decision-routes-and-a-public-act/judges-routes-against-the-aim` |
-| `tasks/DECISION.md` | Drivers across branches | `86-decision-driver-in-another-branch/counts-the-driver-from-another-branch` |
+| `tasks/DECISION.md` | Drivers across branches | `86-decision-driver-in-another-branch/counts-the-driver-from-another-branch`, `87-decision-driver-filed-in-passing/counts-the-driver-from-another-branch`, `88-decision-no-driver-to-carry/carries-no-false-driver` |
 | `tasks/DECISION.md` | States of the world | `61-decision-routes-and-a-public-act/weighs-the-later-plan-on-every-route`, `62-decision-rival-answers/reads-the-rivals-side` |
 | `tasks/DECISION.md` | Decision rule | `63-decision-close-call-is-not-close/picks-a-rule-for-ruin` |
 | `tasks/PRODUCT.md` | Progress in a circumstance | `65-decision-plan-before-committing/names-the-progress-in-context` |
@@ -1036,6 +1047,38 @@ sandbox refused before any agent ran.
 Owed: `62-decision-rival-answers`, whose graders hold the re-derivation of a load-bearing read,
 and `86-decision-driver-in-another-branch`, the new case for *Drivers across branches*. Neither
 ran here. A later change to `autonomous.md` or `DECISION.md` makes this table stale.
+
+## Drivers across branches — 2026-10-26, sonnet judge
+
+The first runs of `86`, `87` and `88`, on the skill whose *Drivers across branches* also asks
+when a factor is filed under one aim. Three runs per arm, CLI 2.1.310, judge `sonnet` with three
+votes per LLM grader, agent `model: opus` as the cases set it, effort at the CLI default. `88`
+is plugin arm only. Every judge vote was unanimous, and no run errored. Reported cost $3.56 for
+the 15 trials.
+
+```bash
+scripts/evals/run_eval.sh drv-<case> <dir>/<case>.json --case <case> --tag figure-out \
+  --ablation with-without --runs 3 --judge-model sonnet --max-cost-usd 6
+scripts/evals/run_eval.sh drv-88 <dir>/88.json --case 88-decision-no-driver-to-carry \
+  --tag figure-out-plugin-only --ablation none --runs 3 --judge-model sonnet --max-cost-usd 3
+```
+
+| Case | Grader | Plugin | No plugin |
+|---|---|---|---|
+| `86-decision-driver-in-another-branch` | `counts-the-driver-from-another-branch` | 3/3 | 0/3 |
+| `87-decision-driver-filed-in-passing` | `counts-the-driver-from-another-branch` | 3/3 | 2/3 |
+| `88-decision-no-driver-to-carry` | `carries-no-false-driver` | 1/3 | — |
+
+- **The suite tests one turn.** Each prompt pastes the earlier talk, so `DECISION.md` is read at
+  the turn where the factor matters. The miss this change fixes appeared only when the file was
+  read turns earlier, which the harness cannot script (*Known limits*). That condition was tested
+  in in-session simulations instead; `20261026-figure-out-drivers-probe-asks-when-a-factor-is-filed`
+  records them.
+- **`88` failed twice.** One reply adds a line on battery aging under price, then says it
+  changes nothing: the probe checking an earlier factor against the new aim, out loud. The other
+  names no cost the grader lists; it spreads the $50 over travel days and assumes the unspent
+  budget is not kept, which the grader exempts. Whether the grader is wrong on that reply is not
+  yet decided, and neither the grader nor the probe changes in the same pass that reads it.
 
 ## Baseline — 2026-10-06, opus judge
 

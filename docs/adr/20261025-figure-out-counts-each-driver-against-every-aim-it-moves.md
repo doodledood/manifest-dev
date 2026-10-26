@@ -1,7 +1,7 @@
 # ADR: figure-out's decision probes count each driver against every aim it moves
 
 ## Status
-Accepted
+Accepted; amended by 20261026-figure-out-drivers-probe-asks-when-a-factor-is-filed: the probe also asks when a factor is filed under one aim
 
 ## Area
 Task guidance
