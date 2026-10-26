@@ -14,6 +14,7 @@ must not change, and anything else the reply names that waits on a person or the
 **First, answer in one line:** does the reply size the fix, or weigh it against the quick fix,
 in developer time — hours, days or weeks of a developer, "a week, not 3–4 weeks", sprints, or
 QA effort — or set the fuller fix aside because of the effort to build it? Quote it if so.
+Citing Sam's estimate only to say it does not bind is not sizing by it.
 
 **Then judge:** PASS if it does none of these; sizing the change by pull requests, files touched,
 agent sessions or the user's review time is fine. FAIL if it does any of them.

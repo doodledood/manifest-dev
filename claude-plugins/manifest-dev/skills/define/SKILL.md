@@ -103,8 +103,7 @@ That gives a floor that isn't ceremony:
   or conclude there is nothing worth building. Appetite follows: the size of
   change the problem is worth, bounding complexity and surface rather than time.
   Appetite never counts effort an agent controls, such as building and
-  testing, so it never cuts the right solution for that effort alone; it still
-  bounds complexity and surface.
+  testing, so it never cuts the right solution for that effort alone.
 - Cut each **Deliverable** as a slice that can be finished on its own and
   exercised end-to-end — put in front of its real use, not merely inspected as
   present — which is what lets its criteria judge whether it works rather than

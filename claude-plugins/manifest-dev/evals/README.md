@@ -750,7 +750,7 @@ file. The row is never deleted while the probe stays.
 | `tasks/PRODUCT.md` | Measures that can mislead | `66-decision-plan-that-holds/measures-customer-progress` |
 | `tasks/PRODUCT.md` | Trade-off: Deepen a promising direction vs search for one worth pursuing | `66-decision-plan-that-holds/chooses-what-to-learn-next` |
 | `references/PRODUCT_KNOWLEDGE.md` | (whole file) | `65-decision-plan-before-committing/names-the-progress-in-context`, `65-decision-plan-before-committing/compares-existing-alternatives`, `65-decision-plan-before-committing/tests-the-customer-pattern`, `65-decision-plan-before-committing/separates-the-two-jobs`, `66-decision-plan-that-holds/separates-purchase-from-use`, `66-decision-plan-that-holds/follows-the-whole-experience`, `66-decision-plan-that-holds/measures-customer-progress`, `66-decision-plan-that-holds/chooses-what-to-learn-next` |
-| `tasks/DECISION.md` | Reference class | `65-decision-plan-before-committing/checks-how-efforts-like-this-went`, `92-estimate-what-waits-on-people/estimate-prices-what-waits-on-people` |
+| `tasks/DECISION.md` | Reference class | `65-decision-plan-before-committing/checks-how-efforts-like-this-went` |
 | `tasks/DECISION.md` | Irreversibility | `61-decision-routes-and-a-public-act/dates-the-irreversible-act` |
 | `tasks/DECISION.md` | Dominating hybrid | `61-decision-routes-and-a-public-act/finds-the-mix` |
 | `tasks/DECISION.md` | Premortem, then backcast | `65-decision-plan-before-committing/imagines-it-failed-then-worked` |

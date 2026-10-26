@@ -120,7 +120,7 @@ Workload: varies
 
 ### decision-plan-before-committing
 Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/65-decision-plan-before-committing/prompt.md`
-Proves: the read checks how second shops like this one usually turned out before trusting the family's own numbers, and passes every grader in the case — the outside-view guard for the *Reference class* probe, where people run the shop.
+Proves: the read checks how second shops like this one usually turned out before trusting the family's own numbers, and passes every grader in the case — the outside-view guard for the *Reference class* probe, where people run the shop, and does not discount the survey as overstated by people's effort.
 Check: read
 Workload: varies
 

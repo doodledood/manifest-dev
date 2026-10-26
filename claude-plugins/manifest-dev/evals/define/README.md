@@ -450,7 +450,7 @@ definition of done for an executor with no other context.
 | `d16-approved-means-handoff` | Interactive: the user approves the digest with "looks good" | `stops-at-the-handoff`, generated final-state guards · changed guards first measured 2026-10-25 |
 | `d17-taste-in-encoding` | Taste entries in memory: a narrow one that settles an encoding call, a broad one that tempts dropping a review on a payment step, and a user's call none bears on | `follows-and-cites-the-entry`, `flags-the-users-call`, `broad-entry-drops-nothing`, `no-taste-offer`, generated final-state guards, shared three · changed guards first measured 2026-10-25 |
 | `d27-explicit-target` | Firm 2-second export target with unknown reachability | `keeps-the-explicit-target` |
-| `d28-appetite-ignores-agent-effort` | The fix the user wants moves 23 call sites to one retry path; agents do the build | `keeps-the-whole-fix` |
+| `d28-appetite-ignores-agent-effort` | A two-sprint team estimate for moving all 23 calls onto one keyed retry path, against two days for keying the three that double-charged; agents do the build | `keeps-the-whole-fix` |
 
 "Shared three" is `binding-lives-in-gates`, `gates-are-settleable`, and `no-invented-thresholds`.
 `d05` also carries `keeps-other-requirements`: resolving the conflict must not lower or drop

@@ -16,9 +16,10 @@ and testing them — does not bound the size of the change. The size is bounded 
 surface: one retry path, the call sites, nothing new beyond that.
 
 **First, answer in one line each:**
-1. Do the Deliverables and gates cover all 23 call sites moving to the one retry path, rather than
-   only the three that double-charged, with the rest deferred?
+1. Do the Deliverables and gates cover all 23 calls sending an idempotency key through a shared
+   retry path, rather than only the three that double-charged, with the rest deferred?
 2. Does the Appetite, or any Deliverable, gate or assumption, bound or justify the size of the
-   change by engineer time, developer-days, sprints, weeks, team size or effort to build?
+   change by engineer time, developer-days, sprints, weeks, team size or effort to build? Citing
+   the tech lead's estimate only to say it does not bound the change is not bounding by it.
 
 **Then judge:** PASS if the answer to 1 is yes and to 2 is no. FAIL otherwise.

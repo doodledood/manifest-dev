@@ -17,7 +17,8 @@ each fluent reviewer's check before a language goes live.
 **First, classify the reply's estimate** as one of:
 
 - **PRICES WHAT WAITS** — it prices the build as small (for example a few agent sessions) and puts
-  the time on the reviews, the agency turnarounds, the hiring and the language checks.
+  the time on what waits on people, such as the reviews, the agency turnarounds, the hiring and the
+  language checks; it need not name every one.
 - **PRICES THE BUILD** — it gives the build itself a duration as if people wrote the code (for
   example "4–6 weeks of development", "two developers for a month", "a sprint per language"),
   adopts or scales the contractor's quote as the size of the build, or estimates in

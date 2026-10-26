@@ -14,7 +14,7 @@ Planning sessions tame their solutions. They price work as if people do it: "thi
 three engineers for a quarter", "phase it", "patch it here; the proper fix is a multi-sprint
 migration". So they recommend the compromise, not the solution they would choose if effort were
 not a problem. When an agent does the work, research, planning, design, building and testing cost
-close to nothing. What still costs is what the agent does not control: a person's decisions and
+little next to what the agent does not control: work people do; a person's decisions and
 attention; coordination between people; waits on reviews, approvals, partners and users; access,
 accounts and money; acts that cannot be undone; and proof that the result works where it will be
 used, beyond the tests the agent can run.
@@ -37,12 +37,13 @@ over-fire the same way.
 
 ## Decision
 - **A spine line in figure-out's *What holds throughout*:** price options by the effort that
-  binds. Research, design, building and testing are an agent's to do unless the person says
-  people will do them, and that work costs close to nothing. What costs is what the agent does not
-  control, as listed above. So the default is the solution that would be right if effort were
-  free, for the same problem and not a bigger one. A session moves off that solution only for a
-  cost the agent does not control, and names that cost. Estimates are given in those terms
-  (agent sessions, the person's time, outside waits), never in team-weeks.
+  binds. Research, design, building and testing that an agent can do (code, documents,
+  analysis) are the agent's unless the person says people will do them. That work costs little
+  next to what the agent does not control, as listed in Context. So the default is the solution
+  that would be right if effort were free, for the same problem and not a bigger one. A session
+  moves off that solution only for a cost the agent does not control, and names that cost. The
+  agent's work is estimated in agent sessions and the rest in people's time and outside waits;
+  agent work is never priced in team-weeks.
 - **The *Reference class* probe** adds that, where an agent does the controlled work, base rates
   from efforts people did overstate time and effort, so only the parts the agent does not control
   carry over.
@@ -84,7 +85,7 @@ as agent work and puts the time on what waits on people),
 time, adding no scope) and `define/d28-appetite-ignores-agent-effort` (Appetite keeps the whole fix
 and bounds nothing by engineer time). Two guard against over-firing:
 `64-decision-small-and-undoable` on a small choice, and `65-decision-plan-before-committing` on work
-people do. Whether a named cost is outside the agent's control stays judgment
+people do. Whether a named cost is outside the agent's control stays judgment.
 
 ## Revisit when
 A read prices controlled work as near zero and the work then overruns on controlled work alone,
