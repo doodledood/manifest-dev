@@ -40,7 +40,8 @@ def proof_gate() -> str:
 CLAUSES = {
     "one-minute top": (
         "Its top reads in about a minute: what changed and why, how the change was shown "
-        "working, the decisions made with the user's calls first, and the debt left."
+        "working, the decisions made with any reopened decision record first and the user's calls "
+        "next, and the debt left."
     ),
     "long lists fold": "Long lists fold",
     "never production": "never on production",

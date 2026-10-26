@@ -19,6 +19,16 @@ encoded in that work's own binding contract (for manifest-dev users: `/define` r
 "never" whose violation would be unsafe or irreversible to a Global Invariant). Keeping
 that line is what stops the document becoming a rulebook nobody reads.
 
+**A line gives grounds for a second look, never a silent veto.** When a line seems to cut
+against an option, first check that the line covers this case: most apparent conflicts come
+from reading a line wider than it was written. Where it does not cover the case, the option
+stands, and the session says why the line does not apply. Where it does, a person decides. A
+run with no person present follows the line, brings the challenge to the owner and carries on;
+it never departs from an end or a principle by itself. No session drops an option unseen because
+a line cuts against it. The same holds for a `Strategy` decision record, whose guiding choice the
+*Strategy choices in force* list shows, except that a run whose assignment explicitly delegates
+that decision may reopen one that covers its case.
+
 **This file is this project's North Star convention, and it governs.** Everything needed
 to read, fill, and maintain `NORTH_STAR.md` is here — no tool, plugin, or prior knowledge
 required. Tooling that carries its own North Star defaults defers to this file. That
@@ -173,7 +183,8 @@ dated targets live with the work that pursues them.
 
 What this project is for, for whom, and how it measures progress — the base every session and
 contributor decides from. This document informs; it never binds: a boundary that must be
-enforced on a piece of work is encoded in that work's own binding contract.
+enforced on a piece of work is encoded in that work's own binding contract. A line gives grounds
+for a second look: before it cuts an option, check that it covers the case.
 
 Every position below carries a state, rendered as a dated provenance note:
 

@@ -1,7 +1,7 @@
 # ADR: figure-out classifies stated constraints before they prune options
 
 ## Status
-Accepted
+Accepted; narrowed by 20261026-decision-records-give-grounds-not-a-veto: a decision record or a North Star line is grounds, not an established constraint that prunes
 
 ## Area
 figure-out

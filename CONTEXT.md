@@ -90,11 +90,11 @@ An index that asserts nothing its records don't, and is rebuilt from them rather
 _Avoid_: ADR list, table of contents.
 
 **Decision Record**:
-One file (an ADR) recording a decision with downstream impact — its context, the alternatives, the consequences, who decided, and the check that enforces it — append-only once published, so a later session meets why the project decided something before it decides again. A newer record supersedes or amends it; the old record's Status says so.
+One file (an ADR) recording a decision with downstream impact — its context, the alternatives, the consequences, who decided, and the check that enforces it — append-only once published, so a later session meets why the project decided something before it decides again — grounds that make it think twice, not a veto: a person may reopen a choice at any time, and a run with no person present reopens one outside the `Strategy` area whose premise no longer holds or that did not weigh a need that makes sense, listing it first in its report. A newer record supersedes or amends it; the old record's Status says so.
 _Avoid_: Design doc, meeting notes.
 
 **Signpost**:
-A `Revisit when` line naming an observable condition and its source, on a decision record or deferred Ticket; readers check it at that source, a deferred Ticket is ready only when its condition holds, and a met or unreadable condition is surfaced for reconsideration under the reader's assignment and authority rather than granting permission to rewrite the choice or its signpost.
+A `Revisit when` line naming an observable condition and its source, on a decision record or deferred Ticket; readers check it at that source, a deferred Ticket is ready only when its condition holds, and a met or unreadable condition is one reason to reconsider, never the only one, surfaced rather than granting permission to rewrite the choice or its signpost; on a `Strategy` record a met one goes to its owner unless the reader's assignment and authority cover reconsidering it.
 _Avoid_: Reminder, trigger, reopen condition kept in prose.
 
 **Verification Harness**:

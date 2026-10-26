@@ -1,4 +1,4 @@
-# Holds the decision in docs/adr/20261013-corrections-become-scoped-locks-and-their-hits-become-reported-debt.md — removing this case removes that record's only check; update its Enforced by line in the same change.
+# Holds the decisions in docs/adr/20261013-corrections-become-scoped-locks-and-their-hits-become-reported-debt.md and, through follows-the-record-whose-reasons-hold and record-not-superseded, docs/adr/20261026-decision-records-give-grounds-not-a-veto.md (a record whose reasons hold is followed) — removing this case removes those checks; update both records' Enforced by lines in the same change.
 schema_version: "1.0"
 name: 38-stated-rule-conflicts-with-a-record
 context:

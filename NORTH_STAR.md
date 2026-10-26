@@ -4,7 +4,8 @@ What this project is for, for whom, and how it measures progress — the base ev
 contributor decides from. This document informs; it never binds: a boundary that must be
 enforced on a piece of work is encoded in that work's own binding contract (for manifest-dev
 users: `/define` routes a principle whose violation would be unsafe or irreversible to a Global
-Invariant). The choices made along the way live in `docs/adr/`, never here.
+Invariant). A line gives grounds for a second look: before it cuts an option, check that it
+covers the case. The choices made along the way live in `docs/adr/`, never here.
 
 Every position below carries a state, rendered as a dated provenance note:
 

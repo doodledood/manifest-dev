@@ -104,6 +104,10 @@ loaded left the skill. It reaches every case that writes a spec, `d09` and `d17`
 changes no case or grader. **Every recorded number in this file, the 2026-10-25 baseline's included, is stale as
 of 2026-10-25.**
 
+A 2026-10-26 change made every report list a decision record the run reopened before the user's
+calls. It reaches `d17` most, whose `flags-the-users-call` grader reads that ordering, and changes
+no case or grader.
+
 The review runs in a fresh context, which this suite's sessions cannot start, so define reviews
 its own Manifest here and says the review was self-graded. No case holds the per-gate wrong-result
 question; the `define` recipe's `fresh-review` drive checks it instead. `d26` holds the search for
