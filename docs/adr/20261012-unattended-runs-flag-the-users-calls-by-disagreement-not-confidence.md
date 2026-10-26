@@ -1,7 +1,7 @@
 # ADR: Unattended runs flag the user's calls by a disagreement test, not by their own confidence
 
 ## Status
-Accepted
+Accepted; narrowed by 20261025-figure-out-re-derives-only-reads-that-are-costly-to-get-wrong: the fresh-context classification runs only where the read is load-bearing, and is done inline, saying so, where the read is cheap to reverse
 
 ## Area
 define / do

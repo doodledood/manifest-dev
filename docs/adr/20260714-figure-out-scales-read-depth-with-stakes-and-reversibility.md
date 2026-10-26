@@ -1,7 +1,7 @@
 # ADR: figure-out scales read depth with stakes and reversibility, not fog alone
 
 ## Status
-Accepted
+Accepted; amended by 20261025-figure-out-re-derives-only-reads-that-are-costly-to-get-wrong: autonomous mode scales the re-check and the read's depth with what rides on it; narrowed by 20261025-figure-out-records-what-the-lean-body-rebuild-retired: whether to restore a depth-by-stakes rule to the interactive spine is not decided
 
 ## Area
 figure-out

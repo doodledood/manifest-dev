@@ -1,7 +1,7 @@
 # ADR: figure-out narrows the presentation no-trim clause to its guardrail
 
 ## Status
-Accepted
+Accepted; carried elsewhere per 20261025-figure-out-records-what-the-lean-body-rebuild-retired: `SKILL.md` states it at lines 59-60
 
 ## Area
 figure-out

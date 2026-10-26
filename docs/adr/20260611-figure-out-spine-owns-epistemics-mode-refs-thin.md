@@ -1,7 +1,7 @@
 # ADR: figure-out's spine owns all epistemics; mode references thin to pure mechanics
 
 ## Status
-Accepted — amended by 20261012-unattended-runs-flag-the-users-calls-by-disagreement-not-confidence: the autonomous reference flags a Known Assumption candidate by the user's-call test, not by low confidence
+Accepted — amended by 20261012-unattended-runs-flag-the-users-calls-by-disagreement-not-confidence: the autonomous reference flags a Known Assumption candidate by the user's-call test, not by low confidence; narrowed by 20261025-figure-out-records-what-the-lean-body-rebuild-retired: autonomous mode's convergence rules live in `references/autonomous.md`
 
 ## Area
 figure-out

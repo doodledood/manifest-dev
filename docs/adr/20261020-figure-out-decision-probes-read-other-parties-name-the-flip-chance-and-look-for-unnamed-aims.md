@@ -1,7 +1,7 @@
 # ADR: figure-out's decision probes read other parties from their side, name the flip chance, and look for unnamed aims
 
 ## Status
-Accepted
+Accepted; the probe count became 14 with 20261025-figure-out-counts-each-driver-against-every-aim-it-moves, which adds *Drivers across branches*
 
 ## Area
 Task guidance

@@ -1,7 +1,7 @@
 # ADR: Prototyping and scratch are one mechanism; scratch mode is deleted
 
 ## Status
-Accepted; amended by 20260905-disposable-prototypes-may-expose-behavior: disposable prototypes may execute to expose the behavior being judged; product implementation and real external actions remain separate
+Accepted; amended by 20260905-disposable-prototypes-may-expose-behavior: disposable prototypes may execute to expose the behavior being judged; product implementation and real external actions remain separate; narrowed by 20261025-figure-out-records-what-the-lean-body-rebuild-retired: show-don't-narrate and polish-is-not-the-axis are not decided
 
 ## Area
 figure-out

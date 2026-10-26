@@ -1,7 +1,7 @@
 # ADR: figure-out stops analysing a decision only on shown reasons
 
 ## Status
-Accepted
+Accepted; the probe count became 14 with 20261025-figure-out-counts-each-driver-against-every-aim-it-moves, which adds *Drivers across branches*
 
 ## Area
 Task guidance

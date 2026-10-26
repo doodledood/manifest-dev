@@ -1,7 +1,7 @@
 # ADR: The undiscussed-surface sweep lives in figure-out's read-naming checkpoint
 
 ## Status
-Accepted; the checkpoint it places the sweep in now also carries the output-sensing precondition added by [20260826-sensing-the-output-is-a-precondition-of-naming-a-read](20260826-sensing-the-output-is-a-precondition-of-naming-a-read.md)
+Accepted; the checkpoint it places the sweep in now also carries the output-sensing precondition added by [20260826-sensing-the-output-is-a-precondition-of-naming-a-read](20260826-sensing-the-output-is-a-precondition-of-naming-a-read.md); narrowed by 20261025-figure-out-records-what-the-lean-body-rebuild-retired: the sweep is carried for feature work by `tasks/FEATURE.md` only; the read-naming copy is not decided
 
 ## Area
 figure-out

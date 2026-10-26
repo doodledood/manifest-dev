@@ -1,7 +1,7 @@
 # ADR: figure-out provides process trust, kept distinct from define→do's artifact trust
 
 ## Status
-Accepted
+Accepted; narrowed by 20261025-figure-out-records-what-the-lean-body-rebuild-retired: the outside view is carried for decisions and plans by `tasks/DECISION.md` and is not decided for the spine
 
 ## Area
 figure-out

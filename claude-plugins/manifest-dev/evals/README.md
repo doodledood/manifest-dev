@@ -251,6 +251,7 @@ base model already covers; such a case leaves only through its probe's *Coverage
 | `83-separate-questions-separate-owners` | autonomous | Offer to narrow the read to what is settled and hand four independent questions to their owners | tuning |
 | `84-chosen-option-goes-to-a-record` | autonomous, repository | Record a ruling the owner would re-tune as a decision record and leave the North Star's positions as they are | tuning |
 | `85-evidence-against-a-bet` | autonomous, repository | When the repository's evidence goes against a North Star bet, flag the conflict or mark the bet weakened, without rewriting it | tuning |
+| `86-decision-driver-in-another-branch` | press, `unmeasured` | Count a factor filed under one aim against every other aim it moves before judging the options on the next | tuning |
 
 Cases `30` to `46` were written on 2026-10-13 and `48` on 2026-10-14. Their first run was the
 2026-10-25 baseline, with the split frozen before it: every case added since 2026-10-13 is tuning
@@ -292,6 +293,13 @@ crux sentence now names parent before child first, the draft offer is its own bu
 `--autonomous` paragraph and the log section left `SKILL.md` for the references that hold them,
 autonomous mode names the draft offer and the re-derivation by their current names, and the
 document probe's check names a walk recipe. It reaches `01`, `06`, `22`, `25` and `35` most.
+
+A second change after that baseline made autonomous mode re-derive and re-classify only reads that
+are costly or hard to undo, and added the *Drivers across branches* probe to `DECISION.md`. It
+reaches every other case whose prompt passes `--autonomous` — `10`, `11`, `14`–`16`, `18`–`21`, `24`,
+`25`, `32`–`36`, `38`, `40`, `41`, `43`, `44`, `46`, `48`, `52`, `54`–`63` and `65`–`85` — and the
+interactive decision cases `06`, `26` and `29`. `42` and `64` were re-measured on the changed
+skill (*Hill-climb on proportionate re-checks*, below); `86` is new and unmeasured.
 
 Every recorded number before that baseline was already stale as of 2026-10-21. The 2026-10-13 change edited
 figure-out's spine, its docs-mode and autonomous references, and its task files, the
@@ -417,6 +425,7 @@ being declared a guard. `tests/test_eval_cases.py` fails when a case has no row 
 | `83` | first run decides | New on 2026-10-20: The only case for the offer to narrow a read |
 | `84` | first run decides | New on 2026-10-21: The only case for a ruling the North Star must not take in |
 | `85` | first run decides | New on 2026-10-21: The only case for evidence against a North Star bet |
+| `86` | first run decides | New on 2026-10-25: The only case for a driver filed under another branch |
 
 Retired on 2026-10-15: `12` (floored in both arms, not a declared guard), `47` and `49` (each a
 second older-version case beside `53`, which the version rule now forbids; their straight-to-newest
@@ -690,6 +699,7 @@ file. The row is never deleted while the probe stays.
 | `tasks/DIAGNOSIS.md` | Trade-off: Reproduce first vs trace in place | `20-one-failed-repro/non-repro-is-not-exclusion` |
 | `tasks/DIAGNOSIS.md` | Trade-off: Trigger-depth vs root-depth | `76-diagnosis-incident-depth/keeps-digging-past-the-trigger` |
 | `tasks/DECISION.md` | Fundamental objectives | `61-decision-routes-and-a-public-act/judges-routes-against-the-aim` |
+| `tasks/DECISION.md` | Drivers across branches | `86-decision-driver-in-another-branch/counts-the-driver-from-another-branch` |
 | `tasks/DECISION.md` | States of the world | `61-decision-routes-and-a-public-act/weighs-the-later-plan-on-every-route`, `62-decision-rival-answers/reads-the-rivals-side` |
 | `tasks/DECISION.md` | Decision rule | `63-decision-close-call-is-not-close/picks-a-rule-for-ruin` |
 | `tasks/PRODUCT.md` | Progress in a circumstance | `65-decision-plan-before-committing/names-the-progress-in-context` |
@@ -982,6 +992,50 @@ from the whole suite, single cases as places to look:
 - **Plugin-only:** `53` fails offering only what is new since v9; `27` fails both Taste offers;
   `36` misses the stale mark on the export entry; `52` offers a project surface where there is no
   project.
+
+## Hill-climb on proportionate re-checks — 2026-10-25, sonnet judge
+
+One round on the climb set `42` and `64`, the two cases the 2026-10-25 baseline names as the
+plugin arm's biggest loss. `v0` is the skill at `962f09bd`, the merge base; `v1` is the skill at
+`9ca7e52d`, whose `references/autonomous.md` and `tasks/DECISION.md` are the files this change
+merges. In them, autonomous mode runs the independent re-derivation and the fresh-context
+classification only where the read is costly or hard to undo, and `DECISION.md` gains *Drivers
+across branches*.
+
+Plugin arm only, three runs per case, CLI 2.1.310, judge `sonnet` with three votes per LLM
+grader, agent `model: opus` as the cases set it. The CLI records no resolved model ID; the
+baseline above, on the same CLI, recorded it as `claude-opus-5-5`. Agent effort was left at the
+CLI default, not the baseline's `medium`. Each case ran as one invocation:
+
+```bash
+scripts/evals/run_eval.sh hc-v0b-<case> <dir>/v0/<case>.json --case <case> --tag figure-out \
+  --ablation none --runs 3 --judge-model sonnet --scaffold --max-cost-usd 6
+python3 scripts/evals/score_rounds.py --state <dir>/_state.json v0=<dir>/v0 v1=<dir>/v1
+```
+
+`_state.json` held both cases as train and none as test. No run errored and none was partial.
+Reported cost $4.35 for the 12 trials, plus $0.09 of judge cost on a first attempt that the
+sandbox refused before any agent ran.
+
+| Case | Grader | v0 | v1 |
+|---|---|---|---|
+| `42-one-line-fix` | `no-sketch-ceremony` | 2/3 | 3/3 |
+| `42-one-line-fix` | `skill-fired`, `autonomous-flag-passed` | 3/3 | 3/3 |
+| `64-decision-small-and-undoable` | `picks-without-ceremony` | 0/3 | 1/3 |
+| `64-decision-small-and-undoable` | `skill-fired`, `autonomous-flag-passed` | 3/3 | 3/3 |
+
+- **The re-check stopped on both small asks.** Five of the six `v0` replies report a second,
+  independent check; none of the six `v1` replies does, and all six note that a wrong answer
+  is cheap to undo. This is read from the final replies, not from traces.
+- **The score moved by one run on each case**, 2/6 to 4/6 on the quality graders. At three runs
+  that is inside the noise this suite has shown, so it shows the direction and no size.
+- **`64` still fails on the other half of its ceremony.** The two failing `v1` replies keep
+  sections of alternatives and assumptions, or recommend ordering both lamps. The change does
+  not touch that, and this round attributes nothing to it.
+
+Owed: `62-decision-rival-answers`, whose graders hold the re-derivation of a load-bearing read,
+and `86-decision-driver-in-another-branch`, the new case for *Drivers across branches*. Neither
+ran here. A later change to `autonomous.md` or `DECISION.md` makes this table stale.
 
 ## Baseline — 2026-10-06, opus judge
 

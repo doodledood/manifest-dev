@@ -1,7 +1,7 @@
 # ADR: Sensing the output is a precondition of naming a read
 
 ## Status
-Accepted
+Accepted; narrowed by 20261025-figure-out-records-what-the-lean-body-rebuild-retired: stating the output and offering a render are carried, but not as a precondition of naming the read; the decline rule is not decided
 
 ## Area
 figure-out

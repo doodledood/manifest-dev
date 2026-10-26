@@ -1,7 +1,7 @@
 # ADR: figure-out keeps the do-nothing option in the option set
 
 ## Status
-Accepted
+Accepted; carried elsewhere per 20261025-figure-out-records-what-the-lean-body-rebuild-retired: `SKILL.md` states it at lines 69-70
 
 ## Area
 figure-out

@@ -1,7 +1,7 @@
 # ADR: Re-weight figure-out's SKILL.md by re-hosting — sectioned arc, no extraction, evidence-gated trims
 
 ## Status
-Accepted
+Deprecated — retired by 20261025-figure-out-records-what-the-lean-body-rebuild-retired: the 2026-09-14 rebuild replaced the six-section arc and its deliberate duplication
 
 ## Area
 figure-out
