@@ -234,4 +234,5 @@
 | 2026-10-25 | [manifest-to-goal lists what the goal owes before drafting, and has the goal read cold](20261025-manifest-to-goal-lists-what-the-goal-owes-and-has-it-read-cold.md) | Accepted | Goal setting |
 | 2026-10-25 | [Name the situations people reach for manifest-dev in](20261025-name-the-situations-people-reach-for-manifest-dev-in.md) | Accepted | North Star |
 | 2026-10-26 | [figure-out's drivers probe asks its question when a factor is filed, not only when an aim is judged](20261026-figure-out-drivers-probe-asks-when-a-factor-is-filed.md) | Accepted | Task guidance |
+| 2026-10-26 | [figure-out prices effort by what the agent does not control, and defaults to the solution that would be right if effort were free](20261026-figure-out-prices-effort-by-what-the-agent-does-not-control.md) | Accepted | figure-out |
 | 2026-10-26 | [figure-out's prompt-engineering pointer keeps its guard and inline fallback](20261026-figure-out-prompt-engineering-pointer-keeps-its-fallback.md) | Accepted | Prompt architecture |

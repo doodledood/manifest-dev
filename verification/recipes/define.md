@@ -77,6 +77,12 @@ Proves: before the reply's digest, a fresh context searched the Manifest by judg
 Check: read
 Workload: varies
 
+### appetite-ignores-agent-effort
+Run: `scripts/drive-skill.sh define claude-plugins/manifest-dev/evals/define/d28-appetite-ignores-agent-effort/prompt.md`
+Proves: `manifest.md` moves all 23 processor calls onto one retry path that always sends an idempotency key, rather than keying only the three that double-charged, and neither its Appetite nor any gate or assumption bounds the change by engineer time, sprints or a team's effort.
+Check: read
+Workload: varies
+
 ### amend
 Run: `scripts/drive-skill.sh define verification/prompts/define-amend.md`
 Proves: only the named items change; IDs of the others are untouched and none is reused (diff the file). Before the handoff, a fresh context reviewed the amendment, or the reply says the review was self-graded.

@@ -254,6 +254,8 @@ base model already covers; such a case leaves only through its probe's *Coverage
 | `86-decision-driver-in-another-branch` | press | Count a factor filed under one aim against every other aim it moves before judging the options on the next | tuning |
 | `87-decision-driver-filed-in-passing` | press | `86`'s discipline where the factor was filed as a plain win under costs, with no low weight to flag it | tuning |
 | `88-decision-no-driver-to-carry` | negative, plugin arm only | With no factor that reaches the next aim, invent no link to it and add no cost the user did not raise | tuning |
+| `92-estimate-what-waits-on-people` | autonomous | With no word on who builds, estimate the work by what waits on people and the world — reviews, an agency's turnaround, hiring, language checks — not by a contractor's two-developer quote or team-weeks | tuning |
+| `93-thorough-fix-not-tamed-for-effort` | autonomous, repository | Recommend exact money through all the billing code when the objection to it is developer-weeks, and build no multi-currency the problem does not need | tuning |
 
 Cases `30` to `46` were written on 2026-10-13 and `48` on 2026-10-14. Their first run was the
 2026-10-25 baseline, with the split frozen before it: every case added since 2026-10-13 is tuning
@@ -309,6 +311,15 @@ bear on the read, as deep as what rides on it, and gave `SKILL.md`'s prompt-engi
 fallback. It reaches the same cases, and makes the `42` and `64` numbers in *Hill-climb on
 proportionate re-checks* stale. `86`, `87` and `88` were measured on it (*Drivers across branches —
 2026-10-26*, below).
+
+Another change on 2026-10-26 added a spine line pricing options by the effort that binds:
+research, design, building and testing are an agent's unless the person says people will do them,
+and cost close to nothing, so the read defaults to the solution that would be right if effort were
+free and estimates in agent sessions, the person's time and outside waits. It also added to
+*Reference class* in `DECISION.md` that base rates from efforts people did overstate the work an
+agent controls. Every case reaches the spine line; the decision cases `06`, `26`, `29`, `61`–`66` and
+`86`–`88`, which load `DECISION.md`, reach both. `92` and `93` are new: each was driven once on the skill before this
+change and once after it, and neither is measured.
 
 Every recorded number before that baseline was already stale as of 2026-10-21. The 2026-10-13 change edited
 figure-out's spine, its docs-mode and autonomous references, and its task files, the
@@ -437,6 +448,8 @@ being declared a guard. `tests/test_eval_cases.py` fails when a case has no row 
 | `86` | keep | Uplift +1.00 at three runs on 2026-10-26; the only case for a driver marked a low weight under another branch |
 | `87` | keep | Uplift +0.33 at three runs on 2026-10-26: `86`'s discipline on a product choice, where nothing in the filing marks the factor |
 | `88` | keep | Plugin arm only; a declared guard against the drivers probe over-firing: the no-plugin arm passes by construction. 1 of 3 on its first run, 2026-10-26; its grader is unchecked against one failure |
+| `92` | first run decides | Unattended runs priced the build of agent-built work from a contractor's quote; a drive on the skill before this change failed it |
+| `93` | first run decides | Unattended runs patched the sites the complaints traced to and put the full fix off for developer-weeks; a drive on the skill before this change failed it |
 
 Retired on 2026-10-15: `12` (floored in both arms, not a declared guard), `47` and `49` (each a
 second older-version case beside `53`, which the version rule now forbids; their straight-to-newest
@@ -722,7 +735,7 @@ file. The row is never deleted while the probe stays.
 | `tasks/PRODUCT.md` | Measures that can mislead | `66-decision-plan-that-holds/measures-customer-progress` |
 | `tasks/PRODUCT.md` | Trade-off: Deepen a promising direction vs search for one worth pursuing | `66-decision-plan-that-holds/chooses-what-to-learn-next` |
 | `references/PRODUCT_KNOWLEDGE.md` | (whole file) | `65-decision-plan-before-committing/names-the-progress-in-context`, `65-decision-plan-before-committing/compares-existing-alternatives`, `65-decision-plan-before-committing/tests-the-customer-pattern`, `65-decision-plan-before-committing/separates-the-two-jobs`, `66-decision-plan-that-holds/separates-purchase-from-use`, `66-decision-plan-that-holds/follows-the-whole-experience`, `66-decision-plan-that-holds/measures-customer-progress`, `66-decision-plan-that-holds/chooses-what-to-learn-next` |
-| `tasks/DECISION.md` | Reference class | `65-decision-plan-before-committing/checks-how-efforts-like-this-went` |
+| `tasks/DECISION.md` | Reference class | `65-decision-plan-before-committing/checks-how-efforts-like-this-went`, `92-estimate-what-waits-on-people/estimate-prices-what-waits-on-people` |
 | `tasks/DECISION.md` | Irreversibility | `61-decision-routes-and-a-public-act/dates-the-irreversible-act` |
 | `tasks/DECISION.md` | Dominating hybrid | `61-decision-routes-and-a-public-act/finds-the-mix` |
 | `tasks/DECISION.md` | Premortem, then backcast | `65-decision-plan-before-committing/imagines-it-failed-then-worked` |

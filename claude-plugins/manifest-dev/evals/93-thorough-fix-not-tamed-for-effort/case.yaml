@@ -1,0 +1,5 @@
+# Holds the decision in docs/adr/20261026-figure-out-prices-effort-by-what-the-agent-does-not-control.md — removing this case removes that record's check that a read defaults to the fix that would be right if effort were free, for the same problem; update its Enforced by line in the same change.
+schema_version: "1.0"
+name: 93-thorough-fix-not-tamed-for-effort
+context:
+  scaffold_script: scaffold.sh

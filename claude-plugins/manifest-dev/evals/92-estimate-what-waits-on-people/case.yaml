@@ -1,0 +1,3 @@
+# Holds the decision in docs/adr/20261026-figure-out-prices-effort-by-what-the-agent-does-not-control.md — removing this case removes that record's check that an estimate prices controlled work as small and names what waits on people; update its Enforced by line in the same change.
+schema_version: "1.0"
+name: 92-estimate-what-waits-on-people
