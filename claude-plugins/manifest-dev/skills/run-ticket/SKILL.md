@@ -163,7 +163,7 @@ accepts the answer.
 
 For repository work, `/done` proves the task contract; it does not by itself prove that the work
 is ready to land. Commit and push the coherent result to the stable branch, create or refresh its
-one pull request — its description listing the run's material decisions, the user's calls first,
+one pull request — its description listing the run's material decisions, each reopened decision record first, then the user's calls,
 and a "Debt left" section carrying the debt `/done` named, one line each — and drive that pull
 request through the repository's normal checks. Activate the `check-pr` skill for the current pull request
 and head. Address agent-resolvable failures and re-check rather than handing routine repair to a
@@ -195,8 +195,9 @@ entries — ratified preferences in a `## Taste` section of a loaded memory file
 Follow an entry only where it clearly bears: it speaks to this kind of call, and
 following it would change the choice. A general lean that would tilt almost any
 call, such as less effort or lower cost, does not bear on its own. Otherwise
-decide on the evidence. Wherever decisions are reported, list the user's calls
-first, each with the alternative not taken and what decided it — the entry
+decide on the evidence. Wherever decisions are reported, list first each decision record the run
+reopened, with the reason set aside and what reversing would cost, then the
+user's calls, each with the alternative not taken and what decided it — the entry
 followed, or that no entry applied.
 
 ## ESCALATED
@@ -214,7 +215,7 @@ continues from it. The handoff record contains:
 - the debt `/escalate` named, one line each;
 - the flagged offers, agent-decided records and drafted Taste entries `/escalate` named, each with what accepting or reviewing it would change;
 - a mention of the person needed next, resolved from the Ticket, project escalation contact, or initiating human;
-- the run's material decisions, the user's calls first, each with the alternative not taken and what decided it.
+- the run's material decisions, each reopened decision record first, then the user's calls, each with the alternative not taken and what decided it.
 
 Leave the Ticket open and retain its Auto grant when it is still present, and release the automation
 claim — in that order, mark first — never removing a person's. Released before the mark lands, the

@@ -49,6 +49,17 @@ The threshold is **downstream architectural impact** — decisions that shape th
 
 **Decision Test** (when uncertain): *"Would someone joining in six months benefit from knowing WHY this was decided this way?"* If yes, write one. If they would just accept it as obvious, skip it.
 
+## What a record is for
+
+A record gives grounds, not a veto. It keeps the reasons for a choice so that a later session thinks twice before it decides differently; it does not stop that session from deciding differently. A session whose work a record bears on weighs the record's reasons against the case:
+
+- Where the reasons still hold, it follows the record and names the reason that holds. "A record says so" is never the whole reason.
+- Where a premise no longer holds, or the case has a need the record did not weigh and that need makes sense, the choice is open again. The session shows the option beside the record's reasons, and never drops an option because a record cuts against it.
+- A person can reopen a choice at any time. Outside the `Strategy` area, a run with no person present decides for itself: where a premise no longer holds or such a need makes sense, it reopens the choice and writes the new record, naming itself as decider (see **Decided by** below). Its report, and any pull request it opens, then lists each reopened record first among its decisions. Each entry gives the reason set aside and what reversing would cost, counted by what depends on the change after it lands rather than by the effort to redo it.
+- Reopening is a new record that supersedes or narrows the old one, under the lifecycle below.
+
+Reopening a record grants no authority to publish, spend or delete. A `Strategy` record (see **Area** below) is different: other decisions derive from it, so a person reopens it. A run with no person present follows one that covers its case and raises the challenge with its owner, unless its assignment explicitly delegates that decision.
+
 ## Template
 
 ````markdown
@@ -102,7 +113,7 @@ One label is reserved. A record of a guiding choice — one the project pursues 
 
 **Enforced by** names what makes the decision hold for contributors who never read the record. Name the strongest rung that applies: a type or structure that makes the wrong code fail to compile; a lint or architecture test that fails the build; an invariant test that states a property; one owning site that every caller goes through. Name the check by file and test or rule, and what it pins. Where a check holds only part of the decision, write `partly —` with the check and the part that stays judgment. Where a check could hold it but none does yet, write `not yet —` with the check that would; the run that implements or touches the decision builds it and replaces the line. Where no check can hold it — metric design, a deliberate non-action, a one-time operational choice — write `none —` with the reason. The check carries a comment citing the record, so someone about to weaken it meets the decision first. The line records current enforcement, not the decision, so it is editable in place.
 
-**Revisit when** is the record's signpost: the observable condition in the world that would reopen the choice, and where it is read — for example, "the second channel brings more than a third of new sign-ups, read on the weekly funnel report". It is optional on any record and expected on a `Strategy` record, because a guiding choice made on today's evidence is the one most worth reopening when the evidence moves. Name a source a reader can open; a condition nobody can read is a reminder, not a signpost. A reader that finds the condition met may reopen the choice only within an assignment and explicit authority covering it; otherwise bring the evidence and a recommendation to its owner. Reopening the choice is a new record, never a rewrite of the old decision or authority inferred from the observation. The field says when to look again, not what was decided, so it is editable in place.
+**Revisit when** is the record's signpost: the observable condition in the world that would reopen the choice, and where it is read — for example, "the second channel brings more than a third of new sign-ups, read on the weekly funnel report". It is optional on any record and expected on a `Strategy` record, because a guiding choice made on today's evidence is the one most worth reopening when the evidence moves. Name a source a reader can open; a condition nobody can read is a reminder, not a signpost. A met condition is one named reason to look again, not the only one: a reader reopens the record as *What a record is for* above says. On a `Strategy` record, a reader that finds the condition met may reopen the choice only within an assignment and explicit authority covering it; otherwise it brings the evidence and a recommendation to the owner. Either way, reopening the choice is a new record, never a rewrite of the old decision, and the observation alone grants no authority. The field says when to look again, not what was decided, so it is editable in place.
 
 ## File Naming and Location
 

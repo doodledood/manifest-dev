@@ -1,0 +1,5 @@
+# Holds the decision in docs/adr/20261026-decision-records-give-grounds-not-a-veto.md — removing this case removes that record's check that, with a person present, an option a record cuts against stays in view beside the record's reasons; update its Enforced by line in the same change.
+schema_version: "1.0"
+name: 91-record-against-the-users-idea
+context:
+  scaffold_script: scaffold.sh

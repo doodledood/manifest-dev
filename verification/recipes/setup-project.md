@@ -17,9 +17,9 @@ Installs a project's surfaces — North Star, glossary, ADR conventions, a verif
 
 ## Scenarios
 
-### update-from-v9
-Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-update-one-behind.md --scaffold claude-plugins/manifest-dev/evals/53-update-offer-from-v9 --max-turns 80`
-Proves: it follows the v9 guide: scoped instructions preserve defaults and distinguish assignment from delegation; delegated maintenance records the decider and authority while retained ends stay with the owner; coordination configuration is offered only when wanted, through the existing resolver, with no operation started. The version line reaches v10 only after applicable offers have an answer. No delegation or new end is invented. Nothing already supplied is offered again.
+### update-from-v10
+Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-update-one-behind.md --scaffold claude-plugins/manifest-dev/evals/53-update-offer-from-v10 --max-turns 80`
+Proves: it follows the v10 guide: it offers the *What a record is for* section and the `Revisit when` reader rule for the project's ADR conventions, the North Star fit check for its conventions and opening line, and the context file's two bullets, each compared with the project's own wording; the version line reaches v11 only after the applicable offers have an answer. No record, North Star position or code is rewritten, and nothing already supplied is offered again.
 Check: read
 Workload: varies
 

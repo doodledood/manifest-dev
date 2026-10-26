@@ -29,20 +29,56 @@ Check: read
 Workload: varies
 
 ### one-version-behind
-Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/53-update-offer-from-v9/prompt.md --scaffold claude-plugins/manifest-dev/evals/53-update-offer-from-v9`
-Proves: the reply offers the v10 scoped-instructions and delegated-maintenance changes, preserves existing defaults, shows new choices before persistence, and keeps coordination setup optional without starting work.
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/53-update-offer-from-v10/prompt.md --scaffold claude-plugins/manifest-dev/evals/53-update-offer-from-v10`
+Proves: the reply offers only the v11 changes — decision records give grounds, not a veto, with the `Revisit when` rule for records outside `Strategy`, and the North Star fit check — and offers nothing from v10 or earlier as new.
 Check: read
 Workload: varies
 
 ### from-v1
 Run: `scripts/drive-skill.sh figure-out verification/prompts/figure-out-from-v1.md --scaffold verification/scaffolds/project-at-v1`
-Proves: the reply offers the update and names only what v2 to v10 add, including the move to one harness, the North Star reshape and its *Purpose* opening with the end.
+Proves: the reply offers the update and names only what v2 to v11 add, including the move to one harness, the North Star reshape and its *Purpose* opening with the end.
 Check: read
 Workload: varies
 
 ### strategy-signpost
 Run: `scripts/drive-skill.sh figure-out verification/prompts/figure-out-strategy-signpost.md --scaffold verification/scaffolds/deferred-ticket-store`
 Proves: the reply names the newsletter strategy choice's signpost as met — `signals/website-visits.md` shows more than twenty outside visits a month — as a lead for the owner to reopen the choice, and the summary's files show no record, no North Star list and no `Revisit when` line changed.
+Check: read
+Workload: varies
+
+### record-premise-failed
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/89-record-premise-no-longer-holds/prompt.md --scaffold claude-plugins/manifest-dev/evals/89-record-premise-no-longer-holds`
+Proves: unattended, the read recommends SMS cancellation notices against the email-only record whose cost premise the grant removed, writes the reserved record naming an agent in an unattended run as decider, restatuses the old record, and lists the reopened record first with the reason set aside and what reversing would cost.
+Check: read
+Workload: varies
+
+### north-star-line-read-too-wide
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/90-north-star-line-read-too-wide/prompt.md --scaffold claude-plugins/manifest-dev/evals/90-north-star-line-read-too-wide`
+Proves: unattended, the read keeps an opt-in saved card as an option and says the "never need an account" line forbids requiring an account, not offering one; the summary shows `NORTH_STAR.md` unchanged.
+Check: read
+Workload: varies
+
+### record-against-the-users-idea
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/91-record-against-the-users-idea/prompt.md --scaffold claude-plugins/manifest-dev/evals/91-record-against-the-users-idea`
+Proves: attended, the reply weighs the CLI-only record's reasons (server upkeep, hosting cost) against a static page, keeps the page in view, and does not count the record against it when its reasons do not apply.
+Check: read
+Workload: varies
+
+### ruled-position-holds
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/24-ruled-position-holds/prompt.md --scaffold claude-plugins/manifest-dev/evals/24-ruled-position-holds`
+Proves: unattended, the read keeps riders account-free and designs refunds by booking reference; `NORTH_STAR.md` keeps its ruled line word for word.
+Check: read
+Workload: varies
+
+### record-whose-reasons-hold
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/38-stated-rule-conflicts-with-a-record/prompt.md --scaffold claude-plugins/manifest-dev/evals/38-stated-rule-conflicts-with-a-record`
+Proves: unattended, the read raises the requested CI rule's conflict with the record that keeps email and text wording apart, follows that record, names its reason, and writes no record superseding it.
+Check: read
+Workload: varies
+
+### evidence-against-a-bet
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/85-evidence-against-a-bet/prompt.md --scaffold claude-plugins/manifest-dev/evals/85-evidence-against-a-bet`
+Proves: unattended, the read challenges the bet the evidence undercuts and leaves its text unchanged.
 Check: read
 Workload: varies
 

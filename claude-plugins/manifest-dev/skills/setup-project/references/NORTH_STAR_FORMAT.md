@@ -27,6 +27,16 @@ encoded in that work's own binding contract (for manifest-dev users: `/define` r
 "never" whose violation would be unsafe or irreversible to a Global Invariant). Keeping
 that line is what stops the document becoming a rulebook nobody reads.
 
+**A line gives grounds for a second look, never a silent veto.** When a line seems to cut
+against an option, first check that the line covers this case: most apparent conflicts come
+from reading a line wider than it was written. Where it does not cover the case, the option
+stands, and the session says why the line does not apply. Where it does, a person decides. A
+run with no person present follows the line, brings the challenge to the owner and carries on;
+it never departs from an end or a principle by itself. No session drops an option unseen because
+a line cuts against it. The same holds for a `Strategy` decision record, whose guiding choice the
+*Strategy choices in force* list shows, except that a run whose assignment explicitly delegates
+that decision may reopen one that covers its case.
+
 <!-- Fixed boundary: copying pauses here. The recipe replaces this section with a short
      paragraph of its own, since a project's copy states its own ownership. -->
 
@@ -192,7 +202,8 @@ dated targets live with the work that pursues them.
 
 What this project is for, for whom, and how it measures progress — the base every session and
 contributor decides from. This document informs; it never binds: a boundary that must be
-enforced on a piece of work is encoded in that work's own binding contract.
+enforced on a piece of work is encoded in that work's own binding contract. A line gives grounds
+for a second look: before it cuts an option, check that it covers the case.
 
 Every position below carries a state, rendered as a dated provenance note:
 
@@ -252,7 +263,7 @@ the entry itself does not explain.
 ```markdown
 ## Project surfaces
 
-<!-- setup-project surfaces v10 -->
+<!-- setup-project surfaces v11 -->
 
 This project keeps its direction, vocabulary, and decision memory in the repo — shared
 ground for every contributor and agent, regardless of tooling. Read `NORTH_STAR.md` and
@@ -265,7 +276,9 @@ ground for every contributor and agent, regardless of tooling. Read `NORTH_STAR.
   never in it. Each position carries a dated state
   (evidence / hypothesis / ruled / empty): new evidence may lower a state, but a
   position changes only by an authorized ruling, recorded with its decider and any explicit
-  delegation. Owner-retained ends and bounds stay with the owner. The full form is `docs/NORTH_STAR_CONVENTIONS.md` — it is self-contained.
+  delegation. Owner-retained ends and bounds stay with the owner. A line gives grounds for a
+  second look, not a veto: before it cuts an option, check that it covers the case. Where it
+  does, a person decides; a run with no person present follows it and raises the challenge. The full form is `docs/NORTH_STAR_CONVENTIONS.md` — it is self-contained.
 <Only when actual scoped adjustments were accepted, include the following entry; otherwise omit it:>
 - **Scoped instructions** — <the accepted scope, responsible actor, delegated decisions and
   retained decisions, or a link to their existing companion>. These apply within assigned work;
@@ -273,8 +286,12 @@ ground for every contributor and agent, regardless of tooling. Read `NORTH_STAR.
 - **CONTEXT.md** — what words mean here. Read it before naming things; add a term when
   the project settles one.
 - **docs/adr/** — why decisions went the way they did. Open `docs/adr/README.md` before
-  settling a question the project may already have settled, and when a change
-  contradicts or narrows an existing decision. Write new records per
+  deciding a question a record may already cover, and when a change contradicts or narrows
+  one. A record gives grounds, not a veto: follow it where its reasons still hold, and reopen
+  it where a premise no longer holds or a need it did not weigh makes sense. Outside the
+  `Strategy` area, a run with no
+  person present decides for itself and lists each record it reopened first in its report
+  and pull request. Write new records per
   `docs/adr/CONVENTIONS.md` — it is self-contained, and writing one is one act: the
   record, the restatus of what it changes, and the index rebuild together.
 - **Verification** — `<command>`: how this project checks that its work still does its job.

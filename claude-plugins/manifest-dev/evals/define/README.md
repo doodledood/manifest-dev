@@ -104,7 +104,11 @@ loaded left the skill. It reaches every case that writes a spec, `d09` and `d17`
 changes no case or grader. **Every recorded number in this file, the 2026-10-25 baseline's included, is stale as
 of 2026-10-25.**
 
-A 2026-10-26 change added to define's Appetite line that Appetite never counts effort an agent
+A 2026-10-26 change made every report list a decision record the run reopened before the user's
+calls. It reaches `d17` most, whose `flags-the-users-call` grader reads that ordering, and changes
+no case or grader.
+
+Another 2026-10-26 change added to define's Appetite line that Appetite never counts effort an agent
 controls, such as building and testing. It reaches every case that writes an Appetite, and `d28`
 is new: it was driven once on the skill before this change and once after it, and is unmeasured.
 
