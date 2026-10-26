@@ -202,7 +202,11 @@ architecture — constrain the shape being designed, not only which probes apply
 
 When the investigation turns prompt-shaped — prompts, system prompts, skills,
 agents, or a prompt-driven failure — invoke the prompt-engineering skill for its
-calibration and come back here; figure-out owns the investigation.
+calibration if it is available; if not, apply its core discipline inline: state the
+prompt's goal, and keep a line only where it carries a user ruling, knowledge outside
+the run's reach, or a default it counteracts — cutting what the run would re-derive
+from material it reads anyway — then check each line holds at the edges. Come back
+here; figure-out owns the investigation.
 
 ## When the questions stop depending on each other
 

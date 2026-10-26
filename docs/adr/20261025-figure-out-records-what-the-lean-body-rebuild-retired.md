@@ -1,7 +1,7 @@
 # ADR: figure-out records what the lean-body rebuild retired
 
 ## Status
-Accepted
+Accepted; amended by 20261026-figure-out-prompt-engineering-pointer-keeps-its-fallback: the prompt-engineering pointer's guard and fallback are back in `SKILL.md`
 
 ## Area
 figure-out
