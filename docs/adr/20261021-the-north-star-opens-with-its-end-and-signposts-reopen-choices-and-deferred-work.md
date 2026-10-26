@@ -1,7 +1,7 @@
 # ADR: The North Star opens with its end, and signposts reopen strategy choices and deferred work
 
 ## Status
-Accepted; amended by 20261023-assignment-bounds-delegated-decisions-and-retained-acceptance: assignment scope, delegated decisions and retained acceptance
+Accepted; amended by 20261023-assignment-bounds-delegated-decisions-and-retained-acceptance: assignment scope, delegated decisions and retained acceptance; amended by 20261026-decision-records-give-grounds-not-a-veto: on a record outside `Strategy`, a met signpost is one reason to reopen, not the only one, and an unattended run may reopen the choice
 
 ## Area
 North Star
