@@ -118,6 +118,24 @@ Proves: the transcript shows the session reading `figure-out/tasks/DECISION.md`,
 Check: read
 Workload: varies
 
+### decision-plan-before-committing
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/65-decision-plan-before-committing/prompt.md`
+Proves: the read checks how second shops like this one usually turned out before trusting the family's own numbers, and passes every grader in the case — the outside-view guard for the *Reference class* probe, where people run the shop, and does not discount the survey as overstated by people's effort.
+Check: read
+Workload: varies
+
+### estimate-what-waits-on-people
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/92-estimate-what-waits-on-people/prompt.md`
+Proves: unattended, with no word on who builds, the estimate prices the build as small agent work and puts the time on the user's reviews, the agency's turnarounds, the hiring and the language checks, and does not adopt the contractor's two-developer quote or give team-weeks.
+Check: read
+Workload: varies
+
+### thorough-fix-not-tamed-for-effort
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/93-thorough-fix-not-tamed-for-effort/prompt.md --scaffold claude-plugins/manifest-dev/evals/93-thorough-fix-not-tamed-for-effort`
+Proves: unattended, the read recommends exact money through all of `src/billing` with one rounding rule over the line-rounding patch that fixes both complaints, sizes it without developer time, and builds no multi-currency.
+Check: read
+Workload: varies
+
 ## Gotchas
 
 - The eval cases' `prompt.md` files open with the case's front matter; `scripts/drive-skill.sh` sends only the body below it.

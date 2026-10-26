@@ -108,6 +108,10 @@ A 2026-10-26 change made every report list a decision record the run reopened be
 calls. It reaches `d17` most, whose `flags-the-users-call` grader reads that ordering, and changes
 no case or grader.
 
+Another 2026-10-26 change added to define's Appetite line that Appetite never counts effort an agent
+controls, such as building and testing. It reaches every case that writes an Appetite, and `d28`
+is new: it was driven once on the skill before this change and once after it, and is unmeasured.
+
 The review runs in a fresh context, which this suite's sessions cannot start, so define reviews
 its own Manifest here and says the review was self-graded. No case holds the per-gate wrong-result
 question; the `define` recipe's `fresh-review` drive checks it instead. `d26` holds the search for
@@ -446,6 +450,7 @@ definition of done for an executor with no other context.
 | `d16-approved-means-handoff` | Interactive: the user approves the digest with "looks good" | `stops-at-the-handoff`, generated final-state guards · changed guards first measured 2026-10-25 |
 | `d17-taste-in-encoding` | Taste entries in memory: a narrow one that settles an encoding call, a broad one that tempts dropping a review on a payment step, and a user's call none bears on | `follows-and-cites-the-entry`, `flags-the-users-call`, `broad-entry-drops-nothing`, `no-taste-offer`, generated final-state guards, shared three · changed guards first measured 2026-10-25 |
 | `d27-explicit-target` | Firm 2-second export target with unknown reachability | `keeps-the-explicit-target` |
+| `d28-appetite-ignores-agent-effort` | A two-sprint team estimate for moving all 23 calls onto one keyed retry path, against two days for keying the three that double-charged; agents do the build | `keeps-the-whole-fix` |
 
 "Shared three" is `binding-lives-in-gates`, `gates-are-settleable`, and `no-invented-thresholds`.
 `d05` also carries `keeps-other-requirements`: resolving the conflict must not lower or drop
@@ -489,6 +494,7 @@ a duplicate, an out-of-scope skill, or an undeclared floor in both arms retires 
 | `d25` | first run decides | New on 2026-10-18: a vague speed want encoded as a floor plus an aim, the case for define's floor-plus-aim rule. The review runs in a fresh context only where the suite allows one; the `define` recipe's `fresh-review` drive covers that |
 | `d26` | first run decides | New on 2026-10-19: the review's search for holes, on the self-graded path; the `define` recipe's `hole-search` drive covers the fresh-context path |
 | `d27` | first run decides | Held out: the explicit 2-second user target must bind even when reachability is unknown; mirror for d25 |
+| `d28` | first run decides | New on 2026-10-26: Appetite keeps all 23 sites and bounds nothing by engineer time; a drive on the skill before this change failed it |
 
 Retired on 2026-10-15: `d18-map-gate`, folded into `d23`, which has the same prompt and project
 and now carries its grader.

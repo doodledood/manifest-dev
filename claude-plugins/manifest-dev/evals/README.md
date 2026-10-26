@@ -257,6 +257,8 @@ base model already covers; such a case leaves only through its probe's *Coverage
 | `89-record-premise-no-longer-holds` | autonomous, repository | Reopen a decision record whose premise failed though its own `Revisit when` is unmet: decide, write the superseding record, restatus the old one, and list the reopened record first with the reason set aside and what reversing costs | tuning |
 | `90-north-star-line-read-too-wide` | autonomous, repository | Check that a North Star line covers the case before it cuts an option: an opt-in saved card is not an account a rider needs, so the option stands and the read says why | tuning |
 | `91-record-against-the-users-idea` | repository | With the user present, weigh a record's reasons against the user's idea and keep it in view; a record whose reasons do not apply counts nothing against it | tuning |
+| `92-estimate-what-waits-on-people` | autonomous | With no word on who builds, estimate the work by what waits on people and the world — reviews, an agency's turnaround, hiring, language checks — not by a contractor's two-developer quote or team-weeks | tuning |
+| `93-thorough-fix-not-tamed-for-effort` | autonomous, repository | Recommend exact money through all the billing code when the objection to it is developer-weeks, and build no multi-currency the problem does not need | tuning |
 
 Cases `30` to `46` were written on 2026-10-13 and `48` on 2026-10-14. Their first run was the
 2026-10-25 baseline, with the split frozen before it: every case added since 2026-10-13 is tuning
@@ -321,6 +323,15 @@ calls, and the surfaces version moved to v11. It reaches every case whose scaffo
 record or a North Star — `23`, `24`, `30`, `36`, `38`, `45`, `53`, `84` and `85` most — and `d17`
 in the define suite, whose user's-call ordering it changed. `89`, `90` and `91` are new: each was
 driven once on the skill before this change and once after it, and none is measured.
+
+A fifth change, also on 2026-10-26, added a spine line pricing options by the effort that binds:
+research, design, building and testing are an agent's unless the person says people will do them,
+and cost close to nothing, so the read defaults to the solution that would be right if effort were
+free and estimates in agent sessions, the person's time and outside waits. It also added to
+*Reference class* in `DECISION.md` that base rates from efforts people did overstate the work an
+agent controls. Every case reaches the spine line; the decision cases `06`, `26`, `29`, `61`–`66`
+and `86`–`88`, which load `DECISION.md`, reach both. `92` and `93` are new: each was driven once on
+the skill before this change and once after it, and neither is measured.
 
 Every recorded number before that baseline was already stale as of 2026-10-21. The 2026-10-13 change edited
 figure-out's spine, its docs-mode and autonomous references, and its task files, the
@@ -452,6 +463,8 @@ being declared a guard. `tests/test_eval_cases.py` fails when a case has no row 
 | `89` | first run decides | Unattended runs deferred a record whose premise failed to its owner and wrote no record; a drive on the skill before this change failed it |
 | `90` | first run decides | Unattended runs held an option off-limits under a North Star line read wider than written; a drive on the skill before this change failed it |
 | `91` | first run decides | Attended sessions still counted a record whose reasons did not apply against the user's idea; a drive on the skill before this change failed it |
+| `92` | first run decides | Unattended runs priced the build of agent-built work from a contractor's quote; a drive on the skill before this change failed it |
+| `93` | first run decides | Unattended runs patched the sites the complaints traced to and put the full fix off for developer-weeks; a drive on the skill before this change failed it |
 
 Retired on 2026-10-15: `12` (floored in both arms, not a declared guard), `47` and `49` (each a
 second older-version case beside `53`, which the version rule now forbids; their straight-to-newest
