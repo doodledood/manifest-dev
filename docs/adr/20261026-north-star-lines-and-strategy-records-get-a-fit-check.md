@@ -31,14 +31,16 @@ continues. It never departs from an end or a principle by itself, and it never d
 unseen because a line cuts against it.
 
 `Strategy` records follow the same rule, not the record rule in
-`20261026-decision-records-give-grounds-not-a-veto`. The exception is work whose assignment
-explicitly delegates strategy, such as orchestrate pursuing an assigned outcome within delegated
-authority. The North Star's update asymmetry is unchanged: its text changes only on an authorized
+`20261026-decision-records-give-grounds-not-a-veto`, except that a run whose assignment
+explicitly delegates that decision, such as orchestrate pursuing an assigned outcome within
+delegated authority, may reopen a `Strategy` record that covers its case. No delegation lets a run
+depart from an end or a principle. The North Star's update asymmetry is unchanged: its text changes only on an authorized
 ruling.
 
 The rule lives in the North Star conventions (`docs/NORTH_STAR_CONVENTIONS.md` and the shipped
 `setup-project/references/NORTH_STAR_FORMAT.md`), beside "It informs; it never binds". A short form
-lives in the North Star bullet of the context-file section.
+lives at the end of the North Star skeleton's opening paragraph and in the North Star bullet of the
+context-file section.
 
 ## Alternatives Considered
 - **The same rule as other records.** An unattended run departs from a North Star line or a
@@ -54,8 +56,8 @@ lives in the North Star bullet of the context-file section.
 
 ### Positive
 - Lines read wider than they were written stop cutting options.
-- An unattended run is never held by a North Star line. It follows the line and keeps going, and
-  the owner sees the challenge.
+- An unattended run is never left waiting for a ruling on a North Star line. It follows the line
+  and keeps going, and the owner sees the challenge.
 
 ### Negative
 - A line that does apply still binds an unattended run until the owner rules, even when the run
@@ -63,9 +65,11 @@ lives in the North Star bullet of the context-file section.
 - The fit check is judgment, and a run can misjudge it in either direction.
 
 ## Enforced by
-partly — `claude-plugins/manifest-dev/evals/24-ruled-position-holds` pins that an unattended run
-keeps a line that covers the case and looks for a design that keeps it; a case for a line read
-wider than it was written is not built yet, and the fit judgment stays judgment
+partly — eval cases driven through `verification/recipes/figure-out.md`:
+`claude-plugins/manifest-dev/evals/24-ruled-position-holds` pins that an unattended run keeps a line
+that covers the case and looks for a design that keeps it, and
+`90-north-star-line-read-too-wide` pins that a line read wider than its words and reason does not
+cut the option and that the line's text is left unchanged; the fit judgment stays judgment
 
 ## Source
 - Session: a figure-out session on records and North Star lines treated as blockers, 2026-10-26.

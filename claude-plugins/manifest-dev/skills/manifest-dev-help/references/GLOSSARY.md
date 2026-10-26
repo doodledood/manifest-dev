@@ -262,18 +262,25 @@ session reads a term with the wrong meaning. A term goes into it when the projec
 term.
 
 ### Decision Record
-<!-- context: 3938795c14a0 -->
+<!-- context: be553da58b26 -->
 A Decision Record is one file that records a decision with a large effect on later work. It is also
 called an ADR. It gives the context, the alternatives, the results, who decided, and the check that
 enforces the decision. After it is published, nobody changes its decision. A newer record replaces
 or amends it, and the old record says so. It exists so that a later session sees why the project
 decided before it decides again.
 
+A Decision Record gives reasons, not a ban. A person can reopen the choice at any time. With no
+person present, a run can reopen a choice that is not a Strategy choice. It does this when a fact
+that the record rests on is no longer true. It also does this when a need that the record did not
+weigh makes sense. The run then lists that record first in its report.
+
 ### Signpost
-<!-- context: ce77f9fca2b1 -->
+<!-- context: 63d80cac2227 -->
 A Signpost is a `Revisit when` line. It names an observable condition and where to read it. On a Decision Record, it names what would reopen the choice. On a deferred Ticket, it names what the work waits for.
 
-A reader checks the condition at its source. A deferred Ticket becomes ready only when that condition holds. A met condition is evidence, not permission to change the choice. Reconsideration needs an Assignment and authority covering it. Otherwise, the reader brings a recommendation to the owner. An unreadable source stays visible as a missing input.
+A reader checks the condition at its source. A deferred Ticket becomes ready only when that condition holds.
+
+A met condition is one reason to look at the choice again, but not the only reason. It does not give permission to change the choice. On a Strategy choice, reconsideration needs an Assignment and authority covering it. Otherwise, the reader brings a recommendation to the owner. An unreadable source stays visible as a missing input.
 
 ### ADR Conventions
 <!-- context: 141f2d9e39ab -->

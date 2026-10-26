@@ -29,7 +29,7 @@ meets one during its work:
   the authority unclear, it takes the safe path and follows the record.
 
 The eval suite pulls the same way. Cases `24`, `38`, `84` and `85` reward deference to a record or a
-North Star line, or raising a conflict with one. No case fails a run that follows a record whose
+North Star line, or raising a conflict with one. No case failed a run that follows a record whose
 reasoning no longer fits.
 
 ## Decision
@@ -44,8 +44,9 @@ the case:
   that need makes sense, the choice is open again. The session shows the option beside the
   record's reasons and never drops an option because a record cuts against it.
 - A person can reopen a choice at any time. A run with no person present decides for itself:
-  where the need makes sense, it reopens the choice and writes the new record, naming itself as
-  the decider. It then makes this clear: its report and its pull request list each reopened
+  where a premise no longer holds or such a need makes sense, it reopens the choice and writes
+  the new record, naming itself as the decider. It then makes this clear: its report and any
+  pull request it opens list each reopened
   record first, with the reason it set aside and what reversing would cost, counted by what
   depends on the change after it lands, not by the effort to redo it.
 - Reopening is a new record that supersedes or narrows the old one, under the existing lifecycle.
@@ -53,8 +54,8 @@ the case:
 
 This rule covers records outside the `Strategy` area. `Strategy` records follow
 `20261026-north-star-lines-and-strategy-records-get-a-fit-check`. The rule grants no authority to
-publish, spend or delete. Without the Auto grant, a person still lands the work, so a person sees
-each reopened record before it takes effect.
+publish, spend or delete. Where the work lands through a pull request without the Auto grant, a
+person lands it, so a person sees each reopened record before it takes effect.
 
 The rule lives in the ADR conventions (`docs/adr/CONVENTIONS.md` and the shipped
 `figure-out/references/ADR_FORMAT.md`). A short form lives in the context-file section that
@@ -64,9 +65,8 @@ constraints the user has established.
 
 ## Alternatives Considered
 - **Decide by stakes, leaning toward the record.** An unattended run departs only when the change
-  is cheap to undo; otherwise it follows the record and raises the challenge. This was the user's
-  first, tentative call, and they rejected it: a run that waits for a ruling on every costly
-  choice is not autonomous. Reporting the reopened record afterwards takes the place of the hold.
+  is cheap to undo; otherwise it follows the record and raises the challenge. Rejected: a run
+  that waits for a ruling on every costly choice is not autonomous. Reporting the reopened record afterwards takes the place of the hold.
 - **Surface only.** An unattended run always follows the record and raises the challenge at the
   top of its report. Rejected: it keeps the adherence the user wants to stop, adding only a
   report line.
@@ -90,10 +90,12 @@ constraints the user has established.
 - The emitted conventions change, which needs a new surfaces version.
 
 ## Enforced by
-not yet — eval cases in which an unattended run meets a record whose premise no longer holds and
-reopens it, driven through `verification/recipes/figure-out.md`, beside the existing case
-`38-stated-rule-conflicts-with-a-record` for a record whose reasons still hold; whether a need
-makes sense stays judgment
+partly — eval cases driven through `verification/recipes/figure-out.md`:
+`claude-plugins/manifest-dev/evals/89-record-premise-no-longer-holds` (an unattended run reopens a
+record whose premise failed, writes the superseding record and lists it first),
+`91-record-against-the-users-idea` (an attended run keeps the option a record's reasons no longer
+cut against in view) and `38-stated-rule-conflicts-with-a-record` (a record whose reasons still hold
+is followed and not superseded); whether a need makes sense stays judgment
 
 ## Revisit when
 The owner reverses an unattended reopening in more than one of the next five pull requests that

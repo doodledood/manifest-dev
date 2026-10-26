@@ -1,0 +1,5 @@
+# Holds the decision in docs/adr/20261026-decision-records-give-grounds-not-a-veto.md — removing this case removes that record's check that an unattended run reopens a record whose premise failed; update its Enforced by line in the same change.
+schema_version: "1.0"
+name: 89-record-premise-no-longer-holds
+context:
+  scaffold_script: scaffold.sh

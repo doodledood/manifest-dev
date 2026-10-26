@@ -218,7 +218,7 @@ base model already covers; such a case leaves only through its probe's *Coverage
 | `46-general-question-skips-recall` | autonomous, repository, plugin arm only | Open no earlier session log for a general question the repository's history cannot bear on | tuning |
 | `48-reuse-and-shallow-layer` | autonomous, repository | Before any code, reuse the utilities the codebase already has and question a proposed class that would only forward to them | tuning |
 | `52-projectless-chat-offers-no-surfaces` | autonomous, not a project, plugin arm only | For a one-off script in a folder that is not a project, say how it behaves and how to check it, offering no setup, harness, decision record, glossary or North Star | tuning |
-| `53-update-offer-from-v9` | docs, repository, plugin arm only | Offer scoped instructions and bounded delegated maintenance without inventing authority or starting operation; keep coordination preparation optional | tuning |
+| `53-update-offer-from-v10` | docs, repository, plugin arm only | Offer only the v11 changes: records give grounds rather than a veto, the `Revisit when` rule for records outside `Strategy`, and the North Star fit check | tuning |
 | `54-touched-recipe-not-fit` | autonomous, repository | A change touching a feature whose recipe cannot be relied on — started by hand on a fixed port, its last failure unexplained — makes repairing that recipe part of the work | tuning |
 | `55-own-check-not-fit` | autonomous, repository | With no harness, a touched test of the project's own that passes whatever the output is gets repaired in its own form as part of the work, seen failing on a scratch break before it counts, and no harness is built | tuning |
 | `56-order-dependent-design` | autonomous | Model a design whose correctness depends on the order of events before building it, and pick a check that can reach the breaking interleaving | tuning |
@@ -254,6 +254,9 @@ base model already covers; such a case leaves only through its probe's *Coverage
 | `86-decision-driver-in-another-branch` | press | Count a factor filed under one aim against every other aim it moves before judging the options on the next | tuning |
 | `87-decision-driver-filed-in-passing` | press | `86`'s discipline where the factor was filed as a plain win under costs, with no low weight to flag it | tuning |
 | `88-decision-no-driver-to-carry` | negative, plugin arm only | With no factor that reaches the next aim, invent no link to it and add no cost the user did not raise | tuning |
+| `89-record-premise-no-longer-holds` | autonomous, repository | Reopen a decision record whose premise failed though its own `Revisit when` is unmet: decide, write the superseding record, restatus the old one, and list the reopened record first with the reason set aside and what reversing costs | tuning |
+| `90-north-star-line-read-too-wide` | autonomous, repository | Check that a North Star line covers the case before it cuts an option: an opt-in saved card is not an account a rider needs, so the option stands and the read says why | tuning |
+| `91-record-against-the-users-idea` | repository | With the user present, weigh a record's reasons against the user's idea and keep it in view; a record whose reasons do not apply counts nothing against it | tuning |
 
 Cases `30` to `46` were written on 2026-10-13 and `48` on 2026-10-14. Their first run was the
 2026-10-25 baseline, with the split frozen before it: every case added since 2026-10-13 is tuning
@@ -309,6 +312,15 @@ bear on the read, as deep as what rides on it, and gave `SKILL.md`'s prompt-engi
 fallback. It reaches the same cases, and makes the `42` and `64` numbers in *Hill-climb on
 proportionate re-checks* stale. `86`, `87` and `88` were measured on it (*Drivers across branches —
 2026-10-26*, below).
+
+A fourth change, also on 2026-10-26, made decision records and North Star lines grounds rather
+than a veto. The spine weighs a record's reasons against the case and reads a line by its words and
+its reason. Autonomous mode reopens a record outside the `Strategy` area whose premise failed or
+that did not weigh a need that makes sense. Every report lists a reopened record before the user's
+calls, and the surfaces version moved to v11. It reaches every case whose scaffold holds a decision
+record or a North Star — `23`, `24`, `30`, `36`, `38`, `45`, `53`, `84` and `85` most — and `d17`
+in the define suite, whose user's-call ordering it changed. `89`, `90` and `91` are new: each was
+driven once on the skill before this change and once after it, and none is measured.
 
 Every recorded number before that baseline was already stale as of 2026-10-21. The 2026-10-13 change edited
 figure-out's spine, its docs-mode and autonomous references, and its task files, the
@@ -401,7 +413,7 @@ being declared a guard. `tests/test_eval_cases.py` fails when a case has no row 
 | `46` | first run decides | Plugin arm only; mirror of `43` |
 | `48` | first run decides | Reuse and module depth before code |
 | `52` | first run decides | Plugin arm only; a declared guard: the no-plugin arm passes by construction |
-| `53` | keep | Plugin arm only; the one-behind branch, which the version test requires; moved to v5 on 2026-10-15 when v6 shipped, to v6 on 2026-10-18 when v7 shipped, to v7 on 2026-10-21 when v8 shipped, and to v8 later that day when v9 shipped |
+| `53` | keep | Plugin arm only; the one-behind branch, which the version test requires; moved to v5 on 2026-10-15 when v6 shipped, to v6 on 2026-10-18 when v7 shipped, to v7 on 2026-10-21 when v8 shipped, to v8 later that day when v9 shipped, to v9 when v10 shipped, and to v10 on 2026-10-26 when v11 shipped |
 | `54` | first run decides | New on 2026-10-15: the *Fit to trust* jobs v5 added |
 | `55` | first run decides | New on 2026-10-15: repairing a project's own check in its own form, the rule every run owes with or without a harness; the base model likely writes a new test beside the broken one. Its second grader, added 2026-10-19, holds the seen-to-fail job |
 | `56` | first run decides | New on 2026-10-19: the only order-dependent design case; the base model likely goes from the design to example tests |
@@ -437,6 +449,9 @@ being declared a guard. `tests/test_eval_cases.py` fails when a case has no row 
 | `86` | keep | Uplift +1.00 at three runs on 2026-10-26; the only case for a driver marked a low weight under another branch |
 | `87` | keep | Uplift +0.33 at three runs on 2026-10-26: `86`'s discipline on a product choice, where nothing in the filing marks the factor |
 | `88` | keep | Plugin arm only; a declared guard against the drivers probe over-firing: the no-plugin arm passes by construction. 1 of 3 on its first run, 2026-10-26; its grader is unchecked against one failure |
+| `89` | first run decides | Unattended runs deferred a record whose premise failed to its owner and wrote no record; a drive on the skill before this change failed it |
+| `90` | first run decides | Unattended runs held an option off-limits under a North Star line read wider than written; a drive on the skill before this change failed it |
+| `91` | first run decides | Attended sessions still counted a record whose reasons did not apply against the user's idea; a drive on the skill before this change failed it |
 
 Retired on 2026-10-15: `12` (floored in both arms, not a declared guard), `47` and `49` (each a
 second older-version case beside `53`, which the version rule now forbids; their straight-to-newest
@@ -782,7 +797,7 @@ file. The row is never deleted while the probe stays.
 | `references/LOG.md` | (whole file) | `01-root-press/log-written`; not graded: log safety and resuming from the log, which have shown no failure and sit outside what a grader reads |
 | `references/RECALL.md` | (whole file) | `43-recalls-earlier-work/carries-the-earlier-ruling-as-a-lead`, `44-debt-on-the-path/offers-the-on-path-debt`, `46-general-question-skips-recall/no-recall-for-a-general-question`, `59-reverted-fix/names-the-reverted-fix` |
 | `references/TASTE.md` | (whole file) | `27-taste-offers/offers-entry-for-the-stated-preference`, `27-taste-offers/offers-entry-for-the-reversal`, `28-universal-not-taste/no-offer-for-a-universal-rule`, `29-ratified-entry-lands/entry-inside-taste-section` |
-| `references/WITH_DOCS.md` | (whole file) | `23-term-and-record/term-captured`, `23-term-and-record/record-written`, `24-ruled-position-holds/position-text-unchanged`, `30-update-offer-for-older-setup/offers-only-whats-new`, `36-marks-drift-it-wont-fix/export-entry-marked-stale`, `45-current-setup-offers-nothing/offers-no-setup-update`, `53-update-offer-from-v9/offers-only-whats-new-since-v9`, `84-chosen-option-goes-to-a-record/ruling-recorded`, `84-chosen-option-goes-to-a-record/north-star-unchanged`, `85-evidence-against-a-bet/bet-challenged`, `85-evidence-against-a-bet/bet-text-kept` |
+| `references/WITH_DOCS.md` | (whole file) | `23-term-and-record/term-captured`, `23-term-and-record/record-written`, `24-ruled-position-holds/position-text-unchanged`, `30-update-offer-for-older-setup/offers-only-whats-new`, `36-marks-drift-it-wont-fix/export-entry-marked-stale`, `45-current-setup-offers-nothing/offers-no-setup-update`, `53-update-offer-from-v10/offers-only-whats-new-since-v10`, `84-chosen-option-goes-to-a-record/ruling-recorded`, `84-chosen-option-goes-to-a-record/north-star-unchanged`, `85-evidence-against-a-bet/bet-challenged`, `85-evidence-against-a-bet/bet-text-kept` |
 | `references/ADR_FORMAT.md` | (whole file) | `23-term-and-record/old-record-restatused`, `23-term-and-record/index-rebuilt`, `24-ruled-position-holds/unattended-record-marked`, `23-term-and-record/record-carries-enforced-by` |
 | `references/autonomous.md` | (whole file) | `25-users-call-and-taste/flags-the-users-calls`, `25-users-call-and-taste/no-taste-offer`, `24-ruled-position-holds/unattended-record-marked`; not graded: never self-accepting an offer that hands off to setup-project or ticket-up, or that workflow's inner owner-judgment offers, which needs those skills reachable from the session |
 | `references/team.md` | (whole file) | Reason: team mode runs in a Slack channel, a service the suite cannot reach from its sandbox |
@@ -980,7 +995,7 @@ Plugin arm only:
 | 45-current-setup-offers-nothing | tuning | 1.00 |
 | 46-general-question-skips-recall | tuning | 1.00 |
 | 52-projectless-chat-offers-no-surfaces | tuning | 0.86 |
-| 53-update-offer-from-v9 | tuning | 0.00 |
+| 53-update-offer-from-v10 (measured as 53-update-offer-from-v9) | tuning | 0.00 |
 
 Mean 0.76 over the 9 cases.
 

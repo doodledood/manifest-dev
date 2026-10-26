@@ -235,6 +235,5 @@
 | 2026-10-25 | [Name the situations people reach for manifest-dev in](20261025-name-the-situations-people-reach-for-manifest-dev-in.md) | Accepted | North Star |
 | 2026-10-26 | [Decision records give grounds, not a veto, and unattended runs reopen them where a need makes sense](20261026-decision-records-give-grounds-not-a-veto.md) | Accepted | ADR conventions |
 | 2026-10-26 | [figure-out's drivers probe asks its question when a factor is filed, not only when an aim is judged](20261026-figure-out-drivers-probe-asks-when-a-factor-is-filed.md) | Accepted | Task guidance |
-| 2026-10-26 | [figure-out prices effort by what the agent does not control, and defaults to the solution that would be right if effort were free](20261026-figure-out-prices-effort-by-what-the-agent-does-not-control.md) | Accepted | figure-out |
 | 2026-10-26 | [figure-out's prompt-engineering pointer keeps its guard and inline fallback](20261026-figure-out-prompt-engineering-pointer-keeps-its-fallback.md) | Accepted | Prompt architecture |
 | 2026-10-26 | [North Star lines and Strategy records get a fit check, and an unattended run follows one that applies and raises the challenge](20261026-north-star-lines-and-strategy-records-get-a-fit-check.md) | Accepted | North Star |

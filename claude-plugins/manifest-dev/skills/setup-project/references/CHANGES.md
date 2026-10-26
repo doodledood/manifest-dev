@@ -15,3 +15,4 @@ says how an update reads and offers them, and when it records the newest.
 - v8 — `changes/v8.md`: the North Star holds only what decisions are judged against, in six sections; chosen options move to decision records, guiding ones under the `Strategy` area, on the owner's ruling.
 - v9 — `changes/v9.md`: the North Star's Purpose opens with the end, and the end gets a measure of its own; decision records carry a `Revisit when` signpost the strategy list shows; setup offers a check that rebuilds the index and the list.
 - v10 — `changes/v10.md`: scoped project instructions, delegated record maintenance, and optional coordination preparation.
+- v11 — `changes/v11.md`: decision records give grounds, not a veto, and unattended runs reopen them where a need makes sense and report it first; North Star lines get a fit check before they cut an option.

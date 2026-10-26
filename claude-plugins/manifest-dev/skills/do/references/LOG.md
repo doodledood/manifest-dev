@@ -28,7 +28,8 @@ lives, never its value.
 
 Record what the finished state will not reconstruct on its own:
 
-- **Decisions** — material autonomous choices with their rationale, the user's calls first (as
+- **Decisions** — material autonomous choices with their rationale, each reopened decision
+  record first with the reason set aside and what reversing would cost, then the user's calls (as
   `SKILL.md` defines them), each with the alternative not taken and what decided it; any
   Appetite revision with its benefit and added complexity.
 - **Blockers** — the obligation, the evidence, the intervention needed, and whether it cleared.

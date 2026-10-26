@@ -1,3 +1,4 @@
+# Holds the decision in docs/adr/20261026-north-star-lines-and-strategy-records-get-a-fit-check.md — removing this case removes that record's check that an unattended run keeps a North Star line that covers the case; update its Enforced by line in the same change.
 schema_version: "1.0"
 name: 24-ruled-position-holds
 context:

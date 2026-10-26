@@ -48,8 +48,8 @@ The gate's body is the steering surface — baseline content is enough to start;
 
 Done when the pull request's description shows the change working:
 - Its top reads in about a minute: what changed and why, how the change was shown working, the
-  decisions made with the user's calls first, and the debt left. Long lists fold into collapsed
-  sections below it.
+  decisions made with any reopened decision record first and the user's calls next, and the
+  debt left. Long lists fold into collapsed sections below it.
 - The proof comes from runs of the checks the change touches, on a local or dev instance, or on a
   preview deploy the project's CI already makes — never on production. The description, or a
   comment it links, carries each run's command and the output that shows the result.

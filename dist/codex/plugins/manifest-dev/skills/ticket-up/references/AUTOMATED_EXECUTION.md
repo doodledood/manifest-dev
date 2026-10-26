@@ -88,7 +88,7 @@ updated in place by a later attempt:
   carries it;
 - the flagged offers, agent-decided records and drafted Taste entries `/done` named, each with
   what accepting or reviewing it would change;
-- the run's material decisions, the user's calls first, each with the alternative not taken and
+- the run's material decisions, each reopened decision record first, then the user's calls, each with the alternative not taken and
   what decided it.
 
 The lander adds the landing reference. `orchestrate` adds a line once it has gathered the debt, so

@@ -8,7 +8,7 @@ Shop where independent weavers sell their patterns.
 
 ## Project surfaces
 
-<!-- setup-project surfaces v10 -->
+<!-- setup-project surfaces v11 -->
 
 This project keeps its direction, vocabulary, and decision memory in the repo. Read
 `NORTH_STAR.md` and `CONTEXT.md` at the start of every session.

@@ -56,8 +56,9 @@ entries — ratified preferences in a `## Taste` section of a loaded memory file
 Follow an entry only where it clearly bears: it speaks to this kind of call, and
 following it would change the choice. A general lean that would tilt almost any
 call, such as less effort or lower cost, does not bear on its own. Otherwise
-decide on the evidence. Wherever decisions are reported, list the user's calls
-first, each with the alternative not taken and what decided it — the entry
+decide on the evidence. Wherever decisions are reported, list first each decision record the run
+reopened, with the reason set aside and what reversing would cost, then the
+user's calls, each with the alternative not taken and what decided it — the entry
 followed, or that no entry applied.
 
 **Taste on reversal.** When the user, present in the session, reverses a call an
