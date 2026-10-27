@@ -176,10 +176,12 @@ same text on Claude Code, Codex, OpenCode and Pi, because each of these hosts re
 can start other skills.
 
 ### Agent
-<!-- context: 3b0b3ea9b2ce -->
-An Agent is an isolated execution context that your host gives. manifest-dev uses the word only for
-this. A skill can do part of its work in a separate Agent when the host has one. The separate Agent
-keeps that work apart from the main conversation.
+<!-- context: 694c2fb9a211 -->
+An Agent is an AI model that does work for a person, such as code, documents and analysis. A Ticket
+is written so that a person or an Agent can do it. `/figure-out` prices the work of an Agent by what
+the Agent cannot control, such as your decisions and your reviews. Your host can also run an Agent
+in a separate execution context. A skill can then do part of its work there, apart from the main
+conversation. manifest-dev starts a separate Agent only through your host.
 
 ## The investigation of a problem
 
