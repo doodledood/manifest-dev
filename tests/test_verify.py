@@ -398,7 +398,8 @@ def test_check_leaves_a_directory_a_run_creates_alone(tmp_path: Path) -> None:
 
 
 def test_an_interrupted_run_keeps_no_evidence(tmp_path: Path) -> None:
-    env = _harness(tmp_path, "", "### slow\nRun: `sleep 5`\n")
+    ready = tmp_path / "ready"
+    env = _harness(tmp_path, "", f"### slow\nRun: `touch {ready}; sleep 5`\n")
     drive = subprocess.Popen(
         [str(VERIFY), "drive", "thing"],
         env=env,
@@ -409,9 +410,8 @@ def test_an_interrupted_run_keeps_no_evidence(tmp_path: Path) -> None:
     )
     folder = tmp_path / "verification" / "evidence" / "thing"
     assert drive.stdout is not None
-    assert drive.stdout.readline().startswith(
-        "running [slow]"
-    )  # the command has started
+    assert drive.stdout.readline().startswith("running [slow]")
+    _when_ready(ready)
     os.killpg(drive.pid, signal.SIGINT)  # Ctrl-C reaches the whole foreground group
     _, err = drive.communicate(timeout=10)
     assert drive.returncode == 130, err
@@ -421,7 +421,8 @@ def test_an_interrupted_run_keeps_no_evidence(tmp_path: Path) -> None:
 @pytest.mark.parametrize("when", ["before the command", "while it runs"])
 def test_a_signal_at_any_point_keeps_no_evidence(tmp_path: Path, when: str) -> None:
     # A large covered tree keeps the run busy hashing before the command starts.
-    env = _harness(tmp_path, "", "### slow\nRun: `sleep 5`\n")
+    ready = tmp_path / "ready"
+    env = _harness(tmp_path, "", f"### slow\nRun: `touch {ready}; sleep 5`\n")
     recipe = tmp_path / "verification" / "recipes" / "thing.md"
     recipe.write_text(
         recipe.read_text(encoding="utf-8").replace(
@@ -450,6 +451,7 @@ def test_a_signal_at_any_point_keeps_no_evidence(tmp_path: Path, when: str) -> N
         assert drive.stdout is not None and drive.stdout.readline().startswith(
             b"running"
         )
+        _when_ready(ready)
     drive.send_signal(signal.SIGTERM)  # to the tool alone, as a process manager would
     started = time.monotonic()
     drive.communicate(timeout=10)
@@ -459,8 +461,11 @@ def test_a_signal_at_any_point_keeps_no_evidence(tmp_path: Path, when: str) -> N
 
 
 def test_a_second_signal_stops_what_the_command_started(tmp_path: Path) -> None:
+    ready = tmp_path / "ready"
     env = _harness(
-        tmp_path, "", "### stubborn\nRun: `trap '' INT TERM; sleep 8; echo finished`\n"
+        tmp_path,
+        "",
+        f"### stubborn\nRun: `trap '' INT TERM; touch {ready}; sleep 8; echo finished`\n",
     )
     drive = subprocess.Popen(
         [str(VERIFY), "drive", "thing"],
@@ -469,7 +474,7 @@ def test_a_second_signal_stops_what_the_command_started(tmp_path: Path) -> None:
         stderr=subprocess.PIPE,
     )
     assert drive.stdout is not None and drive.stdout.readline().startswith(b"running")
-    time.sleep(0.3)
+    _when_ready(ready)
     drive.send_signal(signal.SIGINT)
     time.sleep(0.3)
     drive.send_signal(signal.SIGINT)
@@ -613,7 +618,10 @@ def _covering(tmp_path: Path, run: str, covers: str) -> dict[str, str]:
 
 def test_a_command_never_outlives_a_killed_tool(tmp_path: Path) -> None:
     marker = tmp_path / "finished"
-    env = _covering(tmp_path, f"sleep 2; touch {marker}", "verification/recipes")
+    ready = tmp_path / "ready"
+    env = _covering(
+        tmp_path, f"touch {ready}; sleep 2; touch {marker}", "verification/recipes"
+    )
     drive = subprocess.Popen(
         [str(VERIFY), "drive", "thing"],
         env=env,
@@ -623,7 +631,7 @@ def test_a_command_never_outlives_a_killed_tool(tmp_path: Path) -> None:
     )
     assert drive.stdout is not None
     assert drive.stdout.readline().startswith("running [once]")
-    time.sleep(0.5)  # the line prints just before the command starts
+    _when_ready(ready)
     drive.kill()  # SIGKILL: no handler runs, as when a timeout kills the tool
     drive.wait(timeout=10)
     time.sleep(3)
@@ -635,7 +643,10 @@ def test_a_closed_terminal_stops_the_run_and_keeps_no_evidence(
     tmp_path: Path, sig: signal.Signals
 ) -> None:
     marker = tmp_path / "finished"
-    env = _covering(tmp_path, f"sleep 2; touch {marker}", "verification/recipes")
+    ready = tmp_path / "ready"
+    env = _covering(
+        tmp_path, f"touch {ready}; sleep 2; touch {marker}", "verification/recipes"
+    )
     drive = subprocess.Popen(
         [str(VERIFY), "drive", "thing"],
         env=env,
@@ -645,6 +656,7 @@ def test_a_closed_terminal_stops_the_run_and_keeps_no_evidence(
     )
     assert drive.stdout is not None
     assert drive.stdout.readline().startswith("running [once]")
+    _when_ready(ready)
     drive.send_signal(sig)  # to the tool alone; it passes the signal on
     _, err = drive.communicate(timeout=10)
     assert drive.returncode == 130, err
@@ -655,10 +667,11 @@ def test_a_closed_terminal_stops_the_run_and_keeps_no_evidence(
 
 def test_an_interrupted_dry_run_stops(tmp_path: Path) -> None:
     marker = tmp_path / "second"
+    ready = tmp_path / "ready"
     env = _harness(
         tmp_path,
         "",
-        f"### one\nRun: `sleep 2`\n\n### two\nRun: `touch {marker}`\n",
+        f"### one\nRun: `touch {ready}; sleep 2`\n\n### two\nRun: `touch {marker}`\n",
     )
     recipe = tmp_path / "verification" / "recipes" / "thing.md"
     recipe.write_text(
@@ -677,7 +690,7 @@ def test_an_interrupted_dry_run_stops(tmp_path: Path) -> None:
     )
     assert drive.stdout is not None
     assert drive.stdout.readline().startswith("would run [one]")
-    time.sleep(0.5)
+    _when_ready(ready)
     os.killpg(drive.pid, signal.SIGINT)
     drive.communicate(timeout=10)
     assert drive.returncode == 130
@@ -695,8 +708,11 @@ def test_a_command_that_kills_its_own_group_is_failed(tmp_path: Path) -> None:
 
 def test_one_ctrl_c_stops_a_background_job_too(tmp_path: Path) -> None:
     marker = tmp_path / "background"
+    ready = tmp_path / "ready"
     env = _covering(
-        tmp_path, f"(sleep 3; touch {marker}) & sleep 3", "verification/recipes"
+        tmp_path,
+        f"(sleep 3; touch {marker}) & touch {ready}; sleep 3",
+        "verification/recipes",
     )
     drive = subprocess.Popen(
         [str(VERIFY), "drive", "thing"],
@@ -708,7 +724,7 @@ def test_one_ctrl_c_stops_a_background_job_too(tmp_path: Path) -> None:
     )
     assert drive.stdout is not None
     assert drive.stdout.readline().startswith("running [once]")
-    time.sleep(0.5)
+    _when_ready(ready)
     started = time.monotonic()
     os.killpg(drive.pid, signal.SIGINT)  # a background job ignores this one
     drive.communicate(timeout=10)
@@ -722,7 +738,10 @@ def test_a_killed_tool_stops_its_command_before_anyone_reaps_it(
     tmp_path: Path,
 ) -> None:
     marker = tmp_path / "finished"
-    env = _covering(tmp_path, f"sleep 2; touch {marker}", "verification/recipes")
+    ready = tmp_path / "ready"
+    env = _covering(
+        tmp_path, f"touch {ready}; sleep 2; touch {marker}", "verification/recipes"
+    )
     drive = subprocess.Popen(
         [str(VERIFY), "drive", "thing"],
         env=env,
@@ -732,7 +751,7 @@ def test_a_killed_tool_stops_its_command_before_anyone_reaps_it(
     )
     assert drive.stdout is not None
     assert drive.stdout.readline().startswith("running [once]")
-    time.sleep(0.5)
+    _when_ready(ready)
     os.kill(drive.pid, signal.SIGKILL)  # left a zombie: not waited for until the end
     time.sleep(3)
     assert not marker.exists(), "the command ran on while its tool was a zombie"
@@ -761,9 +780,10 @@ def test_a_command_that_signals_its_own_group_ends_the_run_as_failed(
 def test_a_killed_tool_lets_its_command_stop_cleanly_first(tmp_path: Path) -> None:
     # SIGTERM before SIGKILL: what a container client needs to stop the session inside.
     marker = tmp_path / "stopped-cleanly"
+    ready = tmp_path / "ready"
     env = _covering(
         tmp_path,
-        f"trap 'touch {marker}; exit 0' TERM; sleep 30 & wait",
+        f"trap 'touch {marker}; exit 0' TERM; touch {ready}; sleep 30 & wait",
         "verification/recipes",
     )
     drive = subprocess.Popen(
@@ -775,7 +795,7 @@ def test_a_killed_tool_lets_its_command_stop_cleanly_first(tmp_path: Path) -> No
     )
     assert drive.stdout is not None
     assert drive.stdout.readline().startswith("running [once]")
-    time.sleep(0.5)
+    _when_ready(ready)
     drive.kill()
     drive.wait(timeout=10)
     deadline = time.monotonic() + 5
@@ -784,7 +804,7 @@ def test_a_killed_tool_lets_its_command_stop_cleanly_first(tmp_path: Path) -> No
     assert marker.exists()
 
 
-def _start_drive(env: dict[str, str]) -> subprocess.Popen[str]:
+def _start_drive(env: dict[str, str], ready: Path) -> subprocess.Popen[str]:
     drive = subprocess.Popen(
         [str(VERIFY), "drive", "thing"],
         env=env,
@@ -794,7 +814,7 @@ def _start_drive(env: dict[str, str]) -> subprocess.Popen[str]:
     )
     assert drive.stdout is not None
     assert drive.stdout.readline().startswith("running [once]")
-    time.sleep(0.5)  # the line prints just before the command starts
+    _when_ready(ready)
     return drive
 
 
@@ -810,6 +830,18 @@ def _appears(path: Path, within: float) -> bool:
     while not path.exists() and time.monotonic() < deadline:
         time.sleep(0.1)
     return path.exists()
+
+
+def _when_ready(ready: Path) -> None:
+    """Wait until the command reaches the point the test signals it at, where it touches `ready`.
+
+    A fixed sleep only guesses. Too short on a loaded machine, and the signal lands before the
+    command has set its traps (a false failure) or before it has started at all (a pass that
+    proved nothing).
+    """
+    assert _appears(
+        ready, 10
+    ), "the command never reached the point the test signals it at"
 
 
 def test_a_job_left_holding_the_output_does_not_hold_the_run(tmp_path: Path) -> None:
@@ -848,13 +880,14 @@ def test_a_stopped_command_gets_the_grace_to_clean_up(
     # Either way the command's own cleanup runs undisturbed. The cleanup logs any second
     # delivery, so a stray signal fails the test whenever it lands.
     marker = tmp_path / "cleaned-up"
+    ready = tmp_path / "ready"
     env = _covering(
         tmp_path,
         f"trap '' INT; trap 'trap \"echo again >>{marker}\" TERM HUP QUIT; sleep 0.5; "
-        f"echo $? >>{marker}; exit 0' {trapped}; sleep 30 & wait",
+        f"echo $? >>{marker}; exit 0' {trapped}; touch {ready}; sleep 30 & wait",
         "verification/recipes",
     )
-    drive = _start_drive(env)
+    drive = _start_drive(env, ready)
     for name in signals:
         drive.send_signal(getattr(signal, f"SIG{name}"))
         time.sleep(0.2)
@@ -867,13 +900,15 @@ def test_a_stopped_command_gets_the_grace_to_clean_up(
 
 def test_a_forced_stop_kills_what_ignores_it_after_the_grace(tmp_path: Path) -> None:
     marker = tmp_path / "outlived"
+    ready = tmp_path / "ready"
     env = _covering(
         tmp_path,
-        f"(trap '' INT TERM; sleep 2; touch {marker}) >/dev/null 2>&1 & trap '' INT; wait",
+        f"trap '' INT; (trap '' INT TERM; touch {ready}; sleep 2; touch {marker}) "
+        ">/dev/null 2>&1 & wait",
         "verification/recipes",
     )
     _short_grace(tmp_path)
-    drive = _start_drive(env)
+    drive = _start_drive(env, ready)
     drive.send_signal(signal.SIGINT)
     time.sleep(0.2)
     drive.send_signal(signal.SIGINT)
@@ -895,12 +930,11 @@ def test_a_tool_killed_during_the_grace_still_stops_what_was_left(
         f"trap '' TERM; sh -c 'echo $$ > {job}; sleep 3; touch {marker}' & echo started",
         "verification/recipes",
     )
-    # A grace well past _start_drive's half-second wait, so the kill lands inside it.
+    # A grace long enough that the kill below lands inside it.
     _settings(tmp_path, grace="1.5")
     drive = _start_drive(
-        env
+        env, job
     )  # the command has ended; its job ignores the stop's SIGTERM
-    assert _appears(job, 2)
     deadline = time.monotonic() + 5
     while not job.read_text(encoding="utf-8").strip():  # created before it is written
         assert time.monotonic() < deadline, "the job never wrote its pid"
@@ -922,10 +956,13 @@ def test_a_run_with_nothing_left_behind_does_not_wait_the_grace(tmp_path: Path) 
 
 
 def test_a_signal_during_a_stop_kills_at_once(tmp_path: Path) -> None:
+    ready = tmp_path / "ready"
     env = _covering(
-        tmp_path, "trap '' INT TERM; sleep 30 & wait", "verification/recipes"
+        tmp_path,
+        f"trap '' INT TERM; touch {ready}; sleep 30 & wait",
+        "verification/recipes",
     )
-    drive = _start_drive(env)
+    drive = _start_drive(env, ready)
     drive.send_signal(signal.SIGINT)
     time.sleep(0.2)
     drive.send_signal(signal.SIGINT)  # the stop begins; the command ignores its SIGTERM
@@ -1711,8 +1748,9 @@ def test_a_logs_command_that_never_stops_printing_is_cut_off(tmp_path: Path) -> 
 
 
 def test_ctrl_c_while_the_logs_command_runs_stops_the_run(tmp_path: Path) -> None:
+    ready = tmp_path / "ready"
     env = _harness(tmp_path, "", "### bad\nRun: `exit 1`\n")
-    _settings(tmp_path, logs="echo started >&2; sleep 15")
+    _settings(tmp_path, logs=f"touch {ready}; sleep 15")
     drive = subprocess.Popen(
         [str(VERIFY), "drive", "thing"],
         env=env,
@@ -1723,7 +1761,7 @@ def test_ctrl_c_while_the_logs_command_runs_stops_the_run(tmp_path: Path) -> Non
     )
     assert drive.stdout is not None
     assert drive.stdout.readline().startswith("running [bad]")
-    time.sleep(1)  # the scenario has failed and the logs command is running
+    _when_ready(ready)  # the scenario has failed and the logs command is running
     began = time.monotonic()
     os.killpg(drive.pid, signal.SIGINT)
     _, err = drive.communicate(timeout=10)
