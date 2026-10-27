@@ -20,10 +20,13 @@ import signal
 import subprocess
 import time
 import uuid
+from collections.abc import Callable
 from pathlib import Path
-from typing import TypedDict
+from typing import TypedDict, TypeVar
 
 import pytest
+
+T = TypeVar("T")
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 DRIVE = REPO_ROOT / "scripts" / "drive-skill.sh"
@@ -179,9 +182,14 @@ def calls(tmp_path: Path) -> list[Call]:
     record = tmp_path / "calls.jsonl"
     if not record.exists():
         return []
-    return [
-        json.loads(line) for line in record.read_text(encoding="utf-8").splitlines()
-    ]
+    return json_lines(record.read_text(encoding="utf-8"))
+
+
+def json_lines(text: str) -> list[Call]:
+    """Parse the stand-in's call record, refusing one a writer has not finished."""
+    if text and not text.endswith("\n"):
+        raise ValueError("call record ends mid-line")
+    return [json.loads(line) for line in text.splitlines()]
 
 
 def after(args: list[str], flag: str) -> str:
@@ -643,11 +651,30 @@ def run_eval(
     )
 
 
-def wait_for(path: Path, within: float = 20) -> bool:
+def wait_for(path: Path, parse: Callable[[str], T], within: float = 20) -> T:
+    """Return parse(path's text) once the file exists and its writer has finished it.
+
+    A file can appear before its writer has finished it, so existence alone is no signal that it
+    is ready to read: wait until its whole text parses.
+    """
     deadline = time.monotonic() + within
-    while not path.exists() and time.monotonic() < deadline:
+    while True:
+        try:
+            return parse(path.read_text(encoding="utf-8"))
+        except (FileNotFoundError, ValueError) as error:
+            if time.monotonic() >= deadline:
+                raise AssertionError(
+                    f"{path} not complete after {within} s: {error}"
+                ) from error
         time.sleep(0.05)
-    return path.exists()
+
+
+def complete_calls(text: str) -> list[Call]:
+    """The call record once it holds at least one finished call."""
+    record = json_lines(text)
+    if not record:
+        raise ValueError("no call recorded yet")
+    return record
 
 
 def test_an_eval_run_outlives_the_shell_that_started_it(
@@ -659,9 +686,8 @@ def test_an_eval_run_outlives_the_shell_that_started_it(
     result = run_eval(env, out)
     # The launching shell has exited while the suite is still running.
     assert result.returncode == 0, result.stderr
-    assert wait_for(tmp_path / "calls.jsonl")
+    (call,) = wait_for(tmp_path / "calls.jsonl", complete_calls)
     assert not out.exists()
-    (call,) = calls(tmp_path)
     assert_isolated(call)
     assert call["sid"] != os.getsid(0)  # a session of its own: no hangup reaches it
     args = call["args"]
@@ -671,10 +697,9 @@ def test_an_eval_run_outlives_the_shell_that_started_it(
     assert Path(call["cwd"]).resolve() == target.parent.resolve()
     assert after(args, "--json") == str(out) and after(args, "--tag") == "define"
     release.touch()
-    assert wait_for(out)
-    assert json.loads(out.read_text(encoding="utf-8"))["claudeVersion"] == "9.9.9"
+    assert wait_for(out, json.loads)["claudeVersion"] == "9.9.9"
     exit_code = target.parent / "exit-code"
-    assert wait_for(exit_code) and exit_code.read_text().strip() == "0"
+    assert wait_for(exit_code, str.strip) == "0"
     log = (target.parent / "eval.log").read_text(encoding="utf-8")
     assert log.startswith(f"CLI: {VERSION}\n")
     assert str(out) in result.stdout and "eval.log" in result.stdout
@@ -1112,8 +1137,7 @@ def test_stopping_a_drive_stops_its_session(tmp_path: Path, toolbox: Path) -> No
         start_new_session=True,
     )
     try:
-        assert wait_for(tmp_path / "calls.jsonl")
-        (call,) = calls(tmp_path)
+        (call,) = wait_for(tmp_path / "calls.jsonl", complete_calls)
         os.killpg(running.pid, signal.SIGTERM)
         running.wait(timeout=10)
         deadline = time.monotonic() + 5

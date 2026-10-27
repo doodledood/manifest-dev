@@ -30,7 +30,7 @@ Line: 2.8 s on linux-x64-4cpu
 ### tests
 Run: `scripts/check.sh tests`
 Proves: every property test passes, run across every CPU.
-Line: 31.0 s on linux-x64-4cpu
+Line: 40.5 s on linux-x64-4cpu; raised: The suite grew from 597 tests on 2026-10-18 to 852, the 2026-10-18 suite still runs in 29-30 s on this kind of machine, so the old tests are no slower and the time is in the tests added since.
 
 ## Gotchas
 
