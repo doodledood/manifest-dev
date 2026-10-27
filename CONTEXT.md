@@ -193,8 +193,8 @@ _Avoid_: Round cap, round limit.
 A reusable capability that extends an agent's behavior.
 
 **Agent**:
-An isolated host execution context; manifest-dev uses the term only for host-provided contexts.
-_Avoid_: Subprocess, worker.
+An AI model doing work for a person — the "person or agent" a Ticket is written for, and the worker whose effort figure-out prices by what it does not control. A host may also run one in an isolated execution context, where a skill can do part of its work; manifest-dev starts one there only through what the host provides.
+_Avoid_: Subprocess, bot.
 
 **Babysit PR**:
 An author-side workflow that tends an existing pull request through CI, review threads, description sync, and mergeability without pressing merge.
