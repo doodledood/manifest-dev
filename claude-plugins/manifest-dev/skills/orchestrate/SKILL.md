@@ -179,7 +179,7 @@ check-in:
    Ticket where *Landing* step 4 says and passes the turn on. A Ticket without Auto is never landed
    here. When a person has merged its pull request, that merge is its landing unless the Ticket was
    reopened after it: record the landing reference and close the Ticket.
-4. **Gather the debt** — what a run found and did not fix, which its completion record lists — of
+4. **Gather the debt** — what a run found and could not fix on its pull request, which its completion record lists — of
    each Ticket that landed and whose completion record has no line saying its debt was gathered,
    when this orchestrator recorded its landing, or when its landing reference is older than the run
    timeout and no orchestrator gathered it. Check each item against the current code, group what

@@ -294,7 +294,7 @@ re-derivation of a load-bearing read that nobody will check, and `70` the classi
 stated constraint as required or chosen. `83` holds the offer to narrow a read once its remaining
 questions stop depending on each other.
 
-**Every recorded number in this file is stale as of 2026-10-25, including the 2026-10-25 baseline.**
+**Every recorded number in this file is stale as of 2026-10-28, including the 2026-10-25 baseline.**
 A change after that baseline removed drift from figure-out without adding or dropping a rule: the
 crux sentence now names parent before child first, the draft offer is its own bullet, the
 `--autonomous` paragraph and the log section left `SKILL.md` for the references that hold them,
@@ -332,6 +332,12 @@ free and estimates in agent sessions, the person's time and outside waits. It al
 agent controls. Every case reaches the spine line; the decision cases `06`, `26`, `29`, `61`–`66`
 and `86`–`88`, which load `DECISION.md`, reach both. `92` and `93` are new: each was driven once on
 the skill before this change and once after it, and neither is measured.
+
+A sixth change, on 2026-10-28, made the pre-existing issues a run meets build work on its own pull
+request. The *Bundled concerns* probe in `FEATURE.md` now sets those fixes apart from the experiments
+and unrelated improvements it still asks to separate. It reaches every case that loads
+`FEATURE.md`, `71` most, whose `separates-the-extras` grader still holds: a retry-library swap and a
+queue rename are improvements, not issues the work met.
 
 Every recorded number before that baseline was already stale as of 2026-10-21. The 2026-10-13 change edited
 figure-out's spine, its docs-mode and autonomous references, and its task files, the

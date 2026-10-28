@@ -418,9 +418,12 @@ through. It has a declared scope. When it finds existing violations that the run
 run reports them as Debt.
 
 ### Debt
-<!-- context: a4cc9cb5c9ce -->
-Debt is what a run found and did not fix. Examples are existing violations of a Lock, a comment
-about a workaround, and a new suppression. A product regression that the harness found is also Debt.
+<!-- context: 166140f55edf -->
+Debt is what a run found and could not fix in its pull request. The run fixes all other problems
+that it finds, also old problems and findings below the bar of a gate. Debt is only a problem that
+is a project of its own, for example Lock violations that need a decision about the architecture.
+Work that needs a person, for example an ask-first run, is also Debt. A new suppression is also
+Debt.
 
 A run names its Debt in its report, in a "Debt left" section of each pull request, and on its
 Ticket. A later run that changes the same code offers to fix it. `/orchestrate` also writes the Debt of

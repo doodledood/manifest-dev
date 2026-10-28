@@ -46,6 +46,12 @@ Proves: defect-class passes the `not loan["returned"]` condition as the repair o
 Check: read
 Workload: varies
 
+### pre-existing
+Run: `scripts/drive-skill.sh review-code verification/prompts/review-code-pre-existing.md`
+Proves: asked for it on a fresh full look, the report carries a *Pre-existing* section naming the division by zero in `unit_price`, which the change does not touch, with its location. The verdict and the summary counts rest only on findings inside the change, and the division by zero is not among them.
+Check: read
+Workload: varies
+
 ### follow-up
 Run: `scripts/drive-skill.sh review-code verification/prompts/review-code-follow-up.md --scaffold verification/fixtures/review-continuity`
 Proves: the report closes F1 because private notes no longer leak, retains F2 because the last line is still missing from the total, and reports the repair's conversion of identifier strings to integers. It does not add a finding about the unchanged sorting of line SKUs. The report names the prior reviewed state and current scope; broad contextual reading is allowed.

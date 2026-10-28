@@ -15,7 +15,7 @@ Solutions more complex than the problem demands:
 - **Premature abstraction**: Generalizing before concrete use cases justify it (factory for one implementation, plugin system for one plugin)
 - **Unnecessary configurability**: Options that never vary in practice
 - **Speculative generality**: Code for hypothetical future requirements ("what if we need to...")
-- **Missed structural simplification**: A concrete behavior-preserving reframing would delete whole branches, helper layers, modes, or concepts rather than merely polish them. Report only when the simpler shape is visible from the code, preserves behavior, and materially reduces what the reader must hold in their head. Count complexity the code needs only because of its current shape, not just excess. A reshaping that reaches beyond the change's scope is reported as a follow-up for the run's debt list, never applied inside the change.
+- **Missed structural simplification**: A concrete behavior-preserving reframing would delete whole branches, helper layers, modes, or concepts rather than merely polish them. Report only when the simpler shape is visible from the code, preserves behavior, and materially reduces what the reader must hold in their head. Count complexity the code needs only because of its current shape, not just excess. A reshaping that reaches beyond the change's scope is reported as a follow-up, not folded into the finding's fix: the run makes it on its pull request as build work, in a commit of its own, or lists it as debt when it is a project of its own.
 
 ### 2. Premature Optimization
 

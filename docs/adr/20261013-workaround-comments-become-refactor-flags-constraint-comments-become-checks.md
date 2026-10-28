@@ -1,7 +1,7 @@
 # ADR: A workaround comment in the project's own code becomes a refactor flag; a constraint comment becomes an offer to encode it
 
 ## Status
-Accepted
+Accepted; amended by 20261028-every-pull-request-fixes-what-its-work-meets-and-verification-converges: the run reshapes a flagged workaround and deletes its comment, and encodes a claimed constraint, reporting either as debt only when it is gigantic
 
 ## Area
 Code review
@@ -33,7 +33,7 @@ Agents copy what they find, including workarounds that a comment explains, and t
 - Telling a comment about an external constraint from one about the project's own code takes judgment.
 
 ## Enforced by
-not yet — a review-code behavior check must show that the prose-value review reports a workaround as debt while retaining its explanation. The former define case `d19` asked definition to perform an execution-time review and was retired before measurement; telling an external constraint from the project's own stays judgment.
+not yet — a behavior check must show that the prose-value review flags a workaround without deleting its explanation, and that `/do` then reshapes it and deletes the comment, reporting it as debt only when the reshape is gigantic. The former define case `d19` asked definition to perform an execution-time review and was retired before measurement; telling an external constraint from the project's own stays judgment.
 
 ## Source
 - Session: figure-out investigation of steering agents toward maintainable first versions.

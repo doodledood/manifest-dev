@@ -94,8 +94,8 @@ The harness is the project's choice: where that section names the project's own 
 verify through the means it names, and recommend no harness. Where the section records no choice and
 no harness is on disk, verify through what the project keeps, and recommend a harness in the report.
 Either way add any check the change needs in the project's own form and build no harness. In every project, harness or
-not, repair a check the change touches that is broken or not fit to trust in its own form, or
-report it as debt. A harness belongs to a project:
+not, repair a check the work meets that is broken or not fit to trust, in its own form; report it
+as debt only when the repair is gigantic (*What holds for every gate*). A harness belongs to a project:
 a repository or working folder
 holding, or about to hold, work later sessions will change — a new one the user is starting
 counts — which this work concerns. A chat with no workspace, a home or scratch folder, a folder
@@ -123,11 +123,42 @@ introduced or exposed by the changes since that evaluation; a deterministic gate
 Give an invoked evaluator that reporting scope, the assessed state, prior findings, verified
 repairs, and the intervening changes. Recover missing context rather than silently requesting
 another full look. Contextual reading may be wide; touching an old line alone does not make an
-old issue new. A fresh standalone review keeps the scope its caller requested. A finding below
-a gate's bar, and a pre-existing issue unrelated to the change, is recorded rather than
-repaired, since every repair is a delta each judgment gate re-reads; `/done` and `/escalate`
-surface them for the user. A bar never moves down on the executor's judgment, and a summary
-claim is not evidence.
+old issue new. A fresh standalone review keeps the scope its caller requested. A bar never moves
+down on the executor's judgment, and a summary claim is not evidence.
+
+Every pull request leaves the repository better. A pre-existing issue the work meets, related to
+the change or not, and a finding below a gate's bar are build work, never a verdict: neither fails
+a gate nor starts a new full look. They come from three places only: the path of the change the
+Manifest asks for — the checks it runs and the code it changes, calls into or reads to do its job;
+the *Pre-existing* list `review-code` returns when asked, which you ask for on each judgment gate's
+first full look; and review feedback on the pull request (`references/EXTERNAL_REVIEW.md`). What
+fixing one of them, or repairing a finding, runs into joins only when it blocks that fix or a check
+fails, so fixes do not chain. Fix the pre-existing issues; apply the below-bar findings of a first
+full look that improve the work, and dismiss the rest with a reason. What the path brings is fixed
+as part of the build. What first full looks and review bring is fixed in a batch, not one at a
+time; then each judgment gate whose subject the batch changed takes one continued look, which
+reports only failures the batch introduced or exposed. A continued look lists no pre-existing
+issues, and a below-bar finding it reports is left, neither applied nor handed over: it re-samples
+taste on a repair, and chasing it is a loop that never settles. Each pre-existing fix lands as its
+own commit, and the pull request lists it as fixed on the way.
+
+Only a gigantic issue stays out: one whose fix is a project of its own, needing its own definition
+of done — a design decision someone should weigh, a migration or rollout beyond this repository's
+code, or a review that would bury the change the pull request exists for. Size, relatedness and
+convenience do not make an issue gigantic. Gigantic: replacing a framework across the codebase;
+redesigning a module the change only passes through; migrating live data; lock hits across code
+other teams own that need an architecture decision. Not gigantic: a failing or unrunnable test, a
+broken harness script, a stale doc line, a bug or type hole in a helper the change calls, a
+drifting recipe, a workaround whose reshape is local, a few dozen mechanical lock hits. Report a
+gigantic issue as debt with why it is a project of its own (`references/HARVEST.md`). An issue
+that needs access, authority or a decision a person retains is a blocker, not debt.
+
+Before reporting completion, every check the project keeps across the whole tree passes — lint,
+types, tests, build — whether or not the change touched what fails. A check that cannot run is a
+failure of the product or its harness: fix it. Never reach green by removing, skipping or loosening
+a test, unless the test is useless or tautological; then the pull request description names it and
+why. A failing check whose fix is gigantic blocks completion: escalate it as a blocker, never report
+the run as done.
 
 When external review feedback arrives, directly or through `check-pr`, load
 `references/EXTERNAL_REVIEW.md` before acting on it.

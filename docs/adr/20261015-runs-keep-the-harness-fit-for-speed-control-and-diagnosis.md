@@ -1,7 +1,7 @@
 # ADR: Runs keep the harness fit to trust for speed, control and diagnosis, through one list
 
 ## Status
-Accepted — amended by 20261019-a-check-counts-only-after-it-was-seen-to-fail: *Fit to trust* gains a job, that the check was seen to fail on a scratch break of what it proves
+Accepted — amended by 20261019-a-check-counts-only-after-it-was-seen-to-fail: *Fit to trust* gains a job, that the check was seen to fail on a scratch break of what it proves; amended by 20261028-every-pull-request-fixes-what-its-work-meets-and-verification-converges: a check the work meets that is not fit to trust is repaired, and only a gigantic repair is reported as debt
 
 ## Area
 define / do

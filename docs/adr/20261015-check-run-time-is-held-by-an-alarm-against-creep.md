@@ -1,7 +1,7 @@
 # ADR: A check's run time is held by an alarm against creep, set from measurement and moved only on purpose
 
 ## Status
-Accepted — amended by 20261018-the-harness-commits-no-evidence-and-time-lines-live-in-recipes: a line is a number in its recipe that only a run changing that check moves, so it no longer lowers itself
+Accepted — amended by 20261018-the-harness-commits-no-evidence-and-time-lines-live-in-recipes: a line is a number in its recipe that only a run changing that check moves, so it no longer lowers itself; amended by 20261028-every-pull-request-fixes-what-its-work-meets-and-verification-converges: a crossing whose fix lies in shared code the change does not touch is still paid down, and a debt Ticket freezes it only when the fix is gigantic
 
 ## Area
 define / do

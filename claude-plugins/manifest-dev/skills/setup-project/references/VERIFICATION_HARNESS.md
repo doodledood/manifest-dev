@@ -206,8 +206,9 @@ It needs no CI.
 
 A check can exist and still not be worth trusting. These jobs apply to whatever checks a project
 keeps, in any form: a harness's recipes, a test suite, a script, a checklist. A run judges them
-only for the checks its own work touches, repairs what fails there within its scope in the check's
-own form, and reports the rest as debt; a harness grows with the work, never ahead of it. Judge a
+only for the checks its own work touches, repairs what fails there in the check's own form, and
+reports as debt only a repair that is a project of its own; a harness grows with the work, never
+ahead of it. Judge a
 check by the jobs it has to do there, never by how this file would have built it:
 
 - **A cold proof run passes** — one scenario, run from nothing, leaves evidence that is still

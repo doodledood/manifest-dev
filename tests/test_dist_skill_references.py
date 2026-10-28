@@ -747,6 +747,35 @@ def test_do_log_prompts_preserve_journal_boundaries() -> None:
         assert "verifier-agent lookup data" not in text, path
 
 
+# Holds docs/adr/20261028-every-pull-request-fixes-what-its-work-meets-and-verification-converges.md:
+# pre-existing issues and below-bar findings are fixed as build work, and verification still
+# converges because neither can fail a verdict, fixes do not chain, and no continued look feeds
+# them back in.
+CONVERGENCE = {
+    "do/SKILL.md": (
+        "neither fails a gate nor starts a new full look",
+        "joins only when it blocks that fix or a check fails, so fixes do not chain",
+        "A continued look lists no pre-existing issues, and a below-bar finding it reports is"
+        " left, neither applied nor handed over",
+    ),
+    "review-code/SKILL.md": (
+        "They are not findings: they never count toward the verdict",
+        "Leave the section out unless asked, and on every follow-up even when asked",
+    ),
+}
+
+
+def test_fixing_what_the_work_meets_keeps_verification_converging() -> None:
+    for skills in (
+        ROOT / "claude-plugins/manifest-dev/skills",
+        DIST / "codex/plugins/manifest-dev/skills",
+    ):
+        for name, clauses in CONVERGENCE.items():
+            text = re.sub(r"\s+", " ", (skills / name).read_text(encoding="utf-8"))
+            for clause in clauses:
+                assert clause in text, f"{skills / name} lost: {clause!r}"
+
+
 def test_define_task_gates_do_not_select_evaluator_topology() -> None:
     task_roots = [
         ROOT / "claude-plugins/manifest-dev/skills/define/tasks",

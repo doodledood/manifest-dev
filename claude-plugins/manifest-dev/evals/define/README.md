@@ -101,8 +101,8 @@ A second 2026-10-25 change restated define's own text as current state without c
 asks: the unattended-amendment rules moved into *Amendment*, the `User's call:` label into *Write
 the current state*, rules stated twice now point to one statement, and research notes nothing
 loaded left the skill. It reaches every case that writes a spec, `d09` and `d17` most, and
-changes no case or grader. **Every recorded number in this file, the 2026-10-25 baseline's included, is stale as
-of 2026-10-25.**
+changes no case or grader. Every recorded number in this file, the 2026-10-25 baseline's included, was
+already stale as of 2026-10-25.
 
 A 2026-10-26 change made every report list a decision record the run reopened before the user's
 calls. It reaches `d17` most, whose `flags-the-users-call` grader reads that ordering, and changes
@@ -111,6 +111,13 @@ no case or grader.
 Another 2026-10-26 change added to define's Appetite line that Appetite never counts effort an agent
 controls, such as building and testing. It reaches every case that writes an Appetite, and `d28`
 is new: it was driven once on the skill before this change and once after it, and is unmeasured.
+
+A 2026-10-28 change made the pre-existing issues a run meets build work on its own pull request:
+define's *One concern per change* Default now says such a fix rides the same pull request as its own
+commit unless it is a project of its own, and the *Debt left* Default lists only what could not be
+fixed, plus the fixes made on the way. It reaches every case that loads `FEATURE.md` or
+`PR_LIFECYCLE.md`, and changes no case or grader. **Every recorded number in this file is stale as
+of 2026-10-28.**
 
 The review runs in a fresh context, which this suite's sessions cannot start, so define reviews
 its own Manifest here and says the review was self-graded. No case holds the per-gate wrong-result

@@ -56,6 +56,8 @@ Stay within scope — never audit the whole project unless explicitly asked. Ski
 
 **Reading scope ≠ reporting scope.** The diff bounds what you *report* (defaults: only issues introduced or exposed by the change). It does not bound what you *read* — trace mechanisms wherever they lead (existing callers, shared state, upstream writers) so boundary issues between changed and unchanged code stay visible. Read widely; report narrowly. Within the resolved scope, examine every file against every category the loaded reference lists — do not cut corners or skip areas — and report only the findings that clear its bar for reporting (its actionability filter, or for defect-class its acceptance rules).
 
+**The Pre-existing list, only when asked.** When the caller asks for it on a fresh full look, add a `## Pre-existing` section: issues the loaded dimension owns that you noticed in code you read for the change, that the change neither introduced nor exposed, and that clear the dimension's bar for reporting all the same — a stated trigger on a defect-finder, a stated cost for a Medium on an advisory dimension. The caller fixes them on its pull request. They are not findings: they never count toward the verdict or the summary counts. Leave the section out unless asked, and on every follow-up even when asked: a follow-up's scope stays outstanding findings and what the intervening changes introduced or exposed.
+
 This skill is **read-only**: never modify repository files; write only to `/tmp/` for analysis artifacts. The author implements fixes from your report.
 
 ## Severity ladder (shared)
@@ -88,6 +90,9 @@ Each dimension's reference refines these with domain-specific calibration — de
 - **Trigger**: [the condition under which the defect manifests — the concrete input, state, or sequence that produces the failure, or for a static mismatch such as a contract or signature divergence, the call or consumer path that reaches it — required on defect-finder dimensions]
 - **Impact**: [what it breaks / why it matters — on advisory dimensions a Medium-or-higher finding must name the concrete cost that earns that grade: the future change it makes harder, the reader or operator task it defeats, or the condition under which behavior degrades]
 - **Recommended fix**: [specific change]
+
+## Pre-existing (only when the caller asked, on a fresh full look)
+- [title] — `file:line` — [the issue, with its trigger or cost] — [recommended fix]
 
 ## Summary
 - Critical: N | High: N | Medium: N | Low: N
