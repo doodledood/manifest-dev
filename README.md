@@ -41,13 +41,13 @@ Ask about the bug you keep putting off. When a term or a step is unclear, ask `/
 
 `/auto` runs all three steps in one go.
 
-**What you review: a pull request that shows the change working.** When the work ships as a pull request, its top reads in about a minute. It says what changed and why, shows the change working with screenshots or command output, and lists the decisions it made for you and the debt it left — what it found and didn't fix.
+**What you review: a pull request that shows the change working.** When the work ships as a pull request, its top reads in about a minute. It says what changed and why, and shows the change working with screenshots or command output. It lists the decisions it made for you and the debt it left: what it could not fix there, such as a problem that is a project of its own or a paid check it did not run. The description also lists the old problems the run fixed on the way.
 
 ## A project that remembers
 
 `/setup-project`, run once, gives your project a **North Star**: one file that says what the project is for and for whom, how it measures progress, and what it never does. The choices made along the way go in decision records. Every session reads it before it decides what's worth doing.
 
-It also keeps the project's words, decisions, and checks: a glossary of its terms, a record of each decision and why it was made, and one command that checks the project still works. That command is recommended, not required: a project that already verifies its own way keeps doing so. Every run keeps these current where its work touches them. It also turns a mistake someone caught into a check that catches it next time, and offers the debt it left to the next change through that code.
+It also keeps the project's words, decisions, and checks: a glossary of its terms, a record of each decision and why it was made, and one command that checks the project still works. That command is recommended, not required: a project that already verifies its own way keeps doing so. Every run keeps these current where its work touches them. It also turns a mistake someone caught into a check that catches it next time. It fixes the old problems its work runs into in the same pull request; only one that is a project of its own is left, and offered to the next change through that code.
 
 ## A shared queue
 

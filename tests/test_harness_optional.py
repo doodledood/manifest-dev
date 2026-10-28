@@ -53,7 +53,7 @@ CONDITIONS = {
 # so dropping repair for checks outside a harness reopens the class the record closed.
 REPAIR = {
     "define/SKILL.md": "Building is the choice's; keeping sound is every run's",
-    "do/SKILL.md": "repair a check the change touches that is broken or not fit to trust in its own form",
+    "do/SKILL.md": "repair a check the work meets that is broken or not fit to trust, in its own form",
     "figure-out/tasks/CODING.md": (
         "A check of theirs that is broken or not fit to trust is repaired as part of the work, in "
         "its own form"

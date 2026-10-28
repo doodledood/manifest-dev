@@ -36,5 +36,7 @@ Line: 40.5 s on linux-x64-4cpu; raised: The suite grew from 597 tests on 2026-10
 
 - It covers the whole tree, since the tests read every shipped Markdown file, so `affected`
   selects it for every change.
-- The suite needs the virtual environment active and `npm --prefix scripts ci` done;
-  `scripts/setup.sh` does both. A missing tool fails loudly rather than skipping its check.
+- The suite needs the virtual environment at `.venv` and `npm --prefix scripts ci` done;
+  `scripts/setup.sh` does both. `scripts/check.sh` runs the tools from `.venv` whether or not it is
+  active, and stops with a pointer to `scripts/setup.sh` when it is missing. A missing tool fails
+  loudly rather than skipping its check.

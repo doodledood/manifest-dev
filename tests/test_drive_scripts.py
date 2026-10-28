@@ -1097,19 +1097,21 @@ def test_a_failed_scaffold_is_unreachable_and_shows_its_log(
     assert calls(tmp_path) == []
 
 
-@pytest.mark.skipif(os.geteuid() == 0, reason="root ignores directory permissions")
 def test_a_drive_fails_fast_when_it_cannot_create_evidence(
     tmp_path: Path, toolbox: Path
 ) -> None:
     # Only "another drive holds this directory" may be retried; any other failure stops loudly.
-    store = tmp_path / "store"
-    (store / "figure-out").mkdir(parents=True)
-    (store / "figure-out").chmod(0o555)
-    try:
-        result = drive(setup(tmp_path, toolbox))
-    finally:
-        (store / "figure-out").chmod(0o755)
-    assert result.returncode != 0 and "cannot create" in result.stderr, result.stderr
+    # A dangling link where the evidence directory goes makes `mkdir` fail with nothing there,
+    # even for root, which ignores read-only directory permissions.
+    feature = tmp_path / "store" / "figure-out"
+    feature.mkdir(parents=True)
+    (feature / STAMP).symlink_to(tmp_path / "missing")
+    result = drive(setup(tmp_path, toolbox))
+    assert result.returncode != 0, result.stderr
+    assert f"cannot create {feature / STAMP}" in result.stderr, result.stderr
+    assert not (
+        feature / f"{STAMP}-2"
+    ).exists(), "a failure other than a held directory retried"
 
 
 def test_a_walk_passes_on_a_failed_session_and_says_so(

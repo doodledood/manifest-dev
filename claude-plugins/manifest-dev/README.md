@@ -39,7 +39,7 @@ checks and approvals still have to clear; a local rejection does not make a pull
 
 Before it builds, `/do` points the host's goal-setting or continuation capability at the Manifest, so an interrupted run resumes against the same file. Where the host has neither, it prints the same completion contract for you to apply.
 
-It finishes through `done`, which reports the work, or `escalate`, which hands unresolved blockers to you once no useful independent work remains. Neither is invoked by hand. When the work ships as a pull request, its top reads in about a minute: what changed and why, the change shown working, the decisions made for you, and the debt left — what the run found and didn't fix.
+It finishes through `done`, which reports the work, or `escalate`, which hands unresolved blockers to you once no useful independent work remains. Neither is invoked by hand. When the work ships as a pull request, its top reads in about a minute: what changed and why, the change shown working, the decisions made for you, and the debt left — what the run could not fix there, such as a problem that is a project of its own or a paid check it did not run. The description also lists the old problems the run fixed on the way.
 
 ## A project that remembers
 
@@ -55,7 +55,7 @@ The same commands keep the codebase easier to change, with nothing extra to run:
 
 - **Design before code** — `/figure-out` sketches the shape of a change, compares a second one, and screens both for patterns the next agent would copy; `/define` puts a behavior-preserving restructuring first when the area resists the change.
 - **Corrections become checks** — `/do` turns a caught mistake into a scoped type, lint, or test, and the decision record names it.
-- **Debt stays visible** — what a run leaves unfixed is listed when it finishes and in the pull request; the next change on that path is offered the fix.
+- **Debt stays visible** — a run fixes the old problems it meets in its own pull request; what it cannot — a project of its own, or something that needs you — is listed when it finishes and in the pull request, and the next change on that path is offered the fix.
 - **Earlier work is not lost** — sessions on a repository start from what earlier ones ruled and found, and runs keep the glossary, decisions, and checks current where their work touches them.
 
 ## A shared queue

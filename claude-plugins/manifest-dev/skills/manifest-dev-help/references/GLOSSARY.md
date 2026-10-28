@@ -393,7 +393,7 @@ When nobody can agree, for example in an unattended run, the run leaves the reci
 the run that it owes in its report. The project can change this rule.
 
 ### Fit to Trust
-<!-- context: 5f2494aca4e7 -->
+<!-- context: a0cfb56d9721 -->
 Fit to Trust says if you can rely on a check for what a change touches. The check can be a recipe
 in a harness, or a test, a script or a checklist step of the project. The jobs that the check does
 decide it, not the parts that it has. The jobs are:
@@ -408,19 +408,29 @@ decide it, not the parts that it has. The jobs are:
 - The check failed when you made the thing that it checks wrong on purpose, and then you removed
   that change.
 
-When a check that the change touches is not fit to trust, the run repairs it first.
+When a check that the work meets is not fit to trust, the run repairs it. Only a repair that is a
+project of its own stays as Debt.
 
 ### Lock
-<!-- context: ad749d95a942 -->
+<!-- context: 4c0dec5d5053 -->
 A Lock is a check that a run adds after a correction, so that the same kind of mistake fails for
 each later contributor. It can be a type, a lint rule, a test, or one place that all callers go
-through. It has a declared scope. When it finds existing violations that the run does not fix, the
-run reports them as Debt.
+through. It has a declared scope. The run fixes the existing violations that it finds. It reports them as
+Debt only when the fix is a project of its own.
 
 ### Debt
-<!-- context: a4cc9cb5c9ce -->
-Debt is what a run found and did not fix. Examples are existing violations of a Lock, a comment
-about a workaround, and a new suppression. A product regression that the harness found is also Debt.
+<!-- context: ef42b59732d0 -->
+Debt is what a run found and could not fix in its pull request. The run fixes the old problems
+that it finds. Each review gives findings, and some are less serious than the limit of the gate.
+The run uses those findings or rejects them with a reason. The run does not keep them as Debt.
+
+Debt has these types:
+
+- A problem that is a project of its own, for example Lock violations that need a decision about
+  the architecture.
+- Work that needs a person, for example an ask-first run.
+- A new suppression.
+- A Time Line that is held at its current level by a Debt Ticket.
 
 A run names its Debt in its report, in a "Debt left" section of each pull request, and on its
 Ticket. A later run that changes the same code offers to fix it. `/orchestrate` also writes the Debt of

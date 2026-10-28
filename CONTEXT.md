@@ -122,7 +122,7 @@ The mark on a Recipe whose run costs something a person should weigh — money o
 _Avoid_: Paid, model-session, slow.
 
 **Fit to Trust**:
-Whether a check a project keeps — a Verification Harness recipe, or a test, script or checklist step in the project's own form — can be relied on for what a change touches, judged by the jobs it does — a cold proof run of one scenario passes and leaves evidence that survives cleanup, health is checkable, runs are isolated, PASS means the real path, touched checks are fast enough (none over its time line without a reason), what the change touches is controllable through the harness or the project's own scripts, a failure explains itself, and it was seen to fail on a scratch break of what it proves — never by whether it has every part or the shipped tooling. A touched check that fails a job is repaired within scope in its own form.
+Whether a check a project keeps — a Verification Harness recipe, or a test, script or checklist step in the project's own form — can be relied on for what a change touches, judged by the jobs it does — a cold proof run of one scenario passes and leaves evidence that survives cleanup, health is checkable, runs are isolated, PASS means the real path, touched checks are fast enough (none over its time line without a reason), what the change touches is controllable through the harness or the project's own scripts, a failure explains itself, and it was seen to fail on a scratch break of what it proves — never by whether it has every part or the shipped tooling. A check the work meets that fails a job is repaired in its own form; only a repair that is a project of its own is left as debt.
 _Avoid_: Complete, conformant, healthy.
 
 **Surfaces Version**:
@@ -130,11 +130,11 @@ The integer, listed in setup-project's `CHANGES.md`, that a project's context fi
 _Avoid_: Plugin version, setup version, template version.
 
 **Lock**:
-A check installed from a correction so the corrected class of mistake fails for every later contributor — a type or structure, a lint or architecture test, an invariant test, or one owning site — with a declared scope; its repository-wide hits that a run leaves unfixed are reported as debt.
+A check installed from a correction so the corrected class of mistake fails for every later contributor — a type or structure, a lint or architecture test, an invariant test, or one owning site — with a declared scope; a run fixes its repository-wide hits, and reports as debt only hits whose fix is a project of its own.
 _Avoid_: Rule (that is prose), guard, concurrency lock.
 
 **Debt**:
-What a run found and did not fix: unfixed lock hits, refactor flags from workaround comments, constraint comments awaiting encoding, new suppressions, reshapes outside the change's scope, and product regressions the verification harness exposed. A run names it in its completion report, in the "Debt left" section of every pull request it opens, and on its Ticket. A later run whose work reaches the same area offers to fold it in, and `orchestrate` tickets up the debt of the runs it lands.
+What a run found and could not fix on its pull request. That is an issue whose fix is a project of its own, such as lock hits that need an architecture decision or a migration beyond the repository's code; what needs a person, such as an ask-first run owed; a new suppression; and a time-line overshoot frozen under a debt Ticket. A run fixes the pre-existing issues it meets, related to the change or not. It applies or dismisses the findings below a gate's bar. So it leaves no debt it could have paid. A run names its debt in its completion report, in the "Debt left" section of every pull request it opens, and on its Ticket. A later run whose work reaches the same area offers to fold it in, and `orchestrate` tickets up the debt of the runs it lands.
 _Avoid_: Tech debt (too broad), TODO, backlog.
 
 **Seed**:

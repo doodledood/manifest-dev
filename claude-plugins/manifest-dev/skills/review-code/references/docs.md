@@ -17,7 +17,7 @@ That list is guidance, not exhaustive. If you identify a documentation accuracy 
 Before reporting a documentation issue, it must pass ALL of these criteria. **If a finding fails ANY criterion, drop it entirely** — except that criteria 3 and 4 grade a finding that fails them Low rather than dropping it.
 
 1. **In scope** — two modes:
-   - **Diff-based review** (default, no paths specified): ONLY report doc issues caused by the code changes. Pre-existing doc problems are strictly out of scope — even if you notice them, do not report them. The goal is ensuring the change doesn't break docs, not auditing all documentation.
+   - **Diff-based review** (default, no paths specified): ONLY report doc issues caused by the code changes. Pre-existing doc problems are strictly out of scope as findings — even if you notice them, do not report them as findings (a caller may ask for them in a separate list; `SKILL.md` → *The Pre-existing list, only when asked*). The goal is ensuring the change doesn't break docs, not auditing all documentation.
    - **Explicit path review** (caller specified files/directories): audit everything in scope. Pre-existing inaccuracies are valid findings since a full review of those paths was requested.
 2. **Actually incorrect or missing** — "could add more detail" is not a finding. "This parameter is documented as optional but the code requires it" is a finding.
 3. **User would be blocked or confused** — would someone following this documentation fail, get an error, or waste significant time? If yes, report it. If they'd figure it out, grade it Low.

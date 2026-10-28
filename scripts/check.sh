@@ -6,6 +6,15 @@
 set -euo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
 
+# The tools come from the project's virtual environment, never from whatever else is on PATH: a
+# global mypy cannot see pytest's types and reports dozens of false errors, and a global ruff or
+# black may be another version.
+if [ ! -x .venv/bin/python ]; then
+    echo "check.sh: no virtual environment at .venv; run scripts/setup.sh first" >&2
+    exit 2
+fi
+PATH="$PWD/.venv/bin:$PATH"
+
 fix=false
 groups=()
 for arg in "$@"; do
@@ -34,7 +43,7 @@ for group in "${groups[@]}"; do
             ;;
         tests)
             # Runs across every CPU: pyproject.toml passes `-n auto` (pytest-xdist).
-            python3 -m pytest tests/
+            python -m pytest tests/
             ;;
     esac
 done

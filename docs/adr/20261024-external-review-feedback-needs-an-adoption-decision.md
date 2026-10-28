@@ -1,7 +1,7 @@
 # ADR: External review feedback needs an adoption decision
 
 ## Status
-Accepted
+Accepted; amended by 20261028-every-pull-request-fixes-what-its-work-meets-and-verification-converges: a real issue the review finds, in the change or pre-existing, is fixed unless gigantic; a below-bar suggestion on the change as first reviewed is applied when it improves the work, and one on a repair is declined
 
 ## Area
 PR lifecycle

@@ -13,7 +13,7 @@ Executes a Manifest with full autonomy until every Acceptance Criterion and Glob
 - `/do <manifest-path> [--no-log]`.
 - Phrases its description matches: "execute the manifest", "run the plan", "implement it".
 - `auto` after define; `babysit-pr` after its Manifest; `run-ticket` through `auto`.
-- It changes the Manifest only through define, turns corrections into locks and lists the debt it leaves, builds or repairs the project's verification harness and the recipes the Manifest touches (found with `verify affected`, a crossed time line paid down or frozen under a debt Ticket), and arms a goal or prints a goal block so the run survives interruption.
+- It changes the Manifest only through define, turns corrections into locks, fixes on its pull request the pre-existing issues its work meets and lists as debt only those whose fix is a project of its own, keeps every whole-tree check passing, builds or repairs the project's verification harness and the recipes the Manifest touches (found with `verify affected`, a crossed time line paid down or frozen under a debt Ticket), and arms a goal or prints a goal block so the run survives interruption.
 
 ## Scenarios
 
@@ -49,13 +49,13 @@ Workload: varies
 
 ### external-feedback
 Run: `scripts/drive-skill.sh do verification/prompts/do-external-feedback.md --scaffold verification/fixtures/pr-feedback --max-turns 120`
-Proves: new external evidence reopens the previously passing export judgment and repairs the omitted last line, so the supplied order totals 17. The caller reuses the supported private-note and dict-literal dispositions, assesses the new claims, and declines the false VAT claim, currency feature, and optional naming changes with reasons. Its source diff fixes the total without appeasement edits. Local outbound records handle the current thread IDs, leave the human thread open, and do not merge. Required approval and unapplied remote actions remain pending or blocked, never PASS from local disposition alone.
+Proves: new external evidence reopens the previously passing export judgment and repairs the omitted last line, so the supplied order totals 17. The caller reuses the supported private-note and dict-literal dispositions, assesses the new claims, and declines with reasons the false VAT claim, the currency feature (new work), and the optional naming changes, which show no benefit to the work, as the journal's earlier rename decline found. Its source diff fixes the total without appeasement edits. Local outbound records handle the current thread IDs, leave the human thread open, and do not merge. Required approval and unapplied remote actions remain pending or blocked, never PASS from local disposition alone.
 Check: read
 Workload: varies
 
 ### distinct-nits
 Run: `scripts/drive-skill.sh do verification/prompts/do-distinct-nits.md --scaffold verification/fixtures/pr-nits --max-turns 120`
-Proves: both advances assess their different optional suggestions, decline them with reasons, and preserve `order_export.py` without a code commit or push. The second advance retains the first one's journal across the new head. Each current thread receives its own appropriate outbound handling; the outstanding required approval stays pending. Inspect both saved diffs, outbound records, Git history, and the appended journal. The marker-only `Fixture: advance review wave` commit is injected setup, not an appeasement commit; any subject-made code commit is still a failure.
+Proves: both advances assess their different optional suggestions and decline them with reasons — the first, a rename, shows no benefit to the work, as the journal's earlier rename decline and `contract.md`'s naming clause find; the second, a helper extraction, shows none either, since `contract.md` prescribes no helper count and the journal already declined restyling the literal — and preserve `order_export.py` without a code commit or push. The second advance retains the first one's journal across the new head. Each current thread receives its own appropriate outbound handling; the outstanding required approval stays pending. Inspect both saved diffs, outbound records, Git history, and the appended journal. The marker-only `Fixture: advance review wave` commit is injected setup, not an appeasement commit; any subject-made code commit is still a failure.
 Check: read
 Workload: varies
 

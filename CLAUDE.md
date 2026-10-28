@@ -301,8 +301,14 @@ In any domain — code, process, tooling, docs, prompts — prefer the design th
 - For e2e or integration work, write the verification script inline when feasible.
 - Say plainly what you did not verify.
 
+### Every pull request leaves the repository better
+
+- Fix the debt on the pull request itself: what the work leaves behind or its review finds, not flagged for later. Pre-existing issues the work runs into get fixed there too, related or not. Only a gigantic one, a project of its own, stays out: ticket or report it with the reason.
+- Nothing merges until everything passes, tests included. A test that cannot run is a failure of the app or its harness: fix the harness.
+- Fix failures for real. Never reach green by removing, skipping or loosening a test, unless the test is useless or tautological; then say so in the description.
+
 ### Git and pull requests
 
 - Conventional commits: `feat:`, `fix:`, `chore:`, `docs:`, `refactor:`, `test:`. Branches `feature/*`, `fix/*` unless the project says otherwise.
-- Prefer several coherent medium PRs to one monolith when the work naturally splits. Slice vertically — one feature stage end-to-end, handler + service + entity + tests — not horizontally, where each slice carries no logic of its own and only makes sense combined. Small mechanical changes (renames, config, migrations, boilerplate) ride along with the logic that needs them; a sweeping mechanical refactor can still earn its own PR for reviewability. Don't grow a PR past its natural scope — split instead.
+- Prefer several coherent medium PRs to one monolith when the work naturally splits. Slice vertically — one feature stage end-to-end, handler + service + entity + tests — not horizontally, where each slice carries no logic of its own and only makes sense combined. Small mechanical changes (renames, config, migrations, boilerplate) ride along with the logic that needs them; a sweeping mechanical refactor can still earn its own PR for reviewability. Don't grow a PR past its natural scope — split instead. Its debt and the non-gigantic pre-existing issues it runs into are within that scope, as *Every pull request leaves the repository better* says.
 - Open PRs substantially complete. The title names the real scope — the workflow and modules touched, not the immediate symptom. The description leads with what the change does and why it needed this design — the cross-module flow, the non-obvious decisions, the invariants preserved — not a file-by-file list.

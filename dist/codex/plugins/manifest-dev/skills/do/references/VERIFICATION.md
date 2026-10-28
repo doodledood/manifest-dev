@@ -19,13 +19,16 @@ its own `--help`.
   describes; otherwise update it, leave it unrun, and name the run it owes in the report. A
   change to a prompt that leaves its measured eval cases unrun marks them `stale`; unmeasured
   cases stay `unmeasured`.
-- **Drift:** when a run fails because the recipe is wrong about the product, repair the recipe
-  within scope, and remove its `Drift (…)` line when the repair lands. When a recipe the change
-  does not touch is found drifting, add a dated `Drift (YYYY-MM-DD): <what differs>` line to it,
-  and leave the repair to the next run that touches it.
+- **Drift:** when a run fails because the recipe is wrong about the product, repair the recipe,
+  and remove its `Drift (…)` line when the repair lands. A recipe the change does not touch that
+  the run finds drifting is repaired too, in a commit of its own; only where that repair is
+  gigantic (`../SKILL.md` → *What holds for every gate*) does it get a dated
+  `Drift (YYYY-MM-DD): <what differs>` line, reported as debt — while no gate and no whole-tree
+  check rests on it; otherwise it is a blocker.
 - **Unfit harness:** when the harness is not fit to trust for what the work touches
-  (`../../setup-project/references/VERIFICATION_HARNESS.md` → *Fit to trust*), repair it within
-  scope, and report the rest as debt.
+  (`../../setup-project/references/VERIFICATION_HARNESS.md` → *Fit to trust*), repair it. A
+  gigantic repair is debt while the check still runs and passes, and a blocker once a check a gate
+  or the whole tree rests on fails or cannot run (`../SKILL.md` → *What holds for every gate*).
 - **Time lines:** a line is written into its recipe only by the change that changes that check.
   A fixed-workload scenario the change adds gets its first line from a passing run (`verify
   line`), and a change that made a check faster keeps the gain the same way; no other run moves a
@@ -34,14 +37,15 @@ its own `--help`.
   keeps the old line, and the lost work is a finding.
 - **Over its line:** when a check the work touches is over its time line, find where the time
   went from the runner's own timings. Pay it down before the run is done when growth did not earn
-  the time — it came from what the change added, such as a slow new test or a sleep — or when the
-  fix lies in code the change already touches. When the fix needs shared code the change does not
-  touch, or a broad refactor, open or join one debt Ticket, freeze the overshoot with it, and
-  report it as debt. Raise the line only when the new time is in new tests for new behavior, the
+  the time — a slow new test, a sleep, waste in shared code alike. When that fix is gigantic — a
+  broad refactor of shared code, say — open or join one debt Ticket, freeze the overshoot with it,
+  and report it as debt. Raise the line only when the new time is in new tests for new behavior, the
   existing tests are no slower, and no cheap waste remains, with that reason on the raise and one
   line in the pull request.
 - **A stand-in is not the target:** where a check runs on a stand-in for where the work will run —
   a cloud container that already has tools a user's machine lacks, a fixture in place of the real
   service — the report names, as unverified, what the stand-in provided that the target will not.
-- **Never weaken a check** to make it pass or run faster. A run that fails because the product
-  is broken is reported as debt with its evidence.
+- **Never weaken a check** to make it pass or run faster; only a useless or tautological test may
+  go, named in the pull request description with why. A check that fails because the product
+  is broken, or that cannot run, is fixed as `../SKILL.md` → *What holds for every gate* says;
+  only a gigantic fix is a blocker, escalated with its evidence.
