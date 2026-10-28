@@ -1,7 +1,7 @@
 # ADR: A correction becomes a scoped lock where one exists, and the lock's hits across the repository are reported as debt
 
 ## Status
-Accepted; amended by 20261028-every-pull-request-fixes-what-its-work-meets-and-verification-converges: a lock's hits are fixed on the pull request in a commit of their own, and only hits whose fix is gigantic, a project of its own, are reported as debt
+Accepted; amended by 20261028-every-pull-request-fixes-what-its-work-meets-and-verification-converges: a lock's hits are fixed on the pull request in a commit of their own, and only hits whose fix is gigantic, a project of its own, are reported as debt, and below-threshold findings and pre-existing issues are no longer reported for the user but applied, dismissed or fixed
 
 ## Area
 do

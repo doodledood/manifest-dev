@@ -112,7 +112,7 @@ Medium is the blocking grade here, so it separates from Low on what the prose co
 
 A finding that cannot say which of those two it is has not made a Medium case.
 
-A refactor flag is graded **Low**: the run reshapes the workaround as build work, or lists it as debt when the reshape is a project of its own, rather than the flag blocking the change.
+A refactor flag is graded **Low**, rather than blocking the change.
 
 ## Dimension-specific report fields
 

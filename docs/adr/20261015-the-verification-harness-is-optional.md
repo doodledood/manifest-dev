@@ -1,7 +1,7 @@
 # ADR: The verification harness is optional — a project may verify its own way
 
 ## Status
-Accepted
+Accepted; amended by 20261028-every-pull-request-fixes-what-its-work-meets-and-verification-converges: a check the work meets that fails a job is repaired in its own form, and reported as debt only when the repair is gigantic
 
 ## Area
 define / do

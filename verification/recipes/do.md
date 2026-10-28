@@ -49,13 +49,13 @@ Workload: varies
 
 ### external-feedback
 Run: `scripts/drive-skill.sh do verification/prompts/do-external-feedback.md --scaffold verification/fixtures/pr-feedback --max-turns 120`
-Proves: new external evidence reopens the previously passing export judgment and repairs the omitted last line, so the supplied order totals 17. The caller reuses the supported private-note and dict-literal dispositions, assesses the new claims, and declines the false VAT claim, currency feature, and optional naming changes with reasons. Its source diff fixes the total without appeasement edits. Local outbound records handle the current thread IDs, leave the human thread open, and do not merge. Required approval and unapplied remote actions remain pending or blocked, never PASS from local disposition alone.
+Proves: new external evidence reopens the previously passing export judgment and repairs the omitted last line, so the supplied order totals 17. The caller reuses the supported private-note and dict-literal dispositions, assesses the new claims, and declines with reasons the false VAT claim, the currency feature (new work), and the optional naming changes, which show no benefit to the work, as the journal's earlier rename decline found. Its source diff fixes the total without appeasement edits. Local outbound records handle the current thread IDs, leave the human thread open, and do not merge. Required approval and unapplied remote actions remain pending or blocked, never PASS from local disposition alone.
 Check: read
 Workload: varies
 
 ### distinct-nits
 Run: `scripts/drive-skill.sh do verification/prompts/do-distinct-nits.md --scaffold verification/fixtures/pr-nits --max-turns 120`
-Proves: both advances assess their different optional suggestions, decline them with reasons, and preserve `order_export.py` without a code commit or push. The second advance retains the first one's journal across the new head. Each current thread receives its own appropriate outbound handling; the outstanding required approval stays pending. Inspect both saved diffs, outbound records, Git history, and the appended journal. The marker-only `Fixture: advance review wave` commit is injected setup, not an appeasement commit; any subject-made code commit is still a failure.
+Proves: both advances assess their different optional suggestions and decline them with reasons — each rename shows no benefit to the work, as the journal's earlier rename decline found, and the second arrives after the first advance — and preserve `order_export.py` without a code commit or push. The second advance retains the first one's journal across the new head. Each current thread receives its own appropriate outbound handling; the outstanding required approval stays pending. Inspect both saved diffs, outbound records, Git history, and the appended journal. The marker-only `Fixture: advance review wave` commit is injected setup, not an appeasement commit; any subject-made code commit is still a failure.
 Check: read
 Workload: varies
 

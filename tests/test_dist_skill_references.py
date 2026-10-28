@@ -753,14 +753,24 @@ def test_do_log_prompts_preserve_journal_boundaries() -> None:
 # them back in.
 CONVERGENCE = {
     "do/SKILL.md": (
-        "neither fails a gate nor starts a new full look",
+        "neither fails a judgment gate nor starts a new full look",
         "joins only when it blocks that fix or a check fails, so fixes do not chain",
         "A continued look lists no pre-existing issues, and a below-bar finding it reports is"
         " left, neither applied nor handed over",
     ),
+    "do/references/EXTERNAL_REVIEW.md": (
+        "one that arrives on a repair, including distinct optional nits from a reviewer that runs"
+        " after every commit, is declined",
+        "pre-existing issue raised about code that only a repair or a fix on the way touched joins"
+        " only when it blocks that repair or a check fails",
+    ),
     "review-code/SKILL.md": (
         "They are not findings: they never count toward the verdict",
         "Leave the section out unless asked, and on every follow-up even when asked",
+    ),
+    "define/references/SCHEMA.md": (
+        "the fixes every run owes on its pull request — a pre-existing issue the work met whose fix"
+        " is not a project of its own",
     ),
 }
 

@@ -1102,7 +1102,7 @@ def test_a_drive_fails_fast_when_it_cannot_create_evidence(
 ) -> None:
     # Only "another drive holds this directory" may be retried; any other failure stops loudly.
     # A dangling link where the evidence directory goes makes `mkdir` fail with nothing there,
-    # for root too, which ignores the directory permissions an earlier version of this test used.
+    # even for root, which ignores read-only directory permissions.
     feature = tmp_path / "store" / "figure-out"
     feature.mkdir(parents=True)
     (feature / STAMP).symlink_to(tmp_path / "missing")

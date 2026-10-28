@@ -1,7 +1,7 @@
 # ADR: Tickets follow independently schedulable work units
 
 ## Status
-Accepted — narrowed by 20260823-split-tickets-are-exercisable-end-to-end
+Accepted — narrowed by 20260823-split-tickets-are-exercisable-end-to-end; amended by 20261028-every-pull-request-fixes-what-its-work-meets-and-verification-converges: a pre-existing issue found during execution is fixed in the source outcome unless gigantic; only a gigantic one or new work becomes a follow-up Ticket
 
 ## Area
 Ticketing

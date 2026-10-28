@@ -130,8 +130,8 @@ That gives a floor that isn't ceremony:
   harness already on disk with no bullet counts as chosen, and an `ASM-*` suggests recording its
   bullet. The harness is the project's choice,
   never the run's. Building is the choice's; keeping sound is every run's: in any form, a check the
-  work touches that is broken, drifting or not fit to trust (`../setup-project/references/VERIFICATION_HARNESS.md`
-  → *Fit to trust*) is repaired within scope, ahead of the work that relies on it.
+  work meets that is broken, drifting or not fit to trust (`../setup-project/references/VERIFICATION_HARNESS.md`
+  → *Fit to trust*) is repaired in its own form, ahead of the work that relies on it.
   - **Harness:** where it lacks what the work needs, or a recipe the work touches is drifting or not
     fit to trust, cut building or repairing it, scoped to what the change touches, as the first Deliverable, ahead of
     any preparatory slice; unattended runs build it too. A Manifest that touches anything a recipe

@@ -12,8 +12,10 @@ repetition, or arrival on another commit does not establish that. Decline with a
 suggestions and requests for new work outside the assignment, such as a feature. A below-bar
 suggestion on the change as first reviewed is applied when it improves the work and declined with
 a reason otherwise; one that arrives on a repair, including distinct optional nits from a reviewer
-that runs after every commit, is declined, since it re-samples taste on the repair. Fix what the
-review brings in a batch, as that section says. Make no code change merely to silence feedback.
+that runs after every commit, is declined, since it re-samples taste on the repair. A
+pre-existing issue raised about code that only a repair or a fix on the way touched joins only
+when it blocks that repair or a check fails; otherwise decline it with a reason, so fixes do not
+chain. Fix what the review brings in a batch, as that section says. Make no code change merely to silence feedback.
 Adopt warranted repairs within the assignment; a binding failure remains owed.
 
 Keep the claim's substance, disposition, and supporting evidence in the existing execution log

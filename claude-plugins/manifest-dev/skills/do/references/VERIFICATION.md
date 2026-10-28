@@ -25,8 +25,9 @@ its own `--help`.
   gigantic (`../SKILL.md` → *What holds for every gate*) does it get a dated
   `Drift (YYYY-MM-DD): <what differs>` line, reported as debt.
 - **Unfit harness:** when the harness is not fit to trust for what the work touches
-  (`../../setup-project/references/VERIFICATION_HARNESS.md` → *Fit to trust*), repair it; report
-  as debt only a repair that is gigantic.
+  (`../../setup-project/references/VERIFICATION_HARNESS.md` → *Fit to trust*), repair it. A
+  gigantic repair is debt while the check still runs and passes, and a blocker once it fails or
+  cannot run (`../SKILL.md` → *What holds for every gate*).
 - **Time lines:** a line is written into its recipe only by the change that changes that check.
   A fixed-workload scenario the change adds gets its first line from a passing run (`verify
   line`), and a change that made a check faster keeps the gain the same way; no other run moves a
@@ -43,6 +44,7 @@ its own `--help`.
 - **A stand-in is not the target:** where a check runs on a stand-in for where the work will run —
   a cloud container that already has tools a user's machine lacks, a fixture in place of the real
   service — the report names, as unverified, what the stand-in provided that the target will not.
-- **Never weaken a check** to make it pass or run faster. A check that fails because the product
+- **Never weaken a check** to make it pass or run faster; only a useless or tautological test may
+  go, named in the pull request description with why. A check that fails because the product
   is broken, or that cannot run, is fixed as `../SKILL.md` → *What holds for every gate* says;
   only a gigantic fix is a blocker, escalated with its evidence.

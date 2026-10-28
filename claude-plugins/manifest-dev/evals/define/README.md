@@ -115,8 +115,11 @@ is new: it was driven once on the skill before this change and once after it, an
 A 2026-10-28 change made the pre-existing issues a run meets build work on its own pull request:
 define's *One concern per change* Default now says such a fix rides the same pull request as its own
 commit unless it is a project of its own, and the *Debt left* Default lists only what could not be
-fixed, plus the fixes made on the way. It reaches every case that loads `FEATURE.md` or
-`PR_LIFECYCLE.md`, and changes no case or grader. **Every recorded number in this file is stale as
+fixed, plus the fixes made on the way. The ceiling invariant every Manifest carries now counts
+those fixes as required work, and define's verification line repairs a check the work meets, not
+only one it touches. It reaches every case that writes a spec: the generated `ceiling-verbatim`
+graders and the ceiling quoted in `d09`'s prompt follow the new ceiling text, and no other case or
+grader changes. **Every recorded number in this file is stale as
 of 2026-10-28.**
 
 The review runs in a fresh context, which this suite's sessions cannot start, so define reviews

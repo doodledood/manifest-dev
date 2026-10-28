@@ -33,6 +33,9 @@ mistake fails for every later contributor, with or without this workflow.
 
 ## Comments in touched code
 
+These hold for code the change touches. A comment that only a fix on the way or a repair passes
+joins only as `../SKILL.md` → *What holds for every gate* says.
+
 - A comment that explains a workaround in code the project owns is a refactor flag: reshape the
   code so the workaround is no longer needed, and delete the comment. Where the reshape is
   gigantic, report it as debt, naming the symbol to reshape, and leave the comment in place.
@@ -46,9 +49,11 @@ mistake fails for every later contributor, with or without this workflow.
 
 Debt is what the run found and could not fix on its pull request: each gigantic item, as
 `../SKILL.md` → *What holds for every gate* defines it — lock hits, a reshape, a constraint to
-encode, harness friction, a product regression or a broken check whose fix is a project of its
-own — with why; new suppressions; ask-first recipes the change touched and did not run; and a
-time-line overshoot frozen under a debt Ticket. The pre-existing issues the work met that are not
+encode, harness friction, a drifting recipe or a check that runs and passes but is not fit to
+trust, whose fix is a project of its own — with why; new suppressions; ask-first recipes the change
+touched and did not run, and anything else that needs access, authority or a decision a person
+retains, naming what it needs; and a time-line overshoot frozen under a debt Ticket. A failing
+check whose fix is gigantic is a blocker, never debt. The pre-existing issues the work met that are not
 gigantic, and below-bar findings, are fixed, applied or dismissed with a reason, never debt.
 
 - Record each item in the execution log as it is found.

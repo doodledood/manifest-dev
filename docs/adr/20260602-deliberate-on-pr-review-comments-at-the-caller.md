@@ -1,7 +1,7 @@
 # ADR: Deliberate on PR review comments at the caller, with confident autonomous push-back
 
 ## Status
-Accepted; amended by 20261024-external-review-feedback-needs-an-adoption-decision: correct optional nits may be declined, supported dispositions survive new IDs, and required external blockers remain explicit
+Accepted; amended by 20261024-external-review-feedback-needs-an-adoption-decision: correct optional nits may be declined, supported dispositions survive new IDs, and required external blockers remain explicit; amended by 20261028-every-pull-request-fixes-what-its-work-meets-and-verification-converges: a real issue a review raises, in the change or pre-existing, is fixed unless gigantic; only new work outside the assignment, false claims and taste on a repair are declined
 
 ## Area
 PR review

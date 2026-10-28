@@ -25,7 +25,7 @@ Workload: varies
 
 ### external-feedback
 Run: `scripts/drive-skill.sh babysit-pr verification/prompts/babysit-pr-external-feedback.md --scaffold verification/fixtures/pr-feedback --tools --max-turns 120`
-Proves: the tend passes the existing journal to do, which repairs the demonstrated total defect while declining optional, false, and new-feature suggestions with reasons. Existing dispositions survive new thread IDs; current thread handling still appears in local outbound records. The human thread stays open. The required approval remains pending or blocked, and no merge or live network mutation occurs. Inspect the actual export result, source diff, action records, and appended journal.
+Proves: the tend passes the existing journal to do, which repairs the demonstrated total defect while declining with reasons the false and new-feature suggestions and the optional ones that show no benefit to the work. Existing dispositions survive new thread IDs; current thread handling still appears in local outbound records. The human thread stays open. The required approval remains pending or blocked, and no merge or live network mutation occurs. Inspect the actual export result, source diff, action records, and appended journal.
 Check: read
 Workload: varies
 

@@ -149,7 +149,7 @@ a person to land, and never lands it, whatever its prompt says.
 
 Keep work required by the source Ticket on the source Ticket. Finish it there, or escalate that Ticket when a blocker prevents completion.
 
-A discovered item earns a follow-up Ticket only when it is genuinely separate work that someone could assign, prioritize, block on, and close independently. Group related findings into one coherent follow-up. Search the effort's open Tickets before authoring to avoid duplicates, then invoke `ticket-up` with the source Ticket, grouped finding, relationship, and execution evidence. Never write a follow-up directly to the venue, and never grant it Auto: the run that found the work never grants it.
+A discovered item earns a follow-up Ticket only when it is genuinely separate work that someone could assign, prioritize, block on, and close independently. A pre-existing issue the work meets is not: `/do` fixes it on the pull request unless the fix is a project of its own. Group related findings into one coherent follow-up. Search the effort's open Tickets before authoring to avoid duplicates, then invoke `ticket-up` with the source Ticket, grouped finding, relationship, and execution evidence. Never write a follow-up directly to the venue, and never grant it Auto: the run that found the work never grants it.
 
 Questions that do not need their own lifecycle stay in the completion record.
 
@@ -164,7 +164,7 @@ accepts the answer.
 For repository work, `/done` proves the task contract; it does not by itself prove that the work
 is ready to land. Commit and push the coherent result to the stable branch, create or refresh its
 one pull request — its description listing the run's material decisions, each reopened decision record first, then the user's calls,
-and a "Debt left" section carrying the debt `/done` named, one line each — and drive that pull
+the issues fixed on the way and any test removed as useless or tautological, with why, and a "Debt left" section carrying the debt `/done` named, one line each — and drive that pull
 request through the repository's normal checks. Activate the `check-pr` skill for the current pull request
 and head. Address agent-resolvable failures and re-check rather than handing routine repair to a
 person; what may remain is only what a person gives, such as a required review. A required check

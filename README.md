@@ -41,7 +41,7 @@ Ask about the bug you keep putting off. When a term or a step is unclear, ask `/
 
 `/auto` runs all three steps in one go.
 
-**What you review: a pull request that shows the change working.** When the work ships as a pull request, its top reads in about a minute. It says what changed and why, shows the change working with screenshots or command output, and lists the decisions it made for you, the old problems it fixed on the way, and the debt it left — what it found and could not fix there, each a project of its own.
+**What you review: a pull request that shows the change working.** When the work ships as a pull request, its top reads in about a minute. It says what changed and why, and shows the change working with screenshots or command output. It lists the decisions it made for you and the debt it left: what it could not fix there, such as a problem that is a project of its own or a paid check it did not run. The description also lists the old problems the run fixed on the way.
 
 ## A project that remembers
 
