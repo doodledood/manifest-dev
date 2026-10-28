@@ -282,17 +282,18 @@ Ratified steering preferences for this repo. Each states the preference, why it 
 
 ### Solution design
 
-In any domain — code, process, tooling, docs, prompts — prefer the design that prevents a class of problems over the quick one that merely works today. And treat every problem you touch as one you should not meet again: leave the system so that class of problem cannot return, or costs less when it does.
+In any domain — code, process, tooling, docs, prompts — prefer the design that prevents a class of problems over the quick one that merely works today. And treat every problem you touch as one you should not meet again: leave the system so that class of problem cannot return, or costs less when it does. At any size of change, also make the next change — by anyone, human or agent — easier to get right, in proportion to how often that area changes; sound existing structure needs no redesign. This is an investment, not polish: time spent up front making code harder to get wrong is repaid as speed on every later change.
 
-- The cheapest class of bugs to prevent is the code never written — before designing, ask whether the requirement itself is needed, and say so when it isn't.
+- The cheapest class of bugs to prevent is the code never written — before designing, ask whether the requirement itself is needed, and say so when it isn't. That includes what you propose yourself: an extra mode, rival path, or option earns a place in the build only when the next decision needs it; otherwise name it as a later addition.
 - Design so a class of bugs cannot occur, whether or not one has occurred yet: illegal states unrepresentable, the invariant enforced where it cannot be bypassed, one source of truth instead of two that can disagree. This is the default for new code as much as for a fix — the design that closes the class beats the patch that handles the instance in front of you.
-- Among designs that close the class, take the one with the fewest moving parts and the least hidden coupling — unless the user asks to optimize for a different priority. Machinery heavier than the class it closes is over-engineering, not design.
+- Among designs that close the class, take the one with the fewest moving parts and the least hidden coupling. Reshaping a widely used type earns its churn when ordinary callers could otherwise get the next change wrong — which is usually why the bug happened; when every caller already passes through one owning operation, enforcing the invariant there is enough. Machinery heavier than the burden it removes is over-engineering, not design — unless the user asks to optimize for a different priority.
 - Fail loud. No fallback, catch-and-continue, or default value that masks a failure unless degraded operation is explicitly wanted — silent wrong behavior costs more than a crash.
-- When the structural fix is out of reach of the change at hand, fix the instance and name the design that would close the class — don't ship the patch as if it settled the matter.
-- After fixing a bug, sweep for sibling instances of the same defect pattern before calling it done — the class includes the copies that already shipped.
+- A bug fix closes its class across the whole codebase by default, not only where the bug surfaced: if a loose string should have been a strict type, the type changes everywhere that value flows, and every sibling instance gets the same structural fix rather than its own patch. The wider diff is the point, not scope creep. Once the class is closed, delete what it made redundant — defensive checks and tests that only guarded the now-impossible state — but validation of untyped input (API payloads, database rows, user input) moves to the boundary where that input enters rather than disappearing. When the fix is urgent or the sweep is large, land the instance fix first and close the class in the change right after — sequenced, not dropped.
+- When closing the class is genuinely out of reach, fix the instance and name the design that would close it — don't ship the patch as if it settled the matter.
 - A rule that lives as a sentence someone must remember is a check waiting to be written — when a convention can be enforced by a type, lint, test, or CI gate, propose the enforcement. Price it like any machinery: worth building where failure is expensive or the surface is shared, not on a solo surface already verified locally.
 - A new dependency is a recurring cost, not a one-time one — prefer the standard library or what the repo already uses, and justify any addition.
-- Clean the touched area enough for a durable fix; propose broader refactors separately.
+- Favor locality: keep what changes together in one place, so a change, a fix, or a check is made once rather than at every site. Work that has to be repeated across many sites points to a missing seam — close it when the work already passes through those sites or a bug class runs through it, and propose it separately otherwise. Clean the touched area enough for a durable fix either way.
+- Unused is off. When a change removes or narrows something, delete what it leaves unused — code, config, flags, tests, docs, and mentions of the removed concept — rather than keeping or explaining it; keep an unused part only when the user explicitly asks for it. Leftovers mislead the next session about what is live.
 
 ### What counts as verified
 
@@ -301,8 +302,20 @@ In any domain — code, process, tooling, docs, prompts — prefer the design th
 - For e2e or integration work, write the verification script inline when feasible.
 - Say plainly what you did not verify.
 
+### Every pull request leaves the repository better
+
+Each pull request must move the repository to a better place (my rule, 2026-10-28, for every repository, bot and coding session).
+
+- Fix the debt on the pull request itself: what the work leaves behind or its review finds, not flagged for later. Pre-existing issues the work runs into get fixed there too, related or not. Only a gigantic one, a project of its own, stays out: ticket or report it with the reason.
+- Nothing merges until everything passes, tests included. A test that cannot run is a failure of the app or its harness: fix the harness.
+- Fix failures for real. Never reach green by removing, skipping or loosening a test, unless the test is useless or tautological; then say so in the description.
+
 ### Git and pull requests
 
 - Conventional commits: `feat:`, `fix:`, `chore:`, `docs:`, `refactor:`, `test:`. Branches `feature/*`, `fix/*` unless the project says otherwise.
-- Prefer several coherent medium PRs to one monolith when the work naturally splits. Slice vertically — one feature stage end-to-end, handler + service + entity + tests — not horizontally, where each slice carries no logic of its own and only makes sense combined. Small mechanical changes (renames, config, migrations, boilerplate) ride along with the logic that needs them; a sweeping mechanical refactor can still earn its own PR for reviewability. Don't grow a PR past its natural scope — split instead.
+- Prefer several coherent medium PRs to one monolith when the work naturally splits. Slice vertically — one feature stage end-to-end, handler + service + entity + tests — not horizontally, where each slice carries no logic of its own and only makes sense combined. Small mechanical changes (renames, config, migrations, boilerplate) ride along with the logic that needs them; a sweeping mechanical refactor can still earn its own PR for reviewability. Don't grow a PR past its natural scope — split instead. Its debt and the non-gigantic pre-existing issues it runs into are within that scope (see above).
 - Open PRs substantially complete. The title names the real scope — the workflow and modules touched, not the immediate symptom. The description leads with what the change does and why it needed this design — the cross-module flow, the non-obvious decisions, the invariants preserved — not a file-by-file list.
+
+### Browser automation
+
+Scripts and tests that drive a browser (screenshots, Playwright, Puppeteer, CDP) launch Playwright's bundled Chromium or Chrome for Testing, never the installed `/Applications/Google Chrome.app`, and close the browser cleanly. Each launch of the installed Chrome copies the whole app (about 750 MB) into `/private/var/folders`, and a killed launch leaves that copy behind, which filled about 78 GB on my Mac in hours (2026-10-26).
