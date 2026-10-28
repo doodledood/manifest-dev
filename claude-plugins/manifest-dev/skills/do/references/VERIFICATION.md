@@ -23,11 +23,12 @@ its own `--help`.
   and remove its `Drift (…)` line when the repair lands. A recipe the change does not touch that
   the run finds drifting is repaired too, in a commit of its own; only where that repair is
   gigantic (`../SKILL.md` → *What holds for every gate*) does it get a dated
-  `Drift (YYYY-MM-DD): <what differs>` line, reported as debt.
+  `Drift (YYYY-MM-DD): <what differs>` line, reported as debt — while no gate and no whole-tree
+  check rests on it; otherwise it is a blocker.
 - **Unfit harness:** when the harness is not fit to trust for what the work touches
   (`../../setup-project/references/VERIFICATION_HARNESS.md` → *Fit to trust*), repair it. A
-  gigantic repair is debt while the check still runs and passes, and a blocker once it fails or
-  cannot run (`../SKILL.md` → *What holds for every gate*).
+  gigantic repair is debt while the check still runs and passes, and a blocker once a check a gate
+  or the whole tree rests on fails or cannot run (`../SKILL.md` → *What holds for every gate*).
 - **Time lines:** a line is written into its recipe only by the change that changes that check.
   A fixed-workload scenario the change adds gets its first line from a passing run (`verify
   line`), and a change that made a check faster keeps the gain the same way; no other run moves a

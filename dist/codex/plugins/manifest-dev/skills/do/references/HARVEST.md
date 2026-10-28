@@ -49,12 +49,13 @@ joins only as `../SKILL.md` → *What holds for every gate* says.
 
 Debt is what the run found and could not fix on its pull request: each gigantic item, as
 `../SKILL.md` → *What holds for every gate* defines it — lock hits, a reshape, a constraint to
-encode, harness friction, a drifting recipe or a check that runs and passes but is not fit to
-trust, whose fix is a project of its own — with why; new suppressions; ask-first recipes the change
-touched and did not run, and anything else that needs access, authority or a decision a person
-retains, naming what it needs; and a time-line overshoot frozen under a debt Ticket. A failing
-check whose fix is gigantic is a blocker, never debt. The pre-existing issues the work met that are not
-gigantic, and below-bar findings, are fixed, applied or dismissed with a reason, never debt.
+encode, harness friction, a drifting recipe or a check that runs and passes but is not fit to trust,
+whose fix is a project of its own — with why; new suppressions; ask-first recipes the change touched
+and did not run, and anything else that needs access, authority or a decision a person retains,
+naming what it needs; and a time-line overshoot frozen under a debt Ticket. A failing check across
+the whole tree, or one a gate rests on, whose fix is gigantic is a blocker, never debt. The
+pre-existing issues the work met that are not gigantic, and below-bar findings, are fixed, applied
+or dismissed with a reason, never debt.
 
 - Record each item in the execution log as it is found.
 - Hand the list to `/done` or `/escalate`, which name it with the ticket-up offer.

@@ -152,10 +152,11 @@ redesigning a module the change only passes through; migrating live data; lock h
 other teams own that need an architecture decision. Not gigantic: a failing or unrunnable test, a
 broken harness script, a stale doc line, a bug or type hole in a helper the change calls, a drifting
 recipe, a workaround whose reshape is local, a few dozen mechanical lock hits. Report a gigantic
-issue as debt with why it is a project of its own (`references/HARVEST.md`), except a failing check,
-which blocks completion (below). An issue that needs access, authority or a decision a person
-retains is debt that names what it needs, such as an ask-first run owed, unless a gate depends on
-it; then it is a blocker.
+issue as debt with why it is a project of its own (`references/HARVEST.md`), except a failing check
+that completion rests on — one across the whole tree, or one a gate depends on — which blocks
+completion (below). An issue that needs access, authority or a decision a person retains is debt
+that names what it needs, such as an ask-first run owed, unless a gate depends on it; then it is a
+blocker.
 
 Before reporting completion, every check the project keeps across the whole tree passes — lint,
 types, tests, build — whether or not the change touched what fails. A check that cannot run is a
