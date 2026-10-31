@@ -25,13 +25,11 @@ suite and does not redefine them.
 Run: `scripts/evals/run_eval.sh --wait figure-out-with-without evals/results/figure-out-with-without/aggregate-result.json --tag figure-out --ablation with-without --judge-model sonnet --scaffold --max-cost-usd 205`
 Proves: the suite ran both arms; the Δ it reports, read against the noise section of the suite README, is the measurement, and the README's results section records it.
 Check: read
-Workload: varies
 
 ### plugin-only
 Run: `scripts/evals/run_eval.sh --wait figure-out-plugin-only evals/results/figure-out-plugin-only/aggregate-result.json --tag figure-out-plugin-only --ablation none --judge-model sonnet --scaffold --max-cost-usd 15`
 Proves: the cases that test behavior existing only with the plugin pass on the plugin arm.
 Check: read
-Workload: varies
 
 ## Gotchas
 

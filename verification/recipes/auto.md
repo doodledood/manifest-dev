@@ -20,7 +20,6 @@ Chains figure-out, define and do with no approval stops: understanding, then a M
 Run: `scripts/drive-skill.sh auto verification/prompts/auto-chain.md --max-turns 150`
 Proves: the transcript shows define reporting a Manifest path and do starting on that same path in the same run; the run ends in `/done` or `/escalate`, not at a handoff waiting for the user.
 Check: read
-Workload: varies
 
 ## Gotchas
 

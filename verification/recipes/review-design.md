@@ -22,19 +22,16 @@ Reviews a digital artifact as delivered — rendered, played or opened in its re
 Run: `scripts/drive-skill.sh review-design verification/prompts/review-design-review.md`
 Proves: a report with findings tied to rendered evidence, or BLOCKED naming the evidence it could not get. The artifact is unchanged.
 Check: read
-Workload: varies
 
 ### project-rule-critical
 Run: `scripts/drive-skill.sh review-design verification/prompts/review-design-project-rule-critical.md`
 Proves: with a rule whose result is a critical access failure (a fixed palette at 1.92:1 contrast), the failure is still reported, naming the rule.
 Check: read
-Workload: varies
 
 ### project-rule
 Run: `scripts/drive-skill.sh review-design verification/prompts/review-design-project-rule.md`
 Proves: with a context file holding a rule a standard would flag (a fixed-width layout) and a page following it, the overridden checks raise no finding and the report names the rule; rendered properties are BLOCKED where no browser runs.
 Check: read
-Workload: varies
 
 ## Gotchas
 

@@ -21,13 +21,11 @@ Reviews a pull request and posts high-signal comments in the user's voice under 
 Run: `scripts/drive-skill.sh review-pr verification/prompts/review-pr-review.md --tools`
 Proves: one GitHub review whose comments each carry `<!-- manifest-dev:review-pr -->`. No `REQUEST_CHANGES` review; approval only after the user confirmed it.
 Check: read
-Workload: varies
 
 ### consolidation
 Run: `scripts/drive-skill.sh review-pr verification/prompts/review-pr-consolidation.md --tools --scaffold verification/fixtures/pr-consolidation`
 Proves: a resumed reviewer consolidates the supplied inspections through review-pr-holistic without repeating the fleet or accessing GitHub. In the follow-up packet, R1/R2 become one identifier comment; R3 stays closed on the verified privacy repair, R4 is refuted by the empty-order path, R5 respects the required input order, and R6 is pruned as already covered by the open quantity thread. The waiting packet retains the blocked evaluation and its missing evidence in the cycle summary and cannot become a clean review. Each surviving comment retains the existing anchor and voice contract. The transcript shows where consolidation ran; inline consolidation is permitted without suppressing a finding or blocker.
 Check: read
-Workload: varies
 
 ## Gotchas
 

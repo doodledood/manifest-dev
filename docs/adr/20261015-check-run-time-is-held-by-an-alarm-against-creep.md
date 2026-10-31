@@ -1,7 +1,7 @@
 # ADR: A check's run time is held by an alarm against creep, set from measurement and moved only on purpose
 
 ## Status
-Accepted — amended by 20261018-the-harness-commits-no-evidence-and-time-lines-live-in-recipes: a line is a number in its recipe that only a run changing that check moves, so it no longer lowers itself
+Superseded by 20261031-time-lines-are-removed-and-run-time-is-only-reported
 
 ## Area
 define / do
@@ -86,14 +86,7 @@ every crossing run rewrite shared test code would have those agents collide.
 - A frozen overshoot leaves the suite slower until its Ticket is paid.
 
 ## Enforced by
-`tests/test_verify.py`: `test_evidence_records_duration_and_machine`,
-`test_one_run_over_the_line_is_noise_until_a_confirming_run_crosses_too`,
-`test_a_crossing_a_confirming_run_repeats_exits_over_and_names_the_ways_on`,
-`test_a_raise_needs_its_reason_and_writes_both_into_the_recipe`, and
-`test_a_freeze_holds_an_overshoot_at_a_level_naming_its_debt_ticket`; also
-`test_a_line_is_read_from_the_recipe_for_its_kind_of_machine`, which holds the line where
-20261018-the-harness-commits-no-evidence-and-time-lines-live-in-recipes moved it. Whether a raise's
-reason is true stays judgment.
+none — superseded by 20261031-time-lines-are-removed-and-run-time-is-only-reported; the tests that held the line were removed with it.
 
 ## Source
 - Session: figure-out investigation of the verification harness's control, speed and

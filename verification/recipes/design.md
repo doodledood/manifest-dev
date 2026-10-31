@@ -21,7 +21,6 @@ Gives design guidance for a page, app, document, deck, graphic or prototype from
 Run: `scripts/drive-skill.sh design verification/prompts/design-guide.md`
 Proves: guidance that names the person, the moment and the chosen direction. It produced guidance and did not claim to have built or verified anything.
 Check: read
-Workload: varies
 
 ## Gotchas
 

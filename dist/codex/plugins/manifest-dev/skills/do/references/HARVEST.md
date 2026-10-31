@@ -27,7 +27,8 @@ mistake fails for every later contributor, with or without this workflow.
 - **Friction becomes a command:** where the run had to start something by hand, add a print to
   see its state, or wait on something slow, leave the project's verification able to do that — in
   its harness a control command, a `logs:` command or a faster check, or the same in its own
-  scripts — within the change's scope, or name the gap as debt.
+  scripts — within the change's scope, or name the gap as debt. A check that is merely slow is the
+  exception: the report names it and where its time goes, and it is never debt.
 - **Suppressions:** a new suppression of a lock carries its reason on the suppressing line and is
   reported as debt. It needs no approval to land.
 
@@ -44,7 +45,7 @@ mistake fails for every later contributor, with or without this workflow.
 
 Debt is what the run found and did not fix: unfixed lock hits; refactor flags; constraint
 comments awaiting encoding; new suppressions; reshapes outside the change's scope; product
-regressions the verification harness exposed; ask-first recipes the change touched and did not run; a time-line overshoot frozen under a debt Ticket; harness friction left unfixed; a touched check, in any form, left broken or not fit to trust.
+regressions the verification harness exposed; ask-first recipes the change touched and did not run; harness friction left unfixed, other than run time; a touched check, in any form, left broken or not fit to trust.
 
 - Record each item in the execution log as it is found.
 - Hand the list to `/done` or `/escalate`, which name it with the ticket-up offer.

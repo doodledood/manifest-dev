@@ -18,7 +18,6 @@ A reader comes to these documents to estimate what it costs, and should end able
 Run: `scripts/walk.sh 'Estimate what it costs. End able to judge whether a task is worth the workflow’s extra time and tokens. The sections to rely on: README.md → What it costs.' README.md`
 Proves: the reader ends able to judge whether a task is worth the workflow's extra time and tokens, and names nothing it had to guess that blocks the task.
 Check: read
-Workload: varies
 
 ## Gotchas
 

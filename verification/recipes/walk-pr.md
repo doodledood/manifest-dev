@@ -20,7 +20,6 @@ Walks the user through a pull request or large diff one sub-change and one revie
 Run: `scripts/drive-skill.sh walk-pr verification/prompts/walk-pr-walk-a-range.md --tools`
 Proves: the first turn covers one sub-change and asks about one topic. Nothing posts until the user confirms each comment.
 Check: read
-Workload: varies
 
 ## Gotchas
 

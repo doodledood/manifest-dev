@@ -1,7 +1,7 @@
 # ADR: The verification harness commits no evidence, and time lines live in recipes
 
 ## Status
-Accepted
+Accepted — amended by 20261031-time-lines-are-removed-and-run-time-is-only-reported: time lines are removed, so no recipe carries a line and nothing moves one; the harness still commits no evidence and keeps no status
 
 ## Area
 define / do
@@ -69,15 +69,11 @@ partly — `tests/test_verify.py`: `test_a_drive_writes_only_under_an_evidence_d
 (a drive in a fixture repository leaves nothing to commit),
 `test_no_command_reports_or_records_a_status` (`list` and `help` show no status; `judge` is gone),
 `test_a_whole_tree_recipe_is_selected_yet_covers_no_path_in_particular`,
-`test_a_line_is_read_from_the_recipe_for_its_kind_of_machine` (another kind of machine compares
-nothing), `test_one_run_over_the_line_is_noise_until_a_confirming_run_crosses_too`,
-`test_a_raise_needs_its_reason_and_writes_both_into_the_recipe`,
-`test_a_freeze_holds_an_overshoot_at_a_level_naming_its_debt_ticket`,
-`test_no_command_but_line_raise_and_freeze_writes_a_recipe`, and
+`test_no_command_writes_a_recipe_or_the_settings`,
 `test_the_upgrade_moves_lines_into_recipes_before_it_removes_evidence`, and
 `test_this_repository_tracks_no_evidence` (this repository's evidence directory, read from
-`verify --help`, holds no tracked file). Whether a raise's reason is true, and whether an upgrade found the project's own evidence
-directory, stay judgment.
+`verify --help`, holds no tracked file). Whether an upgrade found the project's own evidence
+directory stays judgment.
 
 ## Source
 - Session: figure-out on running unattended Ticket work with many agents at once (2026-10-18).

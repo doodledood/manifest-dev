@@ -26,7 +26,6 @@ Proves: the TypeScript program compiles with no error.
 ### tests
 Run: `npm test`
 Proves: every unit test passes.
-Line: 14.0 s on linux-x64-8cpu
 
 ## Gotchas
 

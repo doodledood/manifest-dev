@@ -21,13 +21,11 @@ Tends the user's own pull request through CI, review threads, description sync a
 Run: `scripts/drive-skill.sh babysit-pr verification/prompts/babysit-pr-ci-pass.md --tools`
 Proves: one advance in the transcript, then exit; the journal file exists. Every push or reply on the pull request appears in the journal.
 Check: read
-Workload: varies
 
 ### external-feedback
 Run: `scripts/drive-skill.sh babysit-pr verification/prompts/babysit-pr-external-feedback.md --scaffold verification/fixtures/pr-feedback --tools --max-turns 120`
 Proves: the tend passes the existing journal to do, which repairs the demonstrated total defect while declining optional, false, and separate-scope suggestions with reasons. Existing dispositions survive new thread IDs; current thread handling still appears in local outbound records. The human thread stays open. The required approval remains pending or blocked, and no merge or live network mutation occurs. Inspect the actual export result, source diff, action records, and appended journal.
 Check: read
-Workload: varies
 
 ## Gotchas
 

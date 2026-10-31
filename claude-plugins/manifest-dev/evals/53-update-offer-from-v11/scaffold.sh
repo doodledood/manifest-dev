@@ -8,17 +8,22 @@ Command-line tool that tracks books a reading club has borrowed.
 
 ## Project surfaces
 
-<!-- setup-project surfaces v10 -->
+<!-- setup-project surfaces v11 -->
 
 This project keeps its direction, vocabulary, and decision memory in the repo. Read
 `NORTH_STAR.md` and `CONTEXT.md` at the start of every session.
 
 - **NORTH_STAR.md** — what this project is for and for whom, the principles it holds, how it
   measures progress, and the bets it rests on. The choices made along the way live in `docs/adr/`,
-  never in it.
+  never in it. A line gives grounds for a second look, not a veto: before it cuts an option,
+  check that it covers the case. Where it does, a person decides; a run with no person present
+  follows it and raises the challenge.
 - **CONTEXT.md** — what words mean here.
-- **docs/adr/** — why decisions went the way they did. Write new records per
-  `docs/adr/CONVENTIONS.md`.
+- **docs/adr/** — why decisions went the way they did. A record gives grounds, not a veto:
+  follow it where its reasons still hold, and reopen it where a premise no longer holds or a need
+  it did not weigh makes sense. Outside the `Strategy` area, a run with no person present decides
+  for itself and lists each record it reopened first in its report and pull request. Write new
+  records per `docs/adr/CONVENTIONS.md`.
 - **Verification** — `scripts/verify`: how this project checks that its work still does its job.
   Run it before saying a change works, when reproducing a reported problem, and when a change
   touches something one of its recipes covers (`scripts/verify list` shows them); a change that
@@ -33,7 +38,8 @@ This project keeps its direction, vocabulary, and decision memory in the repo. R
 ## Before merging
 
 Drive `scripts/verify drive project-checks`; every scenario must pass, and the pull request says
-what the drive found.
+what the drive found. A drive that exits 5 is over a time line: pay it down, or `scripts/verify
+raise` or `scripts/verify freeze` it in the same change.
 EOF
 cat > CONTEXT.md <<'EOF'
 # Shelfnote
@@ -47,6 +53,9 @@ One book lent to one member, from checkout to return.
 EOF
 cat > NORTH_STAR.md <<'EOF'
 # North Star — Shelfnote
+
+What Shelfnote is for, for whom, and how it measures progress. A line gives grounds for a second
+look: before it cuts an option, check that it covers the case.
 
 ## Purpose
 
@@ -97,6 +106,16 @@ cat > docs/adr/CONVENTIONS.md <<'EOF'
 
 Write a record for a decision that shapes the system or would be costly to reverse.
 
+## What a record is for
+
+A record gives grounds, not a veto. A session whose work a record bears on weighs the record's
+reasons against the case: where they still hold, it follows the record and names the reason;
+where a premise no longer holds, or the case has a need the record did not weigh and that need
+makes sense, the choice is open again. A person can reopen a choice at any time. Outside the
+`Strategy` area, a run with no person present decides for itself, writes the new record naming
+itself as decider, and lists each reopened record first in its report and pull request, with the
+reason set aside and what reversing would cost. A `Strategy` record is reopened by a person.
+
 ## Template
 
 ```markdown
@@ -132,7 +151,9 @@ writing, superseding or retiring such a record rebuilds that list in the same ac
 EOF
 cat >> docs/adr/CONVENTIONS.md <<'EOF'
 Where a decision sits outside the North Star Purpose, say so in Context.
-A met signpost goes to the owner; it changes no ruling on its own.
+A met `Revisit when` condition is one reason to look again, not the only one. On a `Strategy`
+record a met signpost still goes to its owner unless the reader's assignment and explicit
+authority cover reopening it.
 EOF
 cat > docs/adr/README.md <<'EOF'
 # Architecture Decision Records
@@ -275,7 +296,7 @@ d=.runs/$VERIFY_RUN_ID; test -f "$d/pid" || { echo "no instance for run $VERIFY_
 kill "$(cat "$d/pid")" && rm -f "$d/pid"
 EOF
 chmod +x scripts/serve.sh scripts/stop.sh
-cat > scripts/verify <<'VERIFY_TOOL_EOF'
+cat > scripts/verify <<'VERIFY_TOOL_V11_EOF'
 #!/bin/sh
 # Starts this project's verification tool, verify.mts beside this file: TypeScript that Node
 # 22.18 or newer (23.6 or newer on Node 23) runs directly. `verify --help` says everything else.
@@ -288,9 +309,9 @@ if [ "$major" -lt 22 ] || { [ "$major" -eq 22 ] && [ "$minor" -lt 18 ]; } || { [
   exit 3
 fi
 exec node "$(dirname "$0")/verify.mts" "$@"
-VERIFY_TOOL_EOF
+VERIFY_TOOL_V11_EOF
 chmod +x scripts/verify
-cat > scripts/verify.mts <<'VERIFY_TOOL_EOF'
+cat > scripts/verify.mts <<'VERIFY_TOOL_V11_EOF'
 // verify — this project's one verification harness.
 //
 // Run `verify --help` for everything: what can be checked, how, which checks a change touches,
@@ -1624,15 +1645,18 @@ main(process.argv.slice(2)).then(
     process.exitCode = 1;
   },
 );
-VERIFY_TOOL_EOF
+VERIFY_TOOL_V11_EOF
 cat > verification/harness.md <<'EOF'
 ---
 ask-first: ask
 start: scripts/serve.sh
 logs: cat .runs/$VERIFY_RUN_ID/serve.log
 stop: scripts/stop.sh
+headroom: 30%
+raise: ask
 ---
 - Every run starts from a checkout with Python 3 on the path.
+- Time lines are set on linux-x64-4cpu; raise one only with a maintainer's agreement.
 - `verify start` serves the overdue page for one run on a free port, its URL in
   `.runs/<run id>/url`; `verify stop --run ID` stops it.
 EOF
@@ -1700,4 +1724,9 @@ Line: 3.1 s on linux-x64-4cpu; raised: tests for the CSV export
 Run: `ruff check src tests`
 Proves: the linter reports nothing.
 Line: 0.3 s on linux-x64-4cpu
+
+### changed-tests
+Run: `python3 -m pytest tests/ --lf`
+Proves: the tests that failed last time pass now.
+Workload: varies
 EOF
