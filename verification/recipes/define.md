@@ -15,6 +15,7 @@ Turns shared understanding into a Manifest — Problem, Appetite, Deliverables w
 - `auto` (with `--autonomous`); `do` to amend; `babysit-pr` with `--babysit`; figure-out's offer at the end of a read.
 - `--babysit <pr-url>` synthesizes a lifecycle-only Manifest from a pull request — the `check-pr` gate and the gate that the pull request shows the change working; `--autonomous` skips the approval wait and records decisions as `(auto)` assumptions.
 - It reads earlier work on the repository before encoding.
+- A disposable draft made only to get a person's reaction loads no task file; its Deliverable owes only that the draft reaches that person.
 - Coding gates do not prescribe when the executor runs its advisory review. PR defaults permit reasoned declines of correct but optional bot suggestions; the independent proof gate remains.
 
 ## Scenarios
@@ -81,6 +82,11 @@ Check: read
 ### current-state-amend
 Run: `scripts/drive-skill.sh define verification/prompts/define-current-state-amend.md`
 Proves: the amended `manifest.md` reads as current state. It carries no date that records when something was decided or changed, and no note of who decided what outside Known Assumptions — the notes in Intent, the Approach, the touched AC-1.2 and the untouched INV-G2 included. The plain-text-only rule, ASM-1's "plain text only" included, is gone from every section, with no text saying it changed, and ASM-1 is replaced rather than joined by a second entry; the plain-text alternative part may remain. The weekly cadence and staying on the relay are recorded as undated `User's call:` Known Assumptions. Reactions are covered by AC-1.1 rewritten to state the class (every kind of item the activity feed shows), with no gate whose region is reactions alone. Every untouched gate keeps its ID, and no reference names an ID that no longer exists. Intent, the Approach and the Deliverable describe the HTML digest. No Known Assumption only records how the amendment's review findings were handled, and the reply lists any finding it did not apply as an open item. Before the handoff, a fresh context reviewed the amendment, or the reply says the review was self-graded.
+Check: read
+
+### draft-gets-no-task-file-gate
+Run: `scripts/drive-skill.sh define verification/prompts/define-draft-request.md`
+Proves: for a request whose only deliverable is a throwaway HTML prototype to react to, the Manifest carries no `review-design`, `review-code` or other task-file gate on the draft; its Deliverable owes only that the draft, kept outside the project's files, reaches the person with the question it poses.
 Check: read
 
 ## Gotchas

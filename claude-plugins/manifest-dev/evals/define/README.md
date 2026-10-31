@@ -112,6 +112,11 @@ Another 2026-10-26 change added to define's Appetite line that Appetite never co
 controls, such as building and testing. It reaches every case that writes an Appetite, and `d28`
 is new: it was driven once on the skill before this change and once after it, and is unmeasured.
 
+A 2026-10-31 change made a disposable draft made only to get a person's reaction load no task
+file, so its Deliverable owes only that the draft reaches that person. No case asks for such a
+draft, so it reaches none of them and changes no case or grader; the `define` recipe's
+`draft-gets-no-task-file-gate` drive covers it and remains **unmeasured**.
+
 The review runs in a fresh context, which this suite's sessions cannot start, so define reviews
 its own Manifest here and says the review was self-graded. No case holds the per-gate wrong-result
 question; the `define` recipe's `fresh-review` drive checks it instead. `d26` holds the search for
