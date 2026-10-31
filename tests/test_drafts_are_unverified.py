@@ -149,7 +149,7 @@ def test_do_keeps_the_draft_throwaway_and_makes_the_decision_durable() -> None:
     # The draft exists to pose a choice; an unattended run does not guess it.
     assert (
         "The choice it poses waits for that person's reaction, and work that depends on the "
-        "choice holds until it arrives." in text
+        "choice is blocked on that reaction until it arrives." in text
     )
 
 
@@ -185,6 +185,8 @@ def test_harvest_takes_a_reaction_to_a_draft_as_direction_and_captures_it() -> N
         in rule
     )
     assert "whether or not it reverses a call this run made" in rule
+    # A requirement surfaced before the real work exists still reaches the run that builds it.
+    assert "naming the lock it owes, so the run that builds it installs it" in rule
     assert "A lean with no stated reason is captured only." in rule
     assert (
         "When it is unclear whether a reaction reaches past the draft, capture it and do not "

@@ -43,7 +43,7 @@ and drafts no Taste entry.
 Capture every reaction, whatever else it does. The direction picked and each criterion the
 reaction surfaced go, through an amendment (`../SKILL.md` → *Amendments*), into the Manifest — as
 gates on the real work where they bind it, and as Known Assumptions recording the person's call —
-into the Ticket the work is tracked on, and into a decision record where the choice meets the
+into any Ticket the work is tracked on, and into a decision record where the choice meets the
 project's bar for one. They never go back into the draft, which changes again only when the person
 asks for another draft.
 
@@ -52,7 +52,8 @@ Lock only what the reaction shows reaches past the draft:
 - **A requirement or constraint on the real work** — something the built thing must do whatever
   it looks like — is an invariant the person stated: take it through the harvest above, at the
   strongest rung that holds it. Lock it where the run holds real work a check can cover; until
-  that work exists, capture it as that work's requirement, and the run that builds it locks it.
+  that work exists, capture it as that work's requirement, naming the lock it owes, so the run
+  that builds it installs it.
 - **A personal lean the person states as reaching beyond this artifact, with a reason**, is
   drafted as a Taste entry for their yes, the way `../SKILL.md` → *Taste on reversal* describes,
   whether or not it reverses a call this run made. A lean with no stated reason is captured only.

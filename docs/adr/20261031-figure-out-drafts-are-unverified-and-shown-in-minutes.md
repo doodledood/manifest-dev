@@ -85,7 +85,7 @@ person with the question it poses.
 partly — `tests/test_drafts_are_unverified.py` pins the no-verification rule (now worded "no review
 skill, and no design measuring or checking tool run on it", with negative assertions on the
 replaced terms), the time bound, the verification bullet's exclusion, the design step's limit
-("none of its optional measuring instruments") and define's task-file exclusion; how long a draft
+("none of the design skill's optional measuring instruments") and define's task-file exclusion; how long a draft
 actually takes, and how rough it is, stay judgment.
 
 ## Source

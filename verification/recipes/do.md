@@ -13,7 +13,7 @@ Executes a Manifest with full autonomy until every Acceptance Criterion and Glob
 - `/do <manifest-path> [--no-log]`.
 - Phrases its description matches: "execute the manifest", "run the plan", "implement it".
 - `auto` after define; `babysit-pr` after its Manifest; `run-ticket` through `auto`.
-- It changes the Manifest only through define, turns corrections into locks — a reaction to a disposable draft steers its direction and locks only what reaches past it — and lists the debt it leaves, builds or repairs the project's verification harness and the recipes the Manifest touches (found with `verify affected`), and arms a goal or prints a goal block so the run survives interruption.
+- It changes the Manifest only through define, turns corrections into locks — a reaction to a disposable draft steers the work's direction and locks only what reaches past it — and lists the debt it leaves, builds or repairs the project's verification harness and the recipes the Manifest touches (found with `verify affected`), and arms a goal or prints a goal block so the run survives interruption.
 
 ## Scenarios
 

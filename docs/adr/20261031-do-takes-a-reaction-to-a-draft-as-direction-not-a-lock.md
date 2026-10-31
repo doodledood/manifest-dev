@@ -35,18 +35,18 @@ and a draft is how they make a design choice quickly without it hardening into a
 make.
 
 ## Decision
-A reaction to a disposable draft is not a correction. By default it steers the direction of the
-draft and of the design behind it, and installs no lock and drafts no Taste entry.
+A reaction to a disposable draft is not a correction. By default it steers the direction the
+draft was made to settle, and the design behind it, and installs no lock and drafts no Taste entry.
 
 Every reaction is captured: the direction picked and each criterion it surfaced go, through a
 define amendment, into the Manifest — gates on the real work where they bind it, Known Assumptions
-recording the person's call — and into any decision record or Ticket the work is tracked on. They
-never go back into the draft.
+recording the person's call — into any Ticket the work is tracked on, and into a decision record
+where the choice meets the project's bar for one. They never go back into the draft.
 
 Only what the reaction shows reaches past the draft is locked. A requirement or constraint on the
 real work is an invariant the person stated and goes through the harvest, locked at the strongest
 rung where real work a check can cover exists; until then it is captured as that work's
-requirement, and the run that builds it locks it. A personal lean the person states as reaching
+requirement, naming the lock it owes, so the run that builds it installs it. A personal lean the person states as reaching
 beyond this artifact, with a reason, is drafted as a Taste entry the way *Taste on reversal*
 describes, whether or not it reverses a call this run made. A lean with no stated reason is
 captured only.
