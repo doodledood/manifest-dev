@@ -1240,6 +1240,14 @@ def test_every_leftover_field_of_a_recipe_is_named_at_once(tmp_path: Path) -> No
     assert "scenario 'b' carries `Workload: varies`" in out, out
 
 
+def test_a_scenarios_output_never_sets_a_field(tmp_path: Path) -> None:
+    # `help` reads the latest run from the summary's own header, never from what it printed.
+    env = _timed(tmp_path, "### once\nRun: `echo '- **Duration:** 99.0 s'`\n")
+    assert run_verify("drive", "thing", env=env).returncode == 0
+    shown = run_verify("help", "thing", env=env).stdout
+    assert "once: passed in 0.0 s" in shown, shown
+
+
 def test_no_command_writes_a_recipe_or_the_settings(tmp_path: Path) -> None:
     env = _timed(tmp_path)
     _settings(tmp_path)
