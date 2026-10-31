@@ -17,7 +17,7 @@ Feed the model the current system prompt plus a small set of logged failures, ea
 
 Constraints to include in the diagnosis call:
 
-- For each failure, decide first whether the fed material caused it — a piece missing, conflicting, wrong or out of date, or buried in noise — and name that fault and its source, before attributing anything to the prompt's lines. A conflict between a prompt line and fed material is an input fault naming both sources, settled by choosing one. A fault inside the prompt's own text belongs with the failure modes.
+- For each failure, decide first whether the fed material caused it — a piece missing, conflicting, wrong or out of date, or buried in noise — and name that fault and its source, before attributing anything to the prompt's lines. A conflict between a prompt line and fed material is an input fault naming both sources. A fault inside the prompt's own text belongs with the failure modes.
 - Identify distinct failure modes among the remaining failures — name and describe each.
 - For each failure mode, quote or paraphrase the specific lines of the system prompt likely causing or reinforcing it. Include contradictions (e.g., *"be concise"* vs. *"err on the side of completeness"*).
 - For each failure mode, briefly explain how those lines steer the agent toward the observed behavior.
@@ -70,7 +70,7 @@ Output format:
 input_faults:
 - failure: ...
   fault: missing | conflicting | wrong_or_stale | noise
-  source: ...
+  sources: ...
 failure_modes:
 - name: ...
   description: ...
@@ -81,7 +81,7 @@ failure_modes:
 
 ## Step 2 — Fix each cause where it lives
 
-Fix each input fault at its source — the code that fills the template, the retrieval, the record a field comes from — and rerun its traces; it gets no prompt patch.
+Fix each input fault at its source — the code that fills the template, the retrieval, the record a field comes from — and rerun its traces. For a conflict, choose the source that is right and correct or remove the other; when the losing side is a prompt line, that line is the source to edit. An input fault gets no compensating prompt rule.
 
 For the failure modes in the prompt's own text, feed the diagnosis from Step 1 into a separate call. Ask for a patch — small explicit edits that resolve the issues without rewriting the prompt.
 
