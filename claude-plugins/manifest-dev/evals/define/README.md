@@ -117,6 +117,11 @@ file, so its Deliverable owes only that the draft reaches that person. No case a
 draft, so it reaches none of them and changes no case or grader; the `define` recipe's
 `draft-gets-no-task-file-gate` drive covers it and remains **unmeasured**.
 
+A second 2026-10-31 change added to *Taste on reversal* that a reaction to a disposable draft is
+about that draft's direction, not a reversal to offer as Taste, unless the user states it as
+reaching beyond that artifact. `d17` is the case nearest it and its prompt reacts to no draft, so
+no case or grader changes.
+
 The review runs in a fresh context, which this suite's sessions cannot start, so define reviews
 its own Manifest here and says the review was self-graded. No case holds the per-gate wrong-result
 question; the `define` recipe's `fresh-review` drive checks it instead. `d26` holds the search for

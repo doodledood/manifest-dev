@@ -1,7 +1,7 @@
 # ADR: Taste is checked at each user's call, followed only where it bears, and captured from explained reversals
 
 ## Status
-Accepted
+Accepted; narrowed by 20261031-do-takes-a-reaction-to-a-draft-as-direction-not-a-lock: an explained reaction to a disposable draft is not a reversal to capture as Taste unless the person states it as reaching beyond that draft
 
 ## Area
 figure-out

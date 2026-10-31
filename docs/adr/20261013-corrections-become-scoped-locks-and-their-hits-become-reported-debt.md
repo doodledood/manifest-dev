@@ -1,7 +1,7 @@
 # ADR: A correction becomes a scoped lock where one exists, and the lock's hits across the repository are reported as debt
 
 ## Status
-Accepted
+Accepted; narrowed by 20261031-do-takes-a-reaction-to-a-draft-as-direction-not-a-lock: a reaction to a disposable draft is not a correction; only what it shows reaches past the draft is locked
 
 ## Area
 do
