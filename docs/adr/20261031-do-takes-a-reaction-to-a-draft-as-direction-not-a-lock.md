@@ -44,18 +44,21 @@ recording the person's call — and into any decision record or Ticket the work 
 never go back into the draft.
 
 Only what the reaction shows reaches past the draft is locked. A requirement or constraint on the
-real work is an owner-stated invariant and goes through the harvest, locked where real work a check
-can cover exists; until then its Manifest gate holds it. A personal lean the person states as
-reaching beyond this artifact, with a reason, goes to *Taste on reversal*. A lean with no stated
-reason is captured only.
+real work is an invariant the person stated and goes through the harvest, locked at the strongest
+rung where real work a check can cover exists; until then it is captured as that work's
+requirement, and the run that builds it locks it. A personal lean the person states as reaching
+beyond this artifact, with a reason, is drafted as a Taste entry the way *Taste on reversal*
+describes, whether or not it reverses a call this run made. A lean with no stated reason is
+captured only.
 
 The key assumption: when it is unclear whether a reaction reaches past the draft, it is captured
 and not locked. A missed lock costs one later correction; a wrong lock binds every later
 contributor to a rule nobody meant.
 
 `/do` keeps the draft throwaway — outside the project's files, as finished as the person expects,
-shown in minutes, never perfected or verified beyond reaching that person with its question — and
-makes durable the decision and criteria the reaction draws out.
+shown in minutes, never perfected or verified beyond reaching that person with its question —
+holds work that depends on the choice until the reaction arrives, and makes durable the decision
+and criteria the reaction draws out.
 
 The rule has one home, `do/references/HARVEST.md` → *A reaction to a draft*; `do/SKILL.md` loads it
 when a reaction arrives and *Taste on reversal* points to it. figure-out's `TASTE.md` and define's

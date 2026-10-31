@@ -172,7 +172,7 @@ short messages do not require permission to do the next piece of research.
   direction, passing along that person, their moment, and our goal; any feeling
   or strength the user named; for each variant, the difference it explores;
   this iteration's question and rough fidelity; and that it is a draft no
-  review loop runs on — no review skill, none of its optional measuring instruments, no second pass. Design
+  review loop runs on — no review skill, none of the design skill's optional measuring instruments, no second pass. Design
   guidance shapes the draft for the next reaction. Where
   that skill is unavailable, write down the loop the reader repeats and what
   has to stay visible together during it, arrange the page to that, pick the

@@ -83,8 +83,8 @@ def test_the_design_step_runs_no_review_loop_on_a_draft() -> None:
         _flat(FIGURE_OUT), "When the read implies making something, also offer"
     )
     assert (
-        "that it is a draft no review loop runs on — no review skill, none of its optional "
-        "measuring instruments, no second pass" in draft
+        "that it is a draft no review loop runs on — no review skill, none of the design "
+        "skill's optional measuring instruments, no second pass" in draft
     )
     assert "no review skill, no instrument, no second pass" not in draft
 
@@ -146,19 +146,26 @@ def test_do_keeps_the_draft_throwaway_and_makes_the_decision_durable() -> None:
         "What the run makes durable is the decision and the criteria their reaction draws out, "
         "never the draft." in text
     )
+    # The draft exists to pose a choice; an unattended run does not guess it.
+    assert (
+        "The choice it poses waits for that person's reaction, and work that depends on the "
+        "choice holds until it arrives." in text
+    )
 
 
 def test_do_reads_the_draft_rule_when_a_reaction_arrives() -> None:
     text = _flat(DO)
     assert "receives a correction or a reaction to a disposable draft" in text
     assert (
-        "a reaction to a draft steers its direction and locks only what reaches past it"
+        "a reaction to a draft steers the work's direction and locks only what reaches past it"
         in text
     )
-    # Taste on reversal points to the rule rather than restating it.
+    # Taste on reversal points to the rule rather than restating it, and its own trigger (a call
+    # this run made) does not refuse what the rule routes there.
     assert (
-        "A reaction to a disposable draft drafts an entry only as `references/HARVEST.md` → "
-        "*A reaction to a draft* says." in text
+        "A reaction to a disposable draft (defined below) drafts an entry exactly when "
+        "`references/HARVEST.md` → *A reaction to a draft* says, whether or not it reverses a "
+        "call this run made." in text
     )
 
 
@@ -166,8 +173,8 @@ def test_harvest_takes_a_reaction_to_a_draft_as_direction_and_captures_it() -> N
     rule = _section(_flat(HARVEST), "A reaction to a draft")
     assert "A reaction to it is not a correction" in rule
     assert (
-        "By default the reaction steers the direction of the draft and of the design behind it, "
-        "and installs no lock and drafts no Taste entry." in rule
+        "By default the reaction steers the direction the draft was made to settle, and the "
+        "design behind it, and installs no lock and drafts no Taste entry." in rule
     )
     assert "Capture every reaction, whatever else it does." in rule
     assert "They never go back into the draft" in rule
@@ -177,10 +184,11 @@ def test_harvest_takes_a_reaction_to_a_draft_as_direction_and_captures_it() -> N
         "**A personal lean the person states as reaching beyond this artifact, with a reason**"
         in rule
     )
+    assert "whether or not it reverses a call this run made" in rule
     assert "A lean with no stated reason is captured only." in rule
     assert (
-        "When it is unclear whether a reaction reaches past the draft, capture it and do not lock"
-        in rule
+        "When it is unclear whether a reaction reaches past the draft, capture it and do not "
+        "lock it or draft a Taste entry" in rule
     )
 
 
