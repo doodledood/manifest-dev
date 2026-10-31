@@ -1,22 +1,24 @@
 # Metaprompting
 
-Diagnose-then-revise for a failing prompt. Instead of writing from scratch, feed a model the current prompt plus logged failure traces, get a root-cause diagnosis, then ask for a surgical revision against that diagnosis.
+Diagnose-then-revise for a failing prompt. Instead of writing from scratch, feed a model the current prompt plus logged failure traces — each with what the run had in front of it — get a root-cause diagnosis, then fix each cause where it lives: material fed into the prompt at its source, the prompt's own text by a surgical revision.
 
 The shape is two separate calls — diagnose first, revise second. Skipping the diagnosis (asking directly for a fix) tends to produce vague rewrites that miss the real cause.
 
 ## Pre-flight check — when metaprompting is the wrong tool
 
+- Read what a few failing runs were fed (`SKILL.md` → *What the run has in front of it*). If that already shows the fault — a piece missing, conflicting, wrong or out of date, or buried in noise — fix it at its source and rerun. Otherwise Step 1 sorts each failure.
 - If the prompt is missing a goal or success criteria entirely, no diagnosis will surface it — fix the gap directly.
 - If the model lacks a capability the prompt is asking for (reliable arithmetic on long numbers, accurate citations without retrieval), no prompt change will fix it — change the architecture.
 - If the failure is a single bug from a typo or contradiction visible on a quick read, just fix it.
 
 ## Step 1 — Diagnose only
 
-Feed the model the current system prompt plus a small set of logged failures. Ask for root-cause analysis. **Do not ask for a solution yet.** The output is an analysis of which lines of the prompt are causing which observed behaviors.
+Feed the model the current system prompt plus a small set of logged failures, each carrying what the run was fed besides the prompt (`SKILL.md` → *What the run has in front of it*). Ask for root-cause analysis. **Do not ask for a solution yet.** The output sorts each failure by cause — the fed material, or the prompt's own text — and, for the prompt-caused ones, names which lines of the prompt are causing which observed behaviors.
 
 Constraints to include in the diagnosis call:
 
-- Identify distinct failure modes — name and describe each.
+- For each failure, decide first whether the fed material caused it — a piece missing, conflicting, wrong or out of date, or buried in noise — and name that fault and its source, before attributing anything to the prompt's lines. A conflict between a prompt line and fed material is an input fault naming both sources. A fault inside the prompt's own text belongs with the failure modes.
+- Identify distinct failure modes among the remaining failures — name and describe each.
 - For each failure mode, quote or paraphrase the specific lines of the system prompt likely causing or reinforcing it. Include contradictions (e.g., *"be concise"* vs. *"err on the side of completeness"*).
 - For each failure mode, briefly explain how those lines steer the agent toward the observed behavior.
 - Return the analysis in a structured-but-readable format.
@@ -36,6 +38,9 @@ You are given:
 
 2) A small set of logged failures. Each entry has:
 - query
+- context_seen (what the run was fed besides the prompt, such as inputs
+  filled into it, files read, retrieved material, tool output, the
+  conversation so far, what was handed to the agent; shortened if needed)
 - tools_called (as actually executed)
 - final_answer (shortened if needed)
 - eval_signal (rating, comment, or grader judgment)
@@ -45,16 +50,27 @@ You are given:
 </failure_traces>
 
 Tasks:
-1) Identify each distinct failure mode (e.g., tool_usage_inconsistency,
-   output_length_drift, autonomy_vs_clarification).
-2) For each failure mode, quote or paraphrase the specific lines of the
+1) For each failure, decide whether its context_seen caused it: a piece
+   the task needs is missing, two pieces conflict, a piece is wrong or out
+   of date, or what matters is buried in noise. A system prompt line that
+   conflicts with context_seen counts too; name both sources. Name the
+   fault and its source. A fault inside the system prompt's own text is
+   not an input fault; leave it for task 2.
+2) Among the remaining failures, identify each distinct failure
+   mode (e.g., tool_usage_inconsistency, output_length_drift,
+   autonomy_vs_clarification).
+3) For each failure mode, quote or paraphrase the specific lines of the
    system prompt most likely causing or reinforcing it. Include any
    contradictions.
-3) Briefly explain how those lines are steering the agent toward the
+4) Briefly explain how those lines are steering the agent toward the
    observed behavior.
 
 Output format:
 
+input_faults:
+- failure: ...
+  fault: missing | conflicting | wrong_or_stale | noise
+  sources: ...
 failure_modes:
 - name: ...
   description: ...
@@ -63,9 +79,11 @@ failure_modes:
       why_it_matters: ...
 ```
 
-## Step 2 — Surgical revision
+## Step 2 — Fix each cause where it lives
 
-Feed the diagnosis from Step 1 into a separate call. Ask for a patch — small explicit edits that resolve the issues without rewriting the prompt.
+Fix each input fault at its source — the code that fills the template, the retrieval, the record a field comes from — and rerun its traces. For a conflict, choose the right source, then correct or remove the other; when the losing side is a prompt line, that line is the source to edit. An input fault gets no compensating prompt rule.
+
+For the failure modes in the prompt's own text, feed the diagnosis from Step 1 into a separate call. Ask for a patch — small explicit edits that resolve the issues without rewriting the prompt.
 
 Constraints to include in the revision call:
 
@@ -74,7 +92,7 @@ Constraints to include in the revision call:
 - Make trade-offs explicit (when to prioritize X over Y; exactly when tool A must vs. must not be called).
 - Keep overall structure and length roughly similar to the original, unless a short consolidation removes obvious duplication.
 
-Re-include the original system prompt verbatim in the revision call — Step 2 doesn't inherit context from Step 1.
+Include the system prompt verbatim in the revision call, with the input-fault edits above already applied, so the revised prompt keeps them — Step 2 doesn't inherit context from Step 1.
 
 Example revision prompt:
 
@@ -90,7 +108,8 @@ Failure-mode analysis:
 [PASTE STEP 1 OUTPUT]
 
 Propose a surgical revision of the system prompt that reduces the
-observed issues while preserving the good behaviors.
+failure modes while preserving the good behaviors. Leave the input
+faults out of the patch; they are fixed at their source.
 
 Constraints:
 - Do not redesign from scratch.
@@ -113,7 +132,7 @@ After applying the patch, re-run the failing queries. Repeat the cycle until the
 
 **Don't stack patches.** If a patch creates new failures, restart at Step 1 with the new failure as input — stacking patches obscures the root cause and produces brittle prompts.
 
-**Stop if the cycle isn't converging.** If repeated cycles produce no improvement on the named failure modes, the issue likely isn't a prompt problem. Revisit the pre-flight check — model-capability gaps and missing goals don't fix with metaprompting.
+**Stop if the cycle isn't converging.** If repeated cycles produce no improvement on the named failure modes, the issue likely isn't a prompt problem. Revisit the pre-flight check — faulty input, model-capability gaps and missing goals don't fix with prompt patches.
 
 ## Pitfalls of the metaprompting workflow itself
 

@@ -899,22 +899,36 @@ and `test_ids` and one `vN/` directory per round.
    analyzer reads only train cases' outputs.
 2. **Fix the climb set once, before round 1**: the train cases whose plugin arm failed a grader in
    the latest baseline, plus the declared guards the prompt under change covers.
-3. **Run the unchanged skill as `v0`**, the control every round is compared with, one invocation
-   per case, plugin arm only, three runs:
+3. **Run the unchanged skill as `v0`**, the control every round is compared with. Use one
+   invocation per case, plugin arm only, three runs. Pass `--keep-temp` so each run's scaffold
+   directory and transcript stay for step 5:
    ```bash
    for c in <climb set>; do
      scripts/evals/run_eval.sh --wait "hc-v0-$c" "evals/results/hillclimb-<suite>/v0/$c.json" \
-       --case "$c" --tag <suite> --ablation none --runs 3 --judge-model sonnet --scaffold --max-cost-usd 6
+       --case "$c" --tag <suite> --ablation none --runs 3 --judge-model sonnet --scaffold --max-cost-usd 6 \
+       --keep-temp
    done
    ```
-4. **Extract train outputs** for the analyzer. A finished run keeps each run's judged artifact
-   but no transcript:
+4. **Extract train outputs** for the analyzer. The result JSON keeps each run's judged artifact,
+   and transcripts are only in the `--keep-temp` directories. Run:
    `python3 scripts/evals/extract_outputs.py <result.json> --state <dir>/_state.json --grader <grader-name> --out <fresh-dir> --cases <train cases...>`. The named grader fixes the evidence source; missing evidence fails instead of falling back to a report.
    Results without the named evidence must be rerun; report-order recovery is not supported.
-5. **Make one change per round**, sized to clear the noise floor, and save its diff and
+5. **Read what the failing runs had in front of them** before choosing a change. Find each
+   failing train run's kept directory from the `kept temp: <path>` line in the run's `eval.log`.
+   Its transcript shows which skill text and references loaded, and which scaffold files and
+   prompt the run read. Check them against the faults listed in prompt-engineering's `SKILL.md`
+   → *What the run has in front of it*. A skill reference that never loaded, or a rule buried
+   under others, calls for a change to what the run is fed, not to a line's wording. Read
+   transcripts of train cases only, as with outputs.
+
+   A fault in the case prompt or its scaffold is not a round's change. Record it in this README
+   as a case defect and fix it outside the climb. Then rerun `v0` for that case before the next
+   round, because every round compares with it. The climb set stays as fixed in step 2. The case's
+   row in the latest baseline is stale until the next full baseline is recorded.
+6. **Make one change per round**, sized to clear the noise floor, and save its diff and
    rationale in `vN/`.
-6. **Rerun the climb set** the same way into `vN/`.
-7. **Compare** per grader and split:
+7. **Rerun the climb set** the same way into `vN/`.
+8. **Compare** per grader and split:
    `python3 scripts/evals/score_rounds.py --state <dir>/_state.json v0=<dir>/v0 vN=<dir>/vN`.
    It merges a directory's results and requires every requested case and quality grader.
    Use `--cases` for an explicit subset beside a full baseline; no silent intersection occurs.
