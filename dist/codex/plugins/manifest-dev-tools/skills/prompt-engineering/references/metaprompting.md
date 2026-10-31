@@ -81,7 +81,7 @@ failure_modes:
 
 ## Step 2 — Fix each cause where it lives
 
-Fix each input fault at its source — the code that fills the template, the retrieval, the record a field comes from — and rerun its traces. For a conflict, choose the source that is right and correct or remove the other; when the losing side is a prompt line, that line is the source to edit. An input fault gets no compensating prompt rule.
+Fix each input fault at its source — the code that fills the template, the retrieval, the record a field comes from — and rerun its traces. For a conflict, choose the right source, then correct or remove the other; when the losing side is a prompt line, that line is the source to edit. An input fault gets no compensating prompt rule.
 
 For the failure modes in the prompt's own text, feed the diagnosis from Step 1 into a separate call. Ask for a patch — small explicit edits that resolve the issues without rewriting the prompt.
 
@@ -92,7 +92,7 @@ Constraints to include in the revision call:
 - Make trade-offs explicit (when to prioritize X over Y; exactly when tool A must vs. must not be called).
 - Keep overall structure and length roughly similar to the original, unless a short consolidation removes obvious duplication.
 
-Re-include the original system prompt verbatim in the revision call — Step 2 doesn't inherit context from Step 1.
+Include the system prompt verbatim in the revision call, with the input-fault edits above already applied, so the revised prompt keeps them — Step 2 doesn't inherit context from Step 1.
 
 Example revision prompt:
 
