@@ -317,7 +317,7 @@ the `/setup-project` setup the project has. When the number is older than the ne
 ## Verification
 
 ### Verification Harness
-<!-- context: 8f662d2fc1e1 -->
+<!-- context: 4f71cd46615f -->
 The Verification Harness is the one command in a project that agents and people use to find if the
 work still does its job. Its `--help` says all about it. It reads one Recipe for each feature,
 skill, document walk or eval suite. It also reads one Recipe for the checks that run on all of the

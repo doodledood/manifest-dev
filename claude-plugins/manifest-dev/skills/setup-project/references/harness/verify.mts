@@ -50,6 +50,7 @@ const STAMP = /(\d{8}T\d{6}Z)(?:-(\d+))?/;
 const REMOVED_SCENARIO_FIELDS = ["Line", "Workload"] as const;
 const REMOVED_SETTINGS = ["headroom", "raise"] as const;
 const REMOVED_WHY = "time lines were removed from the harness, so nothing reads it; delete it";
+const REMOVED_FIELD = new RegExp(`^(?:${REMOVED_SCENARIO_FIELDS.join("|")}):.*$`, "gm");
 // The default branches `affected` tries, in order, after origin/HEAD when given no base.
 const DEFAULT_BRANCHES = ["origin/main", "origin/master", "main", "master"];
 /** How long a failed run waits on the project's `logs:` command before giving up on it. */
@@ -153,12 +154,14 @@ function parseRecipe(path: string): Recipe {
     const run = /^Run:\s*`([^`]+)`/m.exec(rest);
     const proves = /^Proves:\s*(.+)$/m.exec(rest);
     const check = /^Check:\s*(\S+)/m.exec(rest);
-    for (const [left] of rest.matchAll(new RegExp(`^(?:${REMOVED_SCENARIO_FIELDS.join("|")}):.*$`, "gm"))) {
+    for (const [left] of rest.matchAll(REMOVED_FIELD)) {
       leftovers.push(`${file}: scenario '${name}' carries \`${left.trim()}\`: ${REMOVED_WHY}`);
     }
-    if (!run?.[1]) throw new Problem(`${file}: scenario '${name}' has no Run: \`command\` line`);
+    // A leftover found so far is named with the problem that stops the parse, not lost behind it.
+    const stop = (problem: string): Problem => new Problem([...leftovers, problem].join("\n"));
+    if (!run?.[1]) throw stop(`${file}: scenario '${name}' has no Run: \`command\` line`);
     if (check && check[1] !== "read" && check[1] !== "exit") {
-      throw new Problem(`${file}: scenario '${name}' Check: must be \`read\` or \`exit\``);
+      throw stop(`${file}: scenario '${name}' Check: must be \`read\` or \`exit\``);
     }
     scenarios.push({ name, run: run[1], proves: proves?.[1]?.trim() ?? "", judged: check?.[1] === "read" });
   }
@@ -198,8 +201,9 @@ interface Settings {
 
 function settings(): Settings {
   const [meta, body] = existsSync(SETTINGS) ? frontMatter(read(SETTINGS)) : [{}, ""];
-  for (const key of REMOVED_SETTINGS) {
-    if (Object.hasOwn(meta, key)) throw new Problem(`${rel(SETTINGS)}: carries \`${key}: ${meta[key]}\`: ${REMOVED_WHY}`);
+  const leftovers = REMOVED_SETTINGS.filter((key) => Object.hasOwn(meta, key));
+  if (leftovers.length) {
+    throw new Problem(leftovers.map((key) => `${rel(SETTINGS)}: carries \`${key}: ${meta[key]}\`: ${REMOVED_WHY}`).join("\n"));
   }
   const askFirst = meta["ask-first"] ?? "ask";
   if (askFirst !== "ask" && askFirst !== "run") {
@@ -256,7 +260,7 @@ const withRun = (id: string, extra: Record<string, string> = {}): NodeJS.Process
 
 // --- local evidence ---------------------------------------------------------------------
 
-/** What a run wrote, read back from its summary: what `help RECIPE` shows of the latest run. */
+/** What a run wrote, read back from its summary's header. */
 interface Summary {
   path: string;
   when: string; // the stamp, which sorts as the runs were written within one second's order
@@ -920,7 +924,7 @@ function checkProblems(): string[] {
     settings();
   } catch (error) {
     if (!(error instanceof Problem)) throw error;
-    problems.push(error.message);
+    problems.push(...error.message.split("\n"));
   }
   for (const path of markdownIn(RECIPES)) {
     let recipe: Recipe;
@@ -928,7 +932,8 @@ function checkProblems(): string[] {
       recipe = parseRecipe(path);
     } catch (error) {
       if (!(error instanceof Problem)) throw error;
-      problems.push(error.message);
+      // One problem per line: a recipe's leftover fields are named together in one message.
+      problems.push(...error.message.split("\n"));
       continue;
     }
     const file = `${recipe.name}.md`;
@@ -958,7 +963,13 @@ function cmdCheck(): number {
 
 function cmdDoctor(): number {
   const problems = checkProblems();
-  const command = settings().doctor;
+  let command = "";
+  try {
+    command = settings().doctor;
+  } catch (error) {
+    // Settings that do not parse are already among the problems, so there is no command to run.
+    if (!(error instanceof Problem)) throw error;
+  }
   if (command && spawnSync(command, { shell: true, cwd: ROOT, stdio: "inherit", env: withRun(runIdentity(undefined)) }).status !== 0) {
     problems.push(`doctor command failed: ${command}`);
   }

@@ -97,6 +97,7 @@ def test_the_updated_tool_refuses_every_field_the_update_has_not_removed_yet(
         "carries `Line: 3.1 s on linux-x64-4cpu; raised: tests for the CSV export`",
         "carries `Workload: varies`",
         "verification/harness.md: carries `headroom: 30%`",
+        "verification/harness.md: carries `raise: ask`",
     ):
         assert named in result.stdout, (named, result.stdout)
 

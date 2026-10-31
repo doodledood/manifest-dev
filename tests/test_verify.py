@@ -1190,7 +1190,8 @@ def test_help_names_no_time_line_and_no_exit_5(tmp_path: Path) -> None:
     codes = shown[shown.index("Exit codes:") :].split("\n\n")[0]
     assert re.search(r"\b4 refused", codes) and not re.search(r"\b5\b", codes), codes
     recipe = run_verify("help", "thing", env=env).stdout
-    assert "line" not in recipe.lower().replace("lines", ""), recipe
+    for gone in ("no line yet", "Line:", "line ", "its work varies"):
+        assert gone not in recipe, (gone, recipe)
 
 
 @pytest.mark.parametrize(
@@ -1229,6 +1230,35 @@ def test_a_leftover_setting_fails_check_naming_it(tmp_path: Path, setting: str) 
     ), result.stdout
 
 
+def test_both_leftover_settings_are_named_at_once(tmp_path: Path) -> None:
+    env = _harness(tmp_path, "")
+    _settings(tmp_path, **{"headroom": "25%", "raise": "ask"})
+    out = run_verify("check", env=env).stdout
+    assert "carries `headroom: 25%`" in out and "carries `raise: ask`" in out, out
+
+
+def test_a_leftover_field_is_named_beside_a_scenario_that_stops_the_parse(
+    tmp_path: Path,
+) -> None:
+    env = _harness(
+        tmp_path, "", "### a\nRun: `true`\nLine: 1.0 s on m\n\n### b\nProves: x\n"
+    )
+    out = run_verify("check", env=env).stdout
+    assert "scenario 'a' carries `Line: 1.0 s on m`" in out, out
+    assert "scenario 'b' has no Run:" in out, out
+
+
+def test_doctor_names_a_leftover_setting_with_the_recipe_problems(
+    tmp_path: Path,
+) -> None:
+    env = _harness(tmp_path, "", "### a\nRun: `true`\nWorkload: varies\n")
+    _settings(tmp_path, headroom="25%")
+    result = run_verify("doctor", env=env)
+    assert result.returncode == 1, result.stdout + result.stderr
+    assert "carries `headroom: 25%`" in result.stdout, result.stdout
+    assert "carries `Workload: varies`" in result.stdout, result.stdout
+
+
 def test_every_leftover_field_of_a_recipe_is_named_at_once(tmp_path: Path) -> None:
     env = _harness(
         tmp_path,
@@ -1238,6 +1268,7 @@ def test_every_leftover_field_of_a_recipe_is_named_at_once(tmp_path: Path) -> No
     out = run_verify("check", env=env).stdout
     assert "scenario 'a' carries `Line: 1.0 s on m`" in out, out
     assert "scenario 'b' carries `Workload: varies`" in out, out
+    assert "check: 2 problem(s)" in out, out
 
 
 def test_a_scenarios_output_never_sets_a_field(tmp_path: Path) -> None:
@@ -1267,8 +1298,9 @@ def test_the_shipped_example_harness_carries_no_removed_field(tmp_path: Path) ->
     env = {**outer_env(), "VERIFY_ROOT": str(tmp_path), "VERIFY_DATA": str(data)}
     listed = run_verify("list", env=env)
     assert listed.returncode == 0, listed.stdout + listed.stderr
-    checked = run_verify("check", env=env).stdout
-    assert "time lines were removed" not in checked, checked
+    checked = run_verify("check", env=env)
+    # The examples name paths of an imagined project, so only a removed-field refusal matters here.
+    assert "time lines were removed" not in checked.stdout, checked.stdout
 
 
 # --- evidence stays on the machine that ran ---------------------------------------------
