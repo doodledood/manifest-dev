@@ -218,7 +218,7 @@ base model already covers; such a case leaves only through its probe's *Coverage
 | `46-general-question-skips-recall` | autonomous, repository, plugin arm only | Open no earlier session log for a general question the repository's history cannot bear on | tuning |
 | `48-reuse-and-shallow-layer` | autonomous, repository | Before any code, reuse the utilities the codebase already has and question a proposed class that would only forward to them | tuning |
 | `52-projectless-chat-offers-no-surfaces` | autonomous, not a project, plugin arm only | For a one-off script in a folder that is not a project, say how it behaves and how to check it, offering no setup, harness, decision record, glossary or North Star | tuning |
-| `53-update-offer-from-v10` | docs, repository, plugin arm only | Offer only the v11 changes: records give grounds rather than a veto, the `Revisit when` rule for records outside `Strategy`, and the North Star fit check | tuning |
+| `53-update-offer-from-v11` | docs, repository, plugin arm only | Offer only the v12 change: remove the harness's time lines — the tool update, recipes' `Line:` and `Workload:` fields, the `headroom:` and `raise:` settings, and text about lines | tuning |
 | `54-touched-recipe-not-fit` | autonomous, repository | A change touching a feature whose recipe cannot be relied on — started by hand on a fixed port, its last failure unexplained — makes repairing that recipe part of the work | tuning |
 | `55-own-check-not-fit` | autonomous, repository | With no harness, a touched test of the project's own that passes whatever the output is gets repaired in its own form as part of the work, seen failing on a scratch break before it counts, and no harness is built | tuning |
 | `56-order-dependent-design` | autonomous | Model a design whose correctness depends on the order of events before building it, and pick a check that can reach the breaking interleaving | tuning |
@@ -621,8 +621,7 @@ has its row renamed or removed. `tests/test_figure_out_coverage.py` fails until 
   reason there, and each part of a unit no grader reaches carries a `not graded:` note: team mode,
   acts that leave state outside the session, log safety and resume, splitting questions into
   tickets, rendering beyond the draft offer, asking through a host's question-selection capability,
-  never self-accepting an offer that hands off to setup-project or ticket-up, and the *fast enough*
-  job of *Fit to trust*. Two things sit outside the table because no unit names them on its own:
+  and never self-accepting an offer that hands off to setup-project or ticket-up. Two things sit outside the table because no unit names them on its own:
   under-firing, excluded because prompts name the skill by design, and calibrating to the user's
   expertise, which has no observable bar. Held-out witnesses for `19` and `20` were left out to
   bound cost; add one before keeping a change aimed at either. setup-project going straight to the
@@ -696,7 +695,7 @@ file. The row is never deleted while the probe stays.
 | `tasks/CODING.md` | Failure visibility | `73-coding-rests-on-unbuilt/how-anyone-would-know` |
 | `tasks/CODING.md` | Drivable and debuggable | `73-coding-rests-on-unbuilt/can-an-agent-drive-it` |
 | `tasks/CODING.md` | Verification design | `21-how-it-gets-checked/settles-the-exercise`, `56-order-dependent-design/check-reaches-the-interleaving` |
-| `tasks/CODING.md` | The verification harness | `32-reads-the-verification-surface/plans-to-exercise-the-touched-entry`, `33-no-verification-surface/plans-a-way-to-check-it`, `54-touched-recipe-not-fit/folds-the-harness-repair-into-the-work`, `55-own-check-not-fit/repairs-the-own-check`, `55-own-check-not-fit/sees-the-repaired-test-fail`; not graded: the *fast enough* job, which needs evidence carrying a recorded time line |
+| `tasks/CODING.md` | The verification harness | `32-reads-the-verification-surface/plans-to-exercise-the-touched-entry`, `33-no-verification-surface/plans-a-way-to-check-it`, `54-touched-recipe-not-fit/folds-the-harness-repair-into-the-work`, `55-own-check-not-fit/repairs-the-own-check`, `55-own-check-not-fit/sees-the-repaired-test-fail` |
 | `tasks/CODING.md` | Trade-off: Fix in place vs refactor first | `44-debt-on-the-path/offers-the-on-path-debt` |
 | `tasks/CODING.md` | Trade-off: Test depth vs ship speed | `72-coding-shared-function-change/where-to-stop-testing` |
 | `tasks/FEATURE.md` | Beyond the happy path | `21-how-it-gets-checked/settles-the-exercise` |
@@ -810,7 +809,7 @@ file. The row is never deleted while the probe stays.
 | `references/LOG.md` | (whole file) | `01-root-press/log-written`; not graded: log safety and resuming from the log, which have shown no failure and sit outside what a grader reads |
 | `references/RECALL.md` | (whole file) | `43-recalls-earlier-work/carries-the-earlier-ruling-as-a-lead`, `44-debt-on-the-path/offers-the-on-path-debt`, `46-general-question-skips-recall/no-recall-for-a-general-question`, `59-reverted-fix/names-the-reverted-fix` |
 | `references/TASTE.md` | (whole file) | `27-taste-offers/offers-entry-for-the-stated-preference`, `27-taste-offers/offers-entry-for-the-reversal`, `28-universal-not-taste/no-offer-for-a-universal-rule`, `29-ratified-entry-lands/entry-inside-taste-section` |
-| `references/WITH_DOCS.md` | (whole file) | `23-term-and-record/term-captured`, `23-term-and-record/record-written`, `24-ruled-position-holds/position-text-unchanged`, `30-update-offer-for-older-setup/offers-only-whats-new`, `36-marks-drift-it-wont-fix/export-entry-marked-stale`, `45-current-setup-offers-nothing/offers-no-setup-update`, `53-update-offer-from-v10/offers-only-whats-new-since-v10`, `84-chosen-option-goes-to-a-record/ruling-recorded`, `84-chosen-option-goes-to-a-record/north-star-unchanged`, `85-evidence-against-a-bet/bet-challenged`, `85-evidence-against-a-bet/bet-text-kept` |
+| `references/WITH_DOCS.md` | (whole file) | `23-term-and-record/term-captured`, `23-term-and-record/record-written`, `24-ruled-position-holds/position-text-unchanged`, `30-update-offer-for-older-setup/offers-only-whats-new`, `36-marks-drift-it-wont-fix/export-entry-marked-stale`, `45-current-setup-offers-nothing/offers-no-setup-update`, `53-update-offer-from-v11/offers-only-whats-new-since-v11`, `84-chosen-option-goes-to-a-record/ruling-recorded`, `84-chosen-option-goes-to-a-record/north-star-unchanged`, `85-evidence-against-a-bet/bet-challenged`, `85-evidence-against-a-bet/bet-text-kept` |
 | `references/ADR_FORMAT.md` | (whole file) | `23-term-and-record/old-record-restatused`, `23-term-and-record/index-rebuilt`, `24-ruled-position-holds/unattended-record-marked`, `23-term-and-record/record-carries-enforced-by` |
 | `references/autonomous.md` | (whole file) | `25-users-call-and-taste/flags-the-users-calls`, `25-users-call-and-taste/no-taste-offer`, `24-ruled-position-holds/unattended-record-marked`; not graded: never self-accepting an offer that hands off to setup-project or ticket-up, or that workflow's inner owner-judgment offers, which needs those skills reachable from the session |
 | `references/team.md` | (whole file) | Reason: team mode runs in a Slack channel, a service the suite cannot reach from its sandbox |
@@ -1008,7 +1007,7 @@ Plugin arm only:
 | 45-current-setup-offers-nothing | tuning | 1.00 |
 | 46-general-question-skips-recall | tuning | 1.00 |
 | 52-projectless-chat-offers-no-surfaces | tuning | 0.86 |
-| 53-update-offer-from-v10 (measured as 53-update-offer-from-v9) | tuning | 0.00 |
+| 53-update-offer-from-v11 (measured as 53-update-offer-from-v9) | tuning | 0.00 |
 
 Mean 0.76 over the 9 cases.
 

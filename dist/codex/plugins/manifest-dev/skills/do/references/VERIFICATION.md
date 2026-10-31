@@ -26,20 +26,11 @@ its own `--help`.
 - **Unfit harness:** when the harness is not fit to trust for what the work touches
   (`../../setup-project/references/VERIFICATION_HARNESS.md` → *Fit to trust*), repair it within
   scope, and report the rest as debt.
-- **Time lines:** a line is written into its recipe only by the change that changes that check.
-  A fixed-workload scenario the change adds gets its first line from a passing run (`verify
-  line`), and a change that made a check faster keeps the gain the same way; no other run moves a
-  line. Before a lower line is written, compare the work the check did — tests collected, cases
-  run — with a run of the same check at the base commit: a speedup that comes from doing less work
-  keeps the old line, and the lost work is a finding.
-- **Over its line:** when a check the work touches is over its time line, find where the time
-  went from the runner's own timings. Pay it down before the run is done when growth did not earn
-  the time — it came from what the change added, such as a slow new test or a sleep — or when the
-  fix lies in code the change already touches. When the fix needs shared code the change does not
-  touch, or a broad refactor, open or join one debt Ticket, freeze the overshoot with it, and
-  report it as debt. Raise the line only when the new time is in new tests for new behavior, the
-  existing tests are no slower, and no cheap waste remains, with that reason on the raise and one
-  line in the pull request.
+- **Run time:** follow `../../setup-project/references/VERIFICATION_HARNESS.md` → *Run time*.
+  When a check the work touches has grown slow, find where the time went from the runner's own
+  timings and speed it up where the cause is in what the change added, such as a slow new test or
+  a sleep, or in code it already touches; otherwise say in the report which check is slow and
+  where the time goes.
 - **A stand-in is not the target:** where a check runs on a stand-in for where the work will run —
   a cloud container that already has tools a user's machine lacks, a fixture in place of the real
   service — the report names, as unverified, what the stand-in provided that the target will not.

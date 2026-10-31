@@ -18,7 +18,6 @@ A reader comes to these documents to set a project up, and should end able to sa
 Run: `scripts/walk.sh 'Set a project up. End able to say what setting a project up installs, and how an older setup gets updates. The sections to rely on: claude-plugins/manifest-dev/README.md → A project that remembers.' claude-plugins/manifest-dev/README.md`
 Proves: the reader ends able to say what setting a project up installs, and how an older setup gets updates, and names nothing it had to guess that blocks the task.
 Check: read
-Workload: varies
 
 ## Gotchas
 

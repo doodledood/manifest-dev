@@ -31,7 +31,6 @@ Proves: exit code 0, and stdout holds the new note's ID and title.
 ### changed-tests
 Run: `scripts/control-notes test --changed-since main`
 Proves: the unit tests for the files this change touched pass; quick enough to run after every edit.
-Workload: varies
 
 ## Gotchas
 

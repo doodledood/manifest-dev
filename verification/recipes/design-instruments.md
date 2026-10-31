@@ -39,7 +39,6 @@ Check: read
 Run: `d=$(mktemp -d) && node scripts/design-evals/run.mjs "$d/out"`
 Proves: exit `0` and a last line `Checks: PASS`: the instruments' constructed geometric, semantic and behavioral facts hold across the fixture pages, and a blind comparison gallery is written under the temporary directory. It measures no human preference or task speed.
 Check: read
-Line: 290.7 s on linux-x64-4cpu
 
 ## Gotchas
 

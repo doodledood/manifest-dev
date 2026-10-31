@@ -22,7 +22,7 @@ its commands and steps, so no figure-out, define or do run builds or offers one:
 3. **Ask-first marks given for run time** — each recipe whose `ask-first` reason is run time
    alone, offered for removal of the mark; a mark whose reason names cost stays.
 4. **Scenarios whose work varies** — an agent session, a document walk, the affected tests — get
-   `Workload: varies`, per `../VERIFICATION_HARNESS.md` → *Time lines*, so ordinary run-to-run
+   `Workload: varies`, so ordinary run-to-run
    variation never reads as creep.
 5. **The context-file bullet** — the newest wording from `../NORTH_STAR_FORMAT.md` → *The
    project-surfaces section*, which says unmarked recipes are free to run as often as they help

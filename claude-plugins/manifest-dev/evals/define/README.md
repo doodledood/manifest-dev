@@ -553,7 +553,5 @@ Freeze the full split before inspecting outputs, and let the analyzer read only 
   it, which needs an approval a grader can see; a project with nothing that can check the work
   getting a first Deliverable that adds such a check in its own form, never a harness it did not
   choose (figure-out's `33` covers the read); a criterion pinned
-  by reacting to something concrete becoming a gate; an `Enforced by: not yet` check on the
-  work's path getting built; and the *fast enough* job of *Trust the check*, a touched check over
-  its time line repaired first, which needs evidence carrying a recorded line (figure-out's
-  README names the same gap).
+  by reacting to something concrete becoming a gate; and an `Enforced by: not yet` check on the
+  work's path getting built.

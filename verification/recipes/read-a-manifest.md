@@ -18,7 +18,6 @@ A reader comes to these documents to read a Manifest, and should end able to rea
 Run: `scripts/walk.sh 'Read a Manifest. End able to read a Manifest and say what each section binds. The sections to rely on: claude-plugins/manifest-dev/README.md → Manifest sections.' claude-plugins/manifest-dev/README.md`
 Proves: the reader ends able to read a Manifest and say what each section binds, and names nothing it had to guess that blocks the task.
 Check: read
-Workload: varies
 
 ## Gotchas
 

@@ -35,7 +35,6 @@ malformed snapshot keeps the last good view with its banner and warning. The scr
 and blurred, at 1440×900 and 390×844) and `facts.json` go to the directory its first output line
 names: under `verification/evidence/status-page/` in a `verify` run, which git ignores.
 Check: read
-Line: 17.4 s on darwin-arm64-12cpu
 
 ## Gotchas
 

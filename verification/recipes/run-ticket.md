@@ -23,7 +23,6 @@ A Question invokes inquiry only and returns its Read on the same Ticket. A repea
 Run: `scripts/drive-skill.sh run-ticket verification/prompts/run-ticket-run.md --max-turns 120`
 Proves: the Ticket gains `<!-- manifest-dev-run-ticket-attempt -->` carrying the run's Manifest and progress, and, at the end, `<!-- manifest-dev-run-ticket-completion -->`, with the attempt record's run facts marked ready to land, or `<!-- manifest-dev-run-ticket-escalated -->`. Nothing is merged, since the prompt does not say to land.
 Check: read
-Workload: varies
 
 ## Gotchas
 

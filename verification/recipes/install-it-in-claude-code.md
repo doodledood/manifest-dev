@@ -18,7 +18,6 @@ A reader comes to these documents to install it in Claude Code, and should end a
 Run: `scripts/walk.sh 'Install it in Claude Code. End able to install the marketplace and the plugin, and start a first /figure-out. The sections to rely on: README.md → Install.' README.md`
 Proves: the reader ends able to install the marketplace and the plugin, and start a first `/figure-out`, and names nothing it had to guess that blocks the task.
 Check: read
-Workload: varies
 
 ## Gotchas
 

@@ -18,7 +18,6 @@ A reader comes to these documents to pick the tools skill for a job, and should 
 Run: `scripts/walk.sh 'Pick the tools skill for a job. End able to name the tools skill that reviews another author’s pull request, tends the reader’s own, reviews a prompt, or hands a session to a fresh agent. The sections to rely on: claude-plugins/manifest-dev-tools/README.md → Pull requests and Prompts and People and sessions.' claude-plugins/manifest-dev-tools/README.md`
 Proves: the reader ends able to name the tools skill that reviews another author's pull request, tends the reader's own, reviews a prompt, or hands a session to a fresh agent, and names nothing it had to guess that blocks the task.
 Check: read
-Workload: varies
 
 ## Gotchas
 

@@ -57,10 +57,9 @@ skills, prompts with behavior cases, and living documents are all recipes in the
   settings and evidence live), `list` (every recipe, its kind and ask-first mark), `help <recipe>`,
   `drive <recipe> [scenario]` (with `walk` and `eval` as the same for those kinds), `doctor`
   (prerequisites, free), `check` (every recipe parses and names only paths that exist),
-  `affected [BASE]` (the recipes a diff touches and the changed paths no recipe covers), and
-  `line`, `raise` and `freeze` (write a time line into its recipe, below). A port that keeps these
-  subcommands and what they print keeps every skill's instructions working unchanged; one that
-  departs from them says so in its own `--help`.
+  and `affected [BASE]` (the recipes a diff touches and the changed paths no recipe covers). A port
+  that keeps these subcommands and what they print keeps every skill's instructions working
+  unchanged; one that departs from them says so in its own `--help`.
 - **Recipes.** Every check the project keeps is a recipe: one Markdown file per thing a user
   reaches or a reader relies on, and one for the checks the project runs across the whole tree —
   its lint, type checks, test suite, build or gate runner — in the recipes directory
@@ -69,17 +68,15 @@ skills, prompts with behavior cases, and living documents are all recipes in the
   with a one-line reason when it applies, and `dry-run: honored` when its commands obey
   `VERIFY_DRY_RUN=1`. Body: a title and one paragraph on what the user sees it do; *How a user
   reaches it* — every entry point past the obvious one; *Scenarios* — each a `### name` heading
-  with `Run:` (the exact command), `Proves:` (what a passing run shows), `Check: read` when the
-  exit code cannot decide, `Workload: varies` when its work changes from run to run, and otherwise
-  its time lines (`Line:`, below); *Gotchas* — traps that waste or invalidate a run. A recipe carries
+  with `Run:` (the exact command), `Proves:` (what a passing run shows), and `Check: read` when the
+  exit code cannot decide; *Gotchas* — traps that waste or invalidate a run. A recipe carries
   what a reader cannot get elsewhere; one that restates a description the artifact already shows
   its users costs upkeep and guides nobody. Where in the code a feature lives is read from the
   code at run time.
 - **Settings.** `harness.md` beside the recipes directory (`verification/harness.md` by
   default), never inside it: the `ask-first` setting, an optional `doctor:` command, the control
   commands, optional `grace:` (seconds between SIGTERM and SIGKILL when a run stops what it
-  started), `headroom:` (25% by default, at least 1 s) and `raise:` (`run` lets an agent raise a
-  line with its reason, `ask` needs a person) for time lines, and notes `--help` prints — what every run
+  started), and notes `--help` prints — what every run
   starts from, what it needs (a running service, a credential), driving conventions. `harness/`
   beside this file carries an example settings file and four example recipes: a free
   browser-and-CLI feature, an ask-first agent skill, an ask-first document walk, and the free
@@ -110,26 +107,12 @@ A recipe has no status. What a change runs comes from its diff and each recipe's
 (`verify affected`), and each run says what it found in the run itself. A run never reports an
 entry point as working because a different one did: each summary names the scenario it came from.
 
-## Time lines
+## Run time
 
-A scenario with a fixed workload carries a time line for each kind of machine its line was set on:
-a line in its recipe, `Line: <seconds> s on <kind of machine>`, taken from a passing run there, and
-a run is over it past those seconds plus headroom for noise. It is an alarm against a check slowly getting slower, and it only reports — it never
-decides when a check runs or who may run it. A run on a kind of machine its recipe has no line
-for reports its time and compares nothing. One run over is noise: `drive` runs the scenario once
-more at once, and only when that run is over too does the crossing count and `drive` exit 5.
-
-No run moves a line on its own. The change that changes a check moves its line, in that same
-change, with one of three commands that write it into the recipe: `verify line` sets a first line
-or lowers one the change made faster, `verify raise` moves it up to the latest run with the
-reason written beside it (`; raised: <reason>`), and `verify freeze` holds an overshoot at the
-latest run's level naming the debt Ticket that pays it down (`; frozen at <seconds> s by
-<Ticket>`); a run past the frozen level is new creep, and once a run is back under the line,
-`verify line` clears the freeze. Speed is never bought with proof: a check that proves less to
-meet its line has not met it. A scenario whose work varies — the affected tests, or an agent
-session whose work the model decides each run — declares `Workload: varies` and gets none. Two
-branches that raise the same line meet as a one-line conflict in the recipe, which the run that
-merges them resolves.
+Every run reports how long it took, in its output and its evidence, and that is the only time
+signal. Keep checks fast and treat a slow harness as friction to fix — a check that makes agents
+wait is one they stop running. Never block, gate, fail, ticket or exit non-zero on run time, and
+never make a check faster by having it check less.
 
 ## Ask first
 
@@ -137,7 +120,7 @@ Some checks cost something a person should weigh: money or quota (an agent sessi
 API, cloud resources), load on shared environments or other teams, or effects outside the
 repository (a deploy, a message sent). Mark such a recipe `ask-first` with its reason. Run time
 alone is not a reason: every unmarked check is free, and agents run it as often as it helps,
-judging from the durations its runs report and its lines state. The mark follows what a run costs, not its kind:
+judging from the durations its runs report. The mark follows what a run costs, not its kind:
 driving a web app in a local browser, running a CLI, or calling a local API is unmarked and runs
 freely, as do tests, dry runs and static checks.
 
@@ -216,9 +199,6 @@ check by the jobs it has to do there, never by how this file would have built it
 - **Runs are isolated** — a run cannot drive a shared instance or another run's data.
 - **PASS means the real path** — not mocks past a boundary the product does not isolate, not a
   test-only endpoint, not a skipped entry point counted as another's success.
-- **Fast enough** — no check the work touches sits over its time line without a raise or a
-  freeze that says why, or, outside a harness, has grown slower through the change without a
-  reason.
 - **Controllable** — what the work touches can be started in a known state, observed and stopped
   through the harness or the project's own scripts, each run on its own.
 - **A failure explains itself** — failed evidence carries what locates the cause: the instance's

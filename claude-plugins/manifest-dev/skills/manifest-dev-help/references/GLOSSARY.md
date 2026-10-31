@@ -317,7 +317,7 @@ the `/setup-project` setup the project has. When the number is older than the ne
 ## Verification
 
 ### Verification Harness
-<!-- context: 2a0e6dfdb86f -->
+<!-- context: 4f71cd46615f -->
 The Verification Harness is the one command in a project that agents and people use to find if the
 work still does its job. Its `--help` says all about it. It reads one Recipe for each feature,
 skill, document walk or eval suite. It also reads one Recipe for the checks that run on all of the
@@ -327,6 +327,9 @@ While you work, you can run a check command directly. The Evidence that a change
 the harness. The harness writes its Evidence on your computer, in a directory that git ignores, so
 the repository keeps no Evidence. To find what a change must run, it reads the change. It can also
 start, observe, reset and stop what it examines.
+
+Runs keep the checks fast. A slow check is a problem to repair. But a run never stops, fails or
+makes a Ticket because of the time that a check takes.
 
 It exists because without it each session must find again how to test the project, and a test that
 nobody runs becomes stale.
@@ -356,9 +359,10 @@ the project, such as lint and tests. Each of its Scenarios calls the command tha
 already has.
 
 ### Scenario
-<!-- context: 39c884d2c5f3 -->
+<!-- context: 284b135f0190 -->
 A Scenario is one exercise in a Recipe: an exact command and what it proves. The Verification
-Harness runs it, writes its Evidence and tells you if it passed. It exists so that each claim of a
+Harness runs it, writes its Evidence and tells you if it passed and how much time it took. That
+time is the only time information that a run gives. It exists so that each claim of a
 Recipe has an exact command that anyone can run again.
 
 ### Evidence
@@ -368,19 +372,6 @@ command, the summary that a Scenario run writes on your computer, or a quoted pa
 request shows its Evidence in its description. A summary claim is not
 evidence. In a North Star, "evidence" is also a state, with the same sense: something observed, not
 only said.
-
-### Time Line
-<!-- context: 789424b3ebff -->
-A Time Line is the run time that a Scenario with a fixed workload must stay under. The line stops a
-slow increase of test time that nobody sees.
-
-The line is in the Recipe, for one kind of computer. A passed run sets it, with some headroom. Only
-the change that changes the check moves its line. It lowers the line when it makes the check faster.
-It raises the line only with a reason that it writes beside the line. A freeze that names a debt
-Ticket keeps the line at its value.
-
-A run on a different kind of computer shows its time and compares nothing. When a run crosses the
-line, the harness runs the Scenario again. The crossing counts only when the second run crosses too.
 
 ### Ask-first
 <!-- context: dcbbcddc356f -->
@@ -393,7 +384,7 @@ When nobody can agree, for example in an unattended run, the run leaves the reci
 the run that it owes in its report. The project can change this rule.
 
 ### Fit to Trust
-<!-- context: 5f2494aca4e7 -->
+<!-- context: 7a0ede6976d4 -->
 Fit to Trust says if you can rely on a check for what a change touches. The check can be a recipe
 in a harness, or a test, a script or a checklist step of the project. The jobs that the check does
 decide it, not the parts that it has. The jobs are:
@@ -402,7 +393,6 @@ decide it, not the parts that it has. The jobs are:
 - You can examine the health of the harness.
 - Each run is isolated from the other runs.
 - PASS means that the real path worked.
-- The checks are fast enough, and none is over its Time Line without a reason.
 - You can control what the change touches through the harness or the scripts of the project.
 - A failure explains itself.
 - The check failed when you made the thing that it checks wrong on purpose, and then you removed

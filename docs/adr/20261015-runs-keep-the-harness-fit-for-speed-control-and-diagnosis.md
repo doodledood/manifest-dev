@@ -1,7 +1,7 @@
 # ADR: Runs keep the harness fit to trust for speed, control and diagnosis, through one list
 
 ## Status
-Accepted — amended by 20261019-a-check-counts-only-after-it-was-seen-to-fail: *Fit to trust* gains a job, that the check was seen to fail on a scratch break of what it proves
+Accepted — amended by 20261019-a-check-counts-only-after-it-was-seen-to-fail: *Fit to trust* gains a job, that the check was seen to fail on a scratch break of what it proves; amended by 20261031-time-lines-are-removed-and-run-time-is-only-reported: the *fast enough* job is removed, and a slow check is friction to fix, never a reason the check cannot be trusted
 
 ## Area
 define / do
@@ -57,10 +57,7 @@ Star's hypothesis that a codebase converges when debt is paid on the path of the
 - Noticing friction is judgment, and a run can miss it.
 
 ## Enforced by
-partly — the fast-enough job is held by the time line of
-20261015-check-run-time-is-held-by-an-alarm-against-creep: `verify drive` exits 5 on a confirmed
-crossing (`test_a_crossing_a_confirming_run_repeats_exits_over_and_names_the_ways_on` in
-`tests/test_verify.py`). Eval cases `54-touched-recipe-not-fit` (figure-out folds the repair into
+partly — eval cases `54-touched-recipe-not-fit` (figure-out folds the repair into
 the work) and `d23-unfit-recipe-repaired-first` (define cuts the repair as the first Deliverable)
 measure the repair once run. Whether a run noticed friction and whether a failure explains itself
 stay judgment.

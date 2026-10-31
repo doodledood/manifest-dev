@@ -174,7 +174,6 @@ const SETTINGS = join(DATA, "harness.md");
 
 const EXIT_UNREACHABLE = 3; // a scenario command exits 3 when a prerequisite is missing
 const EXIT_ASK_FIRST = 4; // this harness refused a run that needs a person's agreement without --yes
-const EXIT_OVER_LINE = 5; // a scenario passed, but its run time crossed its line and a re-run confirmed it
 const EXIT_USAGE = 2;
 
 /** What one run of a scenario came to. A recipe has no status: each run says what it found. */
@@ -196,13 +195,12 @@ const isControl = (name: string): name is Control => Object.hasOwn(CONTROL, name
 const NAMES_A_RUN: readonly Control[] = ["logs", "reset", "stop"];
 
 const STAMP = /(\d{8}T\d{6}Z)(?:-(\d+))?/;
-const LINE_FIELD = /^Line:[ \t]*(.*?)[ \t]*$/gm;
-const LINE_TEXT = /^(\d+(?:\.\d+)?) s on (\S+)((?:; .*)?)$/;
-const LINE_FORM =
-  "`Line: <seconds> s on <kind of machine>`, then optionally `; raised: <reason>` and `; frozen at <seconds> s by <Ticket>`";
-
-/** However short a scenario, its line sits at least this many seconds above what it measured. */
-const MIN_HEADROOM_SECONDS = 1;
+// Fields earlier versions read for time lines, which were removed: a run reports its duration
+// and nothing compares it. A leftover field is refused, so it cannot read as live.
+const REMOVED_SCENARIO_FIELDS = ["Line", "Workload"] as const;
+const REMOVED_SETTINGS = ["headroom", "raise"] as const;
+const REMOVED_WHY = "time lines were removed from the harness, so nothing reads it; delete it";
+const REMOVED_FIELD = new RegExp(`^(?:${REMOVED_SCENARIO_FIELDS.join("|")}):.*$`, "gm");
 // The default branches `affected` tries, in order, after origin/HEAD when given no base.
 const DEFAULT_BRANCHES = ["origin/main", "origin/master", "main", "master"];
 /** How long a failed run waits on the project's `logs:` command before giving up on it. */
@@ -221,23 +219,11 @@ class Problem extends Error {
   }
 }
 
-/**
- * A scenario's time line on one kind of machine, as its recipe states it. Only a change to that
- * check moves it, through `verify line`, `raise` or `freeze`; no run moves it on its own.
- */
-interface Line {
-  base: number; // seconds: the run the line was set, lowered or raised from
-  raised: string; // why the line was last raised, or "" for a line set or lowered
-  frozen?: { level: number; ticket: string }; // an overshoot a debt Ticket holds at this level
-}
-
 interface Scenario {
   name: string;
   run: string;
   proves: string;
   judged: boolean; // true: a person or agent reads the output; false: the exit code decides
-  timed: boolean; // false for `Workload: varies`, whose run time is no measure of creep
-  lines: Map<string, Line>; // by kind of machine
 }
 
 interface Recipe {
@@ -303,34 +289,13 @@ function frontMatter(text: string): [Record<string, string>, string] {
   return [meta, text.slice(end + 5)];
 }
 
-/** One `Line:` field's text, as `[kind of machine, line]`; `where` names it in a problem. */
-function parseLine(text: string, where: string): [string, Line] {
-  const found = LINE_TEXT.exec(text);
-  const problem = (): Problem => new Problem(`${where}: \`Line: ${text}\` is not ${LINE_FORM}; \`verify line\`, \`raise\` and \`freeze\` write it`);
-  if (!found) throw problem();
-  const line: Line = { base: Number(found[1]), raised: "" };
-  for (const part of (found[3] ?? "").split("; ").slice(1)) {
-    const frozen = /^frozen at (\d+(?:\.\d+)?) s by (\S.*)$/.exec(part);
-    const raised = /^raised: (\S.*)$/.exec(part);
-    if (frozen) line.frozen = { level: Number(frozen[1]), ticket: frozen[2] ?? "" };
-    else if (raised) line.raised = raised[1] ?? "";
-    else throw problem();
-  }
-  return [found[2] ?? "", line];
-}
-
-function renderLine(kind: string, line: Line): string {
-  const raised = line.raised ? `; raised: ${line.raised}` : "";
-  const frozen = line.frozen ? `; frozen at ${line.frozen.level.toFixed(1)} s by ${line.frozen.ticket}` : "";
-  return `Line: ${line.base.toFixed(1)} s on ${kind}${raised}${frozen}`;
-}
-
 function parseRecipe(path: string): Recipe {
   const file = stem(path) + ".md";
   const [meta, body] = frontMatter(read(path));
   if (!meta.kind) throw new Problem(`${file}: front matter has no \`kind:\``);
   if (!/^# \S/m.test(body)) throw new Problem(`${file}: no \`# Title\` line`);
   const scenarios: Scenario[] = [];
+  const leftovers: string[] = [];
   const section = /^## Scenarios[ \t]*$([\s\S]*?)(?=^## |(?![\s\S]))/m.exec(body);
   for (const block of section ? (section[1] ?? "").split(/^### /m).slice(1) : []) {
     const newline = block.indexOf("\n");
@@ -339,26 +304,18 @@ function parseRecipe(path: string): Recipe {
     const run = /^Run:\s*`([^`]+)`/m.exec(rest);
     const proves = /^Proves:\s*(.+)$/m.exec(rest);
     const check = /^Check:\s*(\S+)/m.exec(rest);
-    const workload = /^Workload:\s*(\S+)/m.exec(rest);
-    if (!run?.[1]) throw new Problem(`${file}: scenario '${name}' has no Run: \`command\` line`);
+    for (const [left] of rest.matchAll(REMOVED_FIELD)) {
+      leftovers.push(`${file}: scenario '${name}' carries \`${left.trim()}\`: ${REMOVED_WHY}`);
+    }
+    // A leftover found so far is named with the problem that stops the parse, not lost behind it.
+    const stop = (problem: string): Problem => new Problem([...leftovers, problem].join("\n"));
+    if (!run?.[1]) throw stop(`${file}: scenario '${name}' has no Run: \`command\` line`);
     if (check && check[1] !== "read" && check[1] !== "exit") {
-      throw new Problem(`${file}: scenario '${name}' Check: must be \`read\` or \`exit\``);
+      throw stop(`${file}: scenario '${name}' Check: must be \`read\` or \`exit\``);
     }
-    if (workload && workload[1] !== "fixed" && workload[1] !== "varies") {
-      throw new Problem(`${file}: scenario '${name}' Workload: must be \`fixed\` or \`varies\``);
-    }
-    const timed = workload?.[1] !== "varies";
-    const lines = new Map<string, Line>();
-    for (const [, text = ""] of rest.matchAll(LINE_FIELD)) {
-      const [kind, line] = parseLine(text, `${file}: scenario '${name}'`);
-      if (lines.has(kind)) throw new Problem(`${file}: scenario '${name}' states two lines on ${kind}; keep one`);
-      lines.set(kind, line);
-    }
-    if (!timed && lines.size) {
-      throw new Problem(`${file}: scenario '${name}' says \`Workload: varies\`, so it takes no \`Line:\`; remove one of them`);
-    }
-    scenarios.push({ name, run: run[1], proves: proves?.[1]?.trim() ?? "", judged: check?.[1] === "read", timed, lines });
+    scenarios.push({ name, run: run[1], proves: proves?.[1]?.trim() ?? "", judged: check?.[1] === "read" });
   }
+  if (leftovers.length) throw new Problem(leftovers.join("\n"));
   return {
     name: stem(path),
     path,
@@ -386,47 +343,40 @@ function find(name: string): Recipe {
 
 interface Settings {
   askFirst: "ask" | "run";
-  raise: "ask" | "run";
   doctor: string;
   control: Partial<Record<Control, string>>;
   grace: number; // seconds between SIGTERM and SIGKILL when a run is stopped
-  headroom: number; // fraction of a line's measured time allowed for noise
   notes: string;
 }
 
 function settings(): Settings {
   const [meta, body] = existsSync(SETTINGS) ? frontMatter(read(SETTINGS)) : [{}, ""];
-  const choice = (key: string): "ask" | "run" => {
-    const value = meta[key] ?? (key === "ask-first" ? "ask" : "run");
-    if (value !== "ask" && value !== "run") {
-      throw new Problem(`${rel(SETTINGS)}: ${key} must be \`ask\` or \`run\`, not '${value}'`);
-    }
-    return value;
-  };
+  const leftovers = REMOVED_SETTINGS.filter((key) => Object.hasOwn(meta, key));
+  if (leftovers.length) {
+    throw new Problem(leftovers.map((key) => `${rel(SETTINGS)}: carries \`${key}: ${meta[key]}\`: ${REMOVED_WHY}`).join("\n"));
+  }
+  const askFirst = meta["ask-first"] ?? "ask";
+  if (askFirst !== "ask" && askFirst !== "run") {
+    throw new Problem(`${rel(SETTINGS)}: ask-first must be \`ask\` or \`run\`, not '${askFirst}'`);
+  }
   const grace = meta.grace ?? "2";
   if (!/^\d+(?:\.\d+)?$/.test(grace)) {
     throw new Problem(`${rel(SETTINGS)}: grace must be a number of seconds, such as \`2\` or \`0.5\`, not '${grace}'`);
-  }
-  const headroom = meta.headroom ?? "25%";
-  if (!/^\d+(?:\.\d+)?%$/.test(headroom)) {
-    throw new Problem(`${rel(SETTINGS)}: headroom must be a percentage, such as \`25%\`, not '${headroom}'`);
   }
   const control: Partial<Record<Control, string>> = Object.create(null);
   for (const name of Object.keys(CONTROL) as Control[]) {
     if (meta[name]) control[name] = meta[name];
   }
   return {
-    askFirst: choice("ask-first"),
-    raise: choice("raise"),
+    askFirst,
     doctor: meta.doctor ?? "",
     control,
     grace: Number(grace),
-    headroom: Number(headroom.slice(0, -1)) / 100,
     notes: body.trim(),
   };
 }
 
-/** Where a run's time is measured: kinds differ, so a line is never compared across them. */
+/** The kind of machine a run's duration was measured on, recorded beside it so the time reads in context. */
 function machineKind(): string {
   const named = process.env.VERIFY_MACHINE?.trim();
   return named ? named.replace(/\s+/g, "-") : `${platform()}-${arch()}-${availableParallelism()}cpu`;
@@ -458,9 +408,9 @@ const withRun = (id: string, extra: Record<string, string> = {}): NodeJS.Process
   VERIFY_RUN_ID: id,
 });
 
-// --- local evidence and time lines -----------------------------------------------------
+// --- local evidence ---------------------------------------------------------------------
 
-/** What a run wrote, read back from its summary: the fields `line`, `raise` and `freeze` need. */
+/** What a run wrote, read back from its summary's header. */
 interface Summary {
   path: string;
   when: string; // the stamp, which sorts as the runs were written within one second's order
@@ -543,49 +493,6 @@ function evidenceFolder(recipe: Recipe): string {
   return folder;
 }
 
-/** The time a run may take before it counts as over a line: the line's base plus headroom. */
-function limit(base: number, headroom: number): number {
-  return Math.max(base * (1 + headroom), base + MIN_HEADROOM_SECONDS);
-}
-
-/** The level a run is held to: a frozen overshoot's, or else the line's own. */
-function allowance(line: Line, headroom: number): number {
-  return limit(line.frozen ? line.frozen.level : line.base, headroom);
-}
-
-function describeLine(kind: string, line: Line, headroom: number): string {
-  const raised = line.raised ? `, raised: ${line.raised}` : "";
-  const frozen = line.frozen ? `, frozen at ${seconds(line.frozen.level)} by ${line.frozen.ticket}` : "";
-  return `line ${seconds(line.base)} on ${kind}${raised}${frozen} (over past ${seconds(allowance(line, headroom))})`;
-}
-
-/**
- * Write a scenario's line on one kind of machine into its recipe, replacing the one it had there.
- * The recipe is the line's one home, so the change that moves it carries it.
- */
-function writeLine(recipe: Recipe, scenario: string, kind: string, line: Line): void {
-  const text = read(recipe.path);
-  const section = /^## Scenarios[ \t]*$/m.exec(text);
-  const heading = section && new RegExp(`^### [ \\t]*${escapeRegExp(scenario)}[ \\t]*$`, "m").exec(text.slice(section.index));
-  if (!section || !heading) throw new Problem(`${rel(recipe.path)}: cannot find scenario '${scenario}' to write its line; check its \`### ${scenario}\` heading`);
-  const start = section.index + heading.index + heading[0].length;
-  const next = /^#{2,3} /m.exec(text.slice(start));
-  const end = next ? start + next.index : text.length;
-  const lines = text.slice(start, end).split("\n");
-  const written = renderLine(kind, line);
-  const same = lines.findIndex((l) => {
-    const field = /^Line:[ \t]*(.*?)[ \t]*$/.exec(l);
-    return field !== null && LINE_TEXT.exec(field[1] ?? "")?.[2] === kind;
-  });
-  if (same >= 0) lines[same] = written;
-  else {
-    let last = lines.length - 1;
-    while (last > 0 && !lines[last]?.trim()) last--;
-    lines.splice(last + 1, 0, written);
-  }
-  writeWhole(recipe.path, text.slice(0, start) + lines.join("\n") + text.slice(end));
-}
-
 // --- commands ---------------------------------------------------------------------------
 
 const HELP = `verify — this project's one place to control what it checks and to check that its
@@ -603,7 +510,7 @@ another way, and say so here.
 
 Commands:
   verify list [KIND]          every recipe with its kind and ask-first mark
-  verify help RECIPE          one recipe in full, with each scenario's lines and its latest run here
+  verify help RECIPE          one recipe in full, with each scenario's latest run here
   verify drive RECIPE [SCENARIO] [--yes] [--dry-run] [--run ID]
                               run a recipe's scenarios (all, or the one named)
   verify walk RECIPE ...      the same, for a recipe of kind walk
@@ -611,14 +518,6 @@ Commands:
   verify affected [BASE]      the recipes a change since BASE touches, which are the ones to run,
                               and the changed paths no recipe covers. Without BASE: since the
                               branch left the default branch (origin/HEAD, else ${DEFAULT_BRANCHES.join(", ")})
-  verify line RECIPE SCENARIO write the scenario's line on this kind of machine from its latest
-                              run here: a first line, a lower one, or a frozen overshoot paid down
-  verify raise RECIPE SCENARIO REASON...{raiseYes}
-                              move a crossed line up to the latest run, with the reason: the new
-                              time is in new tests for new behavior and the old tests are no slower
-  verify freeze RECIPE SCENARIO TICKET
-                              hold a crossed line's overshoot at the latest run's level while the
-                              debt Ticket named pays it down
   verify doctor               check the harness's prerequisites (free; starts nothing costly)
   verify check                check every recipe parses and names only paths that exist
 {control}
@@ -641,20 +540,11 @@ drive or a control command reaches the instance an earlier run started (\`verify
 id); logs, reset and stop need it. A command started inside a run inherits that run's identity.
 A control command for an id its instance does not know exits non-zero, saying so.
 
-Lines: an alarm against a check slowly getting slower, and nothing else — a line never decides
-when a check runs or who may run it. A scenario with a fixed workload states its line in its
-recipe, one per kind of machine, as \`Line: 12.0 s on linux-x64-8cpu\`. A run on that kind of
-machine is over it past the line plus headroom ({headroom}, at least ${MIN_HEADROOM_SECONDS} s); a run on another kind reports
-its time and compares nothing. One run over is noise: \`drive\` runs the scenario once more, and
-only when that run is over too does the crossing count and \`drive\` exit ${EXIT_OVER_LINE}. No run moves a
-line on its own; the change that changes a check moves its line, in the same change: \`verify
-line\` writes a first line or a lower one the change earned, \`verify raise\` moves it up with its
-reason written beside it{raisePolicy}, and \`verify freeze\` holds an overshoot at a level naming the
-debt Ticket that pays it down; a run past the frozen level is new creep. Speed is never bought
-with proof: a check that proves less to meet its line has not met it. A scenario whose work
-varies — the affected tests, an agent session — says \`Workload: varies\` and gets no line. Set
-VERIFY_MACHINE to name the kind of machine, such as a CI runner label. VERIFY_DURATION stands in
-for every measured time, for the tool's own tests; leave it unset.
+Run time: every run prints and records how long it took, and that is the only time signal. Keep
+checks fast and treat a slow one as friction to fix, never by checking less; no run blocks, fails
+or exits non-zero because of how long it took. Set VERIFY_MACHINE to name the kind of machine the
+summary records beside the duration, such as a CI runner label. VERIFY_DURATION stands in for
+every measured time, for the tool's own tests; leave it unset.
 
 Evidence: each run writes {evidence}/RECIPE/STAMP.md (command, exit code, outcome, run identity,
 kind of machine, duration, output with local paths removed) and removes that scenario's older
@@ -665,8 +555,8 @@ is stopped when it ends: SIGTERM, then SIGKILL after {grace} s (\`grace:\` in {s
 interrupted run keeps no evidence; a command that crashes is failed.
 
 Exit codes: 0 done; 1 a scenario failed or could not start, or a problem; 2 usage; 3 a
-prerequisite is missing; 4 refused without a person's agreement (--yes); 5 over a line, confirmed
-by a second run. A control command exits with its project command's own code.
+prerequisite is missing; 4 refused without a person's agreement (--yes). A control command exits
+with its project command's own code.
 
 Adding a recipe: copy any file in {recipes}, keep the front matter keys (kind, covers,
 ask-first when it applies, dry-run: honored when its commands obey VERIFY_DRY_RUN=1), and give
@@ -689,9 +579,6 @@ function cmdHelp(): number {
     settings: rel(SETTINGS),
     policy: conf.askFirst,
     grace: String(conf.grace),
-    headroom: `${Math.round(conf.headroom * 1000) / 10}%`,
-    raiseYes: conf.raise === "ask" ? " --yes" : "",
-    raisePolicy: conf.raise === "ask" ? " and a person's agreement (raise: ask)" : "",
   };
   const text = HELP.replace("{control}", control);
   console.log(text.replace(/\{(\w+)\}/g, (whole, key: string) => fill[key] ?? whole));
@@ -714,20 +601,14 @@ function cmdList(kind: string | undefined): number {
 
 function cmdShow(name: string): number {
   const recipe = find(name);
-  const { headroom } = settings();
   console.log(`${rel(recipe.path)} — ${recipe.kind}`);
   if (recipe.askFirst) console.log(`ask-first: ${recipe.askFirst}`);
   console.log(recipe.body.trim());
-  console.log("\nLines, and the latest run on this machine, per scenario:");
+  console.log("\nThe latest run on this machine, per scenario:");
   for (const scenario of recipe.scenarios) {
-    const lines = !scenario.timed
-      ? "its work varies, so no line"
-      : scenario.lines.size
-        ? [...scenario.lines].map(([kind, line]) => describeLine(kind, line, headroom)).join("; ")
-        : "no line yet";
     const last = latestRun(recipe, scenario.name);
     const took = last?.duration !== undefined ? ` in ${seconds(last.duration)} on ${last.machine}` : "";
-    console.log(`  ${scenario.name}: ${lines}; ${last ? `last run here ${last.outcome}${took}, ${rel(last.path)}` : "not run here"}`);
+    console.log(`  ${scenario.name}: ${last ? `${last.outcome}${took}, ${rel(last.path)}` : "not run here"}`);
   }
   return 0;
 }
@@ -894,7 +775,7 @@ function scenarioNames(recipe: Recipe): string {
 
 /**
  * VERIFY_DURATION, when set, stands in for every measured run time, as VERIFY_STAMP stands in for
- * the clock, so a test of the line rules plants a duration rather than waiting it out.
+ * the clock, so a test of what a run records plants a duration rather than waiting it out.
  */
 function plantedDuration(): number | undefined {
   const planted = process.env.VERIFY_DURATION;
@@ -983,37 +864,6 @@ async function logsFor(command: string, id: string, scrub: RegExp): Promise<stri
   return `## Logs\n\n${said.replace(scrub, "[local path]")}\n\n${output}\n`;
 }
 
-/** What a passing run's time says against the scenario's line on its kind of machine. */
-function timing(recipe: Recipe, scenario: Scenario, machine: string, took: number, headroom: number): { over: boolean; said: string } {
-  if (!scenario.timed) return { over: false, said: "" };
-  const at = `${recipe.name} ${scenario.name}`;
-  const line = scenario.lines.get(machine);
-  if (!line) {
-    const kinds = [...scenario.lines.keys()];
-    return {
-      over: false,
-      said: kinds.length
-        ? `took ${seconds(took)} on ${machine}; its line is for ${kinds.join(", ")}, so this run compares nothing. A change to this check can add a line here: verify line ${at}`
-        : `took ${seconds(took)} on ${machine}, with no line yet. The change that adds or changes this check sets one: verify line ${at}`,
-    };
-  }
-  const allowed = allowance(line, headroom);
-  if (took > allowed) {
-    const against = line.frozen ? `the ${seconds(line.frozen.level)} Ticket ${line.frozen.ticket} froze` : `its ${seconds(line.base)} line`;
-    return { over: true, said: `${seconds(took)} against ${against} (over past ${seconds(allowed)}) on ${machine}` };
-  }
-  if (line.frozen && took <= limit(line.base, headroom)) {
-    return {
-      over: false,
-      said: `back under its ${seconds(line.base)} line: the overshoot Ticket ${line.frozen.ticket} froze is paid down. The change that paid it clears the freeze: verify line ${at}`,
-    };
-  }
-  if (!line.frozen && limit(took, headroom) <= line.base) {
-    return { over: false, said: `${seconds(took)} against its ${seconds(line.base)} line on ${machine}. A change that made it faster keeps the gain: verify line ${at}` };
-  }
-  return { over: false, said: "" };
-}
-
 interface Drive {
   id: string;
   planted: number | undefined;
@@ -1027,7 +877,7 @@ interface Drive {
  * One run of a scenario, keeping its evidence on this machine. Undefined when it was interrupted,
  * which keeps no evidence.
  */
-async function runOnce(recipe: Recipe, scenario: Scenario, drive: Drive): Promise<{ outcome: Outcome; took: number } | undefined> {
+async function runOnce(recipe: Recipe, scenario: Scenario, drive: Drive): Promise<Outcome | undefined> {
   const [path, stamp, marker] = reserve(recipe);
   let written = false;
   try {
@@ -1057,7 +907,7 @@ async function runOnce(recipe: Recipe, scenario: Scenario, drive: Drive): Promis
     const kept = readSummary(path);
     if (kept) replaceOlder(recipe, scenario.name, kept);
     console.log(`${outcome} in ${seconds(took)}${reading}: evidence in ${rel(path)}`);
-    return { outcome, took };
+    return outcome;
   } finally {
     // A run that did not finish leaves nothing behind to pass for evidence.
     if (!written) rmSync(path, { force: true });
@@ -1087,10 +937,8 @@ async function cmdDrive(
     );
   }
   const id = runIdentity(named);
-  const planted = plantedDuration();
-  const machine = machineKind();
   const interrupts = new Interrupts();
-  const drive: Drive = { id, planted, machine, scrub: localPaths(), conf, interrupts };
+  const drive: Drive = { id, planted: plantedDuration(), machine: machineKind(), scrub: localPaths(), conf, interrupts };
   const interrupted = (scenario: Scenario): number => {
     console.error(`interrupted: no evidence kept for [${scenario.name}]`);
     return 130;
@@ -1109,136 +957,14 @@ async function cmdDrive(
         }
         continue;
       }
-      const first = await runOnce(recipe, scenario, drive);
-      if (!first) return interrupted(scenario);
-      if (first.outcome !== "passed") {
-        worst = 1;
-        continue;
-      }
-      const once = timing(recipe, scenario, machine, first.took, conf.headroom);
-      if (!once.over) {
-        if (once.said) console.log(once.said);
-        continue;
-      }
-      // One run over is noise until a second confirms it, so the confirming run follows at once.
-      console.log(`over its line once: ${once.said}. Running it once more to confirm`);
-      const again = await runOnce(recipe, scenario, drive);
-      if (!again) return interrupted(scenario);
-      if (again.outcome !== "passed") {
-        worst = 1;
-        continue;
-      }
-      const twice = timing(recipe, scenario, machine, again.took, conf.headroom);
-      if (!twice.over) {
-        console.log(`the second run took ${seconds(again.took)}, inside its line: the first was noise`);
-        if (twice.said) console.log(twice.said);
-        continue;
-      }
-      console.log(
-        `over its line: ${twice.said}, on two runs in a row. Pay it down; or, in the change that earned the time, ` +
-          `\`verify raise ${name} ${scenario.name} REASON\`; or \`verify freeze ${name} ${scenario.name} TICKET\` with the debt Ticket that pays it down`,
-      );
-      if (worst === 0) worst = EXIT_OVER_LINE;
+      const outcome = await runOnce(recipe, scenario, drive);
+      if (!outcome) return interrupted(scenario);
+      if (outcome !== "passed") worst = 1;
     }
   } finally {
     interrupts.release();
   }
   return worst;
-}
-
-/** A scenario of the recipe whose line can move: one that exists and has a fixed workload. */
-function timedScenario(recipe: Recipe, name: string, how: string): Scenario {
-  const declared = recipe.scenarios.find((s) => s.name === name);
-  if (!declared) throw new Problem(`${recipe.name} has no scenario '${name}'; its scenarios are ${scenarioNames(recipe)}`);
-  if (!declared.timed) throw new Problem(`${recipe.name} / ${name} says \`Workload: varies\`, so it has no line to ${how}`);
-  return declared;
-}
-
-/** The scenario's latest run on this machine, which a line moves to; it must have passed. */
-function latestPass(recipe: Recipe, name: string): Summary & { duration: number } {
-  const last = latestRun(recipe, name);
-  if (!last || last.duration === undefined || !last.machine) {
-    throw new Problem(`${recipe.name} / ${name} has no run on this machine to take a time from; drive it first: verify drive ${recipe.name} ${name}`);
-  }
-  // A run that failed can end at any point, so it measured nothing.
-  if (last.outcome !== "passed") {
-    throw new Problem(`${recipe.name} / ${name}: its latest run here ${last.outcome} and measured nothing; drive it to a pass first: verify drive ${recipe.name} ${name}`);
-  }
-  return { ...last, duration: last.duration };
-}
-
-/**
- * `verify line`: write the line a change to a check earned — a first line, a lower one, or a
- * frozen overshoot paid down — from the scenario's latest run here. It never moves a line up.
- */
-function cmdLine(name: string, scenario: string): number {
-  const recipe = find(name);
-  const declared = timedScenario(recipe, scenario, "write");
-  const run = latestPass(recipe, scenario);
-  const { headroom } = settings();
-  const at = `${name} / ${scenario}`;
-  const line = declared.lines.get(run.machine);
-  let moved: Line;
-  let said: string;
-  if (!line) {
-    moved = { base: run.duration, raised: "" };
-    said = `line set at ${seconds(run.duration)} on ${run.machine}`;
-  } else if (line.frozen && run.duration <= limit(line.base, headroom)) {
-    moved = { base: line.base, raised: line.raised };
-    said = `the overshoot Ticket ${line.frozen.ticket} froze is paid down: back to its ${seconds(line.base)} line on ${run.machine}`;
-  } else if (!line.frozen && limit(run.duration, headroom) <= line.base) {
-    moved = { base: run.duration, raised: "" };
-    said = `line lowered from ${seconds(line.base)} to ${seconds(run.duration)} on ${run.machine}`;
-  } else if (run.duration > allowance(line, headroom)) {
-    throw new Problem(
-      `${at} is over its line (${seconds(run.duration)} against ${seconds(allowance(line, headroom))} on ${run.machine}), and a line moves up only with its reason: ` +
-        `verify raise ${name} ${scenario} REASON, or verify freeze ${name} ${scenario} TICKET`,
-    );
-  } else if (line.frozen) {
-    throw new Problem(`${at}: its latest run, ${seconds(run.duration)}, is still over its ${seconds(line.base)} line on ${run.machine}, inside the level Ticket ${line.frozen.ticket} froze; the freeze stays: pay the overshoot down, drive it again, then run verify line ${name} ${scenario}`);
-  } else {
-    throw new Problem(`${at}: its latest run, ${seconds(run.duration)}, is within the headroom of its ${seconds(line.base)} line on ${run.machine}; there is no gain to keep, so the line stays and nothing needs writing`);
-  }
-  writeLine(recipe, scenario, run.machine, moved);
-  console.log(`${at}: ${said}. Commit ${rel(recipe.path)} with the change`);
-  return 0;
-}
-
-/**
- * Move a crossed line on purpose: up to the latest run with its reason, or held at the latest
- * run's level by a debt Ticket. Either is written into the recipe, the line's one home.
- */
-function cmdMoveLine(how: "raise" | "freeze", name: string, scenario: string, said: string, yes: boolean): number {
-  const recipe = find(name);
-  const declared = timedScenario(recipe, scenario, how);
-  const what = how === "raise" ? "the reason the time was earned" : "the debt Ticket that will pay it down";
-  if (!said.trim()) throw new Problem(`${how}: give ${what}: verify ${how} ${name} ${scenario} ${how === "raise" ? "REASON..." : "TICKET"}`, EXIT_USAGE);
-  const conf = settings();
-  if (how === "raise" && conf.raise === "ask" && !yes) {
-    throw new Problem(`raising a line needs a person here (raise: ask in ${rel(SETTINGS)}): ask, then pass --yes`, EXIT_ASK_FIRST);
-  }
-  const run = latestPass(recipe, scenario);
-  const line = declared.lines.get(run.machine);
-  if (!line) {
-    throw new Problem(`${name} / ${scenario} has no line on ${run.machine} to ${how}; the change that adds this check sets its first: verify line ${name} ${scenario}`);
-  }
-  if (run.duration <= allowance(line, conf.headroom)) {
-    throw new Problem(
-      `${name} / ${scenario} is not over its line (${seconds(run.duration)} against ${seconds(allowance(line, conf.headroom))} on ${run.machine}); nothing to ${how}`,
-    );
-  }
-  // A reason or Ticket is one field of the line, so it may not carry the line's own separator.
-  const clean = said.trim().replace(/;/g, ",").replace(/\s+/g, " ");
-  const moved: Line =
-    how === "raise" ? { base: run.duration, raised: clean } : { ...line, frozen: { level: run.duration, ticket: clean } };
-  writeLine(recipe, scenario, run.machine, moved);
-  console.log(
-    how === "raise"
-      ? `${name} / ${scenario}: line raised to ${seconds(run.duration)} on ${run.machine} (${clean}); say why in the change's description too`
-      : `${name} / ${scenario}: overshoot frozen at ${seconds(run.duration)} on ${run.machine} by ${clean}; a run past it is new creep`,
-  );
-  console.log(`commit ${rel(recipe.path)} with the change`);
-  return 0;
 }
 
 function cmdControl(name: Control, named: string | undefined): number {
@@ -1344,13 +1070,20 @@ function cmdAffected(base: string | undefined): number {
 
 function checkProblems(): string[] {
   const problems: string[] = [];
+  try {
+    settings();
+  } catch (error) {
+    if (!(error instanceof Problem)) throw error;
+    problems.push(...error.message.split("\n"));
+  }
   for (const path of markdownIn(RECIPES)) {
     let recipe: Recipe;
     try {
       recipe = parseRecipe(path);
     } catch (error) {
       if (!(error instanceof Problem)) throw error;
-      problems.push(error.message);
+      // One problem per line: a recipe's leftover fields are named together in one message.
+      problems.push(...error.message.split("\n"));
       continue;
     }
     const file = `${recipe.name}.md`;
@@ -1380,7 +1113,13 @@ function cmdCheck(): number {
 
 function cmdDoctor(): number {
   const problems = checkProblems();
-  const command = settings().doctor;
+  let command = "";
+  try {
+    command = settings().doctor;
+  } catch (error) {
+    // Settings that do not parse are already among the problems, so there is no command to run.
+    if (!(error instanceof Problem)) throw error;
+  }
   if (command && spawnSync(command, { shell: true, cwd: ROOT, stdio: "inherit", env: withRun(runIdentity(undefined)) }).status !== 0) {
     problems.push(`doctor command failed: ${command}`);
   }
@@ -1389,7 +1128,7 @@ function cmdDoctor(): number {
   return problems.length ? 1 : 0;
 }
 
-const USAGE = `usage: verify [--help] {list,help,drive,walk,eval,affected,line,raise,freeze,doctor,check,${Object.keys(CONTROL).join(",")}} ...`;
+const USAGE = `usage: verify [--help] {list,help,drive,walk,eval,affected,doctor,check,${Object.keys(CONTROL).join(",")}} ...`;
 
 async function main(argv: string[]): Promise<number> {
   const [command, ...rest] = argv;
@@ -1412,11 +1151,9 @@ async function main(argv: string[]): Promise<number> {
   const control = isControl(command) ? command : undefined;
   const allowed = ["drive", "walk", "eval"].includes(command)
     ? ["--yes", "--dry-run", "--run"]
-    : command === "raise"
-      ? ["--yes"]
-      : control && control !== "running"
-        ? ["--run"]
-        : [];
+    : control && control !== "running"
+      ? ["--run"]
+      : [];
   const unknown = [...flags].filter((f) => !allowed.includes(f));
   const arity = (min: number, max: number): void => {
     if (unknown.length || args.length < min || args.length > max || run === "") {
@@ -1439,13 +1176,6 @@ async function main(argv: string[]): Promise<number> {
     case "affected":
       arity(0, 1);
       return cmdAffected(args[0]);
-    case "line":
-      arity(2, 2);
-      return cmdLine(args[0] ?? "", args[1] ?? "");
-    case "raise":
-    case "freeze":
-      arity(2, Infinity);
-      return cmdMoveLine(command, args[0] ?? "", args[1] ?? "", args.slice(2).join(" "), flags.has("--yes"));
     case "doctor":
       arity(0, 0);
       return cmdDoctor();

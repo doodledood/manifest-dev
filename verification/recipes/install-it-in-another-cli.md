@@ -18,7 +18,6 @@ A reader comes to these documents to install it in another CLI, and should end a
 Run: `scripts/walk.sh 'Install it in another CLI. End able to install it in Codex, OpenCode, or Pi, and name what differs from Claude Code. The sections to rely on: README.md → Other CLIs; dist/codex/README.md → Install and Parity with Claude Code; dist/opencode/README.md → Install and Parity with Claude Code; dist/pi/README.md → Install and Parity with Claude Code.' README.md dist/codex/README.md dist/opencode/README.md dist/pi/README.md`
 Proves: the reader ends able to install it in Codex, OpenCode, or Pi, and name what differs from Claude Code, and names nothing it had to guess that blocks the task.
 Check: read
-Workload: varies
 
 ## Gotchas
 

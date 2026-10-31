@@ -21,13 +21,11 @@ Inspects one GitHub pull request — CI, review feedback (threads, review bodies
 Run: `scripts/drive-skill.sh check-pr verification/prompts/check-pr-inspect.md`
 Proves: one PASS or FAIL report with a line per gate; the report's mergeability matches GitHub's; no comment, label or merge appeared on the pull request.
 Check: read
-Workload: varies
 
 ### feedback-snapshot
 Run: `scripts/drive-skill.sh check-pr verification/prompts/check-pr-feedback-snapshot.md --scaffold verification/fixtures/pr-feedback`
 Proves: the inspector reports the current unresolved thread IDs and outstanding required approval, even where a thread repeats an older claim. It reports action targets without judging the claims' validity or composing replies. No outbound action is recorded while the inspector is active. Its verdict remains FAIL; prior dispositions cannot clear current remote state.
 Check: read
-Workload: varies
 
 ## Gotchas
 

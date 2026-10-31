@@ -18,7 +18,6 @@ A reader comes to these documents to find which plugin ships a skill, and should
 Run: `scripts/walk.sh 'Find which plugin ships a skill. End able to name the plugin that ships a given skill and install only that one. The sections to rely on: claude-plugins/README.md → The plugins.' claude-plugins/README.md`
 Proves: the reader ends able to name the plugin that ships a given skill and install only that one, and names nothing it had to guess that blocks the task.
 Check: read
-Workload: varies
 
 ## Gotchas
 
