@@ -909,8 +909,8 @@ and `test_ids` and one `vN/` directory per round.
        --keep-temp
    done
    ```
-4. **Extract train outputs** for the analyzer. The result JSON keeps each run's judged artifact;
-   transcripts are only in the `--keep-temp` directories:
+4. **Extract train outputs** for the analyzer. The result JSON keeps each run's judged artifact,
+   and transcripts are only in the `--keep-temp` directories. Run:
    `python3 scripts/evals/extract_outputs.py <result.json> --state <dir>/_state.json --grader <grader-name> --out <fresh-dir> --cases <train cases...>`. The named grader fixes the evidence source; missing evidence fails instead of falling back to a report.
    Results without the named evidence must be rerun; report-order recovery is not supported.
 5. **Read what the failing runs had in front of them** before choosing a change. Find each
@@ -922,9 +922,9 @@ and `test_ids` and one `vN/` directory per round.
    transcripts of train cases only, as with outputs.
 
    A fault in the case prompt or its scaffold is not a round's change. Record it in this README
-   as a case defect and fix it outside the climb. Then re-run `v0` for that case before the next
-   round, since every round compares with it; the climb set stays as fixed in step 2, and the
-   case's suite baseline is stale until the next full baseline.
+   as a case defect and fix it outside the climb. Then rerun `v0` for that case before the next
+   round, because every round compares with it. The climb set stays as fixed in step 2. The case's
+   row in the latest baseline is stale until the next full baseline is recorded.
 6. **Make one change per round**, sized to clear the noise floor, and save its diff and
    rationale in `vN/`.
 7. **Rerun the climb set** the same way into `vN/`.

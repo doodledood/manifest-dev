@@ -17,7 +17,7 @@ Feed the model the current system prompt plus a small set of logged failures, ea
 
 Constraints to include in the diagnosis call:
 
-- For each failure, decide first whether the fed material caused it — a piece missing, conflicting, wrong or out of date, or buried in noise — and name that fault and its source, before attributing anything to the prompt's lines. A fault in the prompt's own text belongs with the failure modes.
+- For each failure, decide first whether the fed material caused it — a piece missing, conflicting, wrong or out of date, or buried in noise — and name that fault and its source, before attributing anything to the prompt's lines. A conflict between a prompt line and fed material is an input fault naming both sources, settled by choosing one. A fault inside the prompt's own text belongs with the failure modes.
 - Identify distinct failure modes among the remaining failures — name and describe each.
 - For each failure mode, quote or paraphrase the specific lines of the system prompt likely causing or reinforcing it. Include contradictions (e.g., *"be concise"* vs. *"err on the side of completeness"*).
 - For each failure mode, briefly explain how those lines steer the agent toward the observed behavior.
@@ -52,9 +52,10 @@ You are given:
 Tasks:
 1) For each failure, decide whether its context_seen caused it: a piece
    the task needs is missing, two pieces conflict, a piece is wrong or out
-   of date, or what matters is buried in noise. Name the fault and its
-   source. A fault in the system prompt's own text is not an input fault;
-   leave it for task 2.
+   of date, or what matters is buried in noise. A system prompt line that
+   conflicts with context_seen counts too; name both sources. Name the
+   fault and its source. A fault inside the system prompt's own text is
+   not an input fault; leave it for task 2.
 2) Among the remaining failures, identify each distinct failure
    mode (e.g., tool_usage_inconsistency, output_length_drift,
    autonomy_vs_clarification).
