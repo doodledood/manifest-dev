@@ -15,7 +15,7 @@ Presses on a topic with the user until both understand it, and ends with a named
 - `auto` when shared understanding is missing; `define` when the transcript has none; `figure-out-team` with `--team`.
 - On a project, docs mode keeps the glossary, decision-record offers, North Star updates, the setup offer and recipe drift markers current; `--no-docs` and `--no-log` turn the docs and the log off.
 - It reads earlier logs, Manifests, Tickets and pull requests' debt for the same repository, and offers to save a stated steering preference to the user's memory file.
-- It offers a disposable draft and calls design for its look.
+- It offers a disposable draft and calls design for its look. A draft is shown within minutes and never verified, tested, reviewed or gated; the user's reaction is its only check. Autonomous runs show it to an owner they can reach, and record an assumption only where none can be reached.
 - Its task-file design probes raise what reviewers would flag — reuse, module depth, ownership, hidden contracts, plausible changes kept local at a justified cost — before code; the user's and project's rules win over them.
 
 Product inquiries additionally load PRODUCT probes, with DECISION for consequential choices. The optional product knowledge reference offers useful lenses rather than a required interview or document. Cases 65 and 66 now cover those lenses; their new criteria remain unmeasured.
@@ -115,6 +115,11 @@ Check: read
 ### thorough-fix-not-tamed-for-effort
 Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/93-thorough-fix-not-tamed-for-effort/prompt.md --scaffold claude-plugins/manifest-dev/evals/93-thorough-fix-not-tamed-for-effort`
 Proves: unattended, the read recommends exact money through all of `src/billing` with one rounding rule over the line-rounding patch that fixes both complaints, sizes it without developer time, and builds no multi-currency.
+Check: read
+
+### draft-is-quick-and-unchecked
+Run: `scripts/drive-skill.sh figure-out verification/prompts/figure-out-draft.md`
+Proves: the session writes one throwaway draft file with fake data outside the project and shows it for a reaction; the transcript shows no recipe, test, review skill or design instrument run on the draft, and the drive's summary reports it took minutes, not hours.
 Check: read
 
 ## Gotchas

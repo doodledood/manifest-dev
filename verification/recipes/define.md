@@ -83,6 +83,11 @@ Run: `scripts/drive-skill.sh define verification/prompts/define-current-state-am
 Proves: the amended `manifest.md` reads as current state. It carries no date that records when something was decided or changed, and no note of who decided what outside Known Assumptions — the notes in Intent, the Approach, the touched AC-1.2 and the untouched INV-G2 included. The plain-text-only rule, ASM-1's "plain text only" included, is gone from every section, with no text saying it changed, and ASM-1 is replaced rather than joined by a second entry; the plain-text alternative part may remain. The weekly cadence and staying on the relay are recorded as undated `User's call:` Known Assumptions. Reactions are covered by AC-1.1 rewritten to state the class (every kind of item the activity feed shows), with no gate whose region is reactions alone. Every untouched gate keeps its ID, and no reference names an ID that no longer exists. Intent, the Approach and the Deliverable describe the HTML digest. No Known Assumption only records how the amendment's review findings were handled, and the reply lists any finding it did not apply as an open item. Before the handoff, a fresh context reviewed the amendment, or the reply says the review was self-graded.
 Check: read
 
+### draft-gets-no-task-file-gate
+Run: `scripts/drive-skill.sh define verification/prompts/define-draft-request.md`
+Proves: for a request whose only deliverable is a throwaway HTML prototype to react to, the Manifest carries no `review-design`, `review-code` or other task-file gate on the draft; its Deliverable owes only that the draft, kept outside the project's files, reaches the person with the question it poses.
+Check: read
+
 ## Gotchas
 
 - Eval prompts ask for `./manifest.md` in the working directory, so a drive of an eval case finds the Manifest in the scratch project, not the home directory.

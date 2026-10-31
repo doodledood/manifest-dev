@@ -333,6 +333,16 @@ agent controls. Every case reaches the spine line; the decision cases `06`, `26`
 and `86`–`88`, which load `DECISION.md`, reach both. `92` and `93` are new: each was driven once on
 the skill before this change and once after it, and neither is measured.
 
+A sixth change, on 2026-10-31, rewrote the draft offer: a draft exists to draw out criteria the
+user cannot put into words and agree a direction, at the fidelity the user expects; it is never
+verified, tested, reviewed or gated; its first version is shown within about 15 minutes and each
+iteration takes minutes; the verification bullet and the design step no longer apply to it; and
+autonomous mode shows it to an owner a channel can reach instead of recording an assumption. It
+reaches `22` most, and every case whose read implies making something; the autonomous cases see
+only the new reach-the-owner branch, which none of their prompts gives a channel for. The
+`figure-out` recipe's `draft-is-quick-and-unchecked` drive covers the draft's speed and its
+exclusion from checks, and is unmeasured.
+
 Every recorded number before that baseline was already stale as of 2026-10-21. The 2026-10-13 change edited
 figure-out's spine, its docs-mode and autonomous references, and its task files, the
 2026-10-14 change moved its verification wording to one harness, the 2026-10-15 change made
@@ -674,7 +684,7 @@ file. The row is never deleted while the probe stays.
 | `SKILL.md` | Explore read-only; acts with durable outside state are offered | `18-read-only-experiment/state-labelhub--labelhub--driver-py`, `18-read-only-experiment/state-labelhub--labelhub--spooler-py`, `17-agreement-is-not-a-go/state-gatekeeper--app--consumer-py`; not graded: acts that leave state outside the session, which need an external-service stub |
 | `SKILL.md` | The person's seat and their uses | `14-persona-seat-feature/takes-the-persona-seat`, `14-persona-seat-feature/persona-from-north-star`, `15-persona-seat-doc/takes-the-readers-seat` |
 | `SKILL.md` | State what it will be and how it is checked | `21-how-it-gets-checked/settles-the-exercise`, `32-reads-the-verification-surface/plans-to-exercise-the-touched-entry`, `33-no-verification-surface/plans-a-way-to-check-it` |
-| `SKILL.md` | Offer a draft | `22-draft-before-feel/offers-a-draft-not-a-feeling`; not graded: rendering beyond the draft offer, which needs opt-in to publishing and several turns |
+| `SKILL.md` | Offer a draft | `22-draft-before-feel/offers-a-draft-not-a-feeling`; not graded: rendering beyond the draft offer, the draft's time bound and its exclusion from every check, which need opt-in to publishing and several turns |
 | `SKILL.md` | Re-derive a load-bearing read independently | `62-decision-rival-answers/checks-the-read-independently` |
 | `SKILL.md` | Flags and the references they load | `01-root-press/log-written`, `25-users-call-and-taste/flags-the-users-calls`, `27-taste-offers/offers-entry-for-the-stated-preference`, `43-recalls-earlier-work/carries-the-earlier-ruling-as-a-lead`, `46-general-question-skips-recall/no-recall-for-a-general-question`, `23-term-and-record/term-captured`; not graded: a quoted or topic mention of a flag read as topic text, which no case prompt carries |
 | `SKILL.md` | What counts as a project | `52-projectless-chat-offers-no-surfaces/no-project-surfaces-offered`, `52-projectless-chat-offers-no-surfaces/state-no-extra-files`; not graded: the same paragraph's team-mode sentences (no Taste, precedence over `--autonomous`), which need a Slack channel the suite cannot reach |

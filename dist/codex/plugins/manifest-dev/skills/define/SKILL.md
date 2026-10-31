@@ -252,6 +252,11 @@ not only which Defaults it drops. Taste entries stay weighed per call, as above.
 multi-repo manifests. These carry encoder data only —
 figure-out's own probe files are a separate set this skill never reads, and any
 `tasks/**/references/*.md` is gate-evaluation lookup data, not loaded here.
+A disposable draft made only to get a person's reaction loads no task file — no
+Quality Gate and no Default — because that reaction is its check. Its
+Deliverable owes only that the draft, kept outside the project's files, reaches
+that person with the question it poses; nothing reviews, tests or checks the
+draft's quality.
 
 | Domain | Indicators | File |
 |---|---|---|
