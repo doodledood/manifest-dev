@@ -18,8 +18,7 @@ removed, since the evidence is where the lines are read from:
 1. **Time lines into recipes** — for each scenario whose latest evidence summary carries a line, a
    `- **Line:** <kind of machine> <seconds> s; …` field in its header (the project's current
    `verify help RECIPE` shows it too), one `Line: <seconds> s on <kind of machine>` under that
-   scenario in its recipe, one per kind of machine, per `../VERIFICATION_HARNESS.md` → *Run
-   time*. A raise keeps its reason as `; raised: <reason>`, a freeze keeps its level and Ticket
+   scenario in its recipe, one per kind of machine. A raise keeps its reason as `; raised: <reason>`, a freeze keeps its level and Ticket
    as `; frozen at <seconds> s by <Ticket>`, and nothing else in the field is carried: `first
    run`, `lowered` and `paid down` say only how the line got there, and a count of crossings
    (`over N`) is dropped because the new tool confirms a crossing within one drive. A scenario

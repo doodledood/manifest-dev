@@ -24,11 +24,11 @@ mistake fails for every later contributor, with or without this workflow.
   ships with it.
 - **The record:** where a decision record's decision is what the lock holds, update the record's
   `Enforced by` line, and give the check a comment citing the record.
-- **Friction becomes a command:** where the run had to start something by hand, add a print to
-  see its state, or wait on something slow, leave the project's verification able to do that — in
-  its harness a control command, a `logs:` command or a faster check, or the same in its own
-  scripts — within the change's scope, or name the gap as debt. A check that is merely slow is the
-  exception: the report names it and where its time goes, and it is never debt.
+- **Friction becomes a command:** where the run had to start something by hand or add a print to
+  see its state, leave the project's verification able to do that — in its harness a control
+  command or a `logs:` command, or the same in its own scripts — within the change's scope, or
+  name the gap as debt. A slow check is sped up within scope or named in the report with where its
+  time goes; it is never debt.
 - **Suppressions:** a new suppression of a lock carries its reason on the suppressing line and is
   reported as debt. It needs no approval to land.
 

@@ -33,8 +33,10 @@ Offer one item, as a default the project may adapt or decline:
      contributor docs they point to. Search those files rather than reading only the context file,
      and show each line before and after.
 
-   Done when the project's `verify check` passes with the updated tool, and a search of its
-   recipes and settings finds no `Line:`, `Workload:`, `headroom:` or `raise:` left. Show the
+   Done when the project's `verify check` passes with the updated tool, a search of its recipes
+   and settings finds no `Line:`, `Workload:`, `headroom:` or `raise:` left, and a search of the
+   context file and the contributor docs it points to finds no instruction about time lines or
+   exit 5 left. Show the
    fields removed. A debt Ticket a freeze named is the project's to close or keep; say which
    Tickets the removed freezes named.
 

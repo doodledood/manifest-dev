@@ -30,8 +30,7 @@ its own `--help`.
   When a check the work touches has grown slow, find where the time went from the runner's own
   timings and speed it up where the cause is in what the change added, such as a slow new test or
   a sleep, or in code it already touches; otherwise say in the report which check is slow and
-  where the time goes. Slowness is never a reason to stop, gate, freeze or open a Ticket, and it is
-  not a debt item.
+  where the time goes.
 - **A stand-in is not the target:** where a check runs on a stand-in for where the work will run —
   a cloud container that already has tools a user's machine lacks, a fixture in place of the real
   service — the report names, as unverified, what the stand-in provided that the target will not.
