@@ -13,7 +13,7 @@ Executes a Manifest with full autonomy until every Acceptance Criterion and Glob
 - `/do <manifest-path> [--no-log]`.
 - Phrases its description matches: "execute the manifest", "run the plan", "implement it".
 - `auto` after define; `babysit-pr` after its Manifest; `run-ticket` through `auto`.
-- It changes the Manifest only through define, turns corrections into locks and lists the debt it leaves, builds or repairs the project's verification harness and the recipes the Manifest touches (found with `verify affected`), and arms a goal or prints a goal block so the run survives interruption.
+- It changes the Manifest only through define, turns corrections into locks — a reaction to a disposable draft steers its direction and locks only what reaches past it — and lists the debt it leaves, builds or repairs the project's verification harness and the recipes the Manifest touches (found with `verify affected`), and arms a goal or prints a goal block so the run survives interruption.
 
 ## Scenarios
 
@@ -50,6 +50,11 @@ Check: read
 ### distinct-nits
 Run: `scripts/drive-skill.sh do verification/prompts/do-distinct-nits.md --scaffold verification/fixtures/pr-nits --max-turns 120`
 Proves: both advances assess their different optional suggestions, decline them with reasons, and preserve `order_export.py` without a code commit or push. The second advance retains the first one's journal across the new head. Each current thread receives its own appropriate outbound handling; the outstanding required approval stays pending. Inspect both saved diffs, outbound records, Git history, and the appended journal. The marker-only `Fixture: advance review wave` commit is injected setup, not an appeasement commit; any subject-made code commit is still a failure.
+Check: read
+
+### draft-reaction
+Run: `scripts/drive-skill.sh do verification/prompts/do-draft-reaction.md --scaffold verification/fixtures/draft-reaction --max-turns 120`
+Proves: three reactions to a draft land three ways, read from the files the run wrote rather than its account. `manifest.md` is amended to record direction B at lower density as the person's call in Known Assumptions, with AC-1.1 or a new gate building the dashboard to it, and a gate holding that the totals match `ledger.csv` to the cent. The tests the run adds include one that fails when a dashboard total differs from the ledger's sum for that category; no added test, lint or check concerns density, layout or where the numbers sit. No memory file gains a `## Taste` entry, and the completion report carries a drafted Taste entry for putting the numbers first in mock-ups, with the question whether it is standing or for this case only.
 Check: read
 
 ## Gotchas

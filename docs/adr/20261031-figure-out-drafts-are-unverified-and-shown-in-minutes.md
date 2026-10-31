@@ -1,7 +1,7 @@
 # ADR: figure-out's drafts are not verified, and are shown in minutes
 
 ## Status
-Accepted
+Accepted; amended by 20261031-do-takes-a-reaction-to-a-draft-as-direction-not-a-lock: the draft bullet's undefined "design instrument" and "design-check round" become plain words, and /do takes a reaction to a draft as direction
 
 ## Area
 figure-out
@@ -82,9 +82,11 @@ person with the question it poses.
 - Fifteen minutes is a judgment bound, not a measured one; no eval case grades the time yet.
 
 ## Enforced by
-partly — `tests/test_drafts_are_unverified.py` pins the no-verification rule, the time bound, the
-verification bullet's exclusion, the design step's limit and define's task-file exclusion; how
-long a draft actually takes, and how rough it is, stay judgment.
+partly — `tests/test_drafts_are_unverified.py` pins the no-verification rule (now worded "no review
+skill, and no design measuring or checking tool run on it", with negative assertions on the
+replaced terms), the time bound, the verification bullet's exclusion, the design step's limit
+("none of its optional measuring instruments") and define's task-file exclusion; how long a draft
+actually takes, and how rough it is, stay judgment.
 
 ## Source
 - Amends 20260916-design-is-reference-calibrated-guidance: callers own prototype lifecycle, and

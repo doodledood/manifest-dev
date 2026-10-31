@@ -32,6 +32,44 @@ mistake fails for every later contributor, with or without this workflow.
 - **Suppressions:** a new suppression of a lock carries its reason on the suppressing line and is
   reported as debt. It needs no approval to land.
 
+## A reaction to a draft
+
+A disposable draft is a throwaway rendering made only to get a person's reaction (`../SKILL.md`
+says how one is made). A reaction to it is not a correction: the draft was made to be reacted to,
+so nothing went wrong that a check should stop. By default the reaction steers the direction of
+the draft and of the design behind it, and installs no lock and drafts no Taste entry.
+
+Capture every reaction, whatever else it does. The direction picked and each criterion the
+reaction surfaced go, through an amendment (`../SKILL.md` → *Amendments*), into the Manifest — as
+gates on the real work where they bind it, and as Known Assumptions recording the person's call —
+and into any decision record or Ticket the work is tracked on. They never go back into the draft,
+which changes again only when the person asks.
+
+Lock only what the reaction shows reaches past the draft:
+
+- **A requirement or constraint on the real work** — something the built thing must do whatever
+  it looks like — is an invariant its owner stated: take it through the harvest above. Lock it
+  where the run holds real work a check can cover; until that work exists, its gate in the
+  Manifest is where it holds.
+- **A personal lean the person states as reaching beyond this artifact, with a reason**, goes to
+  `../SKILL.md` → *Taste on reversal*, which drafts an entry for their yes. A lean with no stated
+  reason is captured only.
+
+When it is unclear whether a reaction reaches past the draft, capture it and do not lock: a missed
+lock costs one later correction, while a wrong one binds every later contributor to a rule nobody
+meant.
+
+Three reactions to a dashboard draft:
+
+- "Go with B, but less dense." Direction only: the Manifest records B at lower density as the
+  person's call and the real dashboard's gate builds to it. No lock, no Taste entry.
+- "These totals have to match the ledger to the cent — we've been burned before." A requirement on
+  the real work: captured as a gate on the real dashboard, and locked by an invariant test that
+  the totals reconcile with the ledger once the real code exists.
+- "In anything you mock up for me, put the numbers first — I scan for them before anything else."
+  A personal lean with a reason, reaching past this draft: captured for this dashboard and drafted
+  as a Taste entry for the person's yes. No lock.
+
 ## Comments in touched code
 
 - A comment that explains a workaround in code the project owns is a refactor flag: report it as

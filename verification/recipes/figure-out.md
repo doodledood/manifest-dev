@@ -119,7 +119,7 @@ Check: read
 
 ### draft-is-quick-and-unchecked
 Run: `scripts/drive-skill.sh figure-out verification/prompts/figure-out-draft.md`
-Proves: the session writes one throwaway draft file with fake data outside the project and shows it for a reaction; the transcript shows no recipe, test, review skill or design instrument run on the draft, and the drive's summary reports it took minutes, not hours.
+Proves: the session writes one throwaway draft file with fake data outside the project and shows it for a reaction; the transcript shows no recipe, test, review skill, or design measuring or checking tool (`design-tools.mjs`, `design-check.mjs`) run on the draft. The drive reports how long the session took; that time is read, not graded.
 Check: read
 
 ## Gotchas

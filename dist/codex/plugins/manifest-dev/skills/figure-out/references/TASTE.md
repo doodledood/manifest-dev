@@ -13,7 +13,7 @@ Taste is a durable personal steering preference persisted only by offer-and-rati
 Watch for directional preferences the user steers by, not one-off situational calls. A candidate is eligible when it is all four:
 
 - **Directional** — it would steer future judgment calls the same way ("prefer the smallest clean change", "prose over tables"), not a fact about this task.
-- **Durable** — recurring within the session, explicitly stated as a standing way of working, or a single reversal of an agent's call for which the user states the reason — the reason is what can carry to later calls. A single correction with no stated reason is not taste.
+- **Durable** — recurring within the session, explicitly stated as a standing way of working, or a single reversal of an agent's call for which the user states the reason — the reason is what can carry to later calls. A single correction with no stated reason is not taste. A reaction to a disposable draft is about that draft's direction, and is not taste unless the user states it as reaching beyond that artifact.
 - **Behavior-changing** — a future session that knew it would act differently; if the model already behaves this way unprompted, there is nothing to write.
 - **Personal** — you could want the opposite for some other user. Where the opposite would simply be the skill working badly, the behavior is owed by every session rather than preferred by this one, and capturing it here makes weighable what should be held and binds it to whoever happened to ratify it. Make no offer, and don't reach for the prompt either: name the gap as one the prompt itself should close, and leave it there.
 

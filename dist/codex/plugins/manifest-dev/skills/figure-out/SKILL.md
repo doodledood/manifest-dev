@@ -141,7 +141,7 @@ short messages do not require permission to do the next piece of research.
   finished as the user expects it to be — rough, not sloppy — and never
   perfect it. A draft is never verified, tested, reviewed or gated: no harness
   or recipe run, no scratch break (a throwaway change made to see a check
-  fail), no review skill, no design instrument or design-check round. The user's reaction is its only check.
+  fail), no review skill, and no design measuring or checking tool run on it. The user's reaction is its only check.
   Show the first draft within about 15 minutes of agent working time after the
   user accepts the offer, and keep each iteration to minutes. When a draft
   cannot be ready in that time, cut it down to the question being judged rather
@@ -172,7 +172,7 @@ short messages do not require permission to do the next piece of research.
   direction, passing along that person, their moment, and our goal; any feeling
   or strength the user named; for each variant, the difference it explores;
   this iteration's question and rough fidelity; and that it is a draft no
-  review loop runs on — no review skill, no instrument, no second pass. Design
+  review loop runs on — no review skill, none of its optional measuring instruments, no second pass. Design
   guidance shapes the draft for the next reaction. Where
   that skill is unavailable, write down the loop the reader repeats and what
   has to stay visible together during it, arrange the page to that, pick the

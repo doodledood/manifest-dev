@@ -73,7 +73,9 @@ explicit yes to that text writes it, inside that file's `## Taste` section,
 changing nothing else. When an existing entry decided the reversed call, raise
 the clash instead — has the entry's default moved, or is this an exception? Show
 any revision or removal verbatim, and apply it only on the user's explicit yes
-to that text. An unattended session makes no offer.
+to that text. An unattended session makes no offer. A reaction to a disposable draft — a
+throwaway rendering made only to get that reaction — is about that draft's direction, not such a
+reversal, unless the user states it as reaching beyond that artifact.
 
 Carry the prior Read's useful rationale, intended progress, circumstances, trade-offs and
 uncertainties into Intent, Approach and Assumptions, as reasoning that holds now rather than the

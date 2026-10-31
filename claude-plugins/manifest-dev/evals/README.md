@@ -340,8 +340,15 @@ iteration takes minutes; the verification bullet and the design step no longer a
 autonomous mode shows it to an owner a channel can reach instead of recording an assumption. It
 reaches `22` most, and every case whose read implies making something; the `--autonomous` cases the
 second change above lists see only the new reach-the-owner branch, which none of their prompts gives a channel for. The
-`figure-out` recipe's `draft-is-quick-and-unchecked` drive covers the draft's speed and its
-exclusion from checks, and is unmeasured.
+`figure-out` recipe's `draft-is-quick-and-unchecked` drive covers the draft's exclusion from checks
+and reports how long it took, and is unmeasured.
+
+A seventh change, on 2026-10-31, replaced the draft bullet's undefined "design instrument" and
+"design-check round" with plain words, told the design step not to run the design skill's optional
+measuring instruments on a draft, and added to `TASTE.md`'s *Durable* bullet that a reaction to a
+disposable draft is about that draft's direction and is not taste unless the user states it as
+reaching beyond that artifact. It reaches `22` and the Taste-offer cases `27` and `28`; none of
+their prompts reacts to a draft, so no grader changes, and all three stay unmeasured since.
 
 Every recorded number before that baseline was already stale as of 2026-10-21. The 2026-10-13 change edited
 figure-out's spine, its docs-mode and autonomous references, and its task files, the
