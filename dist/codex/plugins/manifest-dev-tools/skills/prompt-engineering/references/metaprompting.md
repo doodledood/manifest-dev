@@ -1,24 +1,24 @@
 # Metaprompting
 
-Diagnose-then-revise for a failing prompt. Instead of writing from scratch, feed a model the current prompt plus logged failure traces — each with what the run had in front of it — get a root-cause diagnosis, then fix each cause where it lives: the input for an input fault, a surgical revision of the prompt for an instruction fault.
+Diagnose-then-revise for a failing prompt. Instead of writing from scratch, feed a model the current prompt plus logged failure traces — each with what the run had in front of it — get a root-cause diagnosis, then fix each cause where it lives: material fed into the prompt at its source, the prompt's own text by a surgical revision.
 
 The shape is two separate calls — diagnose first, revise second. Skipping the diagnosis (asking directly for a fix) tends to produce vague rewrites that miss the real cause.
 
 ## Pre-flight check — when metaprompting is the wrong tool
 
-- If the run's input was faulty — a piece missing, conflicting, wrong or out of date, or buried in noise — fix what the run is fed, not the prompt's lines (`SKILL.md` → *What the run has in front of it*). Read the filled-in input of a few failing runs before anything else.
+- Read what a few failing runs were fed (`SKILL.md` → *What the run has in front of it*). If that already shows the fault — a piece missing, conflicting, wrong or out of date, or buried in noise — fix it at its source and rerun. Otherwise Step 1 sorts each failure.
 - If the prompt is missing a goal or success criteria entirely, no diagnosis will surface it — fix the gap directly.
 - If the model lacks a capability the prompt is asking for (reliable arithmetic on long numbers, accurate citations without retrieval), no prompt change will fix it — change the architecture.
 - If the failure is a single bug from a typo or contradiction visible on a quick read, just fix it.
 
 ## Step 1 — Diagnose only
 
-Feed the model the current system prompt plus a small set of logged failures, each carrying what the run had in front of it: the inputs filled into the prompt, the files it read, retrieved material, tool output. Ask for root-cause analysis. **Do not ask for a solution yet.** The output sorts each failure by cause — the input, or the instructions — and, for the instruction-caused ones, names which lines of the prompt are causing which observed behaviors.
+Feed the model the current system prompt plus a small set of logged failures, each carrying what the run was fed besides the prompt (`SKILL.md` → *What the run has in front of it*). Ask for root-cause analysis. **Do not ask for a solution yet.** The output sorts each failure by cause — the fed material, or the prompt's own text — and, for the prompt-caused ones, names which lines of the prompt are causing which observed behaviors.
 
 Constraints to include in the diagnosis call:
 
-- For each failure, decide first whether the input caused it — a piece missing, conflicting, wrong or out of date, or buried in noise — and name that fault, before attributing anything to the prompt's lines.
-- Identify distinct failure modes among the instruction-caused failures — name and describe each.
+- For each failure, decide first whether the fed material caused it — a piece missing, conflicting, wrong or out of date, or buried in noise — and name that fault and its source, before attributing anything to the prompt's lines. A fault in the prompt's own text belongs with the failure modes.
+- Identify distinct failure modes among the remaining failures — name and describe each.
 - For each failure mode, quote or paraphrase the specific lines of the system prompt likely causing or reinforcing it. Include contradictions (e.g., *"be concise"* vs. *"err on the side of completeness"*).
 - For each failure mode, briefly explain how those lines steer the agent toward the observed behavior.
 - Return the analysis in a structured-but-readable format.
@@ -38,8 +38,9 @@ You are given:
 
 2) A small set of logged failures. Each entry has:
 - query
-- context_seen (what the run had in front of it: inputs filled into the
-  prompt, files read, retrieved material, tool output; shortened if needed)
+- context_seen (what the run was fed besides the prompt, such as inputs
+  filled into it, files read, retrieved material, tool output, the
+  conversation so far, what was handed to the agent; shortened if needed)
 - tools_called (as actually executed)
 - final_answer (shortened if needed)
 - eval_signal (rating, comment, or grader judgment)
@@ -49,11 +50,12 @@ You are given:
 </failure_traces>
 
 Tasks:
-1) For each failure, decide whether its input caused it: in context_seen
-   or the prompt, a piece the task needs is missing, two pieces conflict,
-   a piece is wrong or out of date, or what matters is buried in noise.
-   Name the fault and where it sits. Otherwise mark it instruction-caused.
-2) Among the instruction-caused failures, identify each distinct failure
+1) For each failure, decide whether its context_seen caused it: a piece
+   the task needs is missing, two pieces conflict, a piece is wrong or out
+   of date, or what matters is buried in noise. Name the fault and its
+   source. A fault in the system prompt's own text is not an input fault;
+   leave it for task 2.
+2) Among the remaining failures, identify each distinct failure
    mode (e.g., tool_usage_inconsistency, output_length_drift,
    autonomy_vs_clarification).
 3) For each failure mode, quote or paraphrase the specific lines of the
@@ -67,7 +69,7 @@ Output format:
 input_faults:
 - failure: ...
   fault: missing | conflicting | wrong_or_stale | noise
-  where: ...
+  source: ...
 failure_modes:
 - name: ...
   description: ...
@@ -78,9 +80,9 @@ failure_modes:
 
 ## Step 2 — Fix each cause where it lives
 
-Fix each input fault where the input is built — the template, the retrieval, the source a field is filled from — and rerun its traces; it gets no prompt patch.
+Fix each input fault at its source — the code that fills the template, the retrieval, the record a field comes from — and rerun its traces; it gets no prompt patch.
 
-For the instruction-caused failure modes, feed the diagnosis from Step 1 into a separate call. Ask for a patch — small explicit edits that resolve the issues without rewriting the prompt.
+For the failure modes in the prompt's own text, feed the diagnosis from Step 1 into a separate call. Ask for a patch — small explicit edits that resolve the issues without rewriting the prompt.
 
 Constraints to include in the revision call:
 
@@ -105,8 +107,8 @@ Failure-mode analysis:
 [PASTE STEP 1 OUTPUT]
 
 Propose a surgical revision of the system prompt that reduces the
-instruction-caused failure modes while preserving the good behaviors.
-Leave the input faults out of the patch; they are fixed in the input.
+failure modes while preserving the good behaviors. Leave the input
+faults out of the patch; they are fixed at their source.
 
 Constraints:
 - Do not redesign from scratch.

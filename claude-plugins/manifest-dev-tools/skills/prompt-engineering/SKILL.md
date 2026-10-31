@@ -18,7 +18,7 @@ A run's result is bounded by what it has in front of it: the prompt and everythi
 
 Fix the input first: supply the piece or a pointer that reaches it, choose one source where two disagree, correct or drop what is wrong, cut what buries the signal. That usually moves the result more than any other change. Wording edits and after-the-fact corrections — a review pass, a self-check, a rule added after a failure — come after it. A correction that makes up for faulty input leaves the fault in place, and the next run meets it again.
 
-Complete means complete for the task, so this does not argue with the load rule above: the fix is usually trading noise for the missing piece, not adding volume. Look to the instructions instead when the input is already complete, consistent and clean, or when the model lacks a capability no input can supply.
+Complete means complete for the task: the fix usually trades noise for the missing piece rather than adding volume. Look to the instructions when the input is already complete, consistent and clean; when the model lacks a capability no input can supply, change the architecture instead.
 
 ## Where a line came from
 
