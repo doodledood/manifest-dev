@@ -256,7 +256,9 @@ A disposable draft made only to get a person's reaction loads no task file — n
 Quality Gate and no Default — because that reaction is its check. Its
 Deliverable owes only that the draft, kept outside the project's files, reaches
 that person with the question it poses; nothing reviews, tests or checks the
-draft's quality.
+draft's quality. Where the Manifest also holds work beyond the draft, load task
+files for that work as usual and keep the draft's Deliverable outside their
+gates.
 
 | Domain | Indicators | File |
 |---|---|---|

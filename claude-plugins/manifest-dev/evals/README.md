@@ -338,8 +338,8 @@ user cannot put into words and agree a direction, at the fidelity the user expec
 verified, tested, reviewed or gated; its first version is shown within about 15 minutes and each
 iteration takes minutes; the verification bullet and the design step no longer apply to it; and
 autonomous mode shows it to an owner a channel can reach instead of recording an assumption. It
-reaches `22` most, and every case whose read implies making something; the autonomous cases see
-only the new reach-the-owner branch, which none of their prompts gives a channel for. The
+reaches `22` most, and every case whose read implies making something; the `--autonomous` cases the
+second change above lists see only the new reach-the-owner branch, which none of their prompts gives a channel for. The
 `figure-out` recipe's `draft-is-quick-and-unchecked` drive covers the draft's speed and its
 exclusion from checks, and is unmeasured.
 

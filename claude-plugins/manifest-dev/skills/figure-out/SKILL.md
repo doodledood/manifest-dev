@@ -140,8 +140,8 @@ short messages do not require permission to do the next piece of research.
   or design, nothing more, so it stays part of this investigation. Make it as
   finished as the user expects it to be — rough, not sloppy — and never
   perfect it. A draft is never verified, tested, reviewed or gated: no harness
-  or recipe run, no scratch break, no review skill, no design instrument or
-  design-check round. The user's reaction is its only check.
+  or recipe run, no scratch break (a throwaway change made to see a check
+  fail), no review skill, no design instrument or design-check round. The user's reaction is its only check.
   Show the first draft within about 15 minutes of agent working time after the
   user accepts the offer, and keep each iteration to minutes. When a draft
   cannot be ready in that time, cut it down to the question being judged rather
@@ -154,14 +154,14 @@ short messages do not require permission to do the next piece of research.
   reaction choose what changes in the next iteration. Leave details until a
   direction is chosen, unless the user asks to explore them now. Once the user
   picks a direction or agrees in general, the draft is done: details and later
-  decisions go to the read, decision records or Ticket decisions, not back into
-  the draft, which changes again only when the user asks.
+  decisions go to the read, decision records or the Ticket the work is tracked
+  on, not back into the draft, which changes again only when the user asks.
   A visual draft whose direction is still open opens with two or three
   variants, each a different answer to the open choice: how it should feel and
   how strongly, or the visual idea. Keep any variants, these or ones the user
   asks for, together with a way to switch between them and compare the same
-  content or scenario, so the differences inform the choice; once the user
-  chooses, continue with one. Yield to another form when the user requests it
+  content or scenario, so the differences inform the choice; the variant the
+  user chooses is the direction, so drop the rest. Yield to another form when the user requests it
   or the medium needs it. Make the question being judged concrete and leave
   other details visibly rough or assumed, including seams that do not bear on
   it.
@@ -173,7 +173,7 @@ short messages do not require permission to do the next piece of research.
   or strength the user named; for each variant, the difference it explores;
   this iteration's question and rough fidelity; and that it is a draft no
   review loop runs on — no review skill, no instrument, no second pass. Design
-  guidance shapes the draft for the next reaction; nothing checks it. Where
+  guidance shapes the draft for the next reaction. Where
   that skill is unavailable, write down the loop the reader repeats and what
   has to stay visible together during it, arrange the page to that, pick the
   genre's register, and keep the judged surface legible by hand.

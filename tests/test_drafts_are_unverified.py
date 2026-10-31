@@ -47,10 +47,8 @@ def test_the_draft_bullet_states_its_purpose_and_that_nothing_checks_it() -> Non
     )
     assert "rough, not sloppy — and never perfect it" in draft
     assert "A draft is never verified, tested, reviewed or gated" in draft
-    assert (
-        "no harness or recipe run, no scratch break, no review skill, no design instrument or "
-        "design-check round" in draft
-    )
+    assert "no harness or recipe run, no scratch break" in draft
+    assert "no review skill, no design instrument or design-check round" in draft
     assert "The user's reaction is its only check." in draft
 
 
@@ -64,6 +62,9 @@ def test_the_draft_bullet_bounds_the_time_and_says_what_to_cut() -> None:
     assert "one standalone throwaway file with fake data" in draft
     assert "the draft is done" in draft
     assert "changes again only when the user asks" in draft
+    # Choosing a variant is choosing the direction, so no line may read as refining it after.
+    assert "the variant the user chooses is the direction, so drop the rest" in draft
+    assert "continue with one" not in draft
 
 
 def test_the_design_step_runs_no_review_loop_on_a_draft() -> None:
@@ -74,7 +75,6 @@ def test_the_design_step_runs_no_review_loop_on_a_draft() -> None:
         "that it is a draft no review loop runs on — no review skill, no instrument, no second "
         "pass" in draft
     )
-    assert "nothing checks it" in draft
 
 
 def test_the_verification_bullet_excludes_a_draft() -> None:
@@ -110,3 +110,4 @@ def test_define_loads_no_task_file_for_a_draft() -> None:
         "Quality Gate and no Default — because that reaction is its check." in text
     )
     assert "nothing reviews, tests or checks the draft's quality" in text
+    assert "keep the draft's Deliverable outside their gates" in text

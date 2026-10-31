@@ -15,6 +15,7 @@ Turns shared understanding into a Manifest — Problem, Appetite, Deliverables w
 - `auto` (with `--autonomous`); `do` to amend; `babysit-pr` with `--babysit`; figure-out's offer at the end of a read.
 - `--babysit <pr-url>` synthesizes a lifecycle-only Manifest from a pull request — the `check-pr` gate and the gate that the pull request shows the change working; `--autonomous` skips the approval wait and records decisions as `(auto)` assumptions.
 - It reads earlier work on the repository before encoding.
+- A disposable draft made only to get a person's reaction loads no task file; its Deliverable owes only that the draft reaches that person.
 - Coding gates do not prescribe when the executor runs its advisory review. PR defaults permit reasoned declines of correct but optional bot suggestions; the independent proof gate remains.
 
 ## Scenarios
