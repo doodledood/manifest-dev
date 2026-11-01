@@ -1,7 +1,7 @@
 # ADR: manifest-to-goal lists what the goal owes before drafting, and has the goal read cold
 
 ## Status
-Accepted
+Accepted; amended by [20261101-write-goal-replaces-manifest-to-goal-and-fills-gaps-first](20261101-write-goal-replaces-manifest-to-goal-and-fills-gaps-first.md): the skill is renamed `write-goal`, takes any source, and fills its gaps before writing; this method stands with "the Manifest" read as "the sources"
 
 ## Area
 Goal setting
@@ -34,7 +34,7 @@ Before drafting, the skill writes down every Acceptance Criterion and Global Inv
 - Where no isolated context is available, the review is self-graded, and the note says so.
 
 ## Enforced by
-partly — the `manifest-to-goal` recipe's `fresh-review` scenario drives the skill on a 28-gate Manifest whose pass conditions come close to the cap, with a buried threshold, an amendment and advisory steps; whether a run lists, reviews and settles findings stays judgment.
+partly — the `write-goal` recipe's `fresh-review` scenario drives the skill on a 28-gate Manifest whose pass conditions come close to the cap, with a buried threshold, an amendment and advisory steps; whether a run lists, reviews and settles findings stays judgment.
 
 ## Source
 - Session: figure-out read and `/auto` run on 2026-10-25

@@ -1,4 +1,4 @@
-/manifest-dev-tools:manifest-to-goal turn this manifest into a goal i can paste into the goal field. one amendment, settled: we're dropping the CSV export entirely — JSON export only.
+/manifest-dev-tools:write-goal turn this manifest into a goal i can paste into the goal field. one amendment, settled: we're dropping the CSV export entirely — JSON export only.
 
 ````markdown
 # Definition: Usage export API for workspace admins

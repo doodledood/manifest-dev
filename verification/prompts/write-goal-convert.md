@@ -1,4 +1,4 @@
-/manifest-dev-tools:manifest-to-goal
+/manifest-dev-tools:write-goal
 
 Turn this Manifest into a goal:
 
