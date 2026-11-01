@@ -102,7 +102,7 @@ Two plugins ship from this repository:
 | Plugin | What it covers |
 |--------|----------------|
 | [`manifest-dev`](claude-plugins/manifest-dev) | Standalone inquiry, finite work, optional outcome coordination, project setup, ticket authoring and execution, first-principles design with composable guides and optional measurement tools (`/design`), artifact review, and the review skills the criteria call on |
-| [`manifest-dev-tools`](claude-plugins/manifest-dev-tools) | Pull-request collaboration, prompt work, standalone goals from Manifests (`/manifest-to-goal`), teaching, explaining, and handoff between sessions |
+| [`manifest-dev-tools`](claude-plugins/manifest-dev-tools) | Pull-request collaboration, prompt work, standalone goals from a Manifest, a figure-out read or a request (`/write-goal`), teaching, explaining, and handoff between sessions |
 
 Each plugin's README lists what it ships.
 

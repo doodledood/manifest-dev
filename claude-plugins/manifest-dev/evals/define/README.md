@@ -428,7 +428,7 @@ causes rework when the executor meets the intent another way. `d02` covers that 
 
 ## Shared requirement and threshold graders
 
-Both come from what `manifest-to-goal` keeps when it boils a Manifest down to a standalone
+Both come from what `write-goal` keeps when it boils a Manifest down to a standalone
 definition of done for an executor with no other context.
 
 - `binding-lives-in-gates.md`: compares the original request with the gates, including requirements
