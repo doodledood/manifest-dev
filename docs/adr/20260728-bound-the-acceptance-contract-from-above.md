@@ -1,7 +1,7 @@
 # ADR: Bound the acceptance contract from above, not only from below
 
 ## Status
-Accepted
+Accepted; amended by 20261028-every-pull-request-fixes-what-its-work-meets-and-verification-converges: the ceiling also counts as required the fixes every run owes on its pull request, a pre-existing issue the work met that is not gigantic and a below-bar finding a first full look brought that improves the work, so below-bar findings are no longer handed over
 
 ## Area
 define / do

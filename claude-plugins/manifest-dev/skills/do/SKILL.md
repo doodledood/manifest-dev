@@ -36,7 +36,7 @@ followed, or that no entry applied.
 
 **Taste on reversal.** When a steering message reverses a call the run made and states why, and the reason is a preference another user could want the opposite of — not a behavior every session owes — draft a Taste entry in three parts: the preference, stated as a principle that carries to calls never discussed and naming the kind of call it covers; the rationale, built on the reason the user stated, never one you inferred; and when it should yield. Carry it verbatim in the terminal report, with the memory file it would go in and the question whether it is standing or for this case only; "this case only" is a no. Write nothing: only the user's explicit yes to that text writes it, inside that file's `## Taste` section. When an existing entry decided the reversed call, report the clash instead, with any proposed revision or removal shown verbatim for the user's yes. Make no other offer. A reaction to a disposable draft (defined below) drafts an entry exactly when `references/HARVEST.md` → *A reaction to a draft* says, whether or not it reverses a call this run made.
 
-Choose solutions that make the outcome durable and the next change easier to get right; the initial plan is yours to change. A disposable draft is the exception: a throwaway rendering, such as one page with fake data, made only so a person can react to what they cannot yet put into words, which a Deliverable may ask for. Keep it outside the project's files, as finished as that person expects, shown in minutes rather than late, and never perfected or verified beyond reaching that person with the question it poses. The choice it poses waits for that person's reaction, and work that depends on the choice is blocked on that reaction until it arrives. What the run makes durable is the decision and the criteria their reaction draws out, never the draft. Appetite — the size of change the problem is worth — may be revised by amendment (*Amendments*), never to excuse excess already produced or to lower a gate's bar. Out of bounds exclusions, binding requirements and permissions stay fixed unless the user changes them, and absence from an exclusion list authorizes nothing unrelated.
+Choose solutions that make the outcome durable and the next change easier to get right; the initial plan is yours to change. A disposable draft is the exception: a throwaway rendering, such as one page with fake data, made only so a person can react to what they cannot yet put into words, which a Deliverable may ask for. Keep it outside the project's files, as finished as that person expects, shown in minutes rather than late, and never perfected or verified beyond reaching that person with the question it poses. The choice it poses waits for that person's reaction, and work that depends on the choice is blocked on that reaction until it arrives. What the run makes durable is the decision and the criteria their reaction draws out, never the draft. Appetite — the size of change the problem is worth — may be revised by amendment (*Amendments*), never to excuse excess already produced or to lower a gate's bar. Out of bounds exclusions, binding requirements and permissions stay fixed unless the user changes them, and absence from an exclusion list authorizes nothing unrelated beyond the fixes *What holds for every gate* asks of every run.
 
 An obligation is blocked only when no authorized path remains after trying credible alternatives: it needs knowledge, access or authority the run lacks, or a change to a binding requirement. A failed approach is yours to redesign rather than repeat; when two repairs that rest on one premise have both failed a gate, test that premise before a third repair. Where there is always one more thing to try, evidence, never a count of tries, says when a gate is out of reach: a measured limiter that every remaining authorized option leaves in place, recent attempts that no longer move the result beyond its run-to-run noise, or two gates where repairing one fails the other. The burden of proof is the run's: the limiter measured rather than guessed, the attempts distinct approaches aimed at it rather than variations of one idea, and every authorized option that could move it tried; until then the gate is not out of reach, and the work goes on. Any of these, so earned, makes it blocked as needing a change to a binding requirement; its blocker names the best result reached, the limiter, the attempts made and the requirement change that would unblock it, and the bar stays as written. Surface a blocker promptly with its evidence and the intervention it needs, then continue useful independent work that does not guess the blocked decision; invoke `/escalate` with the unresolved blockers only when no useful independent work remains. An external process still running is a wait, never completion.
 
@@ -84,8 +84,8 @@ Assume the user is AFK; make authorized decisions without asking questions. Surf
 
 Load `references/HARVEST.md` before the run reports, and earlier as soon as it repairs a finding,
 fixes a defect, receives a correction or a reaction to a disposable draft, or touches a comment that explains a workaround or claims a
-constraint: a correction becomes a lock where a check can hold it, a reaction to a draft steers the work's direction and locks only what reaches past it, such a comment becomes a refactor flag or
-an encoding offer, and the debt the run leaves goes into its report and into every pull request it opens or updates. When the
+constraint: a correction becomes a lock where a check can hold it, a reaction to a draft steers the work's direction and locks only what reaches past it, such a comment is reshaped or
+encoded, and the debt the run leaves goes into its report and into every pull request it opens or updates. When the
 Manifest gates a verification recipe, or the project keeps a verification harness — named in the
 project-surfaces section of the context file, or on disk with no verification bullet there, which
 counts as chosen — and the work needs a part it lacks or touches a path no recipe covers, load
@@ -94,8 +94,8 @@ The harness is the project's choice: where that section names the project's own 
 verify through the means it names, and recommend no harness. Where the section records no choice and
 no harness is on disk, verify through what the project keeps, and recommend a harness in the report.
 Either way add any check the change needs in the project's own form and build no harness. In every project, harness or
-not, repair a check the change touches that is broken or not fit to trust in its own form, or
-report it as debt. A harness belongs to a project:
+not, repair a check the work meets that is broken or not fit to trust, in its own form, as *What holds
+for every gate* says. A harness belongs to a project:
 a repository or working folder
 holding, or about to hold, work later sessions will change — a new one the user is starting
 counts — which this work concerns. A chat with no workspace, a home or scratch folder, a folder
@@ -123,11 +123,53 @@ introduced or exposed by the changes since that evaluation; a deterministic gate
 Give an invoked evaluator that reporting scope, the assessed state, prior findings, verified
 repairs, and the intervening changes. Recover missing context rather than silently requesting
 another full look. Contextual reading may be wide; touching an old line alone does not make an
-old issue new. A fresh standalone review keeps the scope its caller requested. A finding below
-a gate's bar, and a pre-existing issue unrelated to the change, is recorded rather than
-repaired, since every repair is a delta each judgment gate re-reads; `/done` and `/escalate`
-surface them for the user. A bar never moves down on the executor's judgment, and a summary
-claim is not evidence.
+old issue new. A fresh standalone review keeps the scope its caller requested. A bar never moves
+down on the executor's judgment, and a summary claim is not evidence.
+
+Every pull request leaves the repository better. A pre-existing issue the work meets, related to the
+change or not, and a finding below a gate's bar are build work, never a verdict: neither fails a
+judgment gate nor starts a new full look. They come from three places only: the path of the change
+the Manifest asks for — the checks it runs and the code it changes, calls into or reads to make that
+change; the *Pre-existing* list `review-code` returns when asked, which you ask for on the first full
+look of each gate that activates `review-code`; and review feedback on the pull request
+(`references/EXTERNAL_REVIEW.md`). Making a disposable draft meets none of them. What fixing one of them or repairing a finding runs into, and
+what a review raises about code that only such a fix or repair touched, joins only when it blocks
+that fix or a check fails, so fixes do not chain. A failing check is one such issue: code read or
+edited only to fix it is what that fix runs into, not the path. Fix the pre-existing issues; apply the below-bar
+findings of a first full look that improve the work, and dismiss the rest with a reason. What the
+path brings is fixed as part of the build. What first full looks and review bring is fixed in a
+batch, not one at a time; then each judgment gate whose subject the batch changed takes one
+continued look, which reports only outstanding findings and failures the batch introduced or
+exposed. A continued look lists no pre-existing issues, and a below-bar finding it reports is left,
+neither applied nor handed over: it re-samples taste on a repair, and chasing it is a loop that
+never settles. Each pre-existing fix lands as its own commit, and the pull request lists it as fixed
+on the way. These fixes are work the Manifest requires under any scope ceiling it carries, whatever
+that ceiling's wording.
+
+A gigantic issue stays out: one whose fix is a project of its own, needing its own definition
+of done — a design decision someone should weigh, a migration or rollout beyond this repository's
+code, or a review that would bury the change the pull request exists for. Size, relatedness and
+convenience do not make an issue gigantic. Gigantic: replacing a framework across the codebase;
+redesigning a module the change only passes through; migrating live data; lock hits across code
+other teams own that need an architecture decision. Not gigantic: a failing or unrunnable test, a
+broken harness script, a stale doc line, a bug or type hole in a helper the change calls, a drifting
+recipe, a workaround whose reshape is local, a few dozen mechanical lock hits. Report a gigantic
+issue as debt with why it is a project of its own (`references/HARVEST.md`), except a failing check
+that completion rests on — one across the whole tree, or one a gate depends on — which blocks
+completion (below). An issue that needs access, authority or a decision a person retains is debt
+that names what it needs, such as an ask-first run owed, unless a gate depends on it; then it is a
+blocker. Where the project's own rules — its context file, a contributing guide, a convention it
+documents — keep fixes unrelated to the change out of a pull request, follow them: report such an
+issue as debt instead of fixing it. That never covers a failing check completion rests on, which
+stays the run's to fix or to escalate as a blocker (below).
+
+Before reporting completion, every check the project keeps across the whole tree passes — lint,
+types, tests, build — whether or not the change touched what fails. A check that cannot run is a
+failure of the product or its harness: fix it. Never reach green by removing, skipping or loosening
+a test, unless the test is useless or tautological; then the pull request description names it and
+why. A failing check whose fix is gigantic blocks completion: escalate it as a blocker, never report
+the run as done. A run that changes no project file, such as one that only makes a disposable draft,
+owes none of this.
 
 When external review feedback arrives, directly or through `check-pr`, load
 `references/EXTERNAL_REVIEW.md` before acting on it.

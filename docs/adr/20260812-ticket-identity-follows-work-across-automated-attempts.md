@@ -1,7 +1,7 @@
 # ADR: Ticket identity follows the work across automated attempts
 
 ## Status
-Accepted
+Accepted; amended by 20261028-every-pull-request-fixes-what-its-work-meets-and-verification-converges: a pre-existing issue the attempt meets is fixed on its pull request unless gigantic; only a gigantic one or new work becomes a follow-up Ticket
 
 ## Area
 Ticketing

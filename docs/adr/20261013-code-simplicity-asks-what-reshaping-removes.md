@@ -1,7 +1,7 @@
 # ADR: The code-simplicity review asks which reshaping makes needed complexity disappear
 
 ## Status
-Accepted
+Accepted; amended by 20261028-every-pull-request-fixes-what-its-work-meets-and-verification-converges: a reshaping beyond the change's scope is made on the pull request as build work, in a commit of its own, and listed as debt only when it is gigantic
 
 ## Area
 Code review

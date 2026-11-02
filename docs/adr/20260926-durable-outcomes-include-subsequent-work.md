@@ -1,7 +1,7 @@
 # ADR: Durable outcomes include making subsequent work easier to do correctly
 
 ## Status
-Accepted
+Accepted; amended by 20261028-every-pull-request-fixes-what-its-work-meets-and-verification-converges: pre-existing issues the work meets, related or not, are no longer outside scope; they are fixed on the pull request unless gigantic
 
 ## Area
 define / do

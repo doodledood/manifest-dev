@@ -169,10 +169,10 @@ recognition is welcome as a consequence, never a target traded against those end
   — evidence: shipped and maintained as per-CLI packages under `dist/` since 2026-06.
 
 - A codebase converges toward one the workflow can maintain on its own when every correction
-  becomes a check, debt is paid on the path of the next change, and each long-lived artifact
-  keeps a way to verify it that normal runs keep fresh.
+  becomes a check, each change pays the debt it meets unless the fix is a project of its own, and
+  each long-lived artifact keeps a way to verify it that normal runs keep fresh.
 
-  — hypothesis: unmeasured until the eval baseline and real projects run it. 2026-10
+  — hypothesis: unmeasured until the eval baseline and real projects run it; wording ruled by the owner 2026-11-02. Records: The convergence bet counts debt paid on the change that meets it.
 
 - People will choose this workflow over direct prompting, manual coordination, or existing
   project tools when preserving intent and bounded delegation saves enough repeated work to

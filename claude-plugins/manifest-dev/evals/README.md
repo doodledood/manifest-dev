@@ -311,7 +311,7 @@ re-derivation of a load-bearing read that nobody will check, and `70` the classi
 stated constraint as required or chosen. `83` holds the offer to narrow a read once its remaining
 questions stop depending on each other.
 
-**Every recorded number in this file is stale as of 2026-10-25, including the 2026-10-25 baseline.**
+**Every recorded number in this file is stale as of 2026-10-28, including the 2026-10-25 baseline.**
 A change after that baseline removed drift from figure-out without adding or dropping a rule: the
 crux sentence now names parent before child first, the draft offer is its own bullet, the
 `--autonomous` paragraph and the log section left `SKILL.md` for the references that hold them,
@@ -375,6 +375,12 @@ user's-call cases `25` and `26`, `22`, and the Taste-offer cases `27` and `28`. 
 tried in three forms and did not ship (*Is a seat look worth its cost — 2026-11-02*, below), so the
 seat line `14` and `15` exercise is unchanged. `99`, `100`, `101` and `103` to `105` are new; each
 was driven and graded blind as the dated sections below say, and none is measured by this suite.
+
+Another change, on 2026-10-28, made the pre-existing issues a run meets build work on its own pull
+request. The *Bundled concerns* probe in `FEATURE.md` now sets those fixes apart from the experiments
+and unrelated improvements it still asks to separate. It reaches every case that loads
+`FEATURE.md`, `71` most, whose `separates-the-extras` grader still holds: a retry-library swap and a
+queue rename are improvements, not issues the work met.
 
 Every recorded number before that baseline was already stale as of 2026-10-21. The 2026-10-13 change edited
 figure-out's spine, its docs-mode and autonomous references, and its task files, the

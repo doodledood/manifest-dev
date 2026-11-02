@@ -15,7 +15,7 @@ scaffolds; it launches no agent or judge. Run with the repository virtual enviro
 ## Scenarios
 
 ### regression
-Run: `python3 -m pytest tests/test_eval_cases.py tests/test_eval_shared_graders.py tests/test_figure_out_coverage.py tests/test_eval_contract.py tests/test_eval_outcomes.py tests/test_score_rounds.py tests/test_extract_outputs.py tests/test_drive_scripts.py -q`
+Run: `.venv/bin/python -m pytest tests/test_eval_cases.py tests/test_eval_shared_graders.py tests/test_figure_out_coverage.py tests/test_eval_contract.py tests/test_eval_outcomes.py tests/test_score_rounds.py tests/test_extract_outputs.py tests/test_drive_scripts.py -q`
 Proves: invalid or incomplete results fail, native normalization matches an independent fixture, extraction keeps run/source identity, protected final files reject any writer, scaffolds execute and case documentation stays synchronized.
 
 ### figure-out-preflight
