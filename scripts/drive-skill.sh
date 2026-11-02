@@ -20,6 +20,12 @@
 #            starts nothing. VERIFY_DRY_RUN=1 (set by `scripts/verify drive --dry-run`) does
 #            the same.
 #
+# DRIVE_PLUGINS_AT=<commit> hands the session the plugins as they were at that commit instead of
+# as they are in the checkout; the prompt and the scaffold still come from the checkout. Any
+# recipe scenario then runs before and after a change with no scenario of its own:
+#   DRIVE_PLUGINS_AT=$(git merge-base HEAD origin/main) scripts/verify drive figure-out <scenario> --yes
+# The summary records which commit the plugins came from.
+#
 # Isolation: `claude` runs directly, its working directory a scratch project built in the
 # drive's evidence directory, outside this checkout. It is handed a copy of the plugin, never the
 # checkout's own directory, and started with no user settings and no MCP servers of yours
@@ -49,7 +55,7 @@ source "$root/scripts/lib/claude-cli.sh"
 model=${MODEL:-opus}
 store=${MANIFEST_DEV_FEATURES_EVIDENCE:-$HOME/.local/state/manifest-dev-features}
 
-usage() { sed -n '2,21p' "$0"; exit 2; }
+usage() { sed -n '2,27p' "$0"; exit 2; }
 die() { echo "drive: $*" >&2; exit 1; }
 unreachable() { echo "drive: unreachable — $*" >&2; exit 3; }
 
@@ -85,6 +91,15 @@ if [[ -n $scaffold ]]; then
 fi
 plugin_names=(manifest-dev)
 [[ $tools == 1 ]] && plugin_names+=(manifest-dev-tools)
+plugins_from=checkout
+if [[ -n ${DRIVE_PLUGINS_AT:-} ]]; then
+  plugins_from=$(git -C "$root" rev-parse --verify --quiet "$DRIVE_PLUGINS_AT^{commit}") ||
+    die "DRIVE_PLUGINS_AT=$DRIVE_PLUGINS_AT names no commit in this checkout"
+  for name in "${plugin_names[@]}"; do
+    git -C "$root" cat-file -e "$plugins_from:claude-plugins/$name" 2>/dev/null ||
+      die "DRIVE_PLUGINS_AT=$DRIVE_PLUGINS_AT has no claude-plugins/$name"
+  done
+fi
 
 stamp=${DRIVE_STAMP:-$(date -u +%Y%m%dT%H%M%SZ)}   # DRIVE_STAMP: tests pin it
 out="$store/$feature/$stamp"
@@ -93,7 +108,7 @@ if [[ $dry == 1 ]]; then
   base=$out; n=1; while [[ -e $out ]]; do n=$((n+1)); out="$base-$n"; done
   echo "would drive: $feature  model=$model  scaffold=${scaffold:-none}"
   echo "project:     $out/project (scratch; the session's working directory)"
-  echo "plugins:     copies of ${plugin_names[*]} under $out/plugins"
+  echo "plugins:     copies of ${plugin_names[*]} from $plugins_from under $out/plugins"
   echo "session:     claude -p --model $model ${CLAUDE_ISOLATION[*]} --plugin-dir <copy>... --max-turns $max_turns <prompt>"
   echo "cli:         $(claude_cli_status)"
   echo "evidence:    $out (full, kept on this machine)"
@@ -131,7 +146,13 @@ fi
 
 plugins=()
 for name in "${plugin_names[@]}"; do
-  copy=$(copy_plugin "$name" "$out/plugins") || exit 3
+  if [[ $plugins_from == checkout ]]; then
+    copy=$(copy_plugin "$name" "$out/plugins") || exit 3
+  else
+    copy="$out/plugins/$name"
+    mkdir -p "$copy" && git -C "$root" archive "$plugins_from:claude-plugins/$name" | tar -x -C "$copy" ||
+      unreachable "could not copy claude-plugins/$name at $plugins_from to $out/plugins; free disk space and rerun"
+  fi
   plugins+=(--plugin-dir "$copy")
 done
 project="$out/project"
@@ -193,10 +214,10 @@ fi
 # A session stopped by a signal (killed, out of memory) left a partial record: a drive that never
 # finished, not a skill that wrote nothing. Its own error exits are read with its result below.
 ((session <= 128)) || unreachable "the session was stopped by a signal (exit $session) after it started; its partial record is in $out — rerun the drive"
-python3 - "$out" "$feature" "$tools" "$CLAUDE_CLI_VERSION" "$session" <<'PY'
+python3 - "$out" "$feature" "$tools" "$CLAUDE_CLI_VERSION" "$session" "$plugins_from" <<'PY'
 import json, pathlib, sys
 out, feature, tools, cli = pathlib.Path(sys.argv[1]), sys.argv[2], sys.argv[3] == "1", sys.argv[4]
-session = int(sys.argv[5])
+session, plugins_from = int(sys.argv[5]), sys.argv[6]
 events = []
 for line in (out / "transcript.jsonl").read_text(encoding="utf-8").splitlines():
     try:
@@ -237,6 +258,7 @@ summary = {
     "cli_version": cli,
     "model": init.get("model"),
     "plugins": sorted(f'{p["name"]}@{p.get("version", "")}' for p in loaded if p["name"] in need),
+    "plugins_from": plugins_from,
     "other_plugins": other,
     "skills_invoked": used,
     "entry_point": entry_point,
@@ -274,7 +296,7 @@ summary = f"""# Drive: {feature} — {stamp}
 
 - **CLI version:** {s['cli_version']}
 - **Model:** {s['model']}
-- **Plugins loaded:** {', '.join(s['plugins'])}
+- **Plugins loaded:** {', '.join(s['plugins'])} (from {s['plugins_from']})
 - **Other plugins loaded:** {', '.join(s['other_plugins']) or 'none'}
 - **Skills invoked:** {', '.join(s['skills_invoked']) or '(none)'}
 - **Entry point:** {s.get('entry_point', 'not recorded')}

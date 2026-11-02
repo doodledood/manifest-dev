@@ -16,6 +16,7 @@ Presses on a topic with the user until both understand it, and ends with a named
 - On a project, docs mode keeps the glossary, decision-record offers, North Star updates, the setup offer and recipe drift markers current; `--no-docs` and `--no-log` turn the docs and the log off.
 - It reads earlier logs, Manifests, Tickets and pull requests' debt for the same repository, and offers to save a stated steering preference to the user's memory file.
 - It offers a disposable draft and calls design for its look. A draft is shown within minutes and never verified, tested, reviewed or gated; the user's reaction is its only check. Autonomous runs show it to an owner they can reach, and record an assumption only where none can be reached.
+- When a read implies something a person will see or use, including a premise inherited from a Ticket or record, it runs a seat pass (`references/SEAT.md`) in a fresh context: it derives that person's journeys, walks them on the running product where it can be started, and judges each noticeable choice against default product stances that Taste entries and project rules override. A user's call about what a person sees or does goes to the user as concrete options or draft variants, and a reason given in reply resets the recommendation.
 - Its task-file design probes raise what reviewers would flag — reuse, module depth, ownership, hidden contracts, plausible changes kept local at a justified cost — before code; the user's and project's rules win over them.
 
 Product inquiries additionally load PRODUCT probes, with DECISION for consequential choices. The optional product knowledge reference offers useful lenses rather than a required interview or document. Cases 65 and 66 now cover those lenses; their new criteria remain unmeasured.
@@ -120,6 +121,76 @@ Check: read
 ### draft-is-quick-and-unchecked
 Run: `scripts/drive-skill.sh figure-out verification/prompts/figure-out-draft.md`
 Proves: the session writes one throwaway draft file with fake data outside the project and shows it for a reaction; the transcript shows no recipe, test, review skill, or design measuring or checking tool (`design-tools.mjs`, `design-check.mjs`) run on the draft. The drive reports how long the session took; that time is read, not graded.
+Check: read
+
+### persona-seat-feature
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/14-persona-seat-feature/prompt.md`
+Proves: unattended, the read reasons from the North Star's home cook and walks three or more of the cook's uses, at least one off the main path, with a gap that follows from the cook's situation — the case's grader `takes-the-persona-seat`. A guard for the person's-seat discipline.
+Check: read
+
+### seat-request-stops-short
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/94-seat-request-stops-short/prompt.md --scaffold claude-plugins/manifest-dev/evals/94-seat-request-stops-short`
+Proves: unattended, asked only to remove a banner from a booking sheet, the read also names the sheet's "one tap — no account needed" promise as false for the people not signed in, whom its Pay button sends to an account-creation step, and proposes a change for it — the case's grader `goes-past-the-requested-change`.
+Check: read
+
+### seat-journeys-beyond-the-described
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/95-seat-journeys-beyond-the-described/prompt.md`
+Proves: unattended, on a plan described only for a signed-in person, the read names a signed-out arrival at a trip's own address and the return to that trip after sign-in, and at least one journey that comes from this page's own modes or setting — the case's graders `walks-arrival-and-return` and `names-a-journey-of-this-feature`.
+Check: read
+
+### seat-inherited-premise
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/96-seat-inherited-premise/prompt.md`
+Proves: unattended, on a Ticket marked settled that adds a referral offer to the card-frozen screen, the read checks what the customer gains and what the addition costs them at that moment before, or instead of, the build details — the case's grader `checks-the-premise-before-the-build`.
+Check: read
+
+### seat-looks-at-the-product
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/97-seat-looks-at-the-product/prompt.md --scaffold claude-plugins/manifest-dev/evals/97-seat-looks-at-the-product --max-turns 50`
+Proves: unattended, asked whether a progress bar and a save-for-later email would fix signup drop-off, on a runnable signup, the transcript shows the session serving the product and using it as a person meets it before the read, and the read names what that showed — the case's grader `drives-the-product-before-the-read`.
+Check: read
+
+### seat-not-for-backend-work
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/98-seat-not-for-backend-work/prompt.md`
+Proves: unattended, on a slow nightly job nobody sees, the transcript shows no seat-pass reference read and no seat pass, and the read carries no product findings — the case's grader `no-seat-pass-on-backend-work`. A guard: the skill before the seat pass passes it by construction.
+Check: read
+
+### experience-choice-as-options
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/99-experience-choice-as-options/prompt.md`
+Proves: attended, with the reason, the maths and the remembered default settled and only the interface open, the reply puts where the servings control lives and how many taps it takes to the user as concrete options or draft variants, with a recommendation — the case's grader `puts-the-choice-as-options`.
+Check: read
+
+### steer-resets-the-recommendation
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/100-steer-resets-the-recommendation/prompt.md`
+Proves: after the user rejects 20 free uses a month of a costly feature with an aim and a reason (anything that costs per use has to be paid for), the next recommendation is reasoned from that aim to a choice the user did not state, such as a one-time taste, not a smaller recurring allowance — the case's grader `reasons-again-from-the-aim`.
+Check: read
+
+### taste-principle-save
+Run: `DRIVE_PLUGINS_AT=296d596 scripts/drive-skill.sh figure-out verification/prompts/taste-moment-save.md --scaffold verification/scaffolds/taste-principle`
+Proves: the Taste test's principle arm (the principle alone) on the save moment: passes when its design asks nothing at the account step beyond the sign-in choice — no dietary needs, household size or display name before the recipe is saved. The test and its result are in `docs/adr/20261102-taste-entry-form-is-chosen-by-a-test.md`.
+Check: read
+
+### taste-principle-checkout
+Run: `DRIVE_PLUGINS_AT=296d596 scripts/drive-skill.sh figure-out verification/prompts/taste-moment-checkout.md --scaffold verification/scaffolds/taste-principle`
+Proves: the Taste test's principle arm (the principle alone) on the checkout moment: passes when its design asks for the delivery address before the order is paid. The test and its result are in `docs/adr/20261102-taste-entry-form-is-chosen-by-a-test.md`.
+Check: read
+
+### taste-case-save
+Run: `DRIVE_PLUGINS_AT=296d596 scripts/drive-skill.sh figure-out verification/prompts/taste-moment-save.md --scaffold verification/scaffolds/taste-principle-case`
+Proves: the Taste test's case arm (the principle plus one case line from a different gate) on the save moment: passes when its design asks nothing at the account step beyond the sign-in choice — no dietary needs, household size or display name before the recipe is saved. The test and its result are in `docs/adr/20261102-taste-entry-form-is-chosen-by-a-test.md`.
+Check: read
+
+### taste-case-checkout
+Run: `DRIVE_PLUGINS_AT=296d596 scripts/drive-skill.sh figure-out verification/prompts/taste-moment-checkout.md --scaffold verification/scaffolds/taste-principle-case`
+Proves: the Taste test's case arm (the principle plus one case line from a different gate) on the checkout moment: passes when its design asks for the delivery address before the order is paid. The test and its result are in `docs/adr/20261102-taste-entry-form-is-chosen-by-a-test.md`.
+Check: read
+
+### taste-stances-save
+Run: `scripts/drive-skill.sh figure-out verification/prompts/taste-moment-save.md --scaffold verification/scaffolds/taste-stances`
+Proves: the Taste test's stances arm (no Taste entry, on the skills that carry the seat pass's default stances) on the save moment: passes when its design asks nothing at the account step beyond the sign-in choice — no dietary needs, household size or display name before the recipe is saved. The test and its result are in `docs/adr/20261102-taste-entry-form-is-chosen-by-a-test.md`.
+Check: read
+
+### taste-stances-checkout
+Run: `scripts/drive-skill.sh figure-out verification/prompts/taste-moment-checkout.md --scaffold verification/scaffolds/taste-stances`
+Proves: the Taste test's stances arm (no Taste entry, on the skills that carry the seat pass's default stances) on the checkout moment: passes when its design asks for the delivery address before the order is paid. The test and its result are in `docs/adr/20261102-taste-entry-form-is-chosen-by-a-test.md`.
 Check: read
 
 ## Gotchas

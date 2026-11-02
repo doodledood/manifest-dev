@@ -601,6 +601,104 @@ def test_a_drive_with_tools_hands_in_a_copy_of_each_plugin(
     assert all(outside_checkout(d) for d in dirs)
 
 
+def committed_checkout(tmp_path: Path) -> tuple[Path, str, Path]:
+    """A throwaway checkout holding the drive script and manifest-dev only, committed once.
+
+    Returns the checkout, the commit, and a skill file whose committed text ends with
+    "as committed" and whose working-tree text has changed since.
+    """
+    checkout = tmp_path / "checkout"
+    for part in (
+        "scripts/drive-skill.sh",
+        "scripts/lib",
+        "verification/recipes/figure-out.md",
+        "claude-plugins/manifest-dev",
+    ):
+        source, target = REPO_ROOT / part, checkout / part
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if source.is_dir():
+            shutil.copytree(source, target)
+        else:
+            shutil.copy2(source, target)
+    skill = checkout / "claude-plugins/manifest-dev/skills/figure-out/SKILL.md"
+    original = skill.read_text(encoding="utf-8")
+    skill.write_text(original + "\nas committed\n", encoding="utf-8")
+    identity = {
+        **os.environ,
+        "GIT_AUTHOR_NAME": "t",
+        "GIT_AUTHOR_EMAIL": "t@example.com",
+        "GIT_COMMITTER_NAME": "t",
+        "GIT_COMMITTER_EMAIL": "t@example.com",
+    }
+    for command in (["init", "-q"], ["add", "-A"], ["commit", "-q", "-m", "base"]):
+        subprocess.run(["git", "-C", str(checkout), *command], env=identity, check=True)
+    rev = subprocess.run(
+        ["git", "-C", str(checkout), "rev-parse", "HEAD"],
+        capture_output=True,
+        text=True,
+        check=True,
+    ).stdout.strip()
+    skill.write_text(original + "\nonly in the working tree\n", encoding="utf-8")
+    return checkout, rev, skill
+
+
+def drive_from(
+    checkout: Path, env: dict[str, str], *args: str
+) -> subprocess.CompletedProcess[str]:
+    return subprocess.run(
+        [
+            str(checkout / "scripts" / "drive-skill.sh"),
+            "figure-out",
+            str(checkout / "verification" / "recipes" / "figure-out.md"),
+            *args,
+        ],
+        env=env,
+        capture_output=True,
+        text=True,
+        timeout=60,
+    )
+
+
+def test_a_drive_can_hand_in_the_plugins_as_they_were_at_a_commit(
+    tmp_path: Path, toolbox: Path
+) -> None:
+    # A before/after pair runs the same scenario on the plugins at a base commit and at the head:
+    # the copy holds the commit's text, not the working tree's.
+    checkout, rev, skill = committed_checkout(tmp_path)
+    env = setup(tmp_path, toolbox, STANDIN_TRANSCRIPT=lines(GOOD))
+    result = drive_from(checkout, {**env, "DRIVE_PLUGINS_AT": rev})
+    assert result.returncode == 0, result.stderr
+    (call,) = calls(tmp_path)
+    plugin_dir = Path(after(call["args"], "--plugin-dir"))
+    assert plugin_dir.name == "manifest-dev" and checkout not in plugin_dir.parents
+    copied = plugin_dir / skill.relative_to(
+        checkout / "claude-plugins" / "manifest-dev"
+    )
+    assert copied.read_text(encoding="utf-8").endswith("\nas committed\n")
+    assert f"(from {rev})" in result.stdout
+
+
+def test_a_drive_refuses_a_plugins_commit_that_does_not_exist(
+    tmp_path: Path, toolbox: Path
+) -> None:
+    env = setup(tmp_path, toolbox, STANDIN_TRANSCRIPT=lines(GOOD))
+    result = drive({**env, "DRIVE_PLUGINS_AT": "no-such-commit"})
+    assert result.returncode == 1
+    assert "DRIVE_PLUGINS_AT=no-such-commit names no commit" in result.stderr
+    assert calls(tmp_path) == [] and not (tmp_path / "store").exists()
+
+
+def test_a_drive_refuses_a_plugins_commit_that_lacks_a_plugin(
+    tmp_path: Path, toolbox: Path
+) -> None:
+    checkout, rev, _ = committed_checkout(tmp_path)
+    env = setup(tmp_path, toolbox, STANDIN_TRANSCRIPT=lines(GOOD))
+    result = drive_from(checkout, {**env, "DRIVE_PLUGINS_AT": rev}, "--tools")
+    assert result.returncode == 1
+    assert "has no claude-plugins/manifest-dev-tools" in result.stderr
+    assert calls(tmp_path) == [] and not (tmp_path / "store").exists()
+
+
 def test_a_drive_names_a_plugin_it_did_not_hand_in(
     tmp_path: Path, toolbox: Path
 ) -> None:

@@ -25,7 +25,7 @@ Passing the gate makes a candidate eligible, not offered — an offer must also 
 
 A taste entry is a prompt line that will ride in every future session, so draft it as one: invoke the prompt-engineering skill if it is available; otherwise apply its core discipline inline — keep the line only where it carries something the model would not reach on its own, and check it holds at the edges. Boundary form is required:
 
-- **Preference** — the lean, stated plainly, naming the kind of call it covers, so it does not stretch over calls it was never about.
+- **Preference** — the lean, stated plainly as a principle that carries to calls never discussed rather than as the details of the case that prompted it, naming the kind of call it covers, so it does not stretch over calls it was never about.
 - **Rationale** — why, so future sessions can weigh it rather than obey it. Build it on the reason the user stated; never write a reason they did not give.
 - **Flip condition** — when it should yield, so it doesn't over-fire on adjacent cases.
 

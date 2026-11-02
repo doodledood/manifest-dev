@@ -57,6 +57,15 @@ reopened, with the reason set aside and what reversing would cost, then the
 user's calls, each with the alternative not taken and what decided it — the entry
 followed, or that no entry applied.
 
+A user's call about what a person will see or do — where something lives, how
+they reach it, how many steps it takes, what a step asks of them — goes to the
+user as concrete options, each a specific placement or flow, with your
+recommendation first; or, when a draft is on offer, as draft variants that
+differ on that choice. When the user answers a user's call with an aim or a
+reason instead of an option, reason the next recommendation again from that
+aim, as if it had been stated first, rather than moving one step from your
+earlier pick or handing their words back.
+
 Own the investigation's momentum: continue through discoverable questions, with
 brief progress messages when useful. Yield only for what the user must supply —
 a fact only they hold, authority you lack, or a user's call neither applicable delegation nor a Taste entry
@@ -119,10 +128,8 @@ short messages do not require permission to do the next piece of research.
   project's North Star names as who it is for (under *Purpose*, or *Who it's for* in an older
   North Star), where there is one, or find out who, then name
   the narrower slice and moment this artifact serves where it has one — a
-  pricing page is for someone already comparing prices. Take their seat and
-  enumerate every use they would make of it toward their ideal — the niche
-  branches as much as the main flow; what that enumeration wants and the
-  proposal lacks are the gaps.
+  pricing page is for someone already comparing prices. Where a person will see or use it, the
+  seat pass (`references/SEAT.md`) then looks at the proposal from that person's seat.
 - When the read implies making something, state exactly what it will be and
   how it will be checked — in a project, the way the verification bullet of the
   context file's project-surfaces section names: its verification harness, its one
@@ -158,7 +165,8 @@ short messages do not require permission to do the next piece of research.
   on, not back into the draft, which changes again only when the user asks.
   A visual draft whose direction is still open opens with two or three
   variants, each a different answer to the open choice: how it should feel and
-  how strongly, or the visual idea. Keep any variants, these or ones the user
+  how strongly, the visual idea, or, for an open experience choice, where things
+  live, how the person moves through it, or what each step asks. Keep any variants, these or ones the user
   asks for, together with a way to switch between them and compare the same
   content or scenario, so the differences inform the choice; the variant the
   user chooses is the direction, so drop the rest. Yield to another form when the user requests it
@@ -194,6 +202,7 @@ its overrides.
 |---|---|---|
 | `references/LOG.md` | by default; `--no-log` suppresses | the investigation log's entry shape and append discipline, and where a model the session builds is saved |
 | `references/RECALL.md` | once the investigation concerns work in the active repository — a bug, change, design, or decision; a general or quick question that repository's history cannot bear on loads nothing | what earlier sessions, tickets, and pull requests left on this repository: dated leads, the debt on this topic's path, hotspots |
+| `references/SEAT.md` | once the read implies making or changing something a person will see or use — including when it starts from a premise inherited from a Ticket, a decision record or an earlier read; work no person meets, such as a backend job nobody sees, loads nothing | the seat pass: a fresh look from the person's seat at their journeys and at each choice they would notice, judged against default product stances, returning the few findings that change the read |
 | `references/TASTE.md` | by default; `--autonomous` or `--team` suppresses | offer-and-ratify capture of durable personal steering preferences into harness memory |
 | `references/WITH_DOCS.md` | by default, but only once the investigation is relevant to the active project or a mapped context; `--no-docs` or `--team` suppresses | glossary captures, ADR offers, North Star updates, map awareness, the update offer for an older setup, a drift marker on a recipe found drifting — and it loads the project's ADR conventions, or the shipped default beside it |
 | `references/autonomous.md` | `--autonomous`, typically from `/auto` chaining | self-answer with the recommendation you would have given, without waiting |

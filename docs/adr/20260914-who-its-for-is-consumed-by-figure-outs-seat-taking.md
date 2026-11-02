@@ -1,7 +1,7 @@
 # ADR: A North Star field is applied only by a consumer at its decision point; `Who it's for` gets one in figure-out
 
 ## Status
-Accepted — amended by 20260924-figure-out-settles-the-artifacts-person-and-opens-visual-directions-with-variants: the seat starts from the North Star's person and narrows to the slice and moment the artifact serves; the draft step settles that person's purpose and our goal before drafting.
+Accepted — amended by 20260924-figure-out-settles-the-artifacts-person-and-opens-visual-directions-with-variants: the seat starts from the North Star's person and narrows to the slice and moment the artifact serves; the draft step settles that person's purpose and our goal before drafting. Also amended by 20261102-figure-out-looks-from-the-persons-seat-in-a-fresh-pass: the spine keeps naming the person and their moment, and the look from their seat moves to a seat pass in a fresh context, loaded once the read implies something a person will see or use.
 
 ## Area
 North Star

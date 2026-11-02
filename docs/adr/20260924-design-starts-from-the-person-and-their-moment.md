@@ -1,7 +1,7 @@
 # ADR: Design starts from the person and their moment; the example catalogs are retired
 
 ## Status
-Accepted — amended by 20260925-design-composes-artifacts-and-creative-directions: the person-and-moment foundation remains; selective artifact and creative-direction guides supplement it. Required example-site study remains retired. Also amended by 20260927-design-names-the-defaults-to-avoid: the opening adds what we want from the person, followed by an attention budget walked through the person's journeys, a named list of defaults to avoid, and a done condition. Also amended by 20261007-design-exposes-optional-instruments-with-bounded-evidence: optional consultation aids supplement design judgment; normative review ownership remains unchanged.
+Accepted — amended by 20260925-design-composes-artifacts-and-creative-directions: the person-and-moment foundation remains; selective artifact and creative-direction guides supplement it. Required example-site study remains retired. Also amended by 20260927-design-names-the-defaults-to-avoid: the opening adds what we want from the person, followed by an attention budget walked through the person's journeys, a named list of defaults to avoid, and a done condition. Also amended by 20261007-design-exposes-optional-instruments-with-bounded-evidence: optional consultation aids supplement design judgment; normative review ownership remains unchanged. Also amended by 20261102-experience-choices-go-to-the-user-as-options-or-variants: where an open alternative is an experience choice, the skill shows two or three variants that differ on it, made from the product's existing patterns.
 
 ## Area
 Design skills
