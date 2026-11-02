@@ -58,8 +58,8 @@ plan one trip, and that gate found all five planted defects. On this fixture the
 found the same five and four more — an unknown trip with no way out, a rejected name with no
 message, an add that fails offline with no help, and the empty and crowded trips it could not
 reach — so it widened what was walked, but the planted defects alone show no uplift. Both seeded
-arms ran on the first version of the twin; the five planted defects are the same in every version,
-as the fixture's tests show.
+arms ran on the seeded fixture built from the twin's first version; the five planted defects are
+the same in every version, as the fixture's tests show.
 
 On the fixed twin the gate walked signed-out arrival, the return after sign-in, the day-start
 setting and two friends adding at once, found each working, and still returned FAIL on defects the
@@ -68,8 +68,9 @@ places and an add saved with no session. With those fixed, the second found thre
 a server error on Add landing on "No trip here", an offline save of the start time showing a blank
 page, Back after a corrected error showing a stale list. With those fixed, the third found one: a
 place saved twice when its name differs only by extra spaces between words. Each was checked in
-`verification/fixtures/journeys-app/server.js` and is now fixed there and pinned by
-`tests/test_journeys_fixture.py`. In three rounds the gate raised no false alarm, and each round
+`verification/fixtures/journeys-app/server.js` and is now fixed there. `tests/test_journeys_fixture.py`
+pins the fixes the server makes; the page script's handling of a failed or offline save is not
+tested. In three rounds the gate raised no false alarm, and each round
 found less; an open gate walks into whatever the twin still gets wrong, so a PASS arm needs a
 twin with nothing left for it to find.
 
@@ -104,6 +105,11 @@ partly — `tests/test_journeys_fixture.py` proves the fixture's five defects ex
 ## Revisit when
 A drive of the `define` recipe's `todays-gates-on-the-seeded-app` and `journeys-gate-on-the-seeded-app`, or a fixture whose defects no specified case reaches, shows the journeys gate finding nothing the Manifest's other gates miss; read in the `define` recipe's evidence for those scenarios.
 
+## Not decided here
+- Whether the gate covers a surface a person reaches only through a client, such as an API with no
+  page of its own.
+- How the fixed twin is kept free of defects, so that `journeys-gate-on-the-fixed-app` can pass.
+
 ## Source
 - Session: a `/define` session and a `/do` run on the resulting Manifest, 2026-11-02 (logs kept locally). Drive summaries and blind grades are in the pull request that adds this record.
-- Related: 20261102-figure-out-looks-from-the-persons-seat-in-a-fresh-pass, 20261102-the-seat-pass-judges-against-default-product-stances
+- See also: 20261102-figure-out-looks-from-the-persons-seat-in-a-fresh-pass, 20261102-the-seat-pass-judges-against-default-product-stances

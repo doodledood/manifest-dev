@@ -51,6 +51,17 @@ project with no history to read, skips it and the version is still recorded. Thi
 to `20261014-setup-project-audits-the-whole-setup-when-run`, under which nothing records a decline
 and a declined item returns on the next run: here the recorded version marks the offer as made.
 
+## Evidence at decision time
+
+The `setup-project` recipe's `taste-from-history` scenario was driven once on the skills before
+this change and once after, with the owner away, and graded by a grader session that saw each run
+under a letter label only. After: PASS (borderline) — it reported two candidates, the two
+overrides, as principles, and put forward none for the restated default, the settled storage
+choice or the revert with no reason; it wrote no entry and opened no past session record. The
+candidates showed no yield clause, which made the first grader borderline. Before: FAIL — it
+offered no Taste candidate. Both runs also wrote decision records for the two overrides; the run
+after asked the owner to keep each choice in one place. The once-only reach was not driven.
+
 ## Alternatives Considered
 
 - **No mining** — not chosen: entries would keep arriving only as corrections happen, one session
