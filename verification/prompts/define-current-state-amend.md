@@ -38,7 +38,7 @@ reaching a Deliverable by a route this Manifest does not name is required by tha
 Required although no criterion names it: work inherited rather than added — the artifact this
 Manifest was synthesized over, and anything arriving from outside the run such as a base branch
 merged into the head — the fixes every run owes on its pull request — a pre-existing issue the
-work met whose fix is not a project of its own, and a below-bar finding from a first full look
+work met whose fix is not a project of its own and that the project's own rules do not keep out, and a below-bar finding from a first full look
 applied because it improves the work — and work discharging what a criterion required, including
 sweeping a changed rule into every copy and surface that holds it.
 

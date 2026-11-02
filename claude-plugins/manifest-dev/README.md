@@ -55,7 +55,7 @@ The same commands keep the codebase easier to change, with nothing extra to run:
 
 - **Design before code** — `/figure-out` sketches the shape of a change, compares a second one, and screens both for patterns the next agent would copy; `/define` puts a behavior-preserving restructuring first when the area resists the change.
 - **Corrections become checks** — `/do` turns a caught mistake into a scoped type, lint, or test, and the decision record names it.
-- **Debt stays visible** — a run fixes the old problems it meets in its own pull request; what it cannot — a project of its own, or something that needs you — is listed when it finishes and in the pull request, and the next change on that path is offered the fix.
+- **Debt stays visible** — a run fixes the old problems it meets in its own pull request; what it cannot or should not there — a project of its own, something that needs you, or an unrelated problem the project's own rules keep out of the pull request — is listed when it finishes and in the pull request, and the next change on that path is offered the fix.
 - **Earlier work is not lost** — sessions on a repository start from what earlier ones ruled and found, and runs keep the glossary, decisions, and checks current where their work touches them.
 
 ## A shared queue

@@ -149,7 +149,7 @@ a person to land, and never lands it, whatever its prompt says.
 
 Keep work required by the source Ticket on the source Ticket. Finish it there, or escalate that Ticket when a blocker prevents completion.
 
-A discovered item earns a follow-up Ticket only when it is genuinely separate work that someone could assign, prioritize, block on, and close independently. A pre-existing issue the work meets is not: `/do` fixes it on the pull request unless the fix is a project of its own. Group related findings into one coherent follow-up. Search the effort's open Tickets before authoring to avoid duplicates, then invoke `ticket-up` with the source Ticket, grouped finding, relationship, and execution evidence. Never write a follow-up directly to the venue, and never grant it Auto: the run that found the work never grants it.
+A discovered item earns a follow-up Ticket only when it is genuinely separate work that someone could assign, prioritize, block on, and close independently. A pre-existing issue the work meets is not: `/do` fixes it on the pull request unless the fix is a project of its own or the project's own rules keep unrelated fixes out, and names it as debt otherwise. Group related findings into one coherent follow-up. Search the effort's open Tickets before authoring to avoid duplicates, then invoke `ticket-up` with the source Ticket, grouped finding, relationship, and execution evidence. Never write a follow-up directly to the venue, and never grant it Auto: the run that found the work never grants it.
 
 Questions that do not need their own lifecycle stay in the completion record.
 

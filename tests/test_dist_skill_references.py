@@ -775,6 +775,28 @@ CONVERGENCE = {
 }
 
 
+# Holds the yield in docs/adr/20261028-every-pull-request-fixes-what-its-work-meets-and-verification-converges.md:
+# a project's own rule that keeps unrelated fixes out of a pull request wins over the default, and
+# never covers a failing check that completion rests on.
+PROJECT_RULE_YIELD = (
+    "keep fixes unrelated to the change out of a pull request, follow them: report such an issue as"
+    " debt instead of fixing it",
+    "That never covers a failing check completion rests on, which stays the run's to fix or to"
+    " escalate as a blocker",
+)
+
+
+def test_a_projects_own_rule_keeps_unrelated_fixes_out() -> None:
+    for skills in (
+        ROOT / "claude-plugins/manifest-dev/skills",
+        DIST / "codex/plugins/manifest-dev/skills",
+    ):
+        path = skills / "do/SKILL.md"
+        text = re.sub(r"\s+", " ", path.read_text(encoding="utf-8"))
+        for clause in PROJECT_RULE_YIELD:
+            assert clause in text, f"{path} lost: {clause!r}"
+
+
 def test_fixing_what_the_work_meets_keeps_verification_converging() -> None:
     for skills in (
         ROOT / "claude-plugins/manifest-dev/skills",

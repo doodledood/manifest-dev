@@ -130,7 +130,7 @@ A check installed from a correction so the corrected class of mistake fails for 
 _Avoid_: Rule (that is prose), guard, concurrency lock.
 
 **Debt**:
-What a run found and could not fix on its pull request. That is an issue whose fix is a project of its own, such as lock hits that need an architecture decision or a migration beyond the repository's code; what needs a person, such as an ask-first run owed; and a new suppression. A run fixes the pre-existing issues it meets, related to the change or not. It applies or dismisses the findings below a gate's bar. So it leaves no debt it could have paid. A run names its debt in its completion report, in the "Debt left" section of every pull request it opens, and on its Ticket. A later run whose work reaches the same area offers to fold it in, and `orchestrate` tickets up the debt of the runs it lands.
+What a run found and could not fix on its pull request. That is an issue whose fix is a project of its own, such as lock hits that need an architecture decision or a migration beyond the repository's code; what needs a person, such as an ask-first run owed; an unrelated issue the project's own rules keep out of the pull request; and a new suppression. A run fixes the pre-existing issues it meets, related to the change or not, unless the project's own rules keep unrelated fixes out. It applies or dismisses the findings below a gate's bar. So it leaves no debt it could have paid. A run names its debt in its completion report, in the "Debt left" section of every pull request it opens, and on its Ticket. A later run whose work reaches the same area offers to fold it in, and `orchestrate` tickets up the debt of the runs it lands.
 _Avoid_: Tech debt (too broad), TODO, backlog.
 
 **Seed**:

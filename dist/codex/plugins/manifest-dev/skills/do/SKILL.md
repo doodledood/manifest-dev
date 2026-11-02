@@ -144,7 +144,7 @@ neither applied nor handed over: it re-samples taste on a repair, and chasing it
 never settles. Each pre-existing fix lands as its own commit, and the pull request lists it as fixed
 on the way.
 
-Only a gigantic issue stays out: one whose fix is a project of its own, needing its own definition
+A gigantic issue stays out: one whose fix is a project of its own, needing its own definition
 of done — a design decision someone should weigh, a migration or rollout beyond this repository's
 code, or a review that would bury the change the pull request exists for. Size, relatedness and
 convenience do not make an issue gigantic. Gigantic: replacing a framework across the codebase;
@@ -156,7 +156,10 @@ issue as debt with why it is a project of its own (`references/HARVEST.md`), exc
 that completion rests on — one across the whole tree, or one a gate depends on — which blocks
 completion (below). An issue that needs access, authority or a decision a person retains is debt
 that names what it needs, such as an ask-first run owed, unless a gate depends on it; then it is a
-blocker.
+blocker. Where the project's own rules — its context file, a contributing guide, a convention it
+documents — keep fixes unrelated to the change out of a pull request, follow them: report such an
+issue as debt instead of fixing it. That never covers a failing check completion rests on, which
+stays the run's to fix or to escalate as a blocker (below).
 
 Before reporting completion, every check the project keeps across the whole tree passes — lint,
 types, tests, build — whether or not the change touched what fails. A check that cannot run is a

@@ -414,9 +414,10 @@ through. It has a declared scope. The run fixes the existing violations that it 
 Debt only when the fix is a project of its own.
 
 ### Debt
-<!-- context: 185b530ed4bf -->
+<!-- context: 049e1cfd4f03 -->
 Debt is what a run found and could not fix in its pull request. The run fixes the old problems
-that it finds. Each review gives findings, and some are less serious than the limit of the gate.
+that it finds. It does not fix an unrelated problem if the rules of your project keep such fixes
+out of a pull request. Each review gives findings, and some are less serious than the limit of the gate.
 The run uses those findings or rejects them with a reason. The run does not keep them as Debt.
 
 Debt has these types:
@@ -424,6 +425,7 @@ Debt has these types:
 - A problem that is a project of its own, for example Lock violations that need a decision about
   the architecture.
 - Work that needs a person, for example an ask-first run.
+- An unrelated problem that the rules of your project keep out of the pull request.
 - A new suppression.
 
 A run names its Debt in its report, in a "Debt left" section of each pull request, and on its

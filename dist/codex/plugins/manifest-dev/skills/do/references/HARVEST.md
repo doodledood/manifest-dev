@@ -95,10 +95,10 @@ Debt is what the run found and could not fix on its pull request: each gigantic 
 encode, harness friction other than run time, a drifting recipe or a check that runs and passes but
 is not fit to trust, whose fix is a project of its own — with why; new suppressions; and ask-first
 recipes the change touched and did not run, and anything else that needs access, authority or a
-decision a person retains, naming what it needs. A failing check across the whole tree, or one a
-gate rests on, whose fix is gigantic is a blocker, never debt. The pre-existing issues the work met
-that are not gigantic, and below-bar findings, are fixed, applied or dismissed with a reason, never
-debt.
+decision a person retains, naming what it needs; and an unrelated issue the project's own rules
+keep out of the pull request. A failing check across the whole tree, or one a gate rests on, whose
+fix is gigantic is a blocker, never debt. The other pre-existing issues the work met, and below-bar
+findings, are fixed, applied or dismissed with a reason, never debt.
 
 - Record each item in the execution log as it is found.
 - Hand the list to `/done` or `/escalate`, which name it with the ticket-up offer.
