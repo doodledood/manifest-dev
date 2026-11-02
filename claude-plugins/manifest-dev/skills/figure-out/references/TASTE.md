@@ -19,7 +19,7 @@ Watch for directional preferences the user steers by, not one-off situational ca
 
 Passing the gate makes a candidate eligible, not offered — an offer must also repay its interruption. When a preference is real but too minor for future sessions to meaningfully profit from, don't stop the session for it: let it ride the session-end sweep, where batching amortizes the cost, or leave it unoffered.
 
-**Per-turn:** when the signal is unmistakable — the same pushback has recurred, the user states a standing preference in so many words, or the user reverses a call and says why — and the entry is consequential enough to repay the interruption, offer immediately, while the instance is concrete. **Session-end sweep:** before the session closes (before naming the read), review for candidates that accumulated without individually clearing the per-turn bar; batch any that now clear the gate into one offer. Anything below the gate: keep working, don't offer.
+**Per-turn:** when the signal is unmistakable — the same pushback has recurred, the user states a standing preference in so many words, or the user reverses a call and says why — and the entry is consequential enough to repay the interruption, offer immediately, while the instance is concrete. **Session-end sweep:** before the session closes (before naming the read), review for candidates that accumulated without individually clearing the per-turn bar; batch any that now clear the gate into one offer. A reason the session named for the user's corrections and the user never confirmed is such a candidate: the offer is where they confirm it. Anything below the gate: keep working, don't offer.
 
 ## Drafting (boundary form)
 
