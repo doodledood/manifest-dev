@@ -22,7 +22,9 @@ def _tool(path: Path, body: str) -> None:
     path.chmod(0o755)
 
 
-def _tree(tmp_path: Path, *, venv: bool) -> tuple[Path, dict[str, str]]:
+def _tree(
+    tmp_path: Path, *, venv: bool, missing: str | None = None
+) -> tuple[Path, dict[str, str]]:
     tree = tmp_path / "repo"
     (tree / "scripts").mkdir(parents=True)
     shutil.copy(ROOT / "scripts" / "check.sh", tree / "scripts" / "check.sh")
@@ -31,6 +33,8 @@ def _tree(tmp_path: Path, *, venv: bool) -> tuple[Path, dict[str, str]]:
         bin_dir = tree / ".venv" / "bin"
         bin_dir.mkdir(parents=True)
         for name in TOOLS:
+            if name == missing:
+                continue
             _tool(bin_dir / name, f'echo "venv {name} $*" >> {log}')
     decoys = tmp_path / "decoys"
     decoys.mkdir()
@@ -71,3 +75,24 @@ def test_a_missing_virtual_environment_stops_with_the_setup_pointer(
     assert not (
         tmp_path / "calls"
     ).exists(), "a tool ran without the virtual environment"
+
+
+def test_a_virtual_environment_missing_a_tool_stops_instead_of_using_the_global_one(
+    tmp_path: Path,
+) -> None:
+    for name in ("ruff", "black", "mypy"):
+        run_dir = tmp_path / name
+        run_dir.mkdir()
+        tree, env = _tree(run_dir, venv=True, missing=name)
+        result = subprocess.run(
+            ["bash", str(tree / "scripts" / "check.sh")],
+            env=env,
+            capture_output=True,
+            text=True,
+        )
+        assert result.returncode == 2, result.stderr
+        assert f".venv has no {name}" in result.stderr, result.stderr
+        assert "scripts/setup.sh" in result.stderr, result.stderr
+        assert not (
+            run_dir / "calls"
+        ).exists(), "a tool ran before the missing one was named"

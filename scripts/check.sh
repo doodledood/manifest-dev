@@ -13,6 +13,12 @@ if [ ! -x .venv/bin/python ]; then
     echo "check.sh: no virtual environment at .venv; run scripts/setup.sh first" >&2
     exit 2
 fi
+for tool in ruff black mypy; do
+    if [ ! -x ".venv/bin/$tool" ]; then
+        echo "check.sh: .venv has no $tool; run scripts/setup.sh to finish installing it" >&2
+        exit 2
+    fi
+done
 PATH="$PWD/.venv/bin:$PATH"
 
 fix=false
