@@ -112,7 +112,7 @@ Check: read
 
 ### todays-gates-on-the-seeded-app
 Run: `scripts/drive-skill.sh define verification/prompts/journeys-todays-gates-evaluate.md --scaffold verification/scaffolds/journeys-app-seeded --max-turns 120`
-Proves: which of the five seeded defects the gates `/define` wrote for `d29`'s feature before the journeys gate existed — its end-to-end drive and its review-design gate — name, beside `journeys-gate-on-the-seeded-app` on the same app. It is the comparison arm, so either verdict is a result; the first comparison is in `docs/adr/20261102-features-a-person-uses-are-driven-through-their-journeys.md`.
+Proves: which of the five seeded defects the gates `/define` wrote for `d29`'s feature before the journeys gate existed — its end-to-end drive and its review-design gate, quoted as written except that the place Person A adds is one the trip does not already hold, so that step can fail — name, beside `journeys-gate-on-the-seeded-app` on the same app. It is the comparison arm, so either verdict is a result; the first comparison is in `docs/adr/20261102-features-a-person-uses-are-driven-through-their-journeys.md`.
 Check: read
 
 ## Gotchas

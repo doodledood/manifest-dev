@@ -148,6 +148,11 @@ Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/97-sea
 Proves: unattended, asked whether a progress bar and a save-for-later email would fix signup drop-off, on a runnable signup, the transcript shows the session serving the product and using it as a person meets it before the read, and the read names what that showed — the case's grader `drives-the-product-before-the-read`.
 Check: read
 
+### seat-convenient-placement
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/101-seat-convenient-placement/prompt.md`
+Proves: unattended, asked only for the engineering of offline downloads behind one library-wide switch in Settings, the read says a person preparing for a flight needs to download, or see ready, a specific session from where they find it, and proposes that — the case's grader `meets-the-person-where-they-are`.
+Check: read
+
 ### seat-not-for-backend-work
 Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/98-seat-not-for-backend-work/prompt.md`
 Proves: unattended, on a slow nightly job nobody sees, the transcript shows no seat-pass reference read and no seat pass, and the read carries no product findings — the case's grader `no-seat-pass-on-backend-work`. A guard: the skill before the seat pass passes it by construction.

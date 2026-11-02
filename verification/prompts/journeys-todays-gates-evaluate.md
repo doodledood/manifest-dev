@@ -24,7 +24,7 @@ what the person met.
 
 Live drive in a real browser on the running server, roughly a few minutes against a local server
 with seeded users. Person A (signed out, phone viewport) opens the trip link, signs in, lands back
-on the same trip, and adds "Time Out Market". Person B, in another session, opens the same link,
+on the same trip, and adds "Feira da Ladra". Person B, in another session, opens the same link,
 sees that place in List, and switches to Day plan. B sets the start to 8:00. A reloads Day plan.
 
 PASS when A gets back to the trip after signing in without retyping the link, B sees A's place in

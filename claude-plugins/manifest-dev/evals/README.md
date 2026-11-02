@@ -266,6 +266,7 @@ base model already covers; such a case leaves only through its probe's *Coverage
 | `98-seat-not-for-backend-work` | autonomous, guard | Run no seat pass and bring no product findings to a backend diagnosis nobody sees | tuning |
 | `99-experience-choice-as-options` | press | Put an open interface choice — where a control lives, how many taps — to the user as concrete options or draft variants, with a recommendation | tuning |
 | `100-steer-resets-the-recommendation` | press | After a steer that gives an aim and a reason, reason the next recommendation from that aim, not one step from the earlier pick | tuning |
+| `101-seat-convenient-placement` | autonomous | Asked only for the engineering of offline downloads behind one switch in Settings, say that a person about to board needs to make one session ready from where they find it | tuning |
 
 Cases `30` to `46` were written on 2026-10-13 and `48` on 2026-10-14. Their first run was the
 2026-10-25 baseline, with the split frozen before it: every case added since 2026-10-13 is tuning
@@ -508,6 +509,7 @@ being declared a guard. `tests/test_eval_cases.py` fails when a case has no row 
 | `98` | keep | A declared guard against the seat pass firing on work nobody meets: the skill before the seat pass passes by construction |
 | `99` | first run decides | New on 2026-11-02 for user's calls on what a person sees; see *Seat pass and experience choices — 2026-11-02* |
 | `100` | first run decides | New on 2026-11-02 for a steer resetting the recommendation; see *Seat pass and experience choices — 2026-11-02* |
+| `101` | first run decides | New on 2026-11-02 for the seat pass on an engineering-framed plan; failed twice before the change, passed one run of two after it; see *Is the seat pass worth its cost — 2026-11-02* |
 
 Retired on 2026-10-15: `12` (floored in both arms, not a declared guard), `47` and `49` (each a
 second older-version case beside `53`, which the version rule now forbids; their straight-to-newest
@@ -851,7 +853,7 @@ file. The row is never deleted while the probe stays.
 | `tasks/WRITING.md` | The author's own point | `82-writing-post-from-notes/builds-on-the-authors-point` |
 | `tasks/WRITING.md` | Sources in hand | `82-writing-post-from-notes/backs-each-claim` |
 | `tasks/WRITING.md` | Trade-off: Breadth vs one sharp point | `82-writing-post-from-notes/picks-one-sharp-point` |
-| `references/SEAT.md` | (whole file) | `94-seat-request-stops-short/goes-past-the-requested-change`, `95-seat-journeys-beyond-the-described/walks-arrival-and-return`, `95-seat-journeys-beyond-the-described/names-a-journey-of-this-feature`, `96-seat-inherited-premise/checks-the-premise-before-the-build`, `97-seat-looks-at-the-product/drives-the-product-before-the-read`, `98-seat-not-for-backend-work/no-seat-pass-on-backend-work`; not graded: the eleven default stances one by one (the Taste test in `verification/recipes/figure-out.md` exercises the gate half of *Just in time*), and the comparison with an inline pass |
+| `references/SEAT.md` | (whole file) | `94-seat-request-stops-short/goes-past-the-requested-change`, `95-seat-journeys-beyond-the-described/walks-arrival-and-return`, `95-seat-journeys-beyond-the-described/names-a-journey-of-this-feature`, `96-seat-inherited-premise/checks-the-premise-before-the-build`, `97-seat-looks-at-the-product/drives-the-product-before-the-read`, `98-seat-not-for-backend-work/no-seat-pass-on-backend-work`, `101-seat-convenient-placement/meets-the-person-where-they-are`; not graded: the eleven default stances one by one (the Taste test in `verification/recipes/figure-out.md` exercises the gate half of *Just in time*), and the comparison with an inline pass, which a local ablation measured once (*Is the seat pass worth its cost*) |
 | `references/LOG.md` | (whole file) | `01-root-press/log-written`; not graded: log safety and resuming from the log, which have shown no failure and sit outside what a grader reads |
 | `references/RECALL.md` | (whole file) | `43-recalls-earlier-work/carries-the-earlier-ruling-as-a-lead`, `44-debt-on-the-path/offers-the-on-path-debt`, `46-general-question-skips-recall/no-recall-for-a-general-question`, `59-reverted-fix/names-the-reverted-fix` |
 | `references/TASTE.md` | (whole file) | `27-taste-offers/offers-entry-for-the-stated-preference`, `27-taste-offers/offers-entry-for-the-reversal`, `28-universal-not-taste/no-offer-for-a-universal-rule`, `29-ratified-entry-lands/entry-inside-taste-section` |
@@ -1186,7 +1188,7 @@ settled in the prompt.
 | `96-seat-inherited-premise` | PASS (b) / FAIL (b); FAIL (b) / PASS (b); PASS / FAIL | — |
 | `97-seat-looks-at-the-product` | PASS / PASS | PASS / PASS |
 | `98-seat-not-for-backend-work` (guard) | PASS / PASS | — |
-| `99-experience-choice-as-options` | FAIL (b) / FAIL | FAIL / FAIL |
+| `99-experience-choice-as-options` | FAIL (b) / FAIL | FAIL / FAIL; third version PASS / FAIL |
 | `100-steer-resets-the-recommendation` | PASS (b) / PASS | PASS / PASS |
 
 - **`96` passes by majority of three.** After the change, two runs of three put the inherited
@@ -1196,10 +1198,11 @@ settled in the prompt.
   product before its read, and looked past a requested change. The failures the change answers
   came from long sessions in which the person's moment competed with other work, which one
   prompt cannot set up (*Known limits*). A case that shows uplift needs that shape.
-- **`99` measures its case.** Both arms asked a parent question before the interface choice —
-  first whether a changed servings number stays on the recipe, then, with that settled, whether
-  the recipe screen has a separate cooking mode. The grader fails any question but the interface.
-  It needs a version whose parents the prompt settles before it can measure the line.
+- **`99` now measures its line.** Its first two versions failed in both arms because each left a
+  parent question open — whether a changed number stays on the recipe, then whether the screen
+  has a separate cooking mode — and both arms asked it first. The prompt now settles both. On
+  that version the after arm put four concrete placements to the user with one recommended and
+  passed; the before arm asked when cooks change servings, offered no options, and failed.
 - **`100` is back on its first version.** Its replacement (twelve filters rejected for shoppers in
   the aisle) passed in both arms as well, and drifted from the scenario the change was specified
   against, so the case holds the first version: a free tier's costly feature rejected because
@@ -1208,6 +1211,45 @@ settled in the prompt.
   page or source file. All four runs had driven the signup in a browser, so the verdicts stand.
 - **Guards held.** `98` and `14` passed on the changed skill, and the recipe's
   `draft-is-quick-and-unchecked` drive passed three runs of three, one borderline.
+
+### Is the seat pass worth its cost — 2026-11-02
+
+Three measurements, each graded blind by a session that saw letter labels only.
+
+**Comparative re-grade, no new runs.** The 18 replies already written for `94` to `97` were scored
+1–10 for product decision quality within each prompt version. After the change averaged 7.7,
+before it 7.3. The after arm won four of seven comparisons; every gap but `96`'s was graded small,
+and inside `96` the spread within each arm was as wide as the gap between them.
+
+**Engineering-framed cases, three arms, two runs each.** Two prompts ask only for engineering on a
+plan that serves the implementation rather than the person: a signed-off notification migration
+that turns on what 16,000 people turned off, and offline downloads reachable only from one
+library-wide switch in Settings. Arms: before the change, the seat pass run inline (a local
+ablation commit that never shipped), and the shipped fresh-context pass.
+
+| Case | Before | Inline | Fresh context |
+|---|---|---|---|
+| migration (not kept) | PASS (b), PASS — 7, 9 | PASS, PASS — 9, 8 | PASS, FAIL (b) — 9, 6 |
+| `101-seat-convenient-placement` | FAIL, FAIL (b) — 6, 6 | FAIL (b), FAIL (b) — 6, 7 | PASS, FAIL — 8, 6 |
+
+The migration case passed twice before the change, so it was not kept. `101` failed twice before
+the change and is kept as a case the change does not yet reliably pass.
+
+**Cost and time** (the session's own reported cost; wall time from the harness):
+
+| Cases | Before | Fresh-context seat pass |
+|---|---|---|
+| `94`–`97`, one prompt each | $0.66, 107 s | $0.86, 127 s |
+| migration | $0.91, 212 s | $1.21, 186 s |
+| `101` | $1.80, 313 s | $1.97, 335 s |
+| `99`, attended first turn | $0.28, 40 s | $0.60, 93 s |
+
+The inline arm cost about what the before arm did.
+
+**Reading.** On these cases the fresh-context seat pass adds about a third to the cost of a read
+that reaches a person and moves the verdict by no more than the run-to-run noise. Whether it pays
+in a long session, where the person's moment competes with hours of other work, is still not
+measured: the drive harness sends one prompt.
 
 `20261102-figure-out-looks-from-the-persons-seat-in-a-fresh-pass` and
 `20261102-experience-choices-go-to-the-user-as-options-or-variants` record what was decided on
