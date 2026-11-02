@@ -7,8 +7,9 @@ Accepted
 define / do
 
 ## Decided by
-The user, for the rule and for the two rulings named in the decision. An agent under the user's
-delegation of design and wording decided the rest; merging stays with the user.
+The user, for the rule, for the two rulings named in the decision, and for making the rule the
+default every user of `/do` gets rather than an option a project turns on. An agent under the
+user's delegation of design and wording decided the rest; merging stays with the user.
 
 ## Context
 The owner set a standing rule: every pull request leaves the repository better.
@@ -84,6 +85,11 @@ sides, so the call is made by kind and never by a number. A gigantic issue is re
 why it is a project of its own. An issue that needs access, authority or a decision a person
 retains is debt that names what it needs, unless a gate depends on it; then it is a blocker.
 
+The default yields to the project. Where the project's own rules — its context file, a
+contributing guide, a convention it documents — keep fixes unrelated to the change out of a pull
+request, the run reports such an issue as debt instead of fixing it. The yield never covers a
+failing check that completion rests on: that stays the run's to fix, or a blocker.
+
 Before `/do` reports completion, every check the project keeps across the whole tree passes,
 whether or not the change touched what fails. A check that cannot run is fixed. A test is removed,
 skipped or loosened only when it is useless or tautological, and the pull request description says
@@ -103,6 +109,48 @@ leave work for later:
 - The scope ceiling every Manifest carries counts these fixes as required work.
 
 Each yields to the gigantic rule above.
+
+## Evidence at decision time
+
+Each scenario ran once per arm through `scripts/verify drive`, from fixtures under
+`verification/fixtures/`. The before arm is main at c204d29, after #405 merged; the after arm is
+this change at a1cefec. For `project-keeps-fixes-out` the before arm is a1cefec, which has the
+rule but not the yield, and the after arm is 7a2b5cf, which adds it. Grader sessions saw each
+pair's reports under random labels only and judged each against the scenario's *Proves* line in
+`verification/recipes/do.md` or `review-code.md`, reading the run's commits and diff.
+
+| Scenario | Before | After | Cost, before → after (USD) | Wall time, before → after (s) |
+|---|---|---|---|---|
+| `fix-on-the-path` | FAIL: left the `format_money` bug as debt | PASS: fixed it in its own commit, left `shipping.py` alone, one continued look | 0.312 → 0.4065 | 76.0 → 59.5 |
+| `gigantic-stays-out` | PASS, borderline wording | PASS | 0.4675 → 0.5109 | 79.2 → 90.4 |
+| `review-code` `pre-existing` | PASS | PASS | 0.263 → 0.2336 | 40.7 → 40.2 |
+| `unrelated-red-test`, run 1 | FAIL: reported completion with the whole-tree check red | FAIL: fixed `days_between` in its own commit, but also removed an unused import it met while fixing it | 0.3235 → 0.3678 | 50.1 → 58.7 |
+| `unrelated-red-test`, run 2 | FAIL: same | FAIL: same pattern | 0.3573 → 0.3935 | 48.8 → 56.3 |
+| `execute` (control, no pre-existing issue) | PASS | PASS | 0.314 → 0.5275 | 44.1 → 59.4 |
+| `project-keeps-fixes-out` | PASS (a1cefec already followed the project file) | PASS | 0.3895 → 0.362 | 56.0 → 44.2 |
+
+The after arm passes and the before arm fails on `fix-on-the-path` only. On `unrelated-red-test`
+both arms fail, for different reasons: before, the red check was left and the run reported done;
+after, the red check was fixed and the run reported done with it green, but it also made a second
+fix that neither blocked the first nor failed a check. `gigantic-stays-out`, `pre-existing`,
+`execute` and `project-keeps-fixes-out` pass on both arms, so they show no uplift; they show the
+change did not break those behaviors. The yield clause showed no uplift either: the run already
+followed the project's file without it. It stays as a stated guarantee, held by a test.
+
+Against each condition that would overturn this decision:
+
+- **The after arm does not fix what main hands over.** Not met. On both scenarios with an issue
+  on the path, the after arm fixed it in its own commit, and main's arm left it.
+- **Cost or time per run rises with little gain.** Not settled by one pair per arm. Scenario
+  deltas run from −0.03 to +0.09 USD and −16.5 to +11.2 s. The control pair, with nothing to fix,
+  rose 0.21 USD and 15.3 s; its after arm also called a separate reviewer for one judgment gate,
+  which main's arm did not. One pair cannot separate that from run-to-run noise.
+- **Runs chain fixes or take extra looks.** Met in part. No run took more than one continued look
+  per affected judgment gate. Both after runs of `unrelated-red-test` made one fix the rule does
+  not ask for: an unused import in the file the run read to fix the red check. The rule counts
+  code a run reads to do its job as on its path, and says what fixing one issue runs into joins
+  only when it blocks that fix or a check fails; this case satisfies both readings, so the wording
+  does not settle it. One small cleanup did not start a loop.
 
 ## Alternatives Considered
 - **Keep recording and handing over (the rule of #328)**: it contradicts the owner's rule and leaves
@@ -143,7 +191,9 @@ fixes chain, or lets a continued look list pre-existing issues or chase its belo
 when external review stops declining taste on a repair or stops bounding pre-existing issues raised
 on one; when `review-code` counts its *Pre-existing* list toward the verdict or returns it on a
 follow-up; and when the scope ceiling stops counting these fixes as required — in the source and
-the Codex copy; whether an issue is on the path, or gigantic, stays judgment.
+the Codex copy; and `test_a_projects_own_rule_keeps_unrelated_fixes_out` in the same file fails
+when `/do` stops yielding to a project's rule or lets the yield cover a failing check. Whether an
+issue is on the path, or gigantic, stays judgment.
 
 ## Source
 - Session: a figure-out session on the owner's rule and verification convergence, 2026-10-28.
