@@ -127,13 +127,14 @@ pair's reports under random labels only and judged each against the scenario's *
 | `review-code` `pre-existing` | PASS | PASS | 0.263 → 0.2336 | 40.7 → 40.2 |
 | `unrelated-red-test`, run 1 | FAIL: reported completion with the whole-tree check red | FAIL: fixed `days_between` in its own commit, but also removed an unused import it met while fixing it | 0.3235 → 0.3678 | 50.1 → 58.7 |
 | `unrelated-red-test`, run 2 | FAIL: same | FAIL: same pattern | 0.3573 → 0.3935 | 48.8 → 56.3 |
+| `unrelated-red-test`, after the path wording below (30c459d) | — | PASS: fixed the red check in its own commit and left the unused import, naming it as not on the path | — → 0.382 | — → 49.5 |
 | `execute` (control, no pre-existing issue) | PASS | PASS | 0.314 → 0.5275 | 44.1 → 59.4 |
 | `project-keeps-fixes-out` | PASS (a1cefec already followed the project file) | PASS | 0.3895 → 0.362 | 56.0 → 44.2 |
 
-The after arm passes and the before arm fails on `fix-on-the-path` only. On `unrelated-red-test`
-both arms fail, for different reasons: before, the red check was left and the run reported done;
-after, the red check was fixed and the run reported done with it green, but it also made a second
-fix that neither blocked the first nor failed a check. `gigantic-stays-out`, `pre-existing`,
+The after arm passes and the before arm fails on `fix-on-the-path`, and on `unrelated-red-test`
+once the path wording was tightened. Before, the red check was left and the run reported done.
+At a1cefec, the red check was fixed, but the run also made a second fix that neither blocked the
+first nor failed a check; at 30c459d, one after-arm run made only the fix the check needed. `gigantic-stays-out`, `pre-existing`,
 `execute` and `project-keeps-fixes-out` pass on both arms, so they show no uplift; they show the
 change did not break those behaviors. The yield clause showed no uplift either: the run already
 followed the project's file without it. It stays as a stated guarantee, held by a test.
@@ -146,12 +147,12 @@ Against each condition that would overturn this decision:
   deltas run from −0.03 to +0.09 USD and −16.5 to +11.2 s. The control pair, with nothing to fix,
   rose 0.21 USD and 15.3 s; its after arm also called a separate reviewer for one judgment gate,
   which main's arm did not. One pair cannot separate that from run-to-run noise.
-- **Runs chain fixes or take extra looks.** Met in part. No run took more than one continued look
-  per affected judgment gate. Both after runs of `unrelated-red-test` made one fix the rule does
-  not ask for: an unused import in the file the run read to fix the red check. The rule counts
-  code a run reads to do its job as on its path, and says what fixing one issue runs into joins
-  only when it blocks that fix or a check fails; this case satisfies both readings, so the wording
-  does not settle it. One small cleanup did not start a loop.
+- **Runs chain fixes or take extra looks.** Met at a1cefec, not after the repair. No run took more
+  than one continued look per affected judgment gate. Both a1cefec runs of `unrelated-red-test`
+  removed an unused import in the file they read to fix the red check: the path then counted code
+  a run "reads to do its job", which code read to fix a check satisfies. The path is now code read
+  "to make that change", and a failing check is named as a fix whose surroundings are not the path;
+  the one run since left the import.
 
 ## Alternatives Considered
 - **Keep recording and handing over (the rule of #328)**: it contradicts the owner's rule and leaves
