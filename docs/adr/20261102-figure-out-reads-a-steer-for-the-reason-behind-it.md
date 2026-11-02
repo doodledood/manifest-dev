@@ -49,8 +49,8 @@ retains available to later sessions without restoring them each time.
   session has named that reason, so they can become a Taste offer. The offer may build its
   rationale on the reason the session named, and says that it is the session's reading, so the
   user's yes to the text confirms it. A named reason the user never confirmed is a candidate for
-  the sweep before the read, so the offer, not another question, is where the user confirms it. A single correction whose reason is neither stated nor named
-  is still not Taste, and an offer never presents as the user's a reason they neither stated nor
+  the sweep before the read, so the offer, not another question, is where the user confirms it. A single correction whose reason the user did not state
+  is still not Taste, even once the session has named one, and an offer never presents as the user's a reason they neither stated nor
   confirmed.
 
 The rejected alternative of the 20261012 record stays rejected in the form it named. The reason is
@@ -64,7 +64,7 @@ All replies were graded in one pass, after the graders' last edit, by grader ses
 each reply under a random label only. A case passes when the run after the change passes and the
 run before it does not, by majority of three where one pair does not settle it.
 
-| Case | Before the change | After the change (the shipped wording, counted with the commit before it, which differs only on a single correction) |
+| Case | Before the change | After the change (the shipped wording, counted with the commit before it, which differs only in the rule for a single unexplained correction) |
 |---|---|---|
 | `107` two corrections with no reason, one principle behind both | FAIL: named the reason and applied it, but made no offer to keep it | PASS in 2 of 4; both failures made the offer, one without naming where it would keep it (borderline), one recommending a push on by default |
 | `108` one correction with two readings that change the rest in opposite ways | PASS in 3 of 3, all borderline: the question only loosely separated the readings | PASS in 3 of 3 |
