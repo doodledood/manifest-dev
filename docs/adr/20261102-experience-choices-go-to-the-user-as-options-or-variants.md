@@ -1,7 +1,7 @@
 # ADR: An experience choice goes to the user as concrete options or variants, and a reason given in reply resets the recommendation
 
 ## Status
-Accepted
+Accepted; amended by 20261102-figure-out-reads-a-steer-for-the-reason-behind-it: the sentence on an answer with an aim or a reason now covers every steer, with or without a reason; an unexplained one is read for the reason the session infers
 
 ## Area
 figure-out
