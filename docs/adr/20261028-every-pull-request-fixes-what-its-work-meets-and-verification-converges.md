@@ -129,6 +129,7 @@ pair's reports under random labels only and judged each against the scenario's *
 | `unrelated-red-test`, run 2 | FAIL: same | FAIL: same pattern | 0.3573 → 0.3935 | 48.8 → 56.3 |
 | `unrelated-red-test`, after the path wording below (30c459d) | — | PASS: fixed the red check in its own commit and left the unused import, naming it as not on the path | — → 0.382 | — → 49.5 |
 | `execute` (control, no pre-existing issue) | PASS | PASS | 0.314 → 0.5275 | 44.1 → 59.4 |
+| `execute`, two more pairs, after arm at 9476b04 | PASS, PASS | PASS, PASS | 0.3032, 0.2956 → 0.2871, 0.3071 | 35.4, 36.6 → 34.0, 36.2 |
 | `project-keeps-fixes-out` | PASS (a1cefec already followed the project file) | PASS | 0.3895 → 0.362 | 56.0 → 44.2 |
 
 The after arm passes and the before arm fails on `fix-on-the-path`, and on `unrelated-red-test`
@@ -143,10 +144,12 @@ Against each condition that would overturn this decision:
 
 - **The after arm does not fix what main hands over.** Not met. On both scenarios with an issue
   on the path, the after arm fixed it in its own commit, and main's arm left it.
-- **Cost or time per run rises with little gain.** Not settled by one pair per arm. Scenario
-  deltas run from −0.03 to +0.09 USD and −16.5 to +11.2 s. The control pair, with nothing to fix,
-  rose 0.21 USD and 15.3 s; its after arm also called a separate reviewer for one judgment gate,
-  which main's arm did not. One pair cannot separate that from run-to-run noise.
+- **Cost or time per run rises with little gain.** Not met. Scenario deltas run from −0.03 to
+  +0.09 USD and −16.5 to +11.2 s, where the after arm did more work. The first control pair, with
+  nothing to fix, rose 0.21 USD and 15.3 s; its after arm also called a separate reviewer for one
+  judgment gate, which main's arm did not. Two more control pairs, the after arm at 9476b04, came
+  out level: a mean of 0.297 USD and 35.1 s after against 0.299 USD and 36.0 s before. A run with
+  nothing to fix costs what it did on main.
 - **Runs chain fixes or take extra looks.** Met at a1cefec, not after the repair. No run took more
   than one continued look per affected judgment gate. Both a1cefec runs of `unrelated-red-test`
   removed an unused import in the file they read to fix the red check: the path then counted code
