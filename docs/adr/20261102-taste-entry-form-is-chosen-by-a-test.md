@@ -86,8 +86,8 @@ none — a drafting instruction read by the model at offer time; no check can te
 
 ## Not decided here
 - Whether entries should name the kind of product they came from.
-- Whether a project-level Taste section should move out of the context file into its own file; it
-  stays in the context file until there is evidence it grows too large.
+- Whether a Taste section should move out of the memory file into its own file:
+  `20261102-taste-stays-a-section-of-the-memory-file` decides that.
 
 ## Source
 - Session: a `/do` run on a Manifest the user approved, 2026-11-02 (log kept locally). Drive summaries and the grader's verdicts are in the pull request that adds this record.
