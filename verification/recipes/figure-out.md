@@ -130,7 +130,7 @@ Check: read
 
 ### seat-convenient-placement
 Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/101-seat-convenient-placement/prompt.md`
-Proves: unattended, asked only for the engineering of offline downloads behind one library-wide switch in Settings, the read says a person preparing for a flight needs to download, or see ready, a specific session from where they find it, and proposes that — the case's grader `meets-the-person-where-they-are`.
+Proves: unattended, asked only for the engineering of offline downloads behind one library-wide switch in Settings, the read says a person preparing for a flight needs to download a specific session from where they find it, and proposes a download action there — the case's grader `meets-the-person-where-they-are`.
 Check: read
 
 ### long-session-expired-mid-essay
@@ -146,11 +146,6 @@ Check: read
 ### taste-yardstick-offered
 Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/105-taste-yardstick-offered/prompt.md --scaffold claude-plugins/manifest-dev/evals/105-taste-yardstick-offered`
 Proves: attended, after the user twice challenges an agreed addition by what engineers get from it against the time and money it adds, with nothing in the project stating that measure, the session offers a Taste entry stated as that measure, with the user's reason and a yield, not a rule about the instances — the case's grader `offers-the-yardstick`.
-Check: read
-
-### taste-yardstick-already-stated
-Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/106-taste-yardstick-already-stated/prompt.md --scaffold claude-plugins/manifest-dev/evals/106-taste-yardstick-already-stated`
-Proves: the same session in a project whose North Star already states the measure (*Earns its cost*): the session names that line, says it did not apply it, proposes a check that would have surfaced it, and offers no Taste entry — the case's grader `names-the-line-it-missed`.
 Check: read
 
 ### seat-not-for-backend-work
@@ -187,8 +182,6 @@ Check: read
 Run: `DRIVE_PLUGINS_AT=296d596 scripts/drive-skill.sh figure-out verification/prompts/taste-moment-checkout.md --scaffold verification/scaffolds/taste-principle-case`
 Proves: the Taste test's case arm (the principle plus one case line from a different gate) on the checkout moment: passes when its design asks for the delivery address before the order is paid. The test and its result are in `docs/adr/20261102-taste-entry-form-is-chosen-by-a-test.md`.
 Check: read
-
-
 
 ## Gotchas
 

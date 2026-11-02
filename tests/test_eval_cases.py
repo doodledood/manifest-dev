@@ -99,9 +99,11 @@ def test_a_case_of_several_turns_runs_only_as_a_drive(case: Path) -> None:
     # `claude plugin eval` sends a prompt as one message, so a case written as several turns
     # would reach the session all at once. Only drives play the turns; the tag keeps suites off it.
     prompt = case / "prompt.md"
-    if not prompt.exists():
-        return
-    data, body = _frontmatter(prompt)
+    if prompt.exists():
+        data, body = _frontmatter(prompt)
+    else:
+        data = yaml.safe_load((case / "case.yaml").read_text(encoding="utf-8"))
+        body = str((data.get("execution") or {}).get("prompt") or "")
     several = any(line.strip() == NEXT_TURN for line in body.splitlines())
     tags = data.get("tags") or []
     if several:

@@ -10,22 +10,22 @@ Taste is a durable personal steering preference persisted only by offer-and-rati
 
 ## Detection gate
 
-Watch for directional preferences the user steers by, not one-off situational calls — including the yardstick a challenge reveals: when the user questions a result, the measure they judge it by is a preference even if they never state it as one. A candidate is eligible when it is all four:
+Watch for directional preferences the user steers by, not one-off situational calls. A candidate is eligible when it is all four:
 
 - **Directional** — it would steer future judgment calls the same way ("prefer the smallest clean change", "prose over tables"), not a fact about this task.
-- **Durable** — recurring within the session, including one yardstick behind challenges to different results, explicitly stated as a standing way of working, or a single reversal of an agent's call for which the user states the reason — the reason is what can carry to later calls. A single correction with no stated reason is not taste. A reaction to a disposable draft is about that draft's direction, and is not taste unless the user states it as reaching beyond that artifact.
+- **Durable** — recurring within the session, explicitly stated as a standing way of working, or a single reversal of an agent's call for which the user states the reason — the reason is what can carry to later calls. A single correction with no stated reason is not taste. A reaction to a disposable draft is about that draft's direction, and is not taste unless the user states it as reaching beyond that artifact.
 - **Behavior-changing** — a future session that knew it would act differently; if the model already behaves this way unprompted, there is nothing to write.
 - **Personal** — you could want the opposite for some other user. Where the opposite would simply be the skill working badly, the behavior is owed by every session rather than preferred by this one, and capturing it here makes weighable what should be held and binds it to whoever happened to ratify it. Make no offer, and don't reach for the prompt either: name the gap as one the prompt itself should close, and leave it there.
 
 Passing the gate makes a candidate eligible, not offered — an offer must also repay its interruption. When a preference is real but too minor for future sessions to meaningfully profit from, don't stop the session for it: let it ride the session-end sweep, where batching amortizes the cost, or leave it unoffered.
 
-**Per-turn:** when the signal is unmistakable — the same pushback or the same yardstick has recurred, the user states a standing preference in so many words, or the user reverses a call and says why — and the entry is consequential enough to repay the interruption, offer immediately, while the instance is concrete. **Session-end sweep:** before the session closes (before naming the read), review for candidates that accumulated without individually clearing the per-turn bar; batch any that now clear the gate into one offer. Anything below the gate: keep working, don't offer.
+**Per-turn:** when the signal is unmistakable — the same pushback has recurred, the user states a standing preference in so many words, or the user reverses a call and says why — and the entry is consequential enough to repay the interruption, offer immediately, while the instance is concrete. **Session-end sweep:** before the session closes (before naming the read), review for candidates that accumulated without individually clearing the per-turn bar; batch any that now clear the gate into one offer. Anything below the gate: keep working, don't offer.
 
 ## Drafting (boundary form)
 
 A taste entry is a prompt line that will ride in every future session, so draft it as one: invoke the prompt-engineering skill if it is available; otherwise apply its core discipline inline — keep the line only where it carries something the model would not reach on its own, and check it holds at the edges. Boundary form is required:
 
-- **Preference** — the lean, stated plainly as a principle that carries to calls never discussed rather than as the details of the case that prompted it, naming the kind of call it covers, so it does not stretch over calls it was never about. For a yardstick revealed by challenges, the entry states the yardstick, not the results it was applied to.
+- **Preference** — the lean, stated plainly as a principle that carries to calls never discussed rather than as the details of the case that prompted it, naming the kind of call it covers, so it does not stretch over calls it was never about.
 - **Rationale** — why, so future sessions can weigh it rather than obey it. Build it on the reason the user stated; never write a reason they did not give.
 - **Flip condition** — when it should yield, so it doesn't over-fire on adjacent cases.
 
@@ -44,9 +44,7 @@ Write into a marked `## Taste` section of the target file, creating the section 
 
 ## The offer
 
-First read the loaded project lines — the North Star, the context file, the decision records — for the principle. Where one already states it, offer no entry: a second copy only drifts from the first. Quote that line, say this session did not apply it, and propose a check that would have surfaced it, such as a probe or a gate.
-
-Otherwise name the observed pattern, show the drafted entry verbatim — the user ratifies words, not an idea — and name the scope. For an entry drawn from one reversal, also ask whether it is a standing preference or this case only; "this case only" is a no. Only the user's explicit yes writes; silence, deflection, or a topic change is a no. Don't re-offer a declined candidate in the same session.
+Name the observed pattern, show the drafted entry verbatim, name the scope. For an entry drawn from one reversal, also ask whether it is a standing preference or this case only; "this case only" is a no. Only the user's explicit yes writes; silence, deflection, or a topic change is a no. Don't re-offer a declined candidate in the same session.
 
 ## Curation — the section is a prompt
 

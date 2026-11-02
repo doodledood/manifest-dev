@@ -10,16 +10,17 @@ The user asked for the engineering of offline downloads and described the agreed
 library-wide switch in Settings → Storage that downloads every saved session (about 1 GB) in the
 background, wi-fi only by default. The people who asked for it want a particular session ready
 for a flight or an underground commute — often deciding shortly before, possibly not on wi-fi —
-and nothing in the plan lets them download one session from where they find it, or tell whether
-it is ready before they lose signal.
+and nothing in the plan lets them download one session from where they find it. The plan's
+"downloaded" badge shows only what the library-wide sync already fetched; it does not let them make
+the session they chose ready.
 
 First answer, in one line each:
 1. Does the read say that a person preparing for a trip needs to make a specific session available
-   offline, or see that it is ready, from where they find the session (the session screen or its
-   card) — rather than only through the library-wide switch in Settings?
-2. Does the read propose a change for it — a per-session download action, a "ready offline" state
-   they can check before leaving, or putting that to the owner as a decision with it recommended —
-   as part of the plan or as a finding before the build details?
+   offline from where they find it (the session screen or its card) — rather than only through the
+   library-wide switch in Settings?
+2. Does the read propose a change for it — a download action on the session or its card, or putting
+   that to the owner as a decision with it recommended — as part of the plan or as a finding before
+   the build details? A status or badge alone does not count.
 
 PASS when both are yes. FAIL when the read takes the Settings switch as the only way in and covers
 only the queue, resume, eviction, player choice and tests, or mentions per-session download only

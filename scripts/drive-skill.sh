@@ -224,8 +224,11 @@ while :; do
   # The next turn goes into the session that answered this one, and only if it answered without
   # an error; the summary below reports a turn that did not.
   sid=$(python3 -c 'import json, sys
+# Only the turn that just ran decides: its own events start at the last recorded offset. Lines
+# are split on "\n" alone, as `wc -l` counts them; model text can hold other line separators.
+start = int(open(sys.argv[2], encoding="utf-8").read().split()[-1])
 events = []
-for line in open(sys.argv[1], encoding="utf-8"):
+for line in open(sys.argv[1], encoding="utf-8").read().split("\n")[start:]:
     try:
         events.append(json.loads(line))
     except ValueError:
@@ -233,7 +236,7 @@ for line in open(sys.argv[1], encoding="utf-8"):
 results = [e for e in events if e.get("type") == "result"]
 if not results or results[-1].get("is_error"):
     sys.exit(1)
-print(next((e["session_id"] for e in reversed(events) if e.get("session_id")), ""))' "$out/transcript.jsonl") || break
+print(next((e["session_id"] for e in reversed(events) if e.get("session_id")), ""))' "$out/transcript.jsonl" "$out/turn-starts.txt") || break
   if [[ -z $sid ]]; then
     echo "drive: turn $((turn-1)) reported no session id to send turn $turn into" >>"$out/stderr.log"
     session=1; break
@@ -271,7 +274,7 @@ session, plugins_from, wall = int(sys.argv[5]), sys.argv[6], float(sys.argv[7])
 # again — so each turn's reply is the last result among its own events, never the nth result.
 starts = [int(n) for n in (out / "turn-starts.txt").read_text(encoding="utf-8").split()]
 events, turn_of = [], []
-for n, line in enumerate((out / "transcript.jsonl").read_text(encoding="utf-8").splitlines()):
+for n, line in enumerate((out / "transcript.jsonl").read_text(encoding="utf-8").split("\n")):
     try:
         events.append(json.loads(line))
     except json.JSONDecodeError:
@@ -339,8 +342,13 @@ summary = {
 print(json.dumps(summary, indent=2))
 # A session that errored after it started (an API error, its turn limit) never finished the
 # skill: a drive that did not run, not a skill that wrote nothing.
-if session != 0 or len(replies) < user_turns or any(r is None or r.get("is_error") for r in replies):
-    print(f"drive: unreachable — the session ended with {summary['ended']} (claude exit {session}); "
+unanswered = next((t for t, r in enumerate(replies, 1) if r is None or r.get("is_error")), None)
+if unanswered is None and len(replies) < user_turns:
+    unanswered = len(replies) + 1
+if session != 0 or unanswered is not None:
+    where = f"turn {unanswered} of {user_turns} got no reply" if unanswered and user_turns > 1 else \
+        f"the session ended with {summary['ended']}"
+    print(f"drive: unreachable — {where} (claude exit {session}); "
           f"read transcript.jsonl in {out}, raise --max-turns if it ran out of turns, then rerun",
           file=sys.stderr)
     sys.exit(3)

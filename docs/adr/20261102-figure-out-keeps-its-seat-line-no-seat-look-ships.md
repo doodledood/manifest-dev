@@ -7,7 +7,7 @@ Accepted
 figure-out
 
 ## Decided by
-The user ruled that the form is chosen on evidence, cost included, and approved the rule below in the Manifest for this change; an agent in an unattended run applied the rule to the results.
+An agent in an unattended run, with no review — applying the rule below, which the user approved in the Manifest for this change after ruling that the form is chosen on evidence, cost included; the delegation covered applying that rule to the results, not changing it.
 
 ## Context
 
@@ -77,8 +77,8 @@ scored 7.7 against 7.3 before it, inside run-to-run noise, at about a third more
 - **Ship the folded look** — not chosen: in the long sessions the re-derivation that carries it ran
   in one run of seven, so it behaved like main's line, and it failed guard `14`.
 - **Ship the eleven default product stances on their own** — not chosen: the stances were tested
-  only inside the look; in the Taste test (`20261102-taste-entry-form-is-chosen-by-a-test`) the
-  skills without them passed the same moments.
+  only inside the look; in the Taste test (`20261102-taste-entry-form-is-chosen-by-a-test`) a
+  Taste entry on the skills before the change passed the same moments.
 - **A new user-invoked product skill** — not chosen:
   `20261013-new-capabilities-live-inside-the-four-workflow-entry-points`.
 
@@ -100,7 +100,7 @@ scored 7.7 against 7.3 before it, inside run-to-run noise, at about a third more
 none — whether a read takes the person's seat is judgment, measured only by drives of the cases above.
 
 ## Revisit when
-A proposed change to how figure-out takes the person's seat passes `101`, `103` or `104` by majority where main's line fails it, without failing `104` or the guards; read in `claude-plugins/manifest-dev/evals/README.md` → *Is a seat look worth its cost — 2026-11-02*.
+A proposed change to how figure-out takes the person's seat passes `101` or `103` by majority where main's line fails it, without failing `104` or the guards; read in `claude-plugins/manifest-dev/evals/README.md` → *Is a seat look worth its cost — 2026-11-02*.
 
 ## Source
 - Session: a `/do` run on a Manifest the user approved, 2026-11-02 (log kept locally). Drive summaries and blind grades are in the pull request that adds this record.

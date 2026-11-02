@@ -1116,6 +1116,50 @@ def test_a_turn_that_errors_ends_the_drive_before_the_next_turn(
     assert [c["args"][-1] for c in calls(tmp_path)] == ["one", "two"]
 
 
+def test_a_turn_with_no_reply_ends_the_drive_and_names_that_turn(
+    tmp_path: Path, toolbox: Path
+) -> None:
+    # Only the turn that just ran decides whether the next is sent: an earlier turn's reply
+    # must not stand in for one this turn never gave.
+    prompt = tmp_path / "prompt.md"
+    prompt.write_text(
+        "one\n<!-- next turn -->\ntwo\n<!-- next turn -->\nthree\n", encoding="utf-8"
+    )
+    no_result = [{**GOOD[0], "session_id": "s-1"}]
+    transcripts = [lines(turn("ok", 0.1)), lines(no_result), lines(turn("never", 0.3))]
+    result = drive(
+        setup(tmp_path, toolbox, STANDIN_TRANSCRIPTS=json.dumps(transcripts)),
+        prompt=prompt,
+    )
+    assert result.returncode == 3, result.stdout + result.stderr
+    assert [c["args"][-1] for c in calls(tmp_path)] == ["one", "two"]
+    assert "turn 2 of 3 got no reply" in result.stderr
+
+
+def test_a_line_separator_in_model_text_keeps_turns_apart(
+    tmp_path: Path, toolbox: Path
+) -> None:
+    # The CLI writes U+2028 unescaped; turn boundaries are counted in newlines only, so text
+    # holding one must not shift a reply into the next turn.
+    prompt = tmp_path / "prompt.md"
+    prompt.write_text("one\n<!-- next turn -->\ntwo\n", encoding="utf-8")
+    said = {
+        "type": "assistant",
+        "message": {"content": [{"type": "text", "text": "a\u2028b"}]},
+    }
+    first = lines(turn("first", 0.1)[:1]) + json.dumps(said, ensure_ascii=False) + "\n"
+    first += lines(turn("first", 0.1)[1:])
+    transcripts = [first, lines(turn("second", 0.2))]
+    result = drive(
+        setup(tmp_path, toolbox, STANDIN_TRANSCRIPTS=json.dumps(transcripts)),
+        prompt=prompt,
+    )
+    assert result.returncode == 0, result.stdout + result.stderr
+    (summary,) = (tmp_path / "store" / "figure-out").glob("*/summary.json")
+    recorded = json.loads(summary.read_text(encoding="utf-8"))
+    assert recorded["turn_replies"] == ["first", "second"]
+
+
 def test_a_turn_that_ends_twice_keeps_its_last_reply_as_that_turns(
     tmp_path: Path, toolbox: Path
 ) -> None:

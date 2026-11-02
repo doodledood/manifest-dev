@@ -63,6 +63,13 @@ for rewriting. `100` and the design scenario pass on the skills before the chang
 regression and no uplift. `100`'s replacement drifted from the scenario this change was specified
 against and passed in both arms too, so the suite keeps its first version.
 
+A third version of `99` settles both parent questions in the prompt. On skills that also carried a
+separate seat-look reference, which does not ship
+(`20261102-figure-out-keeps-its-seat-line-no-seat-look-ships`), the run with the paragraph passed and
+the run before it failed. On the skills that ship, the paragraph passed one run of three: the two
+failures asked first whether cooks change servings while planning or at the stove, a question the
+prompt nearly settles, instead of offering placements.
+
 ## Alternatives Considered
 
 - **Leave the form of the ask to the existing user's-call rule** — not chosen: it says to recommend,
@@ -80,8 +87,8 @@ against and passed in both arms too, so the suite keeps its first version.
 - A reason given in reply steers the next recommendation instead of nudging the old one.
 
 ### Negative
-- No case yet shows the change moving a run: `99` needs a version whose parents are settled in the
-  case, and `100` and the design scenario pass without it.
+- No case shows the paragraph moving a run on the skills that ship: `99` passed one run of three
+  with it and failed its one run without it, and `100` and the design scenario pass without it.
 - One more paragraph in figure-out's always-loaded spine.
 
 ## Enforced by
@@ -91,7 +98,6 @@ partly — `tests/test_figure_out_coverage.py` keeps the coverage rows for the p
 A rewritten `99`, or a long-session case, shows runs asking an experience choice as options no more often with the paragraph than without it; read in `claude-plugins/manifest-dev/evals/README.md` → *Seat pass and experience choices — 2026-11-02*.
 
 ## Not decided here
-- A version of `99` whose parent questions the prompt settles.
 - Whether the design skill's variants should also run when no draft is on offer.
 
 ## Source

@@ -59,8 +59,8 @@ A grader session that saw only each reply under a letter label graded all six. E
 The case line therefore did not win moment (a) where the principle alone lost it, so by the rule
 fixed before the test the entry form does not change. Both entry arms also passed moment (b): the
 principle's own yield clause held, and the case line did not over-fire. The stances arm passed both
-moments as well, so on these two moments the stances added nothing an entry or the skills before
-the change did not already give.
+moments as well, so on these two moments the stances added nothing a Taste entry on the skills
+before the change did not already give.
 
 ## Alternatives Considered
 
