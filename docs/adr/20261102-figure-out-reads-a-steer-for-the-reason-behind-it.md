@@ -60,20 +60,22 @@ the user says yes to the exact text, which turns the inference into a confirmed 
 ## Evidence at decision time
 
 Each drive ran through the `figure-out` recipe, the skills before the change at the merge base.
-Each reply was graded by a grader session that saw it under a letter label only. A case passes when
-the run after the change passes and the run before it does not, by majority of three where one pair
-does not settle it.
+All replies were graded in one pass, after the graders' last edit, by grader sessions that saw
+each reply under a random label only. A case passes when the run after the change passes and the
+run before it does not, by majority of three where one pair does not settle it.
 
-| Case | Before the change | After the change |
+| Case | Before the change | After the change (the shipped wording, counted with the commit before it, which differs only on a single correction) |
 |---|---|---|
-| `107` two corrections with no reason, one principle behind both | FAIL: named the reason and applied it, but made no offer to keep it | 107_HEAD_RESULT |
-| `108` one correction with two readings that change the rest in opposite ways | FAIL in 2 of 3, both borderline: the one question asked did not separate the two readings | PASS |
-| `100` a steer resets the recommendation (guard) | — | PASS |
-| `105` a revealed yardstick offered as Taste (measurement) | — | FAIL |
+| `107` two corrections with no reason, one principle behind both | FAIL: named the reason and applied it, but made no offer to keep it | PASS in 2 of 4; both failures made the offer, one without naming where it would keep it (borderline), one recommending a push on by default |
+| `108` one correction with two readings that change the rest in opposite ways | PASS in 3 of 3, all borderline: the question only loosely separated the readings | PASS in 3 of 3 |
+| `100` a steer resets the recommendation (guard) | — | PASS in 2 of 2 |
+| `105` a revealed yardstick offered as Taste (measurement) | — | FAIL in 2 of 2 |
 
-On `107`, the skills before the change already named the reason and changed the other choices; what
-they lacked was the offer, which the Taste change supplies. A first wording that changed only the
-Taste reference still made no offer, so the spine change ships with it. `105` still fails, as it did before this change: an offer drawn from a
+Neither case settles the change by that rule. On `107` the skills before the change already named
+the reason and changed the other choices; what they lacked was the offer, which every run after the
+change made, saying the reason was its own reading. Two earlier wordings asked about the reason more than once in 3 of
+4 runs; the shipped wording asked once in all 4. `108` passes on
+both sides, so it shows no uplift for the one-question rule. `105` still fails: an offer drawn from a
 yardstick the user reveals is a different behavior, which this change does not claim.
 
 ## Alternatives Considered
@@ -83,9 +85,9 @@ yardstick the user reveals is a different behavior, which this change does not c
   only when the guess is unclear.
 - **Infer the reason silently and act on it**: the 20261012 record's grounds hold; a reason the
   user never sees can only be obeyed, and nothing corrects it.
-- **Change only the Taste reference**: driven once on `107`; the session made no offer.
-- **Leave figure-out as it is**: the user named all four failures as worth fixing, and `108` and
-  `107` failed before the change.
+- **Change only the Taste reference**: driven once on `107`; the session asked about the reason three times and made no offer.
+- **Leave figure-out as it is**: the user named all four failures as worth fixing, and `107` failed
+  before the change for want of the offer.
 
 ## Consequences
 
