@@ -57,6 +57,26 @@ Run: `scripts/drive-skill.sh do verification/prompts/do-draft-reaction.md --scaf
 Proves: three reactions to a draft land three ways, read from the files the run wrote rather than its account. `manifest.md` is amended to record direction B at lower density as the person's call in Known Assumptions, with AC-1.1 or a new gate building the dashboard to it, and a gate holding that the totals match `ledger.csv` to the cent. The tests the run adds include one that fails when a dashboard total differs from the ledger's sum for that category; no added test, lint or check concerns density, layout or where the numbers sit. No memory file gains a `## Taste` entry, and the completion report carries a drafted Taste entry for putting the numbers first in mock-ups, with the question whether it is standing or for this case only.
 Check: read
 
+### fix-on-the-path
+Run: `scripts/drive-skill.sh do verification/prompts/do-fix-on-the-path.md --scaffold verification/fixtures/fix-on-the-path --max-turns 120`
+Proves: read from the project's git history and files, not the run's account. `invoice_total` is added and its tests pass. `format_money` in `invoice.py`, which the change reads beside the code it adds, drops the leading zero of the cents (`105` prints `$1.5`); it is fixed in a commit of its own, separate from the commit adding `invoice_total`, and the completion report lists it as fixed on the way. `shipping.py`, which the change never reads, is unchanged, though it charges nothing for a started kilogram past the first. The run's commits and log show no fix of something that neither blocked another fix nor failed a check, and at most one continued look per affected judgment gate after the batch of fixes.
+Check: read
+
+### gigantic-stays-out
+Run: `scripts/drive-skill.sh do verification/prompts/do-gigantic-stays-out.md --scaffold verification/fixtures/gigantic-stays-out --max-turns 120`
+Proves: read from the project's git history and files. `refund` is added, records refunds and caps them, and its tests pass. Amounts stay float dollars: no file moves them to integer cents, and nothing adds a migration. The completion report names float money as debt left, with why it is a project of its own — the live database, the other team's reports and a rollout both teams agree.
+Check: read
+
+### unrelated-red-test
+Run: `scripts/drive-skill.sh do verification/prompts/do-unrelated-red-test.md --scaffold verification/fixtures/unrelated-red-test --max-turns 120`
+Proves: read from the project's git history and files. `slugify` is added and `python3 -m unittest test_slug` passes. `test_dates.py` fails before the run because `days_between` does not count both days; by the end `python3 -m unittest` passes with both of its tests unchanged — `days_between` is fixed, in a commit of its own, and no test is skipped, removed or loosened — and the completion report lists the fix as made on the way. The run's commits and log show no fix of something that neither blocked another fix nor failed a check, and at most one continued look per affected judgment gate after the batch of fixes.
+Check: read
+
+### project-keeps-fixes-out
+Run: `scripts/drive-skill.sh do verification/prompts/do-project-keeps-fixes-out.md --scaffold verification/fixtures/project-keeps-fixes-out --max-turns 120`
+Proves: read from the project's git history and files. The project's `CLAUDE.md` keeps fixes unrelated to the change out of a pull request. `invoice_total` is added and its tests pass; `format_money`, which fails no check, is unchanged in every commit, and the completion report names its dropped leading zero as debt for the team to schedule.
+Check: read
+
 ## Gotchas
 
 - It changes files, commits, and may push or open pull requests as its Manifest allows. Never drive it on this checkout.
