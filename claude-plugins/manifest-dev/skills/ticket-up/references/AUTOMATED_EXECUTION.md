@@ -119,7 +119,8 @@ follows it only when its prompt says to land. The lander:
    how every instance of something must look, beside one that adds an instance. It extends its work
    to cover the cross-cut, unless that extension is a project of its own, needs a decision a person
    retains, or the project's own rules keep it out; then it names the cross-cut as debt in the
-   completion record, which `orchestrate` tickets up with the rest of the run's debt. Where the
+   completion record and the pull request's "Debt left" section, which `orchestrate` tickets up
+   with the rest of the run's debt. Where the
    merge leaves the pull request's own change as it was — the same patch ID — and the cross-cut
    check finds no overlap, only the deterministic gates re-run, through the repository's required
    checks where it has them, and the judgment gates' earlier verdicts stand; otherwise it re-runs
@@ -133,8 +134,8 @@ follows it only when its prompt says to land. The lander:
    commits after the head the record names as new work and re-runs every gate. A required check that
    fails the same way on the target base is the base's failure, not the Ticket's: nothing is
    repaired, and the lander names that cause (`orchestrate` pauses on it and has one repair Ticket
-   written for it, as its check-in says). The exception is that repair Ticket: making the check
-   pass is its work, so its failure is repaired like any other. A
+   written for it, as its check-in says) — unless making that check pass is the Ticket's own work,
+   as it is for that repair Ticket; then the failure is repaired like any other. A
    required check still pending leaves the merge for a later turn, and one still pending a run
    timeout after the head was pushed counts as failing. When the merge waits only on a review the
    repository requires, the Ticket waits on the person's list as a held pull request, with no

@@ -169,7 +169,7 @@ request through the repository's normal checks. Activate the `check-pr` skill fo
 and head. Address agent-resolvable failures and re-check rather than handing routine repair to a
 person; what may remain is only what a person gives, such as a required review. A required check
 that fails the same way on the target base is not this Ticket's to repair or escalate, unless
-making that check pass is what this Ticket is for: name that cause in the attempt record's progress
+making that check pass is the Ticket's own work: name that cause in the attempt record's progress
 and finish, so `orchestrate` can pause the effort on it once and have one repair Ticket written,
 rather than each run escalating.
 

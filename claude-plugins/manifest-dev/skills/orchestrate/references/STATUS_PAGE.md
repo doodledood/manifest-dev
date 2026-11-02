@@ -174,7 +174,7 @@ use their own types gives `type` only for these five.
 | `skipped` | Left alone | In scope, but automation may not take it: for example, its author lacks write access, or a person is assigned. Say why in `note`. |
 | `proposed` | Proposed | In the next plan the orchestrator proposes, not yet approved. |
 
-While the state is `paused`, `queued` and `waiting` Tickets show as Paused.
+While the state is `paused`, `queued` and `waiting` Tickets show as Paused, except the repair Ticket the `Paused:` line names.
 
 ### What needs the person
 

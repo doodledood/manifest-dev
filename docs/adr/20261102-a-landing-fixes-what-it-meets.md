@@ -39,17 +39,19 @@ to an older rule in two places:
   another Ticket, and `orchestrate` still pauses the effort once on it. A cause no code change can
   fix waits for the person, as before. A base check a code change can fix gets one repair Ticket,
   in either mode:
-  - Whenever a `Paused:` line an orchestrator wrote names no repair Ticket for such a cause, an
-    orchestrator writes one through `ticket-up`, in that effort, scoped to making that check pass
-    on the base. `ticket-up` reuses an open Ticket that already covers it. The orchestrator then
-    names the repair Ticket in the line. When the line already names another one, or is gone, it
-    closes the one it just wrote as a duplicate.
+  - Whenever a `Paused:` line an orchestrator wrote names no open repair Ticket for such a cause,
+    an orchestrator writes one through `ticket-up`, in that effort, scoped to making that check
+    pass on the base. `ticket-up` reuses an open Ticket that already covers it. The orchestrator
+    then names the repair Ticket in the line. When the line already names another open one, or is
+    gone, it closes a Ticket `ticket-up` created in that check-in as a duplicate, and leaves a
+    reused one as it was.
   - While the pause holds, only the repair Ticket the line names may launch or land.
-  - The repair Ticket takes the mode's grant step like any Ticket an agent wrote, so its Auto comes
-    from a person or from `orchestrate --autonomous` under its criterion, never from the run that
-    found the failure.
-  - Its own run repairs the failure, as the one exception to the rule that a base failure is not a
-    Ticket's to repair.
+  - The repair Ticket goes to the mode's grant step like any Ticket an agent wrote, so its Auto
+    comes from a person or from `orchestrate --autonomous` under its criterion, never from the run
+    that found the failure. In the default mode it is the pause's one item on the person's list,
+    with its grant recommendation, and joins the current plan once they approve it.
+  - Making the check pass is that Ticket's own work, which is the one exception to the rule that a
+    base failure is not a Ticket's to repair.
   - Once the base check passes, any orchestrator removes the line, as before.
   - A `run-ticket` started by hand, with no orchestrator, names the cause and finishes.
 
@@ -74,10 +76,14 @@ to an older rule in two places:
 ### Negative
 - A landing can grow beyond what the Ticket text named. Bounded by the same three exceptions `/do`
   uses, and by every gate re-running.
-- An orchestrator that stops between writing a repair Ticket and naming it in the line leaves a
-  second repair Ticket open. Its run finds the check already passing and has nothing to change.
-  A scratch model of two orchestrators, one of which may stop at any step, found no other
+- Two orchestrators that write a repair Ticket at the same moment can each create one before
+  either names it in the line. The one whose Ticket the line does not name closes its own, so
+  the duplicate lasts only while that orchestrator is still running; one that stops in that window
+  leaves its Ticket open, and that Ticket's run finds the check already passing and changes
+  nothing. A scratch model of two orchestrators, one of which may stop at any step, found no other
   duplicate, no stuck state, and no second repair landing.
+- In the default mode a repair Ticket waits on the person for its grant and its place in the plan,
+  so the effort stays paused until they answer.
 
 ## Enforced by
 partly — `tests/test_ticket_automation_prompts.py` — `test_a_red_base_gets_one_repair_ticket`

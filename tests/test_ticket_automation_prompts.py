@@ -901,8 +901,11 @@ def test_a_red_base_gets_one_repair_ticket(root: Path) -> None:
 
     # A run never repairs the base inside another Ticket; the repair Ticket is the exception.
     assert "is the base's failure, not the Ticket's: nothing is repaired" in landing
-    assert "The exception is that repair Ticket" in landing
-    assert "unless making that check pass is what this Ticket is for" in run_ticket
+    assert (
+        "unless making that check pass is the Ticket's own work, as it is for that repair Ticket"
+        in landing
+    )
+    assert "unless making that check pass is the Ticket's own work" in run_ticket
     # The effort pauses once on the cause.
     assert "one is enough for a required check that fails the same way on the base" in (
         orchestrate
@@ -911,18 +914,25 @@ def test_a_red_base_gets_one_repair_ticket(root: Path) -> None:
     assert "A base check that a code change can fix gets one repair Ticket instead" in (
         orchestrate
     )
-    assert (
-        "in that effort and in either mode, scoped to making that check pass on the base"
-        in (orchestrate)
-    )
+    assert "scoped to making that check pass on the base, in either mode" in orchestrate
     assert "`ticket-up` reuses an open Ticket that already covers it" in orchestrate
-    assert "close the one just written as a duplicate instead" in orchestrate
+    assert (
+        "close the Ticket `ticket-up` created in this check-in as a duplicate instead"
+        in orchestrate
+    )
     # Only the repair Ticket the line names launches or lands while the pause holds.
     assert "no launch, no landing turn — except the repair Ticket the line names" in (
         orchestrate
     )
     # Its Auto comes from the mode's grant step, never from the run that found the failure.
-    assert "takes the mode's grant step like any Ticket an agent wrote" in orchestrate
+    assert "goes to the mode's grant step like any Ticket an agent wrote" in orchestrate
+    assert "names no open repair Ticket for such a cause" in orchestrate
+    assert (
+        "it is the pause's one item on the list of what waits on the person"
+        in orchestrate
+    )
+    default = flat(orchestrate_text(root, "PROPOSE_AND_WAIT.md"))
+    assert "except a repair Ticket a pause names, which joins this plan" in default
 
 
 # Holds the decision in docs/adr/20261019-every-way-a-landing-cannot-merge-relaunches-or-escalates.md.
