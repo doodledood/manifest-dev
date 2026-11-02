@@ -1,0 +1,75 @@
+# ADR: setup-project's seed offers a few Taste entries mined from reasons the owner already stated
+
+## Status
+Accepted
+
+## Area
+Project context
+
+## Decided by
+The user — the user asked for setup to offer Taste entries mined from the project's history, on the design proposed to them; the agent that ran the change chose the wording and where it lives, under the Manifest's delegation.
+
+## Context
+
+A Taste entry is a ratified steering preference — the preference, the reason its owner gave, and
+when it yields — that later sessions weigh at a call two careful people could make differently
+(`20260719-taste-persists-by-offer-and-ratify`, `20261012-taste-is-checked-per-call-and-captured-from-explained-reversals`).
+Entries are captured one at a time, when a session sees the user reverse a call and say why. A
+project new to the workflow therefore starts with none, though many of its owner's overrides are
+already explained in its history: in decision records, in review threads where a proposal was
+turned down with a reason, and in the owner's past sessions. In replays of one owner's sessions,
+kept outside this repository, the owner restated the same few product judgments across sessions.
+
+The workflow now ships defaults every user gets — figure-out's default product stances
+(`20261102-the-seat-pass-judges-against-default-product-stances`) and each skill's own — so an
+entry earns its place where the owner leans away from one of them.
+
+This decision sits inside what the North Star's *Purpose* names: a person returns without restoring
+the same context, and keeps control of the choices they retain.
+
+## Decision
+
+setup-project's seed (`setup-project/references/MINING.md` → *Taste*) also offers Taste candidates:
+
+- only from a reversal or correction whose reason the user stated — a decision record whose
+  reasoning is a preference, a review or pull request thread, and the user's past session records
+  where the host keeps them, opened only after the user agrees, since they are private;
+- overrides of shipped defaults first; nothing a shipped default already says, and nothing a
+  decision record already settles;
+- at most five, each drafted in the Taste boundary form figure-out's `references/TASTE.md` gives;
+- ratified as one batch, as the glossary seed is, and written only into the `## Taste` section of
+  the memory file the user picks; with nobody to ratify, nothing is written and the candidates are
+  reported.
+
+`--no-mine` skips it with the rest of the seed. On an update, a project whose memory files hold no
+`## Taste` section yet gets the same offer.
+
+## Alternatives Considered
+
+- **No mining** — not chosen: entries would keep arriving only as corrections happen, one session
+  at a time, while the reasons sit unread in the history.
+- **Mine everything the owner said** — not chosen: it yields the overfitted, case-shaped entries
+  that drafting now steers away from (`20261102-taste-entry-form-is-chosen-by-a-test`), and a long
+  list is read as a checklist.
+- **Copy settled decisions into Taste** — not chosen: a decision record is the home of a settled
+  choice, and a second copy drifts from it.
+
+## Consequences
+
+### Positive
+- A newly set-up project can start with its owner's real overrides of the defaults.
+- Every entry rests on a reason the owner gave and passes through their yes.
+
+### Negative
+- Reading past session records costs tokens and needs the user's agreement each time.
+- A few weak entries can still reach a memory file; the batch ratification is the only filter.
+
+## Enforced by
+none — which candidates deserve an entry is judgment; the `setup-project` recipe's `taste-from-history` scenario checks it by a drive.
+
+## Not decided here
+- Whether figure-out should offer the same mining outside setup.
+
+## Source
+- Session: a `/do` run on a Manifest the user amended mid-run, 2026-11-02 (log kept locally). The drive's grade is in the pull request that adds this record.
+- Related: 20260719-taste-persists-by-offer-and-ratify, 20261012-taste-is-checked-per-call-and-captured-from-explained-reversals, 20261102-taste-entry-form-is-chosen-by-a-test, 20261102-the-seat-pass-judges-against-default-product-stances, 20260809-glossary-stays-resident-with-an-under-produced-seed

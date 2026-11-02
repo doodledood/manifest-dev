@@ -138,7 +138,8 @@ function tripPage(req, res, url, id) {
 <p>Sign in to see the places your group saved for this trip.</p><p><a href="${signinLink(url.pathname + url.search)}">Sign in</a></p>`));
   }
   const mode = url.searchParams.get("mode") === "plan" ? "plan" : "list";
-  const error = ERRORS[url.searchParams.get("error")];
+  const code = url.searchParams.get("error");
+  const error = code && Object.hasOwn(ERRORS, code) ? ERRORS[code] : "";
   const typed = url.searchParams.get("typed") || "";
   const current = (m) => (m === mode ? ' aria-current="page"' : "");
   const nav = `<nav><a href="${path}"${current("list")}>List</a><a href="${path}?mode=plan"${current("plan")}>Day plan</a></nav>`;
@@ -177,7 +178,7 @@ async function addPlace(req, res, id) {
   const form = await readForm(req);
   const mode = form.get("mode") === "plan" ? "plan" : "list";
   const back = `/trips/${id}${mode === "plan" ? "?mode=plan" : ""}`;
-  const name = (form.get("name") || "").trim();
+  const name = (form.get("name") || "").trim().replace(/\s+/g, " ");
   if (!user) {
     const kept = new URLSearchParams({ ...(mode === "plan" ? { mode } : {}), error: "session", typed: name });
     return redirect(res, signinLink(name ? `/trips/${id}?${kept}` : back));
@@ -212,7 +213,7 @@ http
     const url = new URL(req.url, `http://localhost:${PORT}`);
     const tripPath = /^\/trips\/([^/]+?)\/?(places|start)?\/?$/i.exec(url.pathname);
     const id = tripPath && tripPath[1].toLowerCase();
-    if (tripPath && !TRIPS[id]) return notFound(req, res);
+    if (tripPath && !Object.hasOwn(TRIPS, id)) return notFound(req, res);
     const route = `${req.method} ${tripPath ? `/trips/:id${tripPath[2] ? `/${tripPath[2]}` : ""}` : url.pathname}`;
     if (route === "GET /") return home(req, res);
     if (route === "GET /signin") return signinForm(req, res, url);

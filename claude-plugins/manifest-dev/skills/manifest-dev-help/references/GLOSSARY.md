@@ -316,10 +316,11 @@ that a tool makes. It exists so that the skills know which file is true when a c
 it.
 
 ### Seed
-<!-- context: 60a5d84c2225 -->
+<!-- context: ecaf90560e16 -->
 A Seed is the first version of the Glossary and the Decision Records that `/setup-project` makes
-from the history of a project. It is small on purpose, and it names what it could not find. It is a
-start, not a full record.
+from the history of a project. It also offers a few Taste entries, but only where the owner already
+gave the reason. It is small on purpose, and it names what it could not find. It is a start, not a
+full record.
 
 ### Surfaces Version
 <!-- context: 6ddec267a226 -->

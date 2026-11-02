@@ -1,6 +1,6 @@
 # Seeding from a project's history
 
-Reconstruct what the project already decided and what it calls things.
+Reconstruct what the project already decided, what it calls things, and the few steering preferences its owner has already explained.
 
 ## Sources, strongest first
 
@@ -46,6 +46,18 @@ Everything mined here lands in a file loaded on every future session, so the cou
 
 With no user available to ratify, write nothing to the glossary — report the candidate list instead and let a later session settle it.
 
+## Taste
+
+A Taste entry is a ratified personal steering preference that later sessions weigh at a call two careful people could make differently: the preference, the reason its owner gave, and when it yields, kept in a `## Taste` section of a memory file the harness loads every session. A project new to this workflow has none, so its owner's overrides reach no session until corrections capture them one at a time — though many are already explained in its history.
+
+**Only a reason the user stated.** A candidate comes from a reversal or a correction whose reason the user gave: a decision record whose reasoning is a preference rather than a constraint, a review or pull request thread where they turned a proposal down and said why, and their past session records where the host keeps them. Those records are private: ask before opening them, and read them only on a yes. A reason you inferred never founds an entry — the same rule *When the reasoning is gone* applies to records.
+
+**Overrides first.** The workflow already ships defaults — figure-out's default product stances (`../../figure-out/references/SEAT.md` → *Default stances*) and each skill's own defaults. An entry earns its place where the user leans differently from one of them. Offer nothing a shipped default already says, and nothing a decision record already settles: that record is the choice's home, and a second copy drifts.
+
+**Few, and stated as principles.** Offer at most five, ranked by how many later calls each would steer. Draft each in the boundary form `../../figure-out/references/TASTE.md` → *Drafting (boundary form)* gives — a preference that carries to calls never discussed, not the details of the case that prompted it — and propose its write target as *Scope and write target* there says.
+
+**Ratify, don't write.** Present the candidates as one batch, each with the source it came from. Write only what the user accepts, into the `## Taste` section of the memory file they pick, changing nothing outside it. With no user available to ratify, write nothing — report the candidates instead.
+
 ## Reporting
 
-Close the run by saying what was recovered and what was not: which sources carried usable rationale, how many records were written, how many carry unrecovered reasoning, and which parts of the project's history yielded nothing. Understating a thin seed is the failure to avoid — a user who knows it is thin will grow it.
+Close the run by saying what was recovered and what was not: which sources carried usable rationale, how many records were written, how many carry unrecovered reasoning, and which parts of the project's history yielded nothing. For Taste, say which candidates were offered and from which sources, which the user accepted and the file each was written to, and what was left out and why — a default already said it, a record already settles it, or no reason was stated. Understating a thin seed is the failure to avoid — a user who knows it is thin will grow it.

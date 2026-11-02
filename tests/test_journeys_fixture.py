@@ -206,6 +206,8 @@ def test_twin_says_why_a_name_was_rejected(fixed: App) -> None:
     assert "already saved" in page and page.count("Belém Tower") == 1
     page = app.post("/trips/lisbon/places", name="x" * 81, mode="list")[1]
     assert "up to 80 characters" in page
+    page = app.post("/trips/lisbon/places", name="LX  Factory", mode="list")[1]
+    assert "already saved" in page and page.count("<li>LX Factory</li>") == 1
 
 
 def test_twin_gives_an_unknown_link_a_way_out(fixed: App) -> None:
@@ -214,6 +216,11 @@ def test_twin_gives_an_unknown_link_a_way_out(fixed: App) -> None:
     assert missing.value.code == 404
     assert 'href="/signin"' in missing.value.read().decode()
     assert fixed.get("/trips/LISBON/")[0] == "/trips/lisbon"
+    for key in ("constructor", "__proto__"):
+        with pytest.raises(urllib.error.HTTPError) as inherited:
+            _signed_in(fixed).get(f"/trips/{key}")
+        assert inherited.value.code == 404
+    assert fixed.get("/")[0] == "/"
 
 
 def test_twin_shows_an_empty_trip(fixed: App) -> None:

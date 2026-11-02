@@ -138,7 +138,7 @@ What a run found and did not fix: unfixed lock hits, refactor flags from workaro
 _Avoid_: Tech debt (too broad), TODO, backlog.
 
 **Seed**:
-The deliberately under-produced vocabulary and decision corpus `/setup-project` reconstructs from a project's history — a starting point that names what it could not recover, never a complete record.
+The deliberately under-produced vocabulary and decision corpus `/setup-project` reconstructs from a project's history, with the few Taste entries it offers from reasons the owner already stated — a starting point that names what it could not recover, never a complete record.
 _Avoid_: Import, migration, backfill.
 
 **Progressive Disclosure**:

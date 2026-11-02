@@ -50,22 +50,28 @@ session that saw each output under a letter label only.
 | `d29` a shared trip page, Manifest after / before | PASS / FAIL — after, a gate has the evaluator derive the person's journeys; before, one fixed two-friend script |
 | `d30` a library option (guard), after / before | PASS / PASS — no journeys gate in either |
 | journeys gate on the seeded fixture | FAIL, naming all five planted defects and four more |
-| journeys gate on the fixed fixture | FAIL — none of the five planted defects; seven other defects the fixed twin has |
+| journeys gate on the fixed fixture, three rounds | FAIL each time, never on a planted defect: seven other real defects, then three, then one |
 | the before Manifest's own gates on the seeded fixture | FAIL, naming all five planted defects |
 
 The Manifest written before this change already carried an end-to-end gate that had two friends
 plan one trip, and that gate found all five planted defects. On this fixture the journeys gate
 found the same five and four more — an unknown trip with no way out, a rejected name with no
 message, an add that fails offline with no help, and the empty and crowded trips it could not
-reach — so it widened what was walked, but the planted defects alone show no uplift.
+reach — so it widened what was walked, but the planted defects alone show no uplift. Both seeded
+arms ran on the first version of the twin; the five planted defects are the same in every version,
+as the fixture's tests show.
 
 On the fixed twin the gate walked signed-out arrival, the return after sign-in, the day-start
-setting and two friends adding at once, found each working, and still returned FAIL on defects
-the twin has: with about 30 places the plan lists times such as "25:00", and an add sent with no
-session is saved while the page asks the person to sign in. Both are in
-`verification/fixtures/journeys-app/server.js` (`tripPage` adds two hours per place with no cap;
-`addPlace` checks no session). So the gate raised no false alarm; the twin is not free of the
-defects an open gate walks into, and a PASS arm needs a twin hardened against them.
+setting and two friends adding at once, found each working, and still returned FAIL on defects the
+twin really had. The first round found seven, among them a plan listing "25:00" with about 30
+places and an add saved with no session. With those fixed, the second found three narrower ones —
+a server error on Add landing on "No trip here", an offline save of the start time showing a blank
+page, Back after a corrected error showing a stale list. With those fixed, the third found one: a
+place saved twice when its name differs only by extra spaces between words. Each was checked in
+`verification/fixtures/journeys-app/server.js` and is now fixed there and pinned by
+`tests/test_journeys_fixture.py`. In three rounds the gate raised no false alarm, and each round
+found less; an open gate walks into whatever the twin still gets wrong, so a PASS arm needs a
+twin with nothing left for it to find.
 
 ## Alternatives Considered
 
@@ -89,8 +95,8 @@ defects an open gate walks into, and a PASS arm needs a twin hardened against th
   rather than repairing them.
 - No uplift measured on planted defects: an end-to-end gate the specification already asks for
   catches them too.
-- The fixture's fixed twin fails the gate on defects of its own, so the recipe's
-  `journeys-gate-on-the-fixed-app` scenario cannot pass until the twin is hardened.
+- The recipe's `journeys-gate-on-the-fixed-app` scenario has not passed: its last run found a
+  defect the twin had, since fixed and not driven again.
 
 ## Enforced by
 partly — `tests/test_journeys_fixture.py` proves the fixture's five defects exist and its twin fixes them; whether `/define` emits the gate and whether an evaluator finds them is judgment, measured by the `define` recipe's drives.

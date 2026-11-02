@@ -39,9 +39,9 @@
 -  }
 +  if (!user) return send(res, 200, page(trip.title, ""));
    const mode = url.searchParams.get("mode") === "plan" ? "plan" : "list";
-   const error = ERRORS[url.searchParams.get("error")];
-   const typed = url.searchParams.get("typed") || "";
-@@ -158,7 +154,7 @@
+   const code = url.searchParams.get("error");
+   const error = code && Object.hasOwn(ERRORS, code) ? ERRORS[code] : "";
+@@ -159,7 +155,7 @@
      const { days, unplanned } = planDays(trip, trip.places, hour);
      const planned = days
        .map((dayPlaces, d) => `<div class="day"><h3>${dayLabel(trip, d)}</h3><ul>${dayPlaces
@@ -50,7 +50,7 @@
          .join("")}</ul></div>`)
        .join("");
      const rest = unplanned.length
-@@ -189,7 +185,8 @@
+@@ -190,7 +186,8 @@
    if (!name) return fail("empty");
    if (name.length > MAX_NAME) return fail("long");
    if (trip.places.some((p) => p.toLowerCase() === name.toLowerCase())) return fail("duplicate");

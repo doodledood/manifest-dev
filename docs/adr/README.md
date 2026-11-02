@@ -247,5 +247,6 @@
 | 2026-11-02 | [An experience choice goes to the user as concrete options or variants, and a reason given in reply resets the recommendation](20261102-experience-choices-go-to-the-user-as-options-or-variants.md) | Accepted | figure-out |
 | 2026-11-02 | [A feature a person uses is gated on being driven through that person's journeys, which the evaluator derives](20261102-features-a-person-uses-are-driven-through-their-journeys.md) | Accepted | define |
 | 2026-11-02 | [figure-out looks from the person's seat in a separate pass before it names a read](20261102-figure-out-looks-from-the-persons-seat-in-a-fresh-pass.md) | Accepted | figure-out |
+| 2026-11-02 | [setup-project's seed offers a few Taste entries mined from reasons the owner already stated](20261102-setup-offers-taste-entries-mined-from-stated-reasons.md) | Accepted | Project context |
 | 2026-11-02 | [A Taste entry states a general principle and carries no case line](20261102-taste-entry-form-is-chosen-by-a-test.md) | Accepted | figure-out |
 | 2026-11-02 | [The seat pass judges each choice against eleven default product stances that Taste and project rules override](20261102-the-seat-pass-judges-against-default-product-stances.md) | Accepted | figure-out |
