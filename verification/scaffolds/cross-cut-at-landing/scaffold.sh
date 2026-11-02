@@ -2,7 +2,8 @@
 # A Shelfnote project whose file store holds one Ticket ready to land on its own branch. The
 # Ticket routes the `list` and `overdue` reports through a new `emit()` helper that prefixes the
 # club name, and sets the convention that every command's output goes through it. After the
-# Ticket's run finished, `main` moved: it landed a new `returned` command that prints directly.
+# Ticket's run finished, `main` moved: it landed a members module with three new reports that print
+# directly.
 # The run-ticket recipe's cross-cut scenario.
 set -euo pipefail
 git rev-parse --git-dir >/dev/null 2>&1 || git init -q
@@ -160,29 +161,62 @@ EOF
 git add -A
 git commit -qm "Record run rt-2026-10-27-a: ready to land"
 
-# Meanwhile main moved: a new command that prints directly.
+# Meanwhile main moved: a members module with three new reports that print directly.
 git checkout -q main
+cat > src/members.py <<'EOF'
+from loans import LOANS
+
+
+def members():
+    for name in sorted({loan["member"] for loan in LOANS}):
+        print(name)
+
+
+def returned():
+    for loan in LOANS:
+        if loan["returned"]:
+            print(f'{loan["title"]} — returned by {loan["member"]}')
+
+
+def history(member):
+    for loan in LOANS:
+        if loan["member"] == member:
+            state = "returned" if loan["returned"] else f'due {loan["due"].isoformat()}'
+            print(f'{loan["title"]} — {state}')
+EOF
 python3 - <<'EOF'
 from pathlib import Path
 p = Path("src/shelfnote.py")
 s = p.read_text()
-s = s.replace("    print(\"usage: shelfnote.py list|overdue\", file=sys.stderr)", "    if command == [\"returned\"]:\n        for loan in LOANS:\n            if loan[\"returned\"]:\n                print(f'{loan[\"title\"]} — returned by {loan[\"member\"]}')\n        return 0\n    print(\"usage: shelfnote.py list|overdue|returned\", file=sys.stderr)")
+s = s.replace(
+    "    print(\"usage: shelfnote.py list|overdue\", file=sys.stderr)",
+    "    import members\n\n    if command == [\"members\"]:\n        members.members()\n        return 0\n"
+    "    if command == [\"returned\"]:\n        members.returned()\n        return 0\n"
+    "    if len(command) == 2 and command[0] == \"history\":\n        members.history(command[1])\n        return 0\n"
+    "    print(\"usage: shelfnote.py list|overdue|members|returned|history <member>\", file=sys.stderr)",
+)
 p.write_text(s)
 EOF
-cat > tests/test_returned.py <<'EOF'
+cat > tests/test_members.py <<'EOF'
 import unittest
 
 from test_shelfnote import run
 
 
-class Returned(unittest.TestCase):
+class MemberReports(unittest.TestCase):
+    def test_members_lists_each_member_once(self):
+        self.assertEqual(run("members"), ["Ana", "Lena", "Ravi"])
+
     def test_returned_names_each_returned_loan(self):
         self.assertEqual(run("returned"), ["Beloved — returned by Ravi"])
+
+    def test_history_shows_one_members_loans(self):
+        self.assertEqual(run("history", "Ana"), ["Middlemarch — due 2026-10-22"])
 
 
 if __name__ == "__main__":
     unittest.main()
 EOF
 git add -A
-git commit -qm "Add a returned command"
+git commit -qm "Add member reports: members, returned and history"
 git checkout -q ticket/01-club-name-on-reports

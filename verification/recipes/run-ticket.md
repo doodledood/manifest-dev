@@ -26,7 +26,7 @@ Check: read
 
 ### cross-cut
 Run: `scripts/drive-skill.sh run-ticket verification/prompts/run-ticket-cross-cut.md --scaffold verification/scaffolds/cross-cut-at-landing --max-turns 120`
-Proves: landing a Ticket marked ready while `main` moved, the run merges `main` in, finds that the new `returned` command prints without `emit()`, the convention the Ticket set, and routes `returned` through `emit()` in its own work, updating its test. It re-runs the gates, lands on `main`, and writes no follow-up Ticket for a person about `returned`.
+Proves: landing a Ticket marked ready while `main` moved, the run merges `main` in and finds that the three member reports `main` added (`members`, `returned`, `history`) print without `emit()`, the convention the Ticket set. It routes all three through `emit()` in its own work, updating their tests, re-runs the gates, lands on `main`, and writes no follow-up Ticket for a person about them.
 Check: read
 
 ## Gotchas

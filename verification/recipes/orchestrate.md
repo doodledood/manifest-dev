@@ -32,7 +32,7 @@ Check: read
 
 ### red-base
 Run: `scripts/drive-skill.sh orchestrate verification/prompts/orchestrate-red-base.md --scaffold verification/scaffolds/red-base-ticket-store --max-turns 200`
-Proves: run with `--autonomous`, the orchestrator pauses the `club` effort once with a `Paused:` line naming the failing `due_date` check on `main`, and writes exactly one Ticket in `tickets/club/` scoped to making that check pass, which the line names. Ticket `01` is neither escalated nor used to repair `due_date` in its own change. The repair Ticket's run leaves `python3 -m unittest discover -s tests` passing on `main`, and Ticket `01` runs or lands only after that.
+Proves: run with `--autonomous`, the orchestrator pauses the `club` effort once with a `Paused:` line naming the required check that fails on `main` (a renamed helper, `due_on`, whose caller still imports `due_date`), and writes exactly one Ticket in `tickets/club/` scoped to making that check pass, which the line names. Ticket `01` is neither escalated nor used to repair that caller in its own change. The repair Ticket's run leaves `python3 -m unittest discover -s tests` passing on `main`, and Ticket `01` runs or lands only after that.
 Check: read
 
 ## Gotchas
