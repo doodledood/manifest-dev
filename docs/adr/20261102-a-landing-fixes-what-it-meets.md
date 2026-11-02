@@ -39,8 +39,8 @@ to an older rule in two places:
   another Ticket, and `orchestrate` still pauses the effort once on it. A cause no code change can
   fix waits for the person, as before. A base check a code change can fix gets one repair Ticket,
   in either mode:
-  - Whenever a `Paused:` line an orchestrator wrote names no open repair Ticket for such a cause,
-    an orchestrator writes one through `ticket-up`, in that effort, scoped to making that check
+  - Whenever a `Paused:` line an orchestrator wrote names no open repair Ticket for such a cause
+    while that check still fails the same way on the base, an orchestrator writes one through `ticket-up`, in that effort, scoped to making that check
     pass on the base. `ticket-up` reuses an open Ticket that already covers it. The orchestrator
     then names the repair Ticket in the line. When the line already names another open one, or is
     gone, it closes a Ticket `ticket-up` created in that check-in as a duplicate, and leaves a

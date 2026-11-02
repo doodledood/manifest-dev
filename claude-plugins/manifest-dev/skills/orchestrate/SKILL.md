@@ -172,15 +172,16 @@ check-in:
      cause and this orchestrator's ID. A cause no code change can fix, such as that outage, waits
      for the person: raise one item naming it on the list of what waits on the person.
    - **Repair.** A base check that a code change can fix gets one repair Ticket instead. Whenever a
-     `Paused:` line naming an orchestrator names no open repair Ticket for such a cause, write one
-     through `ticket-up` in that effort, scoped to making that check pass on the base, in either
-     mode; `ticket-up` reuses an open Ticket that already covers it. Then name it in the line. When
-     the line already names another open repair Ticket, or is gone, close the Ticket `ticket-up`
-     created in this check-in as a duplicate instead; leave a reused one as it was. The repair
-     Ticket goes to the mode's grant step like any Ticket an agent wrote. In the default mode it is
-     the pause's one item on the list of what waits on the person, with its grant recommendation,
-     and joins the current plan once the person approves it; `--autonomous` launches it as soon as
-     its grant allows. It lands under that mode's rules.
+     `Paused:` line naming an orchestrator names no open repair Ticket for such a cause while that
+     check still fails the same way on the base, write one through `ticket-up` in that effort,
+     scoped to making that check pass on the base, in either mode; `ticket-up` reuses an open Ticket
+     that already covers it. Then name it in the line. When the line already names another open
+     repair Ticket, or is gone, close the Ticket `ticket-up` created in this check-in as a duplicate
+     instead; leave a reused one as it was. The repair Ticket goes to the mode's grant step like any
+     Ticket an agent wrote. In the default mode it is the pause's one item on the list of what waits
+     on the person, with its grant recommendation, and joins the current plan once the person
+     approves it; `--autonomous` launches it at its next free slot, and without Auto its run stops
+     at a ready pull request for the person. It lands under that mode's rules.
    - **Lift.** A `Paused:` line naming an orchestrator's ID keeps the check-ins going: at each,
      check its cause, and once the cause is fixed any orchestrator removes that line, never one a
      person wrote.

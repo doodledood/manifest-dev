@@ -928,6 +928,10 @@ def test_a_red_base_gets_one_repair_ticket(root: Path) -> None:
     assert "goes to the mode's grant step like any Ticket an agent wrote" in orchestrate
     assert "names no open repair Ticket for such a cause" in orchestrate
     assert (
+        "while that check still fails the same way on the base, write one"
+        in orchestrate
+    )
+    assert (
         "it is the pause's one item on the list of what waits on the person"
         in orchestrate
     )
