@@ -49,7 +49,7 @@ test that fails still fails a deterministic gate, and the run fixes it. They com
 sources only:
 
 - The path of the change the Manifest asks for: the checks it runs, and the code it changes, calls
-  into or reads to do its job.
+  into or reads to make that change.
 - The *Pre-existing* list that `review-code` returns when its caller asks. The user ruled that
   `/do` asks on the first full look of each gate that activates `review-code`, and that `review-pr`
   does not ask. The list is outside the verdict and the summary counts. A follow-up review never
@@ -58,7 +58,8 @@ sources only:
 
 Fixes do not chain. What fixing one of them, or repairing a finding, runs into joins only when it
 blocks that fix or a check fails. The same holds for what a review raises about code that only such
-a fix or repair touched. Path issues are fixed as part of the build. Issues from first full looks
+a fix or repair touched. A failing check is one such issue: code read or edited only to fix it is what
+that fix runs into, not the path. Path issues are fixed as part of the build. Issues from first full looks
 and review are fixed in a batch. Then each judgment gate whose subject the batch changed takes one
 continued look. That look reports only outstanding findings and failures the batch introduced or
 exposed, and it lists no pre-existing issues. Each pre-existing fix lands as its own commit, and the

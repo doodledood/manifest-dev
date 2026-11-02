@@ -129,12 +129,13 @@ down on the executor's judgment, and a summary claim is not evidence.
 Every pull request leaves the repository better. A pre-existing issue the work meets, related to the
 change or not, and a finding below a gate's bar are build work, never a verdict: neither fails a
 judgment gate nor starts a new full look. They come from three places only: the path of the change
-the Manifest asks for — the checks it runs and the code it changes, calls into or reads to do its
-job; the *Pre-existing* list `review-code` returns when asked, which you ask for on the first full
+the Manifest asks for — the checks it runs and the code it changes, calls into or reads to make that
+change; the *Pre-existing* list `review-code` returns when asked, which you ask for on the first full
 look of each gate that activates `review-code`; and review feedback on the pull request
 (`references/EXTERNAL_REVIEW.md`). Making a disposable draft meets none of them. What fixing one of them or repairing a finding runs into, and
 what a review raises about code that only such a fix or repair touched, joins only when it blocks
-that fix or a check fails, so fixes do not chain. Fix the pre-existing issues; apply the below-bar
+that fix or a check fails, so fixes do not chain. A failing check is one such issue: code read or
+edited only to fix it is what that fix runs into, not the path. Fix the pre-existing issues; apply the below-bar
 findings of a first full look that improve the work, and dismiss the rest with a reason. What the
 path brings is fixed as part of the build. What first full looks and review bring is fixed in a
 batch, not one at a time; then each judgment gate whose subject the batch changed takes one
@@ -142,7 +143,8 @@ continued look, which reports only outstanding findings and failures the batch i
 exposed. A continued look lists no pre-existing issues, and a below-bar finding it reports is left,
 neither applied nor handed over: it re-samples taste on a repair, and chasing it is a loop that
 never settles. Each pre-existing fix lands as its own commit, and the pull request lists it as fixed
-on the way.
+on the way. These fixes are work the Manifest requires under any scope ceiling it carries, whatever
+that ceiling's wording.
 
 A gigantic issue stays out: one whose fix is a project of its own, needing its own definition
 of done — a design decision someone should weigh, a migration or rollout beyond this repository's
@@ -166,7 +168,8 @@ types, tests, build — whether or not the change touched what fails. A check th
 failure of the product or its harness: fix it. Never reach green by removing, skipping or loosening
 a test, unless the test is useless or tautological; then the pull request description names it and
 why. A failing check whose fix is gigantic blocks completion: escalate it as a blocker, never report
-the run as done.
+the run as done. A run that changes no project file, such as one that only makes a disposable draft,
+owes none of this.
 
 When external review feedback arrives, directly or through `check-pr`, load
 `references/EXTERNAL_REVIEW.md` before acting on it.

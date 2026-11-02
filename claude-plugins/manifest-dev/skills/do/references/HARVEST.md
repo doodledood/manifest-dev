@@ -20,8 +20,8 @@ mistake fails for every later contributor, with or without this workflow.
   fails only when a change adds more. Noisy hits across the repository mean the scope or the rule is wrong, not that the hits
   are debt.
 - **Across the repository:** run the lock everywhere and fix its hits on this pull request, in a
-  commit of their own; report a cleanup instead only when it is gigantic, as `../SKILL.md` →
-  *What holds for every gate* defines it. A lock local to the fix ships with it.
+  commit of their own; report a cleanup instead only when it is gigantic, or the project's own rules keep fixes unrelated
+  to the change out, as `../SKILL.md` → *What holds for every gate* says. A lock local to the fix ships with it.
 - **The record:** where a decision record's decision is what the lock holds, update the record's
   `Enforced by` line, and give the check a comment citing the record.
 - **Friction becomes a command:** where the run had to start something by hand or add a print to

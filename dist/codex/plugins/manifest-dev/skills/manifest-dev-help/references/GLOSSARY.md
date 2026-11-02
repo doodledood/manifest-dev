@@ -389,7 +389,7 @@ When nobody can agree, for example in an unattended run, the run leaves the reci
 the run that it owes in its report. The project can change this rule.
 
 ### Fit to Trust
-<!-- context: 3a26fb8bc11b -->
+<!-- context: b1f38546f821 -->
 Fit to Trust says if you can rely on a check for what a change touches. The check can be a recipe
 in a harness, or a test, a script or a checklist step of the project. The jobs that the check does
 decide it, not the parts that it has. The jobs are:
@@ -404,14 +404,16 @@ decide it, not the parts that it has. The jobs are:
   that change.
 
 When a check that the work meets is not fit to trust, the run repairs it. Only a repair that is a
-project of its own stays as Debt.
+project of its own stays as Debt. A repair also stays as Debt if the rules of your project keep
+unrelated fixes out of a pull request.
 
 ### Lock
-<!-- context: 4c0dec5d5053 -->
+<!-- context: 7a621bd4d564 -->
 A Lock is a check that a run adds after a correction, so that the same kind of mistake fails for
 each later contributor. It can be a type, a lint rule, a test, or one place that all callers go
 through. It has a declared scope. The run fixes the existing violations that it finds. It reports them as
-Debt only when the fix is a project of its own.
+Debt only when the fix is a project of its own. It also reports them as Debt if the rules of your
+project keep unrelated fixes out of a pull request.
 
 ### Debt
 <!-- context: 049e1cfd4f03 -->

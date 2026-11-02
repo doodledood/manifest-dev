@@ -22,7 +22,8 @@ its own `--help`.
 - **Drift:** when a run fails because the recipe is wrong about the product, repair the recipe,
   and remove its `Drift (…)` line when the repair lands. A recipe the change does not touch that
   the run finds drifting is repaired too, in a commit of its own; only where that repair is
-  gigantic (`../SKILL.md` → *What holds for every gate*) does it get a dated
+  gigantic, or the project's own rules keep fixes unrelated to the change out (`../SKILL.md` →
+  *What holds for every gate*), does it get a dated
   `Drift (YYYY-MM-DD): <what differs>` line, reported as debt — while no gate and no whole-tree
   check rests on it; otherwise it is a blocker.
 - **Unfit harness:** when the harness is not fit to trust for what the work touches

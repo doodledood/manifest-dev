@@ -755,6 +755,11 @@ CONVERGENCE = {
     "do/SKILL.md": (
         "neither fails a judgment gate nor starts a new full look",
         "joins only when it blocks that fix or a check fails, so fixes do not chain",
+        "the code it changes, calls into or reads to make that change;",
+        "A failing check is one such issue: code read or edited only to fix it is what that fix runs"
+        " into, not the path.",
+        "These fixes are work the Manifest requires under any scope ceiling it carries, whatever"
+        " that ceiling's wording.",
         "A continued look lists no pre-existing issues, and a below-bar finding it reports is"
         " left, neither applied nor handed over",
     ),
