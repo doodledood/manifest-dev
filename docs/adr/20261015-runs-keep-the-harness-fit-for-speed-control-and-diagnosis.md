@@ -1,7 +1,7 @@
 # ADR: Runs keep the harness fit to trust for speed, control and diagnosis, through one list
 
 ## Status
-Accepted — amended by 20261019-a-check-counts-only-after-it-was-seen-to-fail: *Fit to trust* gains a job, that the check was seen to fail on a scratch break of what it proves; amended by 20261031-time-lines-are-removed-and-run-time-is-only-reported: the *fast enough* job is removed, and a slow check is friction to fix, never a reason the check cannot be trusted
+Accepted — amended by 20261019-a-check-counts-only-after-it-was-seen-to-fail: *Fit to trust* gains a job, that the check was seen to fail on a scratch break of what it proves; amended by 20261031-time-lines-are-removed-and-run-time-is-only-reported: the *fast enough* job is removed, and a slow check is friction to fix, never a reason the check cannot be trusted; amended by 20261028-every-pull-request-fixes-what-its-work-meets-and-verification-converges: a check the work meets that is not fit to trust is repaired, and only a gigantic repair is reported as debt, friction included
 
 ## Area
 define / do

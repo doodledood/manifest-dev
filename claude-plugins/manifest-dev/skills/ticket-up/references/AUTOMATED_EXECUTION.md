@@ -84,8 +84,8 @@ updated in place by a later attempt:
 - evidence that the definition of done holds, with the gate evidence and the head commit;
 - branch, commit, pull-request, deployed-artifact or recorded-answer references that exist;
 - follow-up Ticket links, or a clear statement that none were warranted;
-- the debt `/done` named, one line each, so it outlives the runner even where no pull request
-  carries it;
+- the issues fixed on the way, and the debt `/done` named, one line each, so they outlive the
+  runner even where no pull request carries them;
 - the flagged offers, agent-decided records and drafted Taste entries `/done` named, each with
   what accepting or reviewing it would change;
 - the run's material decisions, each reopened decision record first, then the user's calls, each with the alternative not taken and

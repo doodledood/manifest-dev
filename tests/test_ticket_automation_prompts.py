@@ -449,7 +449,10 @@ def test_orchestrate_tickets_up_debt_and_grants_only_where_it_may() -> None:
     run_ticket = flat(skill_text(SOURCE_SKILLS, "run-ticket"))
     github = ticket_ref(SOURCE_SKILLS, "GITHUB_STORE.md")
 
-    assert "**Gather the debt** — what a run found and did not fix" in text
+    assert (
+        "**Gather the debt** — what a run found and could not fix on its pull request"
+        in text
+    )
     assert "of each Ticket that landed" in text
     assert "skip what an open Ticket already covers" in text
     assert "through `ticket-up`, each linked to its source" in text

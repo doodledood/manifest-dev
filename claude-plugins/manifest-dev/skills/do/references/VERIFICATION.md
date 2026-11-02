@@ -19,20 +19,26 @@ its own `--help`.
   describes; otherwise update it, leave it unrun, and name the run it owes in the report. A
   change to a prompt that leaves its measured eval cases unrun marks them `stale`; unmeasured
   cases stay `unmeasured`.
-- **Drift:** when a run fails because the recipe is wrong about the product, repair the recipe
-  within scope, and remove its `Drift (…)` line when the repair lands. When a recipe the change
-  does not touch is found drifting, add a dated `Drift (YYYY-MM-DD): <what differs>` line to it,
-  and leave the repair to the next run that touches it.
+- **Drift:** when a run fails because the recipe is wrong about the product, repair the recipe,
+  and remove its `Drift (…)` line when the repair lands. A recipe the change does not touch that
+  the run finds drifting is repaired too, in a commit of its own; only where that repair is
+  gigantic, or the project's own rules keep fixes unrelated to the change out (`../SKILL.md` →
+  *What holds for every gate*), does it get a dated
+  `Drift (YYYY-MM-DD): <what differs>` line, reported as debt — while no gate and no whole-tree
+  check rests on it; otherwise it is a blocker.
 - **Unfit harness:** when the harness is not fit to trust for what the work touches
-  (`../../setup-project/references/VERIFICATION_HARNESS.md` → *Fit to trust*), repair it within
-  scope, and report the rest as debt.
+  (`../../setup-project/references/VERIFICATION_HARNESS.md` → *Fit to trust*), repair it. A
+  gigantic repair is debt while the check still runs and passes, and a blocker once a check a gate
+  or the whole tree rests on fails or cannot run (`../SKILL.md` → *What holds for every gate*).
 - **Run time:** follow `../../setup-project/references/VERIFICATION_HARNESS.md` → *Run time*.
-  When a check the work touches has grown slow, find where the time went from the runner's own
-  timings and speed it up where the cause is in what the change added, such as a slow new test or
-  a sleep, or in code it already touches; otherwise say in the report which check is slow and
-  where the time goes.
+  When a check the work meets has grown slow, find where the time went from the runner's own
+  timings and speed it up — a slow new test, a sleep, waste in shared code alike; where that is
+  gigantic, say in the report which check is slow and where the time goes. Slowness is never debt
+  and never a blocker.
 - **A stand-in is not the target:** where a check runs on a stand-in for where the work will run —
   a cloud container that already has tools a user's machine lacks, a fixture in place of the real
   service — the report names, as unverified, what the stand-in provided that the target will not.
-- **Never weaken a check** to make it pass or run faster. A run that fails because the product
-  is broken is reported as debt with its evidence.
+- **Never weaken a check** to make it pass or run faster; only a useless or tautological test may
+  go, named in the pull request description with why. A check that fails because the product
+  is broken, or that cannot run, is fixed as `../SKILL.md` → *What holds for every gate* says;
+  only a gigantic fix is a blocker, escalated with its evidence.

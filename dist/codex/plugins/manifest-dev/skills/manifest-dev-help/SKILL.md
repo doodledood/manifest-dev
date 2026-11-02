@@ -66,8 +66,8 @@ message that you send during `/do` changes the Manifest, and the run continues. 
 each gate has evidence, or when a person must act.
 
 When the work goes into a pull request, its description shows the change working. The top tells
-what changed and why, how the run showed that it works, the decisions, and the Debt left. Screenshots
-show a change that you can see.
+what changed and why, how the run showed that it works, the decisions, and the Debt left. It also
+lists the problems that the run fixed on the way. Screenshots show a change that you can see.
 
 ## The autonomy ladder
 
@@ -132,7 +132,7 @@ or `/skill:name`.
   checks. Then `/do` uses those checks.
 - A Ticket holds one unit of work. `/ticket-up` writes it, `/next-ticket` selects it, and
   `/run-ticket` does it. `/orchestrate` runs many Tickets and lands them.
-- When a run corrects a mistake, it adds a Lock. What it finds and does not fix is Debt. The next
+- When a run corrects a mistake, it adds a Lock. What it finds and cannot fix in its pull request is Debt. The next
   run that changes that code offers to fix the Debt.
 
 ## Why it works this way

@@ -13,7 +13,7 @@ Takes one exact Ticket, recovers any earlier attempt from the Manifest and progr
 - `/run-ticket <ticket reference>`.
 - Phrases its description matches: "run this ticket end to end", orchestrate, an agent runner or a person supplying an issue.
 - `orchestrate`, which starts it in its own session for each Ticket it runs.
-- It reconciles an earlier attempt's record, branch and pull request; it uses check-pr before marking the work ready; separate findings go to ticket-up as follow-ups.
+- It reconciles an earlier attempt's record, branch and pull request; it uses check-pr before marking the work ready; it fixes the pre-existing issues its work meets on the pull request, and only a gigantic one or new work goes to ticket-up as a follow-up.
 
 A Question invokes inquiry only and returns its Read on the same Ticket. A repeated invocation at an unchanged drafted-answer wait does no new work. The implementation scenario below exercises the Shaped route, not the Question route.
 

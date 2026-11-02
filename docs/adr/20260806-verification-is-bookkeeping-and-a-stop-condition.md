@@ -1,7 +1,7 @@
 # ADR: `/do`'s verification layer is bookkeeping and a stop condition, not a checking aid
 
 ## Status
-Accepted
+Accepted; amended by 20261028-every-pull-request-fixes-what-its-work-meets-and-verification-converges: findings beneath a gate's bar are applied or dismissed with a reason on a first full look and left on a continued look, never handed to the user
 
 ## Area
 do

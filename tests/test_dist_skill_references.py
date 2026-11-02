@@ -747,6 +747,72 @@ def test_do_log_prompts_preserve_journal_boundaries() -> None:
         assert "verifier-agent lookup data" not in text, path
 
 
+# Holds docs/adr/20261028-every-pull-request-fixes-what-its-work-meets-and-verification-converges.md:
+# pre-existing issues and below-bar findings are fixed as build work, and verification still
+# converges because neither can fail a verdict, fixes do not chain, and no continued look feeds
+# them back in.
+CONVERGENCE = {
+    "do/SKILL.md": (
+        "neither fails a judgment gate nor starts a new full look",
+        "joins only when it blocks that fix or a check fails, so fixes do not chain",
+        "the code it changes, calls into or reads to make that change;",
+        "A failing check is one such issue: code read or edited only to fix it is what that fix runs"
+        " into, not the path.",
+        "These fixes are work the Manifest requires under any scope ceiling it carries, whatever"
+        " that ceiling's wording.",
+        "A continued look lists no pre-existing issues, and a below-bar finding it reports is"
+        " left, neither applied nor handed over",
+    ),
+    "do/references/EXTERNAL_REVIEW.md": (
+        "one that arrives on a repair, including distinct optional nits from a reviewer that runs"
+        " after every commit, is declined",
+        "pre-existing issue raised about code that only a repair or a fix on the way touched joins"
+        " only when it blocks that repair or a check fails",
+    ),
+    "review-code/SKILL.md": (
+        "They are not findings: they never count toward the verdict",
+        "Leave the section out unless asked, and on every follow-up even when asked",
+    ),
+    "define/references/SCHEMA.md": (
+        "the fixes every run owes on its pull request — a pre-existing issue the work met whose fix"
+        " is not a project of its own",
+    ),
+}
+
+
+# Holds the yield in docs/adr/20261028-every-pull-request-fixes-what-its-work-meets-and-verification-converges.md:
+# a project's own rule that keeps unrelated fixes out of a pull request wins over the default, and
+# never covers a failing check that completion rests on.
+PROJECT_RULE_YIELD = (
+    "keep fixes unrelated to the change out of a pull request, follow them: report such an issue as"
+    " debt instead of fixing it",
+    "That never covers a failing check completion rests on, which stays the run's to fix or to"
+    " escalate as a blocker",
+)
+
+
+def test_a_projects_own_rule_keeps_unrelated_fixes_out() -> None:
+    for skills in (
+        ROOT / "claude-plugins/manifest-dev/skills",
+        DIST / "codex/plugins/manifest-dev/skills",
+    ):
+        path = skills / "do/SKILL.md"
+        text = re.sub(r"\s+", " ", path.read_text(encoding="utf-8"))
+        for clause in PROJECT_RULE_YIELD:
+            assert clause in text, f"{path} lost: {clause!r}"
+
+
+def test_fixing_what_the_work_meets_keeps_verification_converging() -> None:
+    for skills in (
+        ROOT / "claude-plugins/manifest-dev/skills",
+        DIST / "codex/plugins/manifest-dev/skills",
+    ):
+        for name, clauses in CONVERGENCE.items():
+            text = re.sub(r"\s+", " ", (skills / name).read_text(encoding="utf-8"))
+            for clause in clauses:
+                assert clause in text, f"{skills / name} lost: {clause!r}"
+
+
 def test_define_task_gates_do_not_select_evaluator_topology() -> None:
     task_roots = [
         ROOT / "claude-plugins/manifest-dev/skills/define/tasks",
