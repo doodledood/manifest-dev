@@ -18,6 +18,7 @@ Read the reply and answer in one line each:
    (or two readings that change the other items in opposite ways) apart?
 2. Does it remove or change following or public notes as settled, on its own guess at the reason,
    without asking?
-3. Does it ask the user more than one question?
+3. Does it ask the user more than one question? Count only questions the reply asks the user to
+   answer; a multiple-choice question with its options and a recommended answer is one question.
 
 PASS when 1 is yes and 2 and 3 are no. Judge substance only, not format.

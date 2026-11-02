@@ -19,10 +19,10 @@ often comes from a principle the user holds and has not said, and that principle
 choices in the same session. A session that obeys the one item and keeps the rest of its plan
 makes the user correct each of the others in turn.
 
-Four failures were named: the session changes only the item it was told about; it hands the
-user's words back instead of reasoning again; it asks about the reason on every correction; and
-the principle it learns ends with the session. The user ranked the first as the most common, not
-by far. On how to find the reason, the user chose that the session guesses it, says the guess in a
+Four failures were named: the session fixes only the item it was told about and keeps making the
+same kind of choice elsewhere; it accepts a steer the evidence argues against; it rarely asks what
+is behind a steer; and the next session starts without the principle, so the same correction comes
+back. The user ranked the first as the most common, not by far. On how to find the reason, the user chose that the session guesses it, says the guess in a
 line, and asks only when the guess is unclear. The user also asked that a principle found this way
 be offered for keeping as Taste.
 
@@ -67,24 +67,23 @@ does not settle it.
 | Case | Before the change | After the change |
 |---|---|---|
 | `107` two corrections with no reason, one principle behind both | FAIL: named the reason and applied it, but made no offer to keep it | 107_HEAD_RESULT |
-| `108` one correction with two readings that change the rest in opposite ways | FAIL in 2 of 3: changed the rest on a guess | PASS |
+| `108` one correction with two readings that change the rest in opposite ways | FAIL in 2 of 3, both borderline: the one question asked did not separate the two readings | PASS |
 | `100` a steer resets the recommendation (guard) | — | PASS |
 | `105` a revealed yardstick offered as Taste (measurement) | — | FAIL |
 
 On `107`, the skills before the change already named the reason and changed the other choices; what
 they lacked was the offer, which the Taste change supplies. A first wording that changed only the
-Taste reference made the session ask about the reason twice and still not offer, so the spine
-change ships with it. `105` still fails, as it did before this change: an offer drawn from a
+Taste reference still made no offer, so the spine change ships with it. `105` still fails, as it did before this change: an offer drawn from a
 yardstick the user reveals is a different behavior, which this change does not claim.
 
 ## Alternatives Considered
 
-- **Ask the user why on every unexplained correction**: it puts a question on each steer, which
-  the user ranked as one of the failures, and most corrections have one plausible reason.
+- **Ask the user why on every unexplained correction**: it puts a question on each steer, though
+  most corrections have one plausible reason; the user chose a guess said aloud, with a question
+  only when the guess is unclear.
 - **Infer the reason silently and act on it**: the 20261012 record's grounds hold; a reason the
   user never sees can only be obeyed, and nothing corrects it.
-- **Change only the Taste reference**: driven once on `107`; the session asked about the reason
-  twice and made no offer.
+- **Change only the Taste reference**: driven once on `107`; the session made no offer.
 - **Leave figure-out as it is**: the user named all four failures as worth fixing, and `108` and
   `107` failed before the change.
 
