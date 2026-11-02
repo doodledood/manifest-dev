@@ -1103,6 +1103,25 @@ def test_a_turn_that_errors_ends_the_drive_before_the_next_turn(
     assert [c["args"][-1] for c in calls(tmp_path)] == ["one", "two"]
 
 
+def test_a_turn_that_ends_twice_keeps_its_last_reply_as_that_turns(
+    tmp_path: Path, toolbox: Path
+) -> None:
+    # A background task finishing wakes the session again inside one turn, so a turn can carry
+    # two results; the turn's reply is its last, and the next turn's replies stay its own.
+    prompt = tmp_path / "prompt.md"
+    prompt.write_text("one\n<!-- next turn -->\ntwo\n", encoding="utf-8")
+    first = turn("waiting on the agent", 0.1) + turn("agent done, here it is", 0.2)[1:]
+    transcripts = [lines(first), lines(turn("second reply", 0.3))]
+    result = drive(
+        setup(tmp_path, toolbox, STANDIN_TRANSCRIPTS=json.dumps(transcripts)), prompt=prompt
+    )
+    assert result.returncode == 0, result.stdout + result.stderr
+    (summary,) = (tmp_path / "store" / "figure-out").glob("*/summary.json")
+    recorded = json.loads(summary.read_text(encoding="utf-8"))
+    assert recorded["turn_replies"] == ["agent done, here it is", "second reply"]
+    assert recorded["cost_usd"] == 0.3
+
+
 def test_a_prompt_with_an_empty_turn_starts_no_session(
     tmp_path: Path, toolbox: Path
 ) -> None:

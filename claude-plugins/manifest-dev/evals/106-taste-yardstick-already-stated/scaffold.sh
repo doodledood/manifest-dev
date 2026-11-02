@@ -21,9 +21,9 @@ reads it.
 - **Findings people act on.** A finding names the line, the problem and why it matters; vague
   findings are noise.
 - **Runs on our own infrastructure.** Code never leaves our accounts.
-- **Quality first.** Review quality decides; cost and speed bind second to it. Sift stays cheap
-  enough to run on every pull request and fast enough that nobody waits on it, and neither is
-  ever bought with quality.
+- **Earns its cost.** Anything Sift adds to every pull request or every night — another pass,
+  another check, another message — earns its place by what engineers get from it, shown on our
+  own pull requests, weighed against the time and money it adds.
 MD
 cat > sift/review.py <<'PY'
 def review(diff: str) -> list[dict]:

@@ -175,7 +175,7 @@ Check: read
 
 ### taste-yardstick-already-stated
 Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/106-taste-yardstick-already-stated/prompt.md --scaffold claude-plugins/manifest-dev/evals/106-taste-yardstick-already-stated`
-Proves: the same session in a project whose North Star already states the measure: the session names that line, says it did not apply it, proposes a check that would have surfaced it, and offers no Taste entry — the case's grader `names-the-line-it-missed`.
+Proves: the same session in a project whose North Star already states the measure (*Earns its cost*): the session names that line, says it did not apply it, proposes a check that would have surfaced it, and offers no Taste entry — the case's grader `names-the-line-it-missed`.
 Check: read
 
 ### seat-not-for-backend-work

@@ -21,8 +21,6 @@ Passing the gate makes a candidate eligible, not offered — an offer must also 
 
 **Per-turn:** when the signal is unmistakable — the same pushback or the same yardstick has recurred, the user states a standing preference in so many words, or the user reverses a call and says why — and the entry is consequential enough to repay the interruption, offer immediately, while the instance is concrete. **Session-end sweep:** before the session closes (before naming the read), review for candidates that accumulated without individually clearing the per-turn bar; batch any that now clear the gate into one offer. Anything below the gate: keep working, don't offer.
 
-**Already stated in the project.** Where a loaded project line — the North Star, the context file, a decision record — already states the principle, offer no entry: a second copy only drifts from the first. Say which line states it and that this session did not apply it, and propose a check that would have surfaced it, such as a probe or a gate.
-
 ## Drafting (boundary form)
 
 A taste entry is a prompt line that will ride in every future session, so draft it as one: invoke the prompt-engineering skill if it is available; otherwise apply its core discipline inline — keep the line only where it carries something the model would not reach on its own, and check it holds at the edges. Boundary form is required:
@@ -46,7 +44,9 @@ Write into a marked `## Taste` section of the target file, creating the section 
 
 ## The offer
 
-Name the observed pattern, show the drafted entry verbatim, name the scope. For an entry drawn from one reversal, also ask whether it is a standing preference or this case only; "this case only" is a no. Only the user's explicit yes writes; silence, deflection, or a topic change is a no. Don't re-offer a declined candidate in the same session.
+First read the loaded project lines — the North Star, the context file, the decision records — for the principle. Where one already states it, offer no entry: a second copy only drifts from the first. Quote that line, say this session did not apply it, and propose a check that would have surfaced it, such as a probe or a gate.
+
+Otherwise name the observed pattern, show the drafted entry verbatim — the user ratifies words, not an idea — and name the scope. For an entry drawn from one reversal, also ask whether it is a standing preference or this case only; "this case only" is a no. Only the user's explicit yes writes; silence, deflection, or a topic change is a no. Don't re-offer a declined candidate in the same session.
 
 ## Curation — the section is a prompt
 

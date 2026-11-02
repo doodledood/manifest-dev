@@ -212,7 +212,10 @@ trap 'rm -rf "$session_home"' EXIT
 
 session=0 turn=1 resume=() started=$(date +%s.%N)
 : >"$out/transcript.jsonl"
+: >"$out/turn-starts.txt"
 while :; do
+  # Where this turn's events begin, so the summary reads each turn's reply from its own events.
+  wc -l <"$out/transcript.jsonl" >>"$out/turn-starts.txt"
   (cd "$project" && "${CLAUDE_SESSION_ENV[@]}" HOME="$session_home" claude -p --model "$model" "${CLAUDE_ISOLATION[@]}" \
     "${plugins[@]}" "${resume[@]}" --output-format stream-json --verbose --permission-mode bypassPermissions \
     --max-turns "$max_turns" "$(cat "$out/turn-$turn.md")") >>"$out/transcript.jsonl" 2>>"$out/stderr.log" || session=$?
@@ -264,12 +267,16 @@ python3 - "$out" "$feature" "$tools" "$CLAUDE_CLI_VERSION" "$session" "$plugins_
 import json, pathlib, sys
 out, feature, tools, cli = pathlib.Path(sys.argv[1]), sys.argv[2], sys.argv[3] == "1", sys.argv[4]
 session, plugins_from, wall = int(sys.argv[5]), sys.argv[6], float(sys.argv[7])
-events = []
-for line in (out / "transcript.jsonl").read_text(encoding="utf-8").splitlines():
+# A turn can end in more than one result — a background task that finishes wakes the session
+# again — so each turn's reply is the last result among its own events, never the nth result.
+starts = [int(n) for n in (out / "turn-starts.txt").read_text(encoding="utf-8").split()]
+events, turn_of = [], []
+for n, line in enumerate((out / "transcript.jsonl").read_text(encoding="utf-8").splitlines()):
     try:
         events.append(json.loads(line))
     except json.JSONDecodeError:
-        pass
+        continue
+    turn_of.append(sum(1 for start in starts if start <= n))
 init = next((e for e in events if e.get("type") == "system" and e.get("subtype") == "init"), None)
 if init is None:
     print("drive: unreachable — the session produced no init event; see stderr.log in " + str(out), file=sys.stderr)
@@ -293,6 +300,10 @@ other = sorted(p["name"] for p in loaded
 results = [e for e in events if e.get("type") == "result"]
 result = results[-1] if results else {}
 user_turns = len(list(out.glob("turn-*.md")))
+replies = []
+for t in range(1, len(starts) + 1):
+    own = [e for e, k in zip(events, turn_of) if k == t and e.get("type") == "result"]
+    replies.append(own[-1] if own else None)
 # A resumed session reports its cost so far, every turn included, so the last turn's total is
 # the session's. A cost the CLI did not report is said, never shown as zero.
 cost = result.get("total_cost_usd")
@@ -318,7 +329,7 @@ summary = {
     "cost_usd": round(cost, 4) if isinstance(cost, (int, float)) else "not reported",
     "wall_seconds": wall,
     "result": (result.get("result") or "").strip(),
-    "turn_replies": [(r.get("result") or "").strip() for r in results] if user_turns > 1 else [],
+    "turn_replies": [((r or {}).get("result") or "").strip() for r in replies] if user_turns > 1 else [],
     "files_written": (out / "files-written.txt").read_text(encoding="utf-8").strip(),
     "manifest_dev_records": (out / "manifest-dev-records.txt").read_text(encoding="utf-8").splitlines(),
     "claude_exit": session,
@@ -328,7 +339,7 @@ summary = {
 print(json.dumps(summary, indent=2))
 # A session that errored after it started (an API error, its turn limit) never finished the
 # skill: a drive that did not run, not a skill that wrote nothing.
-if session != 0 or len(results) < user_turns or any(r.get("is_error") for r in results):
+if session != 0 or len(replies) < user_turns or any(r is None or r.get("is_error") for r in replies):
     print(f"drive: unreachable — the session ended with {summary['ended']} (claude exit {session}); "
           f"read transcript.jsonl in {out}, raise --max-turns if it ran out of turns, then rerun",
           file=sys.stderr)
