@@ -161,14 +161,22 @@ check-in:
 
 1. **Re-read every Ticket in scope.** For an outcome assignment, also recover its compact coordination record and changed designated evidence as `references/OUTCOME.md` says.
 2. **Honor the pause line.** While a front item carries a `Paused:` line, start nothing in that
-   effort — no launch, no landing turn — and let live runs finish. A line a person wrote holds until
-   a person removes it: once no run is live there, stop working the effort and say so. When Tickets
-   in an effort fail on a cause outside them — one is enough for a required check that fails the
-   same way on the base, and two or more for another cause, such as a CI or venue that is down —
-   whether a live run records it or a landing finds it, pause instead of escalating or repairing
-   each Ticket on its own: write a `Paused:` line naming the cause and this orchestrator's ID, and
-   raise one item naming the cause on the list of what waits on the person. A `Paused:` line naming
-   an orchestrator's ID keeps the check-ins going: at each, check its cause, and once the cause is
+   effort — no launch, no landing turn — except the repair Ticket the line names, and let live runs
+   finish. A line a person wrote holds until a person removes it: once no run is live there, stop
+   working the effort and say so. When Tickets in an effort fail on a cause outside them — one is
+   enough for a required check that fails the same way on the base, and two or more for another
+   cause, such as a CI or venue that is down — whether a live run records it or a landing finds it,
+   pause instead of escalating or repairing each Ticket on its own: write a `Paused:` line naming
+   the cause and this orchestrator's ID. A cause no code change can fix, such as that outage, waits
+   for the person: raise one item naming it on the list of what waits on the person. A base check
+   that a code change can fix gets one repair Ticket instead: whenever a `Paused:` line naming an
+   orchestrator names no repair Ticket for such a cause, write one through `ticket-up`, in that
+   effort and in either mode, scoped to making that check pass on the base — `ticket-up` reuses an
+   open Ticket that already covers it — then name it in the line. When the line already names
+   another repair Ticket, or is gone, close the one just written as a duplicate instead. The repair
+   Ticket takes the mode's grant step like any Ticket an agent wrote, launches and lands under that
+   mode's rules, and reaches the person only as any Ticket does. A `Paused:` line naming an
+   orchestrator's ID keeps the check-ins going: at each, check its cause, and once the cause is
    fixed any orchestrator removes that line, never one a person wrote. Re-read the front item just
    before each edit and change nothing else in it.
 3. **Give out one landing turn at a time** across the scope, to the Auto Ticket ready to land whose

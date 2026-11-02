@@ -30,10 +30,16 @@ Run: `scripts/drive-skill.sh orchestrate verification/prompts/orchestrate-deferr
 Proves: the plan treats `01` and `02` as ready (`02`'s condition reads as met in `signals/requests.md`), leaves `03` alone as unmet, and puts `04` on the list of what waits on the person with its unreadable source; that list also carries the newsletter strategy signpost as met and the monthly-note one as unreadable; it asks for approval, and the summary's files show no Ticket claimed and no record, list or `Revisit when` line changed.
 Check: read
 
+### red-base
+Run: `scripts/drive-skill.sh orchestrate verification/prompts/orchestrate-red-base.md --scaffold verification/scaffolds/red-base-ticket-store --max-turns 200`
+Proves: run with `--autonomous`, the orchestrator pauses the `club` effort once with a `Paused:` line naming the failing `due_date` check on `main`, and writes exactly one Ticket in `tickets/club/` scoped to making that check pass, which the line names. Ticket `01` is neither escalated nor used to repair `due_date` in its own change. The repair Ticket's run leaves `python3 -m unittest discover -s tests` passing on `main`, and Ticket `01` runs or lands only after that.
+Check: read
+
 ## Gotchas
 
 - The `plan` prompt first has ticket-up file two small Tickets granted Auto in a file store, then runs `/manifest-dev:orchestrate` in default mode, which waits for approval.
-- A file store gets no parallel runs; parallel runs, collisions and landing turns need a hosted tracker, which no drive here uses.
+- A file store gets no parallel runs, and its work lands by merging a branch into `main` in the same working copy; parallel runs and collisions need a hosted tracker, which no drive here uses.
+- In `red-base` the required check is the command the fixture's `CLAUDE.md` names; the base fails it before any Ticket runs. A `Paused:` line the orchestrator later removes may survive only in the session's actions, not in the final files.
 - A GitHub venue writes to real Issues and merges real pull requests.
 - The status page the skill keeps is rendered by the free `status-page` recipe; no drive here opens it.
 - `tests/test_ticket_automation_prompts.py` checks the plan-and-wait default, the re-read before each launch, merge, close or mark change, collisions, where answers count, debt and grants.

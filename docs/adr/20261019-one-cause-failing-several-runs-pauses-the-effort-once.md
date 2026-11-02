@@ -1,7 +1,7 @@
 # ADR: One cause failing several runs pauses the effort once
 
 ## Status
-Accepted
+Accepted — amended by 20261102-a-landing-fixes-what-it-meets: a base check a code change can fix gets one repair Ticket, which alone may launch and land during the pause
 
 ## Area
 Ticketing
