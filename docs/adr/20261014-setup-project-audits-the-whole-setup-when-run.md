@@ -1,7 +1,7 @@
 # ADR: setup-project audits the whole setup when run, and figure-out fixes what is on its path
 
 ## Status
-Accepted — amended by 20261018-the-harness-commits-no-evidence-and-time-lines-live-in-recipes: statuses are no longer a part setup offers an existing harness
+Accepted — amended by 20261018-the-harness-commits-no-evidence-and-time-lines-live-in-recipes: statuses are no longer a part setup offers an existing harness Also amended by 20261102-setup-offers-taste-entries-mined-from-stated-reasons: the one-time Taste offer is not made again to a project recording surfaces v13 or later, whatever the answer; the recorded version marks it as made.
 
 ## Area
 Project context

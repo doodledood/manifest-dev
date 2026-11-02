@@ -323,10 +323,14 @@ gave the reason. It is small on purpose, and it names what it could not find. It
 full record.
 
 ### Surfaces Version
-<!-- context: 6ddec267a226 -->
+<!-- context: 3b5e8ec4011a -->
 The Surfaces Version is a number that the Project Context File records. It shows which version of
 the `/setup-project` setup the project has. When the number is older than the newest version,
 `/figure-out` offers the changes since that version. It is not the version of the plugin.
+
+Some changes are offered only one time. For example, v13 offers Taste entries from the project's
+history. A project that records v13 does not get that offer again, so the user is not asked about it
+each time.
 
 ## Verification
 

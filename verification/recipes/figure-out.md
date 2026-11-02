@@ -29,8 +29,8 @@ Proves: the reply says the setup is current, lists nothing the project lacks, do
 Check: read
 
 ### one-version-behind
-Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/53-update-offer-from-v11/prompt.md --scaffold claude-plugins/manifest-dev/evals/53-update-offer-from-v11`
-Proves: the reply offers only the v12 change — the harness's time lines removed: the tool update, recipes' `Line:` and `Workload:` fields, the `headroom:` and `raise:` settings and text about lines — and offers nothing from v11 or earlier as new.
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/53-update-offer-from-v12/prompt.md --scaffold claude-plugins/manifest-dev/evals/53-update-offer-from-v12`
+Proves: the reply offers only the v13 change — once, a few Taste entries drawn from reasons the owner already stated in the project's history, for the user to accept — and offers nothing from v12 or earlier as new.
 Check: read
 
 ### from-v1

@@ -126,7 +126,7 @@ Whether a check a project keeps — a Verification Harness recipe, or a test, sc
 _Avoid_: Complete, conformant, healthy.
 
 **Surfaces Version**:
-The integer, listed in setup-project's `CHANGES.md`, that a project's context file records in its project-surfaces section. Setup-project writes it when it installs or updates the surfaces, and figure-out writes it when the user declines the whole update offer. The recorded number decides whether figure-out offers an update — none at the newest version — and lets a setup-project run mark which of its offers are new since then; a setup-project run audits the whole setup whatever number is recorded, and compares in full when none is. Unrelated to the plugin's own version.
+The integer, listed in setup-project's `CHANGES.md`, that a project's context file records in its project-surfaces section. Setup-project writes it when it installs or updates the surfaces, and figure-out writes it when the user declines the whole update offer. The recorded number decides whether figure-out offers an update — none at the newest version — and lets a setup-project run mark which of its offers are new since then; a version item a guide offers once, such as v13's Taste offer, is not offered again to a project recording that version or later, whatever the answer. A setup-project run audits the whole setup whatever number is recorded, and compares in full when none is. Unrelated to the plugin's own version.
 _Avoid_: Plugin version, setup version, template version.
 
 **Lock**:

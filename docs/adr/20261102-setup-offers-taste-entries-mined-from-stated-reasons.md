@@ -1,4 +1,4 @@
-# ADR: setup-project's seed offers a few Taste entries mined from reasons the owner already stated
+# ADR: setup-project offers a project, once, a few Taste entries mined from reasons the owner already stated
 
 ## Status
 Accepted
@@ -41,8 +41,15 @@ setup-project's seed (`setup-project/references/MINING.md` → *Taste*) also off
   the memory file the user picks; with nobody to ratify, nothing is written and the candidates are
   reported.
 
-`--no-mine` skips it with the rest of the seed. On an update, a project whose memory files hold no
-`## Taste` section yet gets the same offer.
+`--no-mine` skips it with the rest of the seed.
+
+The offer reaches a project once. A project set up for the first time gets it in that setup's seed.
+A project set up at an earlier version gets it as the one item of surfaces version v13, through the
+update offer it already receives (`setup-project/references/upgrades/v12-to-current.md`). Once a
+project records v13, setup does not offer it again, whatever the answer was; `--no-mine`, or a
+project with no history to read, skips it and the version is still recorded. This is an exception
+to `20261014-setup-project-audits-the-whole-setup-when-run`, under which nothing records a decline
+and a declined item returns on the next run: here the recorded version marks the offer as made.
 
 ## Alternatives Considered
 
@@ -53,6 +60,11 @@ setup-project's seed (`setup-project/references/MINING.md` → *Taste*) also off
   list is read as a checklist.
 - **Copy settled decisions into Taste** — not chosen: a decision record is the home of a settled
   choice, and a second copy drifts from it.
+- **Offer it on every update while no `## Taste` section exists** — not chosen: a user who declined
+  would be asked again on every run, and a project whose owner keeps Taste only in a user-level file
+  would never stop being asked.
+- **Never offer it on an update** — not chosen: projects set up before this change would never get
+  it.
 
 ## Consequences
 
@@ -62,6 +74,8 @@ setup-project's seed (`setup-project/references/MINING.md` → *Taste*) also off
 
 ### Negative
 - Reading past session records costs tokens and needs the user's agreement each time.
+- A project whose owner declined, ran with `--no-mine`, or had no history yet does not get the offer
+  again; its entries then come only from capture, or from asking for the mining directly.
 - A few weak entries can still reach a memory file; the batch ratification is the only filter.
 
 ## Enforced by
@@ -69,7 +83,9 @@ none — which candidates deserve an entry is judgment; the `setup-project` reci
 
 ## Not decided here
 - Whether figure-out should offer the same mining outside setup.
+- Whether a later version may offer it again, for example once a project has gained history.
 
 ## Source
 - Session: a `/do` run on a Manifest the user amended mid-run, 2026-11-02 (log kept locally). The drive's grade is in the pull request that adds this record.
-- Related: 20260719-taste-persists-by-offer-and-ratify, 20261012-taste-is-checked-per-call-and-captured-from-explained-reversals, 20261102-taste-entry-form-is-chosen-by-a-test, 20261102-the-seat-pass-judges-against-default-product-stances, 20260809-glossary-stays-resident-with-an-under-produced-seed
+- Amends 20261014-setup-project-audits-the-whole-setup-when-run
+- See also: 20260719-taste-persists-by-offer-and-ratify, 20261012-taste-is-checked-per-call-and-captured-from-explained-reversals, 20261102-taste-entry-form-is-chosen-by-a-test, 20261102-the-seat-pass-judges-against-default-product-stances, 20260809-glossary-stays-resident-with-an-under-produced-seed
