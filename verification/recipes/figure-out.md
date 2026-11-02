@@ -16,7 +16,7 @@ Presses on a topic with the user until both understand it, and ends with a named
 - On a project, docs mode keeps the glossary, decision-record offers, North Star updates, the setup offer and recipe drift markers current; `--no-docs` and `--no-log` turn the docs and the log off.
 - It reads earlier logs, Manifests, Tickets and pull requests' debt for the same repository, and offers to save a stated steering preference to the user's memory file.
 - It offers a disposable draft and calls design for its look. A draft is shown within minutes and never verified, tested, reviewed or gated; the user's reaction is its only check. Autonomous runs show it to an owner they can reach, and record an assumption only where none can be reached.
-- A user's call about what a person sees or does goes to the user as concrete options or draft variants, and a reason given in reply resets the recommendation.
+- A user's call about what a person sees or does goes to the user as concrete options or draft variants. A steer or correction, with a reason or without one, is read for the reason behind it: an unstated one is named, asked about at most once when two readings would change the rest in opposite ways, and reasons the next recommendation; a named reason the user never confirmed is offered for keeping as Taste.
 - Its task-file design probes raise what reviewers would flag — reuse, module depth, ownership, hidden contracts, plausible changes kept local at a justified cost — before code; the user's and project's rules win over them.
 
 Product inquiries additionally load PRODUCT probes, with DECISION for consequential choices. The optional product knowledge reference offers useful lenses rather than a required interview or document. Cases 65 and 66 now cover those lenses; their new criteria remain unmeasured.
@@ -161,6 +161,16 @@ Check: read
 ### steer-resets-the-recommendation
 Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/100-steer-resets-the-recommendation/prompt.md`
 Proves: after the user rejects 20 free uses a month of a costly feature with an aim and a reason (anything that costs per use has to be paid for), the next recommendation is reasoned from that aim to a choice the user did not state, such as a one-time taste, not a smaller recurring allowance — the case's grader `reasons-again-from-the-aim`.
+Check: read
+
+### steer-without-reason
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/107-steer-without-reason/prompt.md`
+Proves: attended over four turns, after the user removes an unread badge and then a reading streak without saying why, the session names the reason it infers (no pull through pressure or guilt) and the other planned items it changes, recommends a quiet way to learn of a followed author's new article, asks about the reason at most once, and offers to keep the reason with its text — the case's grader `reads-the-reason`.
+Check: read
+
+### steer-two-readings
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/108-steer-two-readings/prompt.md`
+Proves: after the user removes comments with no reason, where "no social layer" and "no moderation of posted text" would change the other planned items in opposite ways, the reply asks one short question that tells the two apart instead of changing those items on a guess — the case's grader `asks-which-reason`.
 Check: read
 
 ### taste-principle-save

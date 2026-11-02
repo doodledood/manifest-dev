@@ -1,7 +1,7 @@
 # ADR: Taste is checked at each user's call, followed only where it bears, and captured from explained reversals
 
 ## Status
-Accepted; narrowed by 20261031-do-takes-a-reaction-to-a-draft-as-direction-not-a-lock: an explained reaction to a disposable draft is not a reversal to capture as Taste unless the person states it as reaching beyond that draft
+Accepted; narrowed by 20261031-do-takes-a-reaction-to-a-draft-as-direction-not-a-lock: an explained reaction to a disposable draft is not a reversal to capture as Taste unless the person states it as reaching beyond that draft; amended by 20261102-figure-out-reads-a-steer-for-the-reason-behind-it: in figure-out, corrections that share a reason the session named qualify, and the offer's rationale may rest on that reason when it says it is the session's reading and the user says yes to the text
 
 ## Area
 figure-out
