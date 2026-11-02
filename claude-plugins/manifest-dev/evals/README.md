@@ -41,6 +41,14 @@ per trial is an estimate from a different suite/judge, not an upper bound for th
 case's `prompt.md` declares what the case *wants*; the operator grant is what enables it. Without it, file graders fail in both arms and
 cases burn their turn reporting that writing is disabled.
 
+**Several turns.** A case whose prompt holds `<!-- next turn -->` lines (`102` to `106`) is a
+session of several user turns: `scripts/drive-skill.sh` sends each turn into the same session once
+the one before is answered. `claude plugin eval` sends a prompt as one message, which would hand
+the session every turn at once and test nothing these cases are for, so they carry the tag
+`figure-out-multi-turn`, which no suite command selects, and run only as drives through their
+scenarios in `verification/recipes/figure-out.md`. `tests/test_eval_cases.py` fails a prompt with
+several turns that carries any other tag.
+
 The headline number is **Δ** — with-plugin score minus the no-plugin baseline.
 
 **Judge with `sonnet`, one run per arm.** The owner's call on 2026-10-15: these suites are a proxy
@@ -267,6 +275,11 @@ base model already covers; such a case leaves only through its probe's *Coverage
 | `99-experience-choice-as-options` | press | Put an open interface choice — where a control lives, how many taps — to the user as concrete options or draft variants, with a recommendation | tuning |
 | `100-steer-resets-the-recommendation` | press | After a steer that gives an aim and a reason, reason the next recommendation from that aim, not one step from the earlier pick | tuning |
 | `101-seat-convenient-placement` | autonomous | Asked only for the engineering of offline downloads behind one switch in Settings, say that a person about to board needs to make one session ready from where they find it | tuning |
+| `102-long-session-silent-send-failure` | press, several turns | After three turns of engineering on moving invoice sending into a background job, say the freelancer never learns that a send failed, and propose a change that reaches them | tuning |
+| `103-long-session-expired-mid-essay` | press, several turns | After three turns of engineering on a sign-in provider migration, say a student is signed out partway through writing and loses their place, and propose a change for it | tuning |
+| `104-long-session-shared-link-outsider` | press, several turns | After three turns of engineering on closing a report-link hole, say the clients who receive the links are locked out, and propose a change for them | tuning |
+| `105-taste-yardstick-offered` | press, several turns, repository | After two challenges by one unstated measure, offer a Taste entry stating the measure, not the instances | tuning |
+| `106-taste-yardstick-already-stated` | press, several turns, repository | After the same two challenges, in a project whose North Star states the measure, name the line the session missed and propose a check instead of an entry | tuning |
 
 Cases `30` to `46` were written on 2026-10-13 and `48` on 2026-10-14. Their first run was the
 2026-10-25 baseline, with the split frozen before it: every case added since 2026-10-13 is tuning
@@ -510,6 +523,11 @@ being declared a guard. `tests/test_eval_cases.py` fails when a case has no row 
 | `99` | first run decides | New on 2026-11-02 for user's calls on what a person sees; see *Seat pass and experience choices — 2026-11-02* |
 | `100` | first run decides | New on 2026-11-02 for a steer resetting the recommendation; see *Seat pass and experience choices — 2026-11-02* |
 | `101` | first run decides | New on 2026-11-02 for the seat pass on an engineering-framed plan; failed twice before the change, passed one run of two after it; see *Is the seat pass worth its cost — 2026-11-02* |
+| `102` | first run decides | New on 2026-11-02, a long session for the seat look; drives only (*Several turns*); see *Is the seat pass worth its cost — 2026-11-02* |
+| `103` | first run decides | New on 2026-11-02, a long session for the seat look; drives only (*Several turns*); see *Is the seat pass worth its cost — 2026-11-02* |
+| `104` | first run decides | New on 2026-11-02, a long session for the seat look; drives only (*Several turns*); see *Is the seat pass worth its cost — 2026-11-02* |
+| `105` | first run decides | New on 2026-11-02, Taste capture on a revealed measure; drives only (*Several turns*); pairs with `106` |
+| `106` | first run decides | New on 2026-11-02, Taste capture where the project already states the measure; drives only (*Several turns*); pairs with `105` |
 
 Retired on 2026-10-15: `12` (floored in both arms, not a declared guard), `47` and `49` (each a
 second older-version case beside `53`, which the version rule now forbids; their straight-to-newest
@@ -856,7 +874,7 @@ file. The row is never deleted while the probe stays.
 | `references/SEAT.md` | (whole file) | `94-seat-request-stops-short/goes-past-the-requested-change`, `95-seat-journeys-beyond-the-described/walks-arrival-and-return`, `95-seat-journeys-beyond-the-described/names-a-journey-of-this-feature`, `96-seat-inherited-premise/checks-the-premise-before-the-build`, `97-seat-looks-at-the-product/drives-the-product-before-the-read`, `98-seat-not-for-backend-work/no-seat-pass-on-backend-work`, `101-seat-convenient-placement/meets-the-person-where-they-are`; not graded: the eleven default stances one by one (the Taste test in `verification/recipes/figure-out.md` exercises the gate half of *Just in time*), and the comparison with an inline pass, which a local ablation measured once (*Is the seat pass worth its cost*) |
 | `references/LOG.md` | (whole file) | `01-root-press/log-written`; not graded: log safety and resuming from the log, which have shown no failure and sit outside what a grader reads |
 | `references/RECALL.md` | (whole file) | `43-recalls-earlier-work/carries-the-earlier-ruling-as-a-lead`, `44-debt-on-the-path/offers-the-on-path-debt`, `46-general-question-skips-recall/no-recall-for-a-general-question`, `59-reverted-fix/names-the-reverted-fix` |
-| `references/TASTE.md` | (whole file) | `27-taste-offers/offers-entry-for-the-stated-preference`, `27-taste-offers/offers-entry-for-the-reversal`, `28-universal-not-taste/no-offer-for-a-universal-rule`, `29-ratified-entry-lands/entry-inside-taste-section` |
+| `references/TASTE.md` | (whole file) | `27-taste-offers/offers-entry-for-the-stated-preference`, `27-taste-offers/offers-entry-for-the-reversal`, `28-universal-not-taste/no-offer-for-a-universal-rule`, `29-ratified-entry-lands/entry-inside-taste-section`, `105-taste-yardstick-offered/offers-the-yardstick`, `106-taste-yardstick-already-stated/names-the-line-it-missed` (both drives only) |
 | `references/WITH_DOCS.md` | (whole file) | `23-term-and-record/term-captured`, `23-term-and-record/record-written`, `24-ruled-position-holds/position-text-unchanged`, `30-update-offer-for-older-setup/offers-only-whats-new`, `36-marks-drift-it-wont-fix/export-entry-marked-stale`, `45-current-setup-offers-nothing/offers-no-setup-update`, `53-update-offer-from-v12/offers-only-whats-new-since-v12`, `84-chosen-option-goes-to-a-record/ruling-recorded`, `84-chosen-option-goes-to-a-record/north-star-unchanged`, `85-evidence-against-a-bet/bet-challenged`, `85-evidence-against-a-bet/bet-text-kept` |
 | `references/ADR_FORMAT.md` | (whole file) | `23-term-and-record/old-record-restatused`, `23-term-and-record/index-rebuilt`, `24-ruled-position-holds/unattended-record-marked`, `23-term-and-record/record-carries-enforced-by` |
 | `references/autonomous.md` | (whole file) | `25-users-call-and-taste/flags-the-users-calls`, `25-users-call-and-taste/no-taste-offer`, `24-ruled-position-holds/unattended-record-marked`; not graded: never self-accepting an offer that hands off to setup-project or ticket-up, or that workflow's inner owner-judgment offers, which needs those skills reachable from the session |

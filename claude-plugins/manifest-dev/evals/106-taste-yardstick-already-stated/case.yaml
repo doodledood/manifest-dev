@@ -1,0 +1,4 @@
+schema_version: "1.0"
+name: 106-taste-yardstick-already-stated
+context:
+  scaffold_script: scaffold.sh

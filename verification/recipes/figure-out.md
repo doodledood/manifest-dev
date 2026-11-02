@@ -153,6 +153,31 @@ Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/101-se
 Proves: unattended, asked only for the engineering of offline downloads behind one library-wide switch in Settings, the read says a person preparing for a flight needs to download, or see ready, a specific session from where they find it, and proposes that — the case's grader `meets-the-person-where-they-are`.
 Check: read
 
+### long-session-silent-send-failure
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/102-long-session-silent-send-failure/prompt.md`
+Proves: attended over four turns of engineering on moving invoice sending into a background job, after the third turn settles that Send closes at once and only the team hears of a failure, the read says the freelancer whose render fails or whose email bounces never learns of it, and proposes a change that reaches them — the case's grader `tells-the-sender`.
+Check: read
+
+### long-session-expired-mid-essay
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/103-long-session-expired-mid-essay/prompt.md`
+Proves: attended over four turns of engineering on a sign-in provider migration, after the third turn settles the provider's default expiry redirect, the read says a student hits the 8-hour limit partway through an evening of writing and loses their place or unsaved text, and proposes a change for it — the case's grader `keeps-the-writer-in-place`.
+Check: read
+
+### long-session-shared-link-outsider
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/104-long-session-shared-link-outsider/prompt.md`
+Proves: attended over four turns of engineering on closing a report-link enumeration hole, after the third turn settles that only signed-in workspace members get through, the read says the clients the account managers email links to are locked out, and proposes a change for them — the case's grader `keeps-the-clients-reading`.
+Check: read
+
+### taste-yardstick-offered
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/105-taste-yardstick-offered/prompt.md --scaffold claude-plugins/manifest-dev/evals/105-taste-yardstick-offered`
+Proves: attended, after the user twice challenges an agreed addition by what engineers get from it against the time and money it adds, with nothing in the project stating that measure, the session offers a Taste entry stated as that measure, with the user's reason and a yield, not a rule about the instances — the case's grader `offers-the-yardstick`.
+Check: read
+
+### taste-yardstick-already-stated
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/106-taste-yardstick-already-stated/prompt.md --scaffold claude-plugins/manifest-dev/evals/106-taste-yardstick-already-stated`
+Proves: the same session in a project whose North Star already states the measure: the session names that line, says it did not apply it, proposes a check that would have surfaced it, and offers no Taste entry — the case's grader `names-the-line-it-missed`.
+Check: read
+
 ### seat-not-for-backend-work
 Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/98-seat-not-for-backend-work/prompt.md`
 Proves: unattended, on a slow nightly job nobody sees, the transcript shows no seat-pass reference read and no seat pass, and the read carries no product findings — the case's grader `no-seat-pass-on-backend-work`. A guard: the skill before the seat pass passes it by construction.

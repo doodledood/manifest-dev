@@ -90,6 +90,26 @@ def test_case_files_use_only_accepted_keys(case: Path) -> None:
         assert not set(execution) - EXECUTION_KEYS - {"prompt"}
 
 
+NEXT_TURN = "<!-- next turn -->"
+MULTI_TURN_TAG = "figure-out-multi-turn"
+
+
+@pytest.mark.parametrize("case", CASES, ids=_case_id)
+def test_a_case_of_several_turns_runs_only_as_a_drive(case: Path) -> None:
+    # `claude plugin eval` sends a prompt as one message, so a case written as several turns
+    # would reach the session all at once. Only drives play the turns; the tag keeps suites off it.
+    prompt = case / "prompt.md"
+    if not prompt.exists():
+        return
+    data, body = _frontmatter(prompt)
+    several = any(line.strip() == NEXT_TURN for line in body.splitlines())
+    tags = data.get("tags") or []
+    if several:
+        assert tags == [MULTI_TURN_TAG], f"several turns need tags: [{MULTI_TURN_TAG}]"
+    else:
+        assert MULTI_TURN_TAG not in tags, f"{MULTI_TURN_TAG} on a one-turn prompt"
+
+
 @pytest.mark.parametrize("case", CASES, ids=_case_id)
 def test_graders_use_only_their_types_keys(case: Path) -> None:
     graders = sorted((case / "graders").glob("*.md"))
