@@ -11,8 +11,8 @@ The user
 
 ## Context
 
-When the user steered or corrected a figure-out session, the session took the words as an order
-about one item. figure-out's spine already said that an answer carrying an aim or a reason resets
+The user reported that when they steered or corrected a figure-out session, the session took the
+words as an order about one item. figure-out's spine already said that an answer carrying an aim or a reason resets
 the next recommendation (`20261102-experience-choices-go-to-the-user-as-options-or-variants`). It
 said nothing about a correction that gives no reason, which is the common case. Such a correction
 often comes from a principle the user holds and has not said, and that principle decides other
@@ -22,7 +22,7 @@ makes the user correct each of the others in turn.
 Four failures were named: the session fixes only the item it was told about and keeps making the
 same kind of choice elsewhere; it accepts a steer the evidence argues against; it rarely asks what
 is behind a steer; and the next session starts without the principle, so the same correction comes
-back. The user ranked the first as the most common, not by far. On how to find the reason, the user chose that the session guesses it, says the guess in a
+back. On how to find the reason, the user chose that the session guesses it, says the guess in a
 line, and asks only when the guess is unclear. The user also asked that a principle found this way
 be offered for keeping as Taste.
 
@@ -59,17 +59,18 @@ the user says yes to the exact text, which turns the inference into a confirmed 
 
 ## Evidence at decision time
 
-Each drive ran through the `figure-out` recipe, the skills before the change at the merge base.
-All replies were graded in one pass, after the graders' last edit, by grader sessions that saw
-each reply under a random label only. A case passes when the run after the change passes and the
+Each drive ran through the `figure-out` recipe; the before arm ran the skills at the merge base
+(`DRIVE_PLUGINS_AT=3646a4a`). Replies to `107`, `108` and `105` were graded in one blind pass after
+the graders' last edit, by grader sessions that saw each reply under a random label only; `100`'s
+two replies were graded blind in an earlier pass under its unchanged grader. A case passes when the run after the change passes and the
 run before it does not, by majority of three where one pair does not settle it.
 
 | Case | Before the change | After the change (the shipped wording, counted with the commit before it, which differs only in the rule for a single unexplained correction) |
 |---|---|---|
 | `107` two corrections with no reason, one principle behind both | FAIL: named the reason and applied it, but made no offer to keep it | PASS in 2 of 4; both failures made the offer, one without naming where it would keep it (borderline), one recommending a push on by default |
 | `108` one correction with two readings that change the rest in opposite ways | PASS in 3 of 3, all borderline: the question only loosely separated the readings | PASS in 3 of 3 |
-| `100` a steer resets the recommendation (guard) | — | PASS in 2 of 2 |
-| `105` a revealed yardstick offered as Taste (measurement) | — | FAIL in 2 of 2 |
+| `100` a steer resets the recommendation (guard) | — | PASS in 1 of 1, and 1 of 1 on the earlier wording 77c7c2e |
+| `105` a revealed yardstick offered as Taste (measurement) | — | FAIL in 1 of 1, and 1 of 1 on the earlier wording 77c7c2e |
 
 Neither case settles the change by that rule. On `107` the skills before the change already named
 the reason and changed the other choices; what they lacked was the offer, which every run after the
