@@ -16,7 +16,6 @@ The *Install* and *First note* sections of the project README.
 ### fresh-reader
 Run: `scripts/agent-session --read-only README.md --prompt 'Using only README.md, install Notes and create a first note. Say where you got stuck.'`
 Proves: the reader ends able to install Notes and create a note, and names nothing it had to guess.
-Workload: varies
 Check: read
 
 ## Gotchas

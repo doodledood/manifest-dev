@@ -20,7 +20,6 @@ Writes a self-contained context payload a fresh agent can continue from without 
 Run: `scripts/drive-skill.sh handoff verification/prompts/handoff-write.md --tools`
 Proves: the drive's summary lists a new `handoffs/handoff-*.md` among what the session wrote under `.manifest-dev`, and the reply names its path. A fresh session given only that file can state the goal, the state and the next step.
 Check: read
-Workload: varies
 
 ## Gotchas
 

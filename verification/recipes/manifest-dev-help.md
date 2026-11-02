@@ -20,31 +20,26 @@ Answers any question a person has about manifest-dev, with the why, in English c
 Run: `scripts/drive-skill.sh manifest-dev-help verification/prompts/manifest-dev-help-term.md`
 Proves: the answer says what a recipe and the verification harness are and why each exists, that ask-first marks a run with a cost a person accepts, and how an Acceptance Criterion differs from a Global Invariant, from the glossary, in short plain sentences.
 Check: read
-Workload: varies
 
 ### agent
 Run: `scripts/drive-skill.sh manifest-dev-help verification/prompts/manifest-dev-help-agent.md`
 Proves: the answer gives both uses of the word from the glossary — the AI model that does work for a person, such as the "person or agent" a Ticket is written for, and the separate execution context a host can run one in — in short plain sentences.
 Check: read
-Workload: varies
 
 ### ladder
 Run: `scripts/drive-skill.sh manifest-dev-help verification/prompts/manifest-dev-help-ladder.md`
 Proves: the answer names the five levels, says each works without the ones above it and without the team, and gives what each adds and costs and where to start.
 Check: read
-Workload: varies
 
 ### why-beyond
 Run: `scripts/drive-skill.sh manifest-dev-help verification/prompts/manifest-dev-help-why-beyond.md`
 Proves: for a why that the skill's own text does not carry, the answer reads the skill that owns the behavior (`do` and its log reference), names that file, and gives the reason; it invents nothing that file does not say.
 Check: read
-Workload: varies
 
 ### overview
 Run: `scripts/drive-skill.sh manifest-dev-help verification/prompts/manifest-dev-help-overview.md`
 Proves: with no question, the answer gives what manifest-dev is for, the workflow and the autonomy ladder, and stops there.
 Check: read
-Workload: varies
 
 ## Gotchas
 

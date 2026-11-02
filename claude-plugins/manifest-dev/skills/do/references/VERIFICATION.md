@@ -29,19 +29,11 @@ its own `--help`.
   (`../../setup-project/references/VERIFICATION_HARNESS.md` → *Fit to trust*), repair it. A
   gigantic repair is debt while the check still runs and passes, and a blocker once a check a gate
   or the whole tree rests on fails or cannot run (`../SKILL.md` → *What holds for every gate*).
-- **Time lines:** a line is written into its recipe only by the change that changes that check.
-  A fixed-workload scenario the change adds gets its first line from a passing run (`verify
-  line`), and a change that made a check faster keeps the gain the same way; no other run moves a
-  line. Before a lower line is written, compare the work the check did — tests collected, cases
-  run — with a run of the same check at the base commit: a speedup that comes from doing less work
-  keeps the old line, and the lost work is a finding.
-- **Over its line:** when a check the work touches is over its time line, find where the time
-  went from the runner's own timings. Pay it down before the run is done when growth did not earn
-  the time — a slow new test, a sleep, waste in shared code alike. When that fix is gigantic — a
-  broad refactor of shared code, say — open or join one debt Ticket, freeze the overshoot with it,
-  and report it as debt. Raise the line only when the new time is in new tests for new behavior, the
-  existing tests are no slower, and no cheap waste remains, with that reason on the raise and one
-  line in the pull request.
+- **Run time:** follow `../../setup-project/references/VERIFICATION_HARNESS.md` → *Run time*.
+  When a check the work meets has grown slow, find where the time went from the runner's own
+  timings and speed it up — a slow new test, a sleep, waste in shared code alike; where that is
+  gigantic, say in the report which check is slow and where the time goes. Slowness is never debt
+  and never a blocker.
 - **A stand-in is not the target:** where a check runs on a stand-in for where the work will run —
   a cloud container that already has tools a user's machine lacks, a fixture in place of the real
   service — the report names, as unverified, what the stand-in provided that the target will not.

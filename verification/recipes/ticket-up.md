@@ -24,19 +24,16 @@ Assignments preserve useful intent, evidence, delegated decisions and retained a
 Run: `scripts/drive-skill.sh ticket-up verification/prompts/ticket-up-direct-request.md`
 Proves: the summary's files include `tickets/store-config.md` and one `tickets/<effort>/NN-<slug>.md` with the convention's sections. Each Ticket stands alone: a reader with no Manifest knows what to do and how it is checked.
 Check: read
-Workload: varies
 
 ### follow-up
 Run: `scripts/drive-skill.sh ticket-up verification/prompts/ticket-up-follow-up.md`
 Proves: a follow-up an unattended run found, from a source that carries Auto, is written as a Ticket with no Auto, because neither a person nor `orchestrate --autonomous` granted it at this step. The Ticket names its source.
 Check: read
-Workload: varies
 
 ### deferred
 Run: `scripts/drive-skill.sh ticket-up verification/prompts/ticket-up-deferred.md`
 Proves: the Ticket carries a `Revisit when:` line naming the weekly sign-up count passing 50 and the analytics dashboard it is read on, among its opening lines after `Depends on:`, and no `Depends on:` entry for it.
 Check: read
-Workload: varies
 
 ## Gotchas
 

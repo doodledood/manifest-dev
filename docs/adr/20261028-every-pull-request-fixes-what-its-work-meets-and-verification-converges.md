@@ -90,14 +90,15 @@ skipped or loosened only when it is useless or tautological, and the pull reques
 so. A failing check whose fix is gigantic is a blocker, never a finished run.
 
 Debt therefore narrows to what a run found and could not fix on its pull request. That is a
-gigantic issue, what needs a person (such as an ask-first run owed), a new suppression, and a
-time-line overshoot frozen under a debt Ticket. The same narrowing reaches every rule that used to
+gigantic issue, what needs a person (such as an ask-first run owed), and a new suppression. The
+same narrowing reaches every rule that used to
 leave work for later:
 
 - A lock's hits are fixed on the pull request, in a commit of their own.
 - A workaround comment is reshaped, and a constraint comment is encoded.
 - A drifting recipe and a check not fit to trust are repaired.
-- A time-line crossing is paid down.
+- A slow check is sped up; slowness stays outside debt and blockers, as
+  20261031-time-lines-are-removed-and-run-time-is-only-reported holds.
 - A reshaping the simplicity review finds is made.
 - The scope ceiling every Manifest carries counts these fixes as required work.
 
@@ -151,7 +152,6 @@ the Codex copy; whether an issue is on the path, or gigantic, stays judgment.
   20261013-workaround-comments-become-refactor-flags-constraint-comments-become-checks,
   20261013-runs-build-and-maintain-a-project-verification-surface,
   20261015-runs-keep-the-harness-fit-for-speed-control-and-diagnosis,
-  20261015-check-run-time-is-held-by-an-alarm-against-creep,
   20260926-durable-outcomes-include-subsequent-work,
   20261024-external-review-feedback-needs-an-adoption-decision,
   20260728-bound-the-acceptance-contract-from-above,

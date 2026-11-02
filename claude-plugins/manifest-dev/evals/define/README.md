@@ -122,6 +122,16 @@ graders and the ceiling quoted in `d09`'s prompt follow the new ceiling text, an
 grader changes. **Every recorded number in this file is stale as
 of 2026-10-28.**
 
+A 2026-10-31 change made a disposable draft made only to get a person's reaction load no task
+file, so its Deliverable owes only that the draft reaches that person. No case asks for such a
+draft, so it reaches none of them and changes no case or grader; the `define` recipe's
+`draft-gets-no-task-file-gate` drive covers it and remains **unmeasured**.
+
+A second 2026-10-31 change added to *Taste on reversal* that a reaction to a disposable draft is
+about that draft's direction, not a reversal to offer as Taste, unless the user states it as
+reaching beyond that artifact. `d17` is the case nearest it and its prompt reacts to no draft, so
+no case or grader changes.
+
 The review runs in a fresh context, which this suite's sessions cannot start, so define reviews
 its own Manifest here and says the review was self-graded. No case holds the per-gate wrong-result
 question; the `define` recipe's `fresh-review` drive checks it instead. `d26` holds the search for
@@ -133,6 +143,19 @@ a define case for each would test the same probe twice at twice the runs. The
 headless harness offers no question capability, so the cases measure define's plain-text path. A single 2026-10-14 drive of `d01` (not a measurement) found define keeping the
 requested layer cut as a user's call; define's slicing rule now says a requested cut is never one,
 and a re-drive came back re-cut (that drive's evidence is not kept in the repository).
+
+A 2026-11-02 change added the *Journeys driven as the person* gate to define's feature task file
+and made *Taste on reversal* draft the preference as a principle that carries to calls never
+discussed. The gate reaches every case whose work is a feature a person uses — `d01`, `d06` and
+`d27` most — by adding a gate to the Manifest their graders read; the drafting line reaches no
+case, since none reverses a call. `d29` and `d30` are new and unmeasured by this suite: each was
+driven once on the skill before the change and once after it and graded by a session that saw each
+Manifest under a letter label only. `d29` passed after and failed before — the Manifest before the
+change walked one fixed two-friend script, the one after had the evaluator derive the person's
+journeys — and the `d30` guard passed in both. The `define` recipe's `journeys-gate-*` and
+`todays-gates-on-the-seeded-app` drives put the gate against a fixture with five planted defects;
+`docs/adr/20261102-features-a-person-uses-are-driven-through-their-journeys.md` records what they
+found.
 
 ## Baseline — 2026-10-25, sonnet judge, agent at medium effort
 
@@ -428,7 +451,7 @@ causes rework when the executor meets the intent another way. `d02` covers that 
 
 ## Shared requirement and threshold graders
 
-Both come from what `manifest-to-goal` keeps when it boils a Manifest down to a standalone
+Both come from what `write-goal` keeps when it boils a Manifest down to a standalone
 definition of done for an executor with no other context.
 
 - `binding-lives-in-gates.md`: compares the original request with the gates, including requirements
@@ -461,6 +484,8 @@ definition of done for an executor with no other context.
 | `d17-taste-in-encoding` | Taste entries in memory: a narrow one that settles an encoding call, a broad one that tempts dropping a review on a payment step, and a user's call none bears on | `follows-and-cites-the-entry`, `flags-the-users-call`, `broad-entry-drops-nothing`, `no-taste-offer`, generated final-state guards, shared three · changed guards first measured 2026-10-25 |
 | `d27-explicit-target` | Firm 2-second export target with unknown reachability | `keeps-the-explicit-target` |
 | `d28-appetite-ignores-agent-effort` | A two-sprint team estimate for moving all 23 calls onto one keyed retry path, against two days for keying the three that double-charged; agents do the build | `keeps-the-whole-fix` |
+| `d29-journeys-gate-on-a-feature` | A shared trip page people open from links in group chats, described only by what it does · unmeasured | `encodes-the-journeys-gate` |
+| `d30-no-journeys-gate-on-a-library` | **Negative:** a library option nobody uses directly · unmeasured | `no-journeys-gate` |
 
 "Shared three" is `binding-lives-in-gates`, `gates-are-settleable`, and `no-invented-thresholds`.
 `d05` also carries `keeps-other-requirements`: resolving the conflict must not lower or drop
@@ -505,6 +530,8 @@ a duplicate, an out-of-scope skill, or an undeclared floor in both arms retires 
 | `d26` | first run decides | New on 2026-10-19: the review's search for holes, on the self-graded path; the `define` recipe's `hole-search` drive covers the fresh-context path |
 | `d27` | first run decides | Held out: the explicit 2-second user target must bind even when reachability is unknown; mirror for d25 |
 | `d28` | first run decides | New on 2026-10-26: Appetite keeps all 23 sites and bounds nothing by engineer time; a drive on the skill before this change failed it |
+| `d29` | first run decides | New on 2026-11-02: the journeys gate encoded for a feature a person uses |
+| `d30` | keep | New on 2026-11-02: a declared guard against the journeys gate on work nobody meets directly |
 
 Retired on 2026-10-15: `d18-map-gate`, folded into `d23`, which has the same prompt and project
 and now carries its grader.
@@ -563,7 +590,5 @@ Freeze the full split before inspecting outputs, and let the analyzer read only 
   it, which needs an approval a grader can see; a project with nothing that can check the work
   getting a first Deliverable that adds such a check in its own form, never a harness it did not
   choose (figure-out's `33` covers the read); a criterion pinned
-  by reacting to something concrete becoming a gate; an `Enforced by: not yet` check on the
-  work's path getting built; and the *fast enough* job of *Trust the check*, a touched check over
-  its time line repaired first, which needs evidence carrying a recorded line (figure-out's
-  README names the same gap).
+  by reacting to something concrete becoming a gate; and an `Enforced by: not yet` check on the
+  work's path getting built.

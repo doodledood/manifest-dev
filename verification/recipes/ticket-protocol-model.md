@@ -27,33 +27,28 @@ Run: `verification/models/ticket-protocol/check.sh races`
 Proves: two orchestrators sharing the automation identity, a run that dies and a takeover after a
 timeout keep one attempt record, merge only the recorded head, and land or hand over every Ticket
 marked ready.
-Line: 4.8 s on linux-x64-4cpu
 
 ### race-landing
 Run: `verification/models/ticket-protocol/check.sh race-landing`
 Proves: the same properties with two orchestrators, a takeover, a moved base and a commit a person
 pushed to the pull request's branch.
-Line: 30.2 s on linux-x64-4cpu
 
 ### landing
 Run: `verification/models/ticket-protocol/check.sh landing`
 Proves: each way a landing cannot merge — a moved head, a moved base, a red check, a review only a
 person can give, a pull request closed without merging — ends in a relaunch, an escalation, a
 pull request held for the person's approval or the landing.
-Line: 2.7 s on linux-x64-4cpu
 
 ### person
 Run: `verification/models/ticket-protocol/check.sh person`
 Proves: a person's claim, close, reopen, merge or escalation mark, with a moved base, never leads
 automation to close a Ticket without a landing observed since it was last opened, or to land one
 the person marked; a Ticket reopened after its merge is launched again rather than landed.
-Line: 2.5 s on linux-x64-4cpu; raised: the person configuration explores a person applying the escalation mark
 
 ### deferred
 Run: `verification/models/ticket-protocol/check.sh deferred && verification/models/ticket-protocol/check.sh deferred-unreadable`
 Proves: two orchestrators never claim a deferred Ticket until its signpost's condition reads as met
 at its source, and never claim one whose source cannot be read; the other properties hold meanwhile.
-Line: 2.5 s on linux-x64-4cpu
 
 ### prefix
 Run: `verification/models/ticket-protocol/check.sh --expect-violation prefix-record && verification/models/ticket-protocol/check.sh --expect-violation prefix-stall && verification/models/ticket-protocol/check.sh --expect-violation prefix-escalated && verification/models/ticket-protocol/check.sh --expect-violation prefix-deferred`
@@ -61,7 +56,6 @@ Proves: the check can fail. With the protocol switched back to its four old beha
 a second attempt record, a landing that stalls, a landing of a Ticket a person marked escalated and
 a claim of a Ticket whose signpost reads as unmet, each with its trace; the scenario fails when any
 is not reported.
-Line: 4.5 s on linux-x64-4cpu; raised: a fourth configuration, prefix-deferred, shows LaunchedOnlyWhenMet can fail
 
 ## Gotchas
 

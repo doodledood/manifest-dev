@@ -18,7 +18,6 @@ A reader comes to these documents to pick the entry point for a piece of work, a
 Run: `scripts/walk.sh 'Pick the entry point for a piece of work. End able to choose between /figure-out, /define, /do, and /auto for a given task. The sections to rely on: README.md → One piece of work; claude-plugins/manifest-dev/README.md → One piece of work.' README.md claude-plugins/manifest-dev/README.md`
 Proves: the reader ends able to choose between `/figure-out`, `/define`, `/do`, and `/auto` for a given task, and names nothing it had to guess that blocks the task.
 Check: read
-Workload: varies
 
 ## Gotchas
 

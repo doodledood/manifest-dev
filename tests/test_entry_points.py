@@ -39,12 +39,12 @@ USER_INVOCABLE = {
         "babysit-pr",
         "eli5",
         "handoff",
-        "manifest-to-goal",
         "prompt-engineering",
         "review-pr",
         "review-prompt",
         "teach-me",
         "walk-pr",
+        "write-goal",
     },
 }
 

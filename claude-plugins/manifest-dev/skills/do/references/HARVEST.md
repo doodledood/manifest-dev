@@ -24,12 +24,55 @@ mistake fails for every later contributor, with or without this workflow.
   *What holds for every gate* defines it. A lock local to the fix ships with it.
 - **The record:** where a decision record's decision is what the lock holds, update the record's
   `Enforced by` line, and give the check a comment citing the record.
-- **Friction becomes a command:** where the run had to start something by hand, add a print to
-  see its state, or wait on something slow, leave the project's verification able to do that — in
-  its harness a control command, a `logs:` command or a faster check, or the same in its own
-  scripts — or, where that is gigantic, name the gap as debt.
+- **Friction becomes a command:** where the run had to start something by hand or add a print to
+  see its state, leave the project's verification able to do that — in its harness a control
+  command or a `logs:` command, or the same in its own scripts — or, where that is gigantic, name
+  the gap as debt. A slow check is sped up, or, where that is gigantic, named in the report with
+  where its time goes; it is never debt.
 - **Suppressions:** a new suppression of a lock carries its reason on the suppressing line and is
   reported as debt. It needs no approval to land.
+
+## A reaction to a draft
+
+A disposable draft is a throwaway rendering made only to get a person's reaction (`../SKILL.md` →
+*Autonomous execution* says how one is made). A reaction to it is not a correction: the draft was
+made to be reacted to, so nothing went wrong that a check should stop. By default the reaction
+steers the direction the draft was made to settle, and the design behind it, and installs no lock
+and drafts no Taste entry.
+
+Capture every reaction, whatever else it does. The direction picked and each criterion the
+reaction surfaced go, through an amendment (`../SKILL.md` → *Amendments*), into the Manifest — as
+gates on the real work where they bind it, and as Known Assumptions recording the person's call —
+into any Ticket the work is tracked on, and into a decision record where the choice meets the
+project's bar for one. They never go back into the draft, which changes again only when the person
+asks for another draft.
+
+Lock only what the reaction shows reaches past the draft:
+
+- **A requirement or constraint on the real work** — something the built thing must do whatever
+  it looks like — is an invariant the person stated: take it through the harvest above, at the
+  strongest rung that holds it. Lock it where the run holds real work a check can cover; until
+  that work exists, capture it as that work's requirement, naming the lock it owes, so the run
+  that builds it installs it.
+- **A personal lean the person states as reaching beyond this artifact, with a reason**, is
+  drafted as a Taste entry for their yes, the way `../SKILL.md` → *Taste on reversal* describes,
+  whether or not it reverses a call this run made. A lean with no stated reason is captured only.
+
+When it is unclear whether a reaction reaches past the draft, capture it and do not lock it or
+draft a Taste entry: a missed lock costs one later correction, while a wrong one binds every later
+contributor to a rule nobody meant.
+
+Three reactions to a dashboard draft:
+
+- "Go with B, but less dense." Direction only: the Manifest records B at lower density as the
+  person's call and the real dashboard's gate builds to it. No lock, no Taste entry.
+- "These totals have to match the ledger to the cent — we've been burned before." A requirement on
+  the real work: captured as a gate on the real dashboard, and locked at the strongest rung that
+  holds it — here an invariant test that the totals reconcile with the ledger — once the real code
+  exists.
+- "In anything you mock up for me, put the numbers first — I scan for them before anything else."
+  A personal lean with a reason, reaching past this draft: captured in the Manifest as the
+  person's call and drafted as a Taste entry for their yes. No lock.
 
 ## Comments in touched code
 
@@ -49,13 +92,13 @@ joins only as `../SKILL.md` → *What holds for every gate* says.
 
 Debt is what the run found and could not fix on its pull request: each gigantic item, as
 `../SKILL.md` → *What holds for every gate* defines it — lock hits, a reshape, a constraint to
-encode, harness friction, a drifting recipe or a check that runs and passes but is not fit to trust,
-whose fix is a project of its own — with why; new suppressions; ask-first recipes the change touched
-and did not run, and anything else that needs access, authority or a decision a person retains,
-naming what it needs; and a time-line overshoot frozen under a debt Ticket. A failing check across
-the whole tree, or one a gate rests on, whose fix is gigantic is a blocker, never debt. The
-pre-existing issues the work met that are not gigantic, and below-bar findings, are fixed, applied
-or dismissed with a reason, never debt.
+encode, harness friction other than run time, a drifting recipe or a check that runs and passes but
+is not fit to trust, whose fix is a project of its own — with why; new suppressions; and ask-first
+recipes the change touched and did not run, and anything else that needs access, authority or a
+decision a person retains, naming what it needs. A failing check across the whole tree, or one a
+gate rests on, whose fix is gigantic is a blocker, never debt. The pre-existing issues the work met
+that are not gigantic, and below-bar findings, are fixed, applied or dismissed with a reason, never
+debt.
 
 - Record each item in the execution log as it is found.
 - Hand the list to `/done` or `/escalate`, which name it with the ticket-up offer.

@@ -12,68 +12,64 @@ Installs a project's surfaces — North Star, glossary, ADR conventions, a verif
 
 - `/setup-project [--no-mine]`; `--no-mine` installs the wiring and the verification harness without mining history.
 - Phrases its description matches: "set up the project", "bootstrap ADRs", "check whether the setup is sound".
+- Its seed also offers a few Taste entries (steering preferences the owner already explained in the project's history) for the user to accept. A project set up earlier is offered them once, as the v13 item of its update, and never again.
 - figure-out's docs mode offers it: no surfaces at all, a missing or older surfaces version, or a broken surface met on the way.
-- On a project recording an older surfaces version it follows that version's upgrade guide: from v9, scoped instructions and bounded delegated maintenance with optional coordination preparation; from v8, the North Star's *Purpose* proposed to open with the end the owner names and its measures tested against it, each on the owner's ruling, the `Revisit when` signpost and the outside-Purpose note in the ADR conventions, and the check that rebuilds the index and the strategy list; from v7, also the North Star reshaped into six sections with each chosen option moved to a decision record on the owner's ruling, and the `Strategy` area in the ADR conventions; from v6, also each time line moved from committed evidence into its recipe, committed evidence removed and its directory ignored, and context-file lines that commit evidence rewritten; from v5, also a recipe for the checks run across the whole tree and one way in; from v4, also control commands, the tool update and the ask-first marks narrowed to cost; from earlier, moving an existing verification surface, feature map and reader tasks into one harness of recipes. A repository with nothing gets the wiring only.
+- On a project recording an older surfaces version it follows that version's upgrade guide: from v12, a few Taste entries drawn from reasons the owner already stated, offered once; from v11, also the harness's time lines removed — the tool update, recipes' `Line:` and `Workload:` fields, the `headroom:` and `raise:` settings and text about lines; from v10, also decision records giving grounds rather than a veto and the North Star fit check; from v9, also scoped instructions and bounded delegated maintenance with optional coordination preparation; from v8, the North Star's *Purpose* proposed to open with the end the owner names and its measures tested against it, each on the owner's ruling, the `Revisit when` signpost and the outside-Purpose note in the ADR conventions, and the check that rebuilds the index and the strategy list; from v7, also the North Star reshaped into six sections with each chosen option moved to a decision record on the owner's ruling, and the `Strategy` area in the ADR conventions; from v6, also committed evidence removed and its directory ignored, and context-file lines that commit evidence rewritten; from v5, also a recipe for the checks run across the whole tree and one way in; from v4, also control commands, the tool update and the ask-first marks narrowed to cost; from earlier, moving an existing verification surface, feature map and reader tasks into one harness of recipes. A repository with nothing gets the wiring only.
 
 ## Scenarios
 
-### update-from-v10
-Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-update-one-behind.md --scaffold claude-plugins/manifest-dev/evals/53-update-offer-from-v10 --max-turns 80`
-Proves: it follows the v10 guide: it offers the *What a record is for* section and the `Revisit when` reader rule for the project's ADR conventions, the North Star fit check for its conventions and opening line, and the context file's two bullets, each compared with the project's own wording; the version line reaches v11 only after the applicable offers have an answer. No record, North Star position or code is rewritten, and nothing already supplied is offered again.
+### update-from-v12
+Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-update-one-behind.md --scaffold claude-plugins/manifest-dev/evals/53-update-offer-from-v12 --max-turns 80`
+Proves: it follows the v12 guide: it offers the Taste item once and, accepted, puts forward only entries built on a reason the owner stated, none that a decision record settles, writes only those into a `## Taste` section, and reports what it left out and why; the version line reaches v13 only after the offer has an answer. Nothing from v12 or earlier is offered as new — not the time-line removal — and no record, North Star position or code is rewritten.
 Check: read
-Workload: varies
 
 ### update-from-v3
 Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-update-one-behind.md --scaffold verification/scaffolds/project-at-v3 --max-turns 80`
 Proves: the report lists what it offered, applied and declined; the context file ends at the newest version with one verification bullet; the summary's files include `scripts/verify`, `verification/harness.md`, a recipe per former feature-map entry and reader task (the checkout recipe keeps its *Club notes*), a recipe for the checks run across the whole tree, no committed evidence with its directory ignored, and the removal of `docs/features/` and `docs/reader-tasks/`. Nothing was written that the run did not offer and accept.
 Check: read
-Workload: varies
 
 ### update-from-v1
 Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-update-one-behind.md --scaffold verification/scaffolds/project-at-v1 --max-turns 80`
 Proves: it follows the v1 guide straight to the harness — the loose `verify/` feature map becomes recipes without first taking v2's fixed map shape — and adds the records-in-effect rule.
 Check: read
-Workload: varies
 
 ### seed-from-the-end
 Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-seed-end.md --scaffold verification/scaffolds/app-without-surfaces --max-turns 80`
 Proves: the seeded `NORTH_STAR.md` opens its *Purpose* with the end the prompt's owner names — every lent book coming back and the club staying a pleasure to run — keeps any barrier the README or the prompt names as one thing in its way rather than as the purpose, and its *How we know* holds a measure of that end, `empty` with what would fill it where nothing counts it; the project gets a check that rebuilds the ADR index beside its tests.
 Check: read
-Workload: varies
+
+### taste-from-history
+Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-taste-from-history.md --scaffold verification/scaffolds/taste-from-history --max-turns 80`
+Proves: with the owner away, setup's seed reports Taste candidates drawn only from reasons the owner stated and only where they lean away from a shipped default, and writes none. Graders, applied by a grader session that sees the run under a letter label only: (1) it reports as candidates an entry for the ballot-settings reversal in the commit body (decisions that make a vote valid are set explicitly by the organizer rather than defaulted) and one for the guest-poll refusal in the review notes (nothing that sends to other people before a verified account), each stated as a principle that carries beyond its case, built on the owner's stated reason, with when it yields; (2) it puts forward none for asking only the email at sign-up, which a shipped default already says, none for SQLite storage, which `docs/adr/0001` settles, and none for the export-button revert, which gives no reason; (3) it writes no `## Taste` section or entry to any file; (4) it opens no past session record of the owner; (5) its report names what it left out and why. PASS when all five hold.
+Check: read
 
 ### app-project
 Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-install.md --scaffold verification/scaffolds/app-without-surfaces --max-turns 80`
 Proves: the harness it seeds runs the existing `python3 -m pytest tests/` and the CLI commands, marks none of them ask-first, and `scripts/verify check` passes; one context-file verification bullet.
 Check: read
-Workload: varies
 
 ### audit-current
 Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-audit-current.md --scaffold claude-plugins/manifest-dev/evals/45-current-setup-offers-nothing --max-turns 80`
 Proves: it offers gaps item by item though the version is current, and backfills `Enforced by` only on records in effect.
 Check: read
-Workload: varies
 
 ### upgrade-this-repository-from-v3
 Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-upgrade-this-repository.md --scaffold verification/scaffolds/this-repository-at-v3 --max-turns 300`
 Proves: on this repository's last commit at v3, the update offers the move to one harness and applies it: a recipe per skill, walk and eval suite, committed evidence removed and its directory ignored, `docs/features/` and `docs/reader-tasks/` removed, the version line at the newest. The run's `scratch.diff` is what the later hand-completed commit started from.
 Check: read
-Workload: varies
 
 ### this-repository
 Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-this-repository.md --scaffold verification/scaffolds/this-repository --max-turns 200`
 Proves: on this repository, set up at the newest version, the audit offers nothing and writes nothing; the summary shows no files written.
 Check: read
-Workload: varies
 
 ### install
 Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-install.md --max-turns 80`
 Proves: `docs/adr/CONVENTIONS.md`, `CONTEXT.md`, `NORTH_STAR.md` and `docs/NORTH_STAR_CONVENTIONS.md` exist, and the context file carries the newest version line.
 Check: read
-Workload: varies
 
 ## Gotchas
 
-- Drift (2026-10-14): update-from-v1's evidence is a v1 update that wrote v2, the shape this scenario now skips; it proves the old path, not the move straight to the harness.
 - It writes many project files and changes every later session's context. Scratch directory only.
 - It never overwrites a project-owned copy: differences are offered, not applied.
 - It writes scenarios only as far as existing commands reach; drive work beyond that comes from the change that needs it.

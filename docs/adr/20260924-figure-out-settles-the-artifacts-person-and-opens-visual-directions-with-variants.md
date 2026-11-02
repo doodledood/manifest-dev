@@ -1,7 +1,7 @@
 # ADR: figure-out settles an artifact's own person before drafting, and shows variants while the visual direction is undecided
 
 ## Status
-Accepted
+Accepted — amended by 20261102-experience-choices-go-to-the-user-as-options-or-variants: draft variants may differ on where things live, how the person moves through it, or what each step asks, and an experience choice goes to the user as concrete options or variants.
 
 ## Area
 figure-out

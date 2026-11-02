@@ -42,8 +42,6 @@ Keep everything the project wrote; change only its shape:
 - **Costly recipes get the `ask-first` mark** with the reason: any scenario that starts an agent
   session, uses a paid API or cloud resources, loads a shared environment, or has effects outside
   the repository. Run time alone is not a reason. Free drives stay unmarked.
-- **Scenarios whose work varies** — an agent session, a document walk, the affected tests — get
-  `Workload: varies`, per `../VERIFICATION_HARNESS.md` → *Time lines*.
 - **The tool** is copied as `../VERIFICATION_HARNESS.md` → *The parts* says.
 - **The project's customizations stay**: extra sections, its own wording, its own locations. A
   project whose verification lived at a non-default path may keep it there and set the path

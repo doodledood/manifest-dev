@@ -18,7 +18,6 @@ A reader comes to these documents to deliberate with people who cannot share a s
 Run: `scripts/walk.sh 'Deliberate with people who cannot share a session. End able to run a figure-out deliberation in a Slack channel or thread with /figure-out-team. The sections to rely on: claude-plugins/manifest-dev/README.md → Conversation.' claude-plugins/manifest-dev/README.md`
 Proves: the reader ends able to run a figure-out deliberation in a Slack channel or thread with `/figure-out-team`, and names nothing it had to guess that blocks the task.
 Check: read
-Workload: varies
 
 ## Gotchas
 

@@ -5,7 +5,20 @@ argument-hint: '<request>'
 user-invocable: true
 ---
 
-A prompt states a goal and gets out of the way. Everything else in it is load — spent on every run, taken from the attention the model would otherwise put on the work — so each line has to buy more than it costs. What follows decides three things: whether a line exists, where it sits, and how it is worded.
+A prompt states a goal and gets out of the way. Everything else in it is load — spent on every run, taken from the attention the model would otherwise put on the work — so each line has to buy more than it costs. What follows decides four things: what the run is given, whether a line exists, where it sits, and how it is worded.
+
+## What the run has in front of it
+
+A run's result is bounded by what it has in front of it: the prompt and everything fed into it — the inputs filled into a template, the files it reads, retrieved material, tool output, the conversation so far, what a handed-off agent receives. The model is usually capable enough, so bad output usually traces to that input. When a run underperforms, read what it actually had — the trace or the filled-in input, not the template alone — before you change any wording, and look for four faults:
+
+- **Missing** — a piece the task needs is not there, so the run guesses.
+- **Conflicting** — two pieces disagree, so the run picks one.
+- **Wrong or stale** — a piece is untrue or out of date, so the run repeats it.
+- **Noise** — what matters is there, buried under material that does not bear on the task.
+
+Fix the input first: supply the piece or a pointer that reaches it, choose one source where two disagree, correct or drop what is wrong, cut what buries the signal. That usually moves the result more than any other change. Wording edits and after-the-fact corrections — a review pass, a self-check, a rule added after a failure — come after it. A correction that makes up for faulty input leaves the fault in place, and the next run meets it again.
+
+Complete means complete for the task: the fix usually trades noise for the missing piece rather than adding volume. Look to the instructions when the input is already complete, consistent and clean; when the model lacks a capability no input can supply, change the architecture instead.
 
 ## Where a line came from
 
@@ -80,7 +93,7 @@ A line can earn its place and still break where the prompt actually runs. Check 
 
 ## Updating
 
-Find the gap a line closes before changing anything near it. The best patch usually replaces a line rather than adding one beside it, and a new explicit rule often retires an older vague hedge. Net change can be positive or negative; the target is balance, not direction.
+When the change follows a bad result, start with *What the run has in front of it*, and change the prompt's lines only for what the input does not explain. Find the gap a line closes before changing anything near it. The best patch usually replaces a line rather than adding one beside it, and a new explicit rule often retires an older vague hedge. Net change can be positive or negative; the target is balance, not direction.
 
 The updated prompt reads as if written today for what it now does. What a line used to say, when or why it changed, and who asked for it go in the commit message or a decision record, outside the prompt's file: in the prompt they cost load on every run and can be followed as instructions. Why a rule holds can stay. Keep the ruling, not the note that it was ruled.
 

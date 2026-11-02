@@ -18,7 +18,6 @@ A reader comes to these documents to add a plugin, and should end able to create
 Run: `scripts/walk.sh 'Add a plugin. End able to create a plugin from the template, register it in the marketplace, and test it locally. The sections to rely on: CONTRIBUTING.md → Plugin Development Process; claude-plugins/README.md → Add a plugin; claude-plugins/PLUGIN_TEMPLATE/README.md → Layout and Steps.' CONTRIBUTING.md claude-plugins/README.md claude-plugins/PLUGIN_TEMPLATE/README.md`
 Proves: the reader ends able to create a plugin from the template, register it in the marketplace, and test it locally, and names nothing it had to guess that blocks the task.
 Check: read
-Workload: varies
 
 ## Gotchas
 

@@ -20,7 +20,6 @@ Teaches the user a body of work — this session's changes, a pull request, a de
 Run: `scripts/drive-skill.sh teach-me verification/prompts/teach-me-teach.md --tools`
 Proves: the first turn explains the problem the record solved and ends with a check question. It does not move on before the check is answered.
 Check: read
-Workload: varies
 
 ## Gotchas
 

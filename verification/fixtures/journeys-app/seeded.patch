@@ -1,0 +1,62 @@
+--- a/server.js
++++ b/server.js
+@@ -13,6 +13,7 @@
+   },
+   porto: { title: "Porto", owner: "Maya", firstDay: Date.UTC(2026, 8, 3), dayCount: 2, places: [] },
+ };
++const seededCount = Object.fromEntries(Object.entries(TRIPS).map(([id, t]) => [id, t.places.length]));
+ const dayLabel = (trip, d) =>
+   new Date(trip.firstDay + d * 86400000).toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short", timeZone: "UTC" });
+ const MAX_NAME = 80;
+@@ -75,16 +76,14 @@
+     const url = new URL(`http://x/signin?next=${encodeURIComponent(next)}`);
+     return signinForm(req, res, url, "Enter an email address like name@example.com.");
+   }
+-  const safeNext = next.startsWith("/") && !next.startsWith("//") ? next : "/";
+-  redirect(res, safeNext, { "set-cookie": `user=${encodeURIComponent(email)}; Path=/; HttpOnly` });
++  redirect(res, "/", { "set-cookie": `user=${encodeURIComponent(email)}; Path=/; HttpOnly` });
+ }
+ 
+ function planDays(trip, list, hour) {
+-  const fits = Math.floor((LAST_SLOT - hour) / 2) + 1;
+-  const perDay = Math.min(Math.ceil(list.length / trip.dayCount), fits);
++  const perDay = 2;
+   const days = [];
+-  for (let i = 0; i < list.length && days.length < trip.dayCount; i += perDay) days.push(list.slice(i, i + perDay));
+-  return { days, unplanned: list.slice(perDay * trip.dayCount) };
++  for (let i = 0; i < list.length; i += perDay) days.push(list.slice(i, i + perDay));
++  return { days, unplanned: [] };
+ }
+ 
+ const ERRORS = {
+@@ -133,10 +132,7 @@
+   const trip = TRIPS[id];
+   const path = `/trips/${id}`;
+   const user = userOf(req);
+-  if (!user) {
+-    return send(res, 200, page(trip.title, `<h1>${trip.title} trip: saved places</h1>
+-<p>Sign in to see the places your group saved for this trip.</p><p><a href="${signinLink(url.pathname + url.search)}">Sign in</a></p>`));
+-  }
++  if (!user) return send(res, 200, page(trip.title, ""));
+   const mode = url.searchParams.get("mode") === "plan" ? "plan" : "list";
+   const code = url.searchParams.get("error");
+   const error = code && Object.hasOwn(ERRORS, code) ? ERRORS[code] : "";
+@@ -159,7 +155,7 @@
+     const { days, unplanned } = planDays(trip, trip.places, hour);
+     const planned = days
+       .map((dayPlaces, d) => `<div class="day"><h3>${dayLabel(trip, d)}</h3><ul>${dayPlaces
+-        .map((p, i) => `<li>${String(hour + 2 * i).padStart(2, "0")}:00 — ${escape(p)}</li>`)
++        .map((p, i) => `<li>${String(9 + 2 * i).padStart(2, "0")}:00 — ${escape(p)}</li>`)
+         .join("")}</ul></div>`)
+       .join("");
+     const rest = unplanned.length
+@@ -190,7 +186,8 @@
+   if (!name) return fail("empty");
+   if (name.length > MAX_NAME) return fail("long");
+   if (trip.places.some((p) => p.toLowerCase() === name.toLowerCase())) return fail("duplicate");
+-  trip.places.push(name);
++  if (trip.places.length > seededCount[id]) trip.places[trip.places.length - 1] = name;
++  else trip.places.push(name);
+   redirect(res, back);
+ }
+ 

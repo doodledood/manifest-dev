@@ -21,7 +21,6 @@ this recipe starts the suite and does not redefine them.
 Run: `scripts/evals/run_eval.sh --wait define-with-without evals/results/define-with-without/aggregate-result.json --tag define --ablation with-without --judge-model sonnet --scaffold --max-cost-usd 65`
 Proves: the suite ran both arms; the Δ it reports, read against the suite README's noise, is the measurement, and the README records it.
 Check: read
-Workload: varies
 
 ## Gotchas
 

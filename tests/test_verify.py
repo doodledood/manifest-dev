@@ -147,6 +147,28 @@ def test_eval_scaffolds_seed_the_shipped_tool(scaffold: Path) -> None:
         ), f"{scaffold.relative_to(REPO_ROOT)} writes a {name} that differs from the shipped one"
 
 
+ANY_EMBEDDED = re.compile(r"cat > scripts/verify(?:\.mts)? <<'(\w+)'\n")
+CHANGES = SHIPPED_HARNESS.parent / "CHANGES.md"
+
+
+# The one-behind setup case seeds the tool its version shipped, so the update has a tool to offer;
+# no other scaffold may hold a copy that `sync_dist.py` leaves behind.
+def test_only_the_one_behind_case_seeds_an_older_tool() -> None:
+    newest = max(
+        int(n) for n in re.findall(r"^- v(\d+) — ", CHANGES.read_text("utf-8"), re.M)
+    )
+    behind = f"VERIFY_TOOL_V{newest - 1}_EOF"
+    frozen = {
+        p.parent.name: set(ANY_EMBEDDED.findall(p.read_text(encoding="utf-8")))
+        - {"VERIFY_TOOL_EOF"}
+        for p in EVALS.rglob("scaffold.sh")
+    }
+    frozen = {name: markers for name, markers in frozen.items() if markers}
+    assert frozen == {
+        f"53-update-offer-from-v{newest - 1}": {behind}
+    }, f"only the one-behind case may seed an older tool, under {behind}: {frozen}"
+
+
 def _path_with_node_version(tmp_path: Path, version: str | None) -> str:
     bin_dir = tmp_path / "bin"
     bin_dir.mkdir()
@@ -356,23 +378,6 @@ def test_runs_in_one_second_get_their_own_evidence(tmp_path: Path) -> None:
             "---\nkind: feature\n---\n# T\n\n## Scenarios\n\n### a\nRun: `src/nope.sh`\n",
             "",
             "names src/nope.sh",
-        ),
-        (
-            "---\nkind: feature\n---\n# T\n\n## Scenarios\n\n### a\nRun: `true`\nLine: soon\n",
-            "",
-            "`Line: soon` is not",
-        ),
-        (
-            "---\nkind: feature\n---\n# T\n\n## Scenarios\n\n### a\nRun: `true`\n"
-            "Line: 1.0 s on m\nLine: 2.0 s on m\n",
-            "",
-            "two lines on m",
-        ),
-        (
-            "---\nkind: feature\n---\n# T\n\n## Scenarios\n\n### a\nRun: `true`\n"
-            "Workload: varies\nLine: 1.0 s on m\n",
-            "",
-            "takes no `Line:`",
         ),
         ("---\ncovers: src\n---\n# T\n", "", "no `kind:`"),
     ],
@@ -1016,14 +1021,9 @@ def _only_summary(tmp_path: Path) -> str:
 
 
 def _timed(tmp_path: Path, scenarios: str = "") -> dict[str, str]:
-    """A recipe whose runs take whatever duration the test plants (0 s to begin with)."""
+    """A recipe whose runs record whatever duration the test plants (0 s to begin with)."""
     env = _harness(tmp_path, "", scenarios or "### once\nRun: `true`\n")
     return {**env, "VERIFY_MACHINE": MACHINE, "VERIFY_DURATION": "0"}
-
-
-def _delay(env: dict[str, str], seconds: float) -> None:
-    # Planted rather than slept: the line rules are tested on exact durations, without waiting.
-    env["VERIFY_DURATION"] = f"{seconds}"
 
 
 # --- the stop grace --------------------------------------------------------------------
@@ -1147,13 +1147,12 @@ def test_older_summaries_of_a_scenario_fold_into_one_on_its_next_run(
     assert detail.exists(), "detail kept beside the summaries was removed"
 
 
-# --- lines -----------------------------------------------------------------------------
+# --- run time ------------------------------------------------------------------------
 #
 # Each test here holds the decision in
-# docs/adr/20261018-the-harness-commits-no-evidence-and-time-lines-live-in-recipes.md: a timed
-# scenario's line lives in its recipe, one per kind of machine; a crossing counts only once a
-# confirming run crosses too; and only `line`, `raise` and `freeze` move a line, each writing it
-# into the recipe.
+# docs/adr/20261031-time-lines-are-removed-and-run-time-is-only-reported.md: a run reports how
+# long it took and nothing compares it; no command reads, writes or acts on a time line, and a
+# field earlier versions read for one is refused so it cannot read as live.
 
 RECIPE_PATH = ("verification", "recipes", "thing.md")
 
@@ -1162,310 +1161,146 @@ def _recipe(tmp_path: Path) -> Path:
     return tmp_path.joinpath(*RECIPE_PATH)
 
 
-def _with_line(tmp_path: Path, line: str) -> None:
-    """State a line under the recipe's last scenario, as a change to the check wrote it."""
-    recipe = _recipe(tmp_path)
-    recipe.write_text(recipe.read_text(encoding="utf-8") + line + "\n", "utf-8")
-
-
-def _lines(tmp_path: Path) -> list[str]:
-    return re.findall(r"^Line: .*$", _recipe(tmp_path).read_text("utf-8"), re.M)
-
-
-# Holds the decision in docs/adr/20261018-the-harness-commits-no-evidence-and-time-lines-live-in-recipes.md, which amends
-# docs/adr/20261015-check-run-time-is-held-by-an-alarm-against-creep.md.
-def test_a_line_is_read_from_the_recipe_for_its_kind_of_machine(tmp_path: Path) -> None:
-    env = _timed(tmp_path)
-    _with_line(tmp_path, "Line: 0.0 s on another-machine")
-    _delay(env, 1.2)
-    # On a kind of machine the recipe has no line for, the run reports and compares nothing.
-    other = run_verify("drive", "thing", env=env)
-    assert other.returncode == 0, other.stdout + other.stderr
-    assert (
-        "its line is for another-machine, so this run compares nothing" in other.stdout
-    )
-    _with_line(tmp_path, f"Line: 0.0 s on {MACHINE}")
-    same = run_verify("drive", "thing", env=env)
-    assert same.returncode == 5, same.stdout + same.stderr
-    assert f"against its 0.0 s line (over past 1.0 s) on {MACHINE}" in same.stdout
-    shown = run_verify("help", "thing", env=env).stdout
-    assert (
-        f"line 0.0 s on {MACHINE}" in shown and "line 0.0 s on another-machine" in shown
-    )
-
-
-def test_a_scenario_with_no_line_says_how_its_first_is_set(tmp_path: Path) -> None:
-    env = _timed(tmp_path)
-    before = _recipe(tmp_path).read_bytes()
+def test_a_passing_drive_exits_0_however_long_it_took_and_runs_once(
+    tmp_path: Path,
+) -> None:
+    count = tmp_path / "runs"
+    env = _timed(tmp_path, f"### once\nRun: `echo x >> {count}`\n")
+    env["VERIFY_DURATION"] = "9999"
     result = run_verify("drive", "thing", env=env)
     assert result.returncode == 0, result.stdout + result.stderr
-    assert (
-        "with no line yet" in result.stdout
-        and "verify line thing once" in result.stdout
-    )
-    assert (
-        _recipe(tmp_path).read_bytes() == before
-    ), "a run wrote a line nobody asked for"
+    assert "passed in 9999.0 s" in result.stdout, result.stdout
+    assert count.read_text(encoding="utf-8") == "x\n", "the scenario ran more than once"
+    assert "- **Duration:** 9999.0 s\n" in _only_summary(tmp_path)
 
 
-# Holds the decision in docs/adr/20261018-the-harness-commits-no-evidence-and-time-lines-live-in-recipes.md, which amends
-# docs/adr/20261015-check-run-time-is-held-by-an-alarm-against-creep.md.
-def test_one_run_over_the_line_is_noise_until_a_confirming_run_crosses_too(
+@pytest.mark.parametrize("command", ["line", "raise", "freeze"])
+def test_the_removed_line_commands_are_unknown(tmp_path: Path, command: str) -> None:
+    env = _harness(tmp_path, "")
+    result = run_verify(command, "thing", "once", "why", env=env)
+    assert result.returncode == 2, result.stdout + result.stderr
+    assert f"unknown command '{command}'" in result.stderr, result.stderr
+
+
+def test_help_names_no_time_line_and_no_exit_5(tmp_path: Path) -> None:
+    env = _harness(tmp_path, "")
+    shown = run_verify("--help", env=env).stdout
+    for gone in ("verify line", "verify raise", "verify freeze", "headroom", "Line:"):
+        assert gone not in shown, gone
+    codes = shown[shown.index("Exit codes:") :].split("\n\n")[0]
+    assert re.search(r"\b4 refused", codes) and not re.search(r"\b5\b", codes), codes
+    recipe = run_verify("help", "thing", env=env).stdout
+    for gone in ("no line yet", "Line:", "line ", "its work varies"):
+        assert gone not in recipe, (gone, recipe)
+
+
+@pytest.mark.parametrize(
+    "field",
+    [
+        "Line: 2.5 s on linux-x64-4cpu",
+        "Line: 4.5 s on linux-x64-4cpu; raised: a fourth configuration",
+        "Line: 0.6 s on linux-x64-4cpu; frozen at 0.9 s by #41",
+        "Workload: varies",
+        "Workload: fixed",
+    ],
+)
+def test_a_leftover_scenario_field_fails_check_naming_it(
+    tmp_path: Path, field: str
+) -> None:
+    env = _harness(tmp_path, "", f"### once\nRun: `true`\n{field}\n")
+    result = run_verify("check", env=env)
+    assert result.returncode == 1, result.stdout
+    assert (
+        f"thing.md: scenario 'once' carries `{field}`: time lines were removed"
+        in result.stdout
+    ), result.stdout
+    assert "delete it" in result.stdout, result.stdout
+
+
+@pytest.mark.parametrize("setting", ["headroom: 25%", "raise: ask"])
+def test_a_leftover_setting_fails_check_naming_it(tmp_path: Path, setting: str) -> None:
+    env = _harness(tmp_path, "")
+    key, value = setting.split(": ")
+    _settings(tmp_path, **{key: value})
+    result = run_verify("check", env=env)
+    assert result.returncode == 1, result.stdout
+    assert (
+        f"verification/harness.md: carries `{setting}`: time lines were removed"
+        in result.stdout
+    ), result.stdout
+
+
+def test_both_leftover_settings_are_named_at_once(tmp_path: Path) -> None:
+    env = _harness(tmp_path, "")
+    _settings(tmp_path, **{"headroom": "25%", "raise": "ask"})
+    out = run_verify("check", env=env).stdout
+    assert "carries `headroom: 25%`" in out and "carries `raise: ask`" in out, out
+
+
+def test_a_leftover_field_is_named_beside_a_scenario_that_stops_the_parse(
     tmp_path: Path,
 ) -> None:
-    # Timed by the clock, not planted: the first run sleeps past the line, the confirming run
-    # that `drive` starts at once does not, so the crossing is noise and the drive passes.
     env = _harness(
-        tmp_path, "", "### once\nRun: `if [ -f slow ]; then rm slow; sleep 1.5; fi`\n"
+        tmp_path, "", "### a\nRun: `true`\nLine: 1.0 s on m\n\n### b\nProves: x\n"
     )
-    env["VERIFY_MACHINE"] = MACHINE
-    _with_line(tmp_path, f"Line: 0.0 s on {MACHINE}")
-    (tmp_path / "slow").write_text("", encoding="utf-8")
-    noise = run_verify("drive", "thing", env=env)
-    assert noise.returncode == 0, noise.stdout + noise.stderr
-    assert (
-        "over its line once" in noise.stdout and "the first was noise" in noise.stdout
+    out = run_verify("check", env=env).stdout
+    assert "scenario 'a' carries `Line: 1.0 s on m`" in out, out
+    assert "scenario 'b' has no Run:" in out, out
+
+
+def test_doctor_names_a_leftover_setting_with_the_recipe_problems(
+    tmp_path: Path,
+) -> None:
+    env = _harness(tmp_path, "", "### a\nRun: `true`\nWorkload: varies\n")
+    _settings(tmp_path, headroom="25%")
+    result = run_verify("doctor", env=env)
+    assert result.returncode == 1, result.stdout + result.stderr
+    assert "carries `headroom: 25%`" in result.stdout, result.stdout
+    assert "carries `Workload: varies`" in result.stdout, result.stdout
+
+
+def test_every_leftover_field_of_a_recipe_is_named_at_once(tmp_path: Path) -> None:
+    env = _harness(
+        tmp_path,
+        "",
+        "### a\nRun: `true`\nLine: 1.0 s on m\n\n### b\nRun: `true`\nWorkload: varies\n",
     )
-    assert noise.stdout.count("running [once]") == 2, noise.stdout
-
-
-# Holds the decision in docs/adr/20261018-the-harness-commits-no-evidence-and-time-lines-live-in-recipes.md, which amends
-# docs/adr/20261015-check-run-time-is-held-by-an-alarm-against-creep.md, and in part
-# docs/adr/20261015-runs-keep-the-harness-fit-for-speed-control-and-diagnosis.md.
-def test_a_crossing_a_confirming_run_repeats_exits_over_and_names_the_ways_on(
-    tmp_path: Path,
-) -> None:
-    env = _timed(tmp_path)
-    _with_line(tmp_path, f"Line: 0.0 s on {MACHINE}")
-    before = _recipe(tmp_path).read_bytes()
-    _delay(env, 1.2)
-    over = run_verify("drive", "thing", env=env)
-    assert over.returncode == 5, over.stdout + over.stderr
-    assert "on two runs in a row" in over.stdout, over.stdout
-    assert "verify raise thing once REASON" in over.stdout
-    assert "verify freeze thing once TICKET" in over.stdout
-    assert _recipe(tmp_path).read_bytes() == before, "a crossing moved the line"
-
-
-def test_a_failed_run_is_never_compared_with_its_line(tmp_path: Path) -> None:
-    env = _timed(tmp_path, "### once\nRun: `true; exit 1`\n")
-    _with_line(tmp_path, f"Line: 0.0 s on {MACHINE}")
-    _delay(env, 1.2)
-    result = run_verify("drive", "thing", env=env)
-    assert result.returncode == 1 and "over" not in result.stdout, result.stdout
-    for how, said in (("line", ()), ("raise", ("earned",)), ("freeze", ("T-9",))):
-        refused = run_verify(how, "thing", "once", *said, env=env)
-        assert refused.returncode == 1, refused.stdout
-        assert "measured nothing" in refused.stderr, refused.stderr
-        assert "verify drive thing once" in refused.stderr, refused.stderr
-
-
-# Holds the decision in docs/adr/20261018-the-harness-commits-no-evidence-and-time-lines-live-in-recipes.md, which amends
-# docs/adr/20261015-check-run-time-is-held-by-an-alarm-against-creep.md.
-def test_line_writes_the_first_line_from_the_latest_run_here(tmp_path: Path) -> None:
-    env = _timed(tmp_path)
-    unrun = run_verify("line", "thing", "once", env=env)
-    assert unrun.returncode == 1 and "drive it first" in unrun.stderr, unrun.stderr
-    _delay(env, 2.3)
-    assert run_verify("drive", "thing", env=env).returncode == 0
-    written = run_verify("line", "thing", "once", env=env)
-    assert written.returncode == 0, written.stdout + written.stderr
-    assert (
-        "line set at 2.3 s" in written.stdout
-        and "Commit verification/recipes/thing.md" in written.stdout
-    )
-    assert _lines(tmp_path) == [f"Line: 2.3 s on {MACHINE}"]
-    # Written under its own scenario, where the next run reads it.
-    assert run_verify("check", env=env).returncode == 0
-
-
-def test_line_lowers_a_line_a_faster_run_beat_by_more_than_the_headroom(
-    tmp_path: Path,
-) -> None:
-    env = _timed(tmp_path)
-    _with_line(tmp_path, f"Line: 5.0 s on {MACHINE}")
-    drove = run_verify("drive", "thing", env=env)
-    assert (
-        "A change that made it faster keeps the gain: verify line thing once"
-        in drove.stdout
-    )
-    assert _lines(tmp_path) == [f"Line: 5.0 s on {MACHINE}"], "a run lowered the line"
-    lowered = run_verify("line", "thing", "once", env=env)
-    assert lowered.returncode == 0 and "lowered from 5.0 s to 0.0 s" in lowered.stdout
-    assert _lines(tmp_path) == [f"Line: 0.0 s on {MACHINE}"]
-
-
-def test_line_never_moves_a_line_up_or_keeps_a_gain_inside_the_headroom(
-    tmp_path: Path,
-) -> None:
-    env = _timed(tmp_path)
-    _with_line(tmp_path, f"Line: 0.6 s on {MACHINE}")  # 0.0 s is within 1 s of 0.6 s
-    assert run_verify("drive", "thing", env=env).returncode == 0
-    kept = run_verify("line", "thing", "once", env=env)
-    assert kept.returncode == 1 and "no gain to keep" in kept.stderr, kept.stderr
-    _delay(env, 3.0)
-    run_verify("drive", "thing", env=env)
-    up = run_verify("line", "thing", "once", env=env)
-    assert (
-        up.returncode == 1 and "moves up only with its reason" in up.stderr
-    ), up.stderr
-    assert _lines(tmp_path) == [f"Line: 0.6 s on {MACHINE}"]
-
-
-# Holds the decision in docs/adr/20261018-the-harness-commits-no-evidence-and-time-lines-live-in-recipes.md, which amends
-# docs/adr/20261015-check-run-time-is-held-by-an-alarm-against-creep.md.
-def test_a_raise_needs_its_reason_and_writes_both_into_the_recipe(
-    tmp_path: Path,
-) -> None:
-    env = _timed(tmp_path)
-    _with_line(tmp_path, f"Line: 0.0 s on {MACHINE}")
-    _delay(env, 1.3)
-    assert run_verify("drive", "thing", env=env).returncode == 5
-    refused = run_verify("raise", "thing", "once", env=env)
-    assert refused.returncode == 2 and "give the reason" in refused.stderr
-    assert _lines(tmp_path) == [f"Line: 0.0 s on {MACHINE}"]
-    raised = run_verify(
-        "raise", "thing", "once", "new", "tests;", "for exports", env=env
-    )
-    assert raised.returncode == 0, raised.stdout + raised.stderr
-    # The reason's own `;` would end the field, so it is written as a comma.
-    assert _lines(tmp_path) == [
-        f"Line: 1.3 s on {MACHINE}; raised: new tests, for exports"
-    ]
-    assert run_verify("drive", "thing", env=env).returncode == 0
-    assert run_verify("check", env=env).returncode == 0
-
-
-def test_a_line_not_crossed_has_nothing_to_raise_or_freeze(tmp_path: Path) -> None:
-    env = _timed(tmp_path)
-    _with_line(tmp_path, f"Line: 5.0 s on {MACHINE}")
-    assert run_verify("drive", "thing", env=env).returncode == 0
-    for how, said in (("raise", "because"), ("freeze", "T-1")):
-        result = run_verify(how, "thing", "once", said, env=env)
-        assert result.returncode == 1 and "not over its line" in result.stderr
-
-
-def test_a_raise_or_freeze_with_no_line_here_says_how_to_set_one(
-    tmp_path: Path,
-) -> None:
-    env = _timed(tmp_path)
-    assert run_verify("drive", "thing", env=env).returncode == 0
-    result = run_verify("raise", "thing", "once", "earned", env=env)
-    assert result.returncode == 1 and "verify line thing once" in result.stderr
-
-
-def test_a_project_can_require_a_person_to_raise_a_line(tmp_path: Path) -> None:
-    env = _timed(tmp_path)
-    _settings(tmp_path, **{"raise": "ask"})
-    _with_line(tmp_path, f"Line: 0.0 s on {MACHINE}")
-    _delay(env, 1.3)
-    run_verify("drive", "thing", env=env)
-    refused = run_verify("raise", "thing", "once", "earned", env=env)
-    assert refused.returncode == 4 and "needs a person" in refused.stderr
-    agreed = run_verify("raise", "thing", "once", "earned", "--yes", env=env)
-    assert agreed.returncode == 0, agreed.stderr
-
-
-# Holds the decision in docs/adr/20261018-the-harness-commits-no-evidence-and-time-lines-live-in-recipes.md, which amends
-# docs/adr/20261015-check-run-time-is-held-by-an-alarm-against-creep.md.
-def test_a_freeze_holds_an_overshoot_at_a_level_naming_its_debt_ticket(
-    tmp_path: Path,
-) -> None:
-    env = _timed(tmp_path)
-    _with_line(tmp_path, f"Line: 0.0 s on {MACHINE}")
-    _delay(env, 1.3)
-    assert run_verify("drive", "thing", env=env).returncode == 5
-    assert run_verify("freeze", "thing", "once", env=env).returncode == 2
-    frozen = run_verify("freeze", "thing", "once", "TICKET-7", env=env)
-    assert frozen.returncode == 0, frozen.stdout + frozen.stderr
-    assert _lines(tmp_path) == [
-        f"Line: 0.0 s on {MACHINE}; frozen at 1.3 s by TICKET-7"
-    ]
-    # Up to the frozen level (with headroom) other runs are not held up.
-    _delay(env, 2.2)
-    held = run_verify("drive", "thing", env=env)
-    assert held.returncode == 0 and "over" not in held.stdout, held.stdout
-    # Past it is new creep, paid by whoever causes it.
-    _delay(env, 2.5)
-    past = run_verify("drive", "thing", env=env)
-    assert past.returncode == 5 and "the 1.3 s Ticket TICKET-7 froze" in past.stdout
-
-
-def test_a_run_back_under_the_line_names_the_paid_down_freeze_and_line_clears_it(
-    tmp_path: Path,
-) -> None:
-    env = _timed(tmp_path)
-    _with_line(tmp_path, f"Line: 0.0 s on {MACHINE}; frozen at 3.0 s by TICKET-7")
-    drove = run_verify("drive", "thing", env=env)
-    assert drove.returncode == 0 and "is paid down" in drove.stdout, drove.stdout
-    assert (
-        "frozen at 3.0 s" in _lines(tmp_path)[0]
-    ), "a run cleared the freeze on its own"
-    cleared = run_verify("line", "thing", "once", env=env)
-    assert cleared.returncode == 0 and "is paid down" in cleared.stdout, cleared.stdout
-    assert _lines(tmp_path) == [f"Line: 0.0 s on {MACHINE}"]
-
-
-def test_the_headroom_is_a_setting(tmp_path: Path) -> None:
-    env = _timed(tmp_path)
-    _settings(tmp_path, headroom="300%")
-    _with_line(tmp_path, f"Line: 1.0 s on {MACHINE}")
-    _delay(env, 2.2)  # over 1 s + the 1 s floor, under 1 s + 300%
-    assert run_verify("drive", "thing", env=env).returncode == 0
-    _settings(tmp_path, headroom="lots")
-    result = run_verify("drive", "thing", env=env)
-    assert result.returncode == 1 and "headroom must be a percentage" in result.stderr
-
-
-def test_a_scenario_whose_work_varies_has_no_line(tmp_path: Path) -> None:
-    env = _timed(tmp_path, "### once\nRun: `true`\nWorkload: varies\n")
-    _delay(env, 30)
-    result = run_verify("drive", "thing", env=env)
-    assert result.returncode == 0 and "line" not in result.stdout, result.stdout
-    refused = run_verify("line", "thing", "once", env=env)
-    assert "Workload: varies" in refused.stderr and "no line" in refused.stderr
+    out = run_verify("check", env=env).stdout
+    assert "scenario 'a' carries `Line: 1.0 s on m`" in out, out
+    assert "scenario 'b' carries `Workload: varies`" in out, out
+    assert "check: 2 problem(s)" in out, out
 
 
 def test_a_scenarios_output_never_sets_a_field(tmp_path: Path) -> None:
-    # The line moves from the summary's own header, never from what the command printed.
+    # `help` reads the latest run from the summary's own header, never from what it printed.
     env = _timed(tmp_path, "### once\nRun: `echo '- **Duration:** 99.0 s'`\n")
-    _with_line(tmp_path, f"Line: 5.0 s on {MACHINE}")
     assert run_verify("drive", "thing", env=env).returncode == 0
-    assert "to 0.0 s" in run_verify("line", "thing", "once", env=env).stdout
+    shown = run_verify("help", "thing", env=env).stdout
+    assert "once: passed in 0.0 s" in shown, shown
 
 
-def test_a_line_written_for_one_scenario_leaves_the_others_alone(
-    tmp_path: Path,
-) -> None:
-    env = _timed(
-        tmp_path, "### one\nRun: `true`\n\nTrap text.\n\n### two\nRun: `true`\n"
-    )
-    _with_line(tmp_path, f"Line: 9.0 s on {MACHINE}")  # under `two`
-    assert run_verify("drive", "thing", "one", env=env).returncode == 0
-    assert run_verify("line", "thing", "one", env=env).returncode == 0
-    text = _recipe(tmp_path).read_text("utf-8")
-    assert (
-        f"### one\nRun: `true`\n\nTrap text.\nLine: 0.0 s on {MACHINE}\n\n### two"
-        in text
-    ), text
-    assert text.endswith(f"### two\nRun: `true`\nLine: 9.0 s on {MACHINE}\n"), text
-
-
-# Holds the decision in docs/adr/20261018-the-harness-commits-no-evidence-and-time-lines-live-in-recipes.md, which amends
-# docs/adr/20261015-check-run-time-is-held-by-an-alarm-against-creep.md.
-def test_no_command_but_line_raise_and_freeze_writes_a_recipe(tmp_path: Path) -> None:
-    env = _timed(
-        tmp_path, "### once\nRun: `true`\n\n### varies\nRun: `true`\nWorkload: varies\n"
-    )
+def test_no_command_writes_a_recipe_or_the_settings(tmp_path: Path) -> None:
+    env = _timed(tmp_path)
     _settings(tmp_path)
     shared = [_recipe(tmp_path), tmp_path / "verification" / "harness.md"]
     before = [p.read_bytes() for p in shared]
-    for delay in (0, 5, 0):
-        _delay(env, delay)
+    for _ in range(2):
         run_verify("drive", "thing", env=env)
         for args in (("list",), ("help", "thing"), ("check",), ("doctor",)):
             run_verify(*args, env=env)
     assert [p.read_bytes() for p in shared] == before
+
+
+def test_the_shipped_example_harness_carries_no_removed_field(tmp_path: Path) -> None:
+    data = tmp_path / "verification"
+    shutil.copytree(SHIPPED_HARNESS / "recipes", data / "recipes")
+    shutil.copy2(SHIPPED_HARNESS / "harness.md", data / "harness.md")
+    env = {**outer_env(), "VERIFY_ROOT": str(tmp_path), "VERIFY_DATA": str(data)}
+    listed = run_verify("list", env=env)
+    assert listed.returncode == 0, listed.stdout + listed.stderr
+    checked = run_verify("check", env=env)
+    # The examples name paths of an imagined project, so only a removed-field refusal matters here.
+    assert "time lines were removed" not in checked.stdout, checked.stdout
 
 
 # --- evidence stays on the machine that ran ---------------------------------------------

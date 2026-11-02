@@ -65,15 +65,17 @@ followed, or that no entry applied.
 earlier run made and states why, and the reason is a preference another user
 could want the opposite of — not a behavior every session owes — offer a Taste
 entry before the handoff. Show it
-verbatim in three parts: the preference, naming the kind of call it covers; the
-rationale, built on the reason the user stated, never one you inferred; and when
-it should yield. Name the memory file it would go in, and ask whether it is
+verbatim in three parts: the preference, stated as a principle that carries to
+calls never discussed and naming the kind of call it covers; the rationale, built
+on the reason the user stated, never one you inferred; and when it should yield. Name the memory file it would go in, and ask whether it is
 standing or for this case only; "this case only" is a no. Only the user's
 explicit yes to that text writes it, inside that file's `## Taste` section,
 changing nothing else. When an existing entry decided the reversed call, raise
 the clash instead — has the entry's default moved, or is this an exception? Show
 any revision or removal verbatim, and apply it only on the user's explicit yes
-to that text. An unattended session makes no offer.
+to that text. An unattended session makes no offer. A reaction to a disposable draft — a
+throwaway rendering made only to get that reaction — is about that draft's direction, not such a
+reversal, unless the user states it as reaching beyond that artifact.
 
 Carry the prior Read's useful rationale, intended progress, circumstances, trade-offs and
 uncertainties into Intent, Approach and Assumptions, as reasoning that holds now rather than the
@@ -252,6 +254,13 @@ not only which Defaults it drops. Taste entries stay weighed per call, as above.
 multi-repo manifests. These carry encoder data only —
 figure-out's own probe files are a separate set this skill never reads, and any
 `tasks/**/references/*.md` is gate-evaluation lookup data, not loaded here.
+A disposable draft made only to get a person's reaction loads no task file — no
+Quality Gate and no Default — because that reaction is its check. Its
+Deliverable owes only that the draft, kept outside the project's files, reaches
+that person with the question it poses; nothing reviews, tests or checks the
+draft's quality. Where the Manifest also holds work beyond the draft, load task
+files for that work as usual and keep the draft's Deliverable outside their
+gates.
 
 | Domain | Indicators | File |
 |---|---|---|

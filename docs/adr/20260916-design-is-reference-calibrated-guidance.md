@@ -1,7 +1,7 @@
 # ADR: Design is reference-calibrated guidance; the evaluator owns review machinery
 
 ## Status
-Superseded by 20260924-design-starts-from-the-person-and-their-moment
+Superseded by 20260924-design-starts-from-the-person-and-their-moment; amended by 20261031-figure-out-drafts-are-unverified-and-shown-in-minutes: the prototype lifecycle callers own states that a draft is not verified and is shown in minutes
 
 ## Area
 Design skills
