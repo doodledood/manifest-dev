@@ -22,7 +22,7 @@ kept outside this repository, the owner restated the same few product judgments 
 
 The workflow now ships defaults every user gets — figure-out's default product stances
 (`20261102-the-seat-pass-judges-against-default-product-stances`) and each skill's own — so an
-entry earns its place where the owner leans away from one of them.
+entry earns its place first where the owner leans away from one of them.
 
 This decision sits inside what the North Star's *Purpose* names: a person returns without restoring
 the same context, and keeps control of the choices they retain.
