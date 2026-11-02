@@ -110,6 +110,10 @@ if record:
 time.sleep(float(os.environ.get("STANDIN_SLEEP", "0")))
 plugin_dir = args[args.index("--plugin-dir") + 1] if "--plugin-dir" in args else ""
 transcript = os.environ.get("STANDIN_TRANSCRIPT", "")
+if os.environ.get("STANDIN_TRANSCRIPTS"):
+    # One transcript per session call, in order: the nth call gets the nth.
+    sessions = sum(1 for _ in open(os.environ["STANDIN_RECORD"], encoding="utf-8"))
+    transcript = json.loads(os.environ["STANDIN_TRANSCRIPTS"])[sessions - 1]
 sys.stdout.write(transcript.replace("{plugin_dir}", plugin_dir))
 sys.exit(code)
 """
@@ -1014,6 +1018,100 @@ def test_a_prompt_with_front_matter_sends_only_its_body(
     assert result.returncode == 0, result.stderr
     (call,) = calls(tmp_path)
     assert call["args"][-1] == "the body"
+
+
+def test_a_drive_summary_carries_the_sessions_cost_and_wall_time(
+    tmp_path: Path, toolbox: Path
+) -> None:
+    # Every before-and-after pair reports what each arm cost beside how it did, so the summary
+    # carries the CLI's own cost figure and the time the session took.
+    priced = [GOOD[0], {**GOOD[1], "total_cost_usd": 0.12345}]
+    result = drive(
+        setup(tmp_path, toolbox, STANDIN_TRANSCRIPT=lines(priced), STANDIN_SLEEP="0.3")
+    )
+    assert result.returncode == 0, result.stderr
+    (summary,) = (tmp_path / "store" / "figure-out").glob("*/summary.json")
+    recorded = json.loads(summary.read_text(encoding="utf-8"))
+    assert recorded["cost_usd"] == 0.1235
+    assert 0.3 <= recorded["wall_seconds"] < 30
+    assert "- **Cost:** $0.1235" in result.stdout
+    assert f"- **Wall time:** {recorded['wall_seconds']} s" in result.stdout
+
+
+def test_a_cost_the_cli_did_not_report_is_said_not_zeroed(
+    tmp_path: Path, toolbox: Path
+) -> None:
+    result = drive(setup(tmp_path, toolbox, STANDIN_TRANSCRIPT=lines(GOOD)))
+    assert result.returncode == 0, result.stderr
+    (summary,) = (tmp_path / "store" / "figure-out").glob("*/summary.json")
+    assert json.loads(summary.read_text(encoding="utf-8"))["cost_usd"] == "not reported"
+    assert "- **Cost:** not reported" in result.stdout
+
+
+def turn(reply: str, cost: float, **extra: object) -> list[dict[str, object]]:
+    return [
+        {**GOOD[0], "session_id": "s-1"},
+        {"type": "result", "num_turns": 2, "result": reply, "session_id": "s-1",
+         "total_cost_usd": cost, **extra},
+    ]
+
+
+def test_a_drive_plays_each_turn_into_the_same_session_in_order(
+    tmp_path: Path, toolbox: Path
+) -> None:
+    # A long session is several user turns: each goes in only once the session has answered the
+    # one before, into that same session, and the summary keeps every reply in order.
+    prompt = tmp_path / "prompt.md"
+    prompt.write_text(
+        "---\ntags: a\n---\nfirst ask\n<!-- next turn -->\nsecond ask\n"
+        "<!-- next turn -->\nthird ask\n",
+        encoding="utf-8",
+    )
+    transcripts = [lines(turn(f"reply {i}", 0.1 * i)) for i in (1, 2, 3)]
+    result = drive(
+        setup(tmp_path, toolbox, STANDIN_TRANSCRIPTS=json.dumps(transcripts)), prompt=prompt
+    )
+    assert result.returncode == 0, result.stdout + result.stderr
+    asked = [c["args"][-1] for c in calls(tmp_path)]
+    assert asked == ["first ask", "second ask", "third ask"]
+    resumed = ["--resume" in c["args"] and after(c["args"], "--resume") for c in calls(tmp_path)]
+    assert resumed == [False, "s-1", "s-1"]
+    (summary,) = (tmp_path / "store" / "figure-out").glob("*/summary.json")
+    recorded = json.loads(summary.read_text(encoding="utf-8"))
+    assert recorded["turn_replies"] == ["reply 1", "reply 2", "reply 3"]
+    assert recorded["result"] == "reply 3"
+    assert (recorded["user_turns"], recorded["turns"]) == (3, 6)
+    # A resumed session's cost counts every turn so far, so the session's cost is the last one's.
+    assert recorded["cost_usd"] == 0.3
+    assert result.stdout.index("### Turn 1") < result.stdout.index("### Turn 3")
+
+
+def test_a_turn_that_errors_ends_the_drive_before_the_next_turn(
+    tmp_path: Path, toolbox: Path
+) -> None:
+    prompt = tmp_path / "prompt.md"
+    prompt.write_text("one\n<!-- next turn -->\ntwo\n<!-- next turn -->\nthree\n", encoding="utf-8")
+    transcripts = [
+        lines(turn("ok", 0.1)),
+        lines(turn("", 0.2, is_error=True, subtype="error_max_turns")),
+        lines(turn("never", 0.3)),
+    ]
+    result = drive(
+        setup(tmp_path, toolbox, STANDIN_TRANSCRIPTS=json.dumps(transcripts)), prompt=prompt
+    )
+    assert result.returncode == 3, result.stdout + result.stderr
+    assert [c["args"][-1] for c in calls(tmp_path)] == ["one", "two"]
+
+
+def test_a_prompt_with_an_empty_turn_starts_no_session(
+    tmp_path: Path, toolbox: Path
+) -> None:
+    prompt = tmp_path / "prompt.md"
+    prompt.write_text("one\n<!-- next turn -->\n\n", encoding="utf-8")
+    result = drive(setup(tmp_path, toolbox, STANDIN_TRANSCRIPT=lines(GOOD)), prompt=prompt)
+    assert result.returncode == 3, result.stdout + result.stderr
+    assert "empty turn" in result.stderr
+    assert calls(tmp_path) == []
 
 
 def test_a_drive_never_reuses_an_evidence_directory(

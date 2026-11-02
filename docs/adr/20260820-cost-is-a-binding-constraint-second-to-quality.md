@@ -1,7 +1,7 @@
 # ADR: Cost is a binding constraint, second to quality
 
 ## Status
-Accepted — revised by 20260914-one-skill-per-beat-built-from-the-lean-body: the leaner paths this decision justified as a parallel family became the only family, on evidence that the leaner prompt investigated better rather than merely cheaper; amended by 20261015-verification-speed-binds-like-cost-second-to-quality, which makes verification speed a binding constraint beside cost, still second to quality
+Accepted — revised by 20260914-one-skill-per-beat-built-from-the-lean-body: the leaner paths this decision justified as a parallel family became the only family, on evidence that the leaner prompt investigated better rather than merely cheaper; amended by 20261015-verification-speed-binds-like-cost-second-to-quality, which makes verification speed a binding constraint beside cost, still second to quality; amended by 20261102-an-addition-that-costs-every-run-earns-its-place-by-evidence, which says what an addition that costs every run owes: a gain shown on evidence
 
 ## Area
 Positioning
