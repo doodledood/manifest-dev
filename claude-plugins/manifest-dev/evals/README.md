@@ -376,6 +376,12 @@ tried in three forms and did not ship (*Is a seat look worth its cost — 2026-1
 seat line `14` and `15` exercise is unchanged. `99`, `100`, `101` and `103` to `105` are new; each
 was driven and graded blind as the dated sections below say, and none is measured by this suite.
 
+A ninth change, on 2026-11-02, read every steer or correction for the reason behind it, asked about
+a reason at most once, and let a Taste offer rest on a reason the session named for several
+corrections. It reaches `100`, `105`, `27` and `28`, so the results recorded for `100` and `105`
+above predate it. `107` and `108` are new; their drives and blind grades are in
+`docs/adr/20261102-figure-out-reads-a-steer-for-the-reason-behind-it.md`.
+
 Every recorded number before that baseline was already stale as of 2026-10-21. The 2026-10-13 change edited
 figure-out's spine, its docs-mode and autonomous references, and its task files, the
 2026-10-14 change moved its verification wording to one harness, the 2026-10-15 change made
@@ -515,8 +521,8 @@ being declared a guard. `tests/test_eval_cases.py` fails when a case has no row 
 | `103` | first run decides | New on 2026-11-02, the person's seat in a long session; main's seat line fails it; drives only (*Several turns*); see *Is a seat look worth its cost — 2026-11-02* |
 | `104` | first run decides | New on 2026-11-02, the person's seat in a long session; main's seat line passes two runs of three; drives only (*Several turns*); see *Is a seat look worth its cost — 2026-11-02* |
 | `105` | first run decides | New on 2026-11-02, Taste capture on a revealed measure; drives only (*Several turns*); failed on main and on a wording that did not ship, see *Taste capture on a revealed measure — 2026-11-02* |
-| `107` | first run decides | New on 2026-11-02, the reason behind a steer given without one; drives only (*Several turns*) |
-| `108` | first run decides | New on 2026-11-02, asking when a steer has two readings |
+| `107` | first run decides | New on 2026-11-02, the reason behind a steer given without one; drives only (*Several turns*); drive results in `docs/adr/20261102-figure-out-reads-a-steer-for-the-reason-behind-it.md` |
+| `108` | first run decides | New on 2026-11-02, asking when a steer has two readings; drive results in `docs/adr/20261102-figure-out-reads-a-steer-for-the-reason-behind-it.md` |
 
 Retired on 2026-10-15: `12` (floored in both arms, not a declared guard), `47` and `49` (each a
 second older-version case beside `53`, which the version rule now forbids; their straight-to-newest
