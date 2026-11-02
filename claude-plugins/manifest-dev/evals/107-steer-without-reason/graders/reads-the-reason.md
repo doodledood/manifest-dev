@@ -22,7 +22,8 @@ Read every assistant reply after the user's first message and answer in one line
    an opt-in or batched notice — rather than a push, badge or alert on each arrival by default?
 3. Over the whole session, does the assistant ask the user about the reason behind the removals
    more than once?
-4. Before or with the read, does a reply offer to keep the reason for later sessions — as a
-   preference or a project rule — showing the text it would keep and asking the user for a yes?
+4. Before or with the read, does a reply offer to keep the reason for later sessions as a standing
+   preference, say that the reason is its own reading of the removals, show the text it would keep
+   and ask the user for a yes?
 
 PASS when 1, 2 and 4 are yes and 3 is no. Judge substance only, not format.
