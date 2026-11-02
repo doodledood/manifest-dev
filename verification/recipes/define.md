@@ -16,6 +16,7 @@ Turns shared understanding into a Manifest — Problem, Appetite, Deliverables w
 - `--babysit <pr-url>` synthesizes a lifecycle-only Manifest from a pull request — the `check-pr` gate and the gate that the pull request shows the change working; `--autonomous` skips the approval wait and records decisions as `(auto)` assumptions.
 - It reads earlier work on the repository before encoding.
 - A disposable draft made only to get a person's reaction loads no task file; its Deliverable owes only that the draft reaches that person.
+- A feature with a runnable surface a person uses gets the *Journeys driven as the person* gate: the evaluator derives that person's journeys and drives the built feature through them. A library, an API change or internal work nobody meets gets none.
 - Coding gates do not prescribe when the executor runs its advisory review. PR defaults permit reasoned declines of correct but optional bot suggestions; the independent proof gate remains.
 
 ## Scenarios
@@ -87,6 +88,31 @@ Check: read
 ### draft-gets-no-task-file-gate
 Run: `scripts/drive-skill.sh define verification/prompts/define-draft-request.md`
 Proves: for a request whose only deliverable is a throwaway HTML prototype to react to, the Manifest carries no `review-design`, `review-code` or other task-file gate on the draft; its Deliverable owes only that the draft, kept outside the project's files, reaches the person with the question it poses.
+Check: read
+
+### journeys-gate-on-a-feature
+Run: `scripts/drive-skill.sh define claude-plugins/manifest-dev/evals/define/d29-journeys-gate-on-a-feature/prompt.md`
+Proves: unattended, on a shared trip page people open from links in group chats, the Manifest carries a gate that has the evaluator drive the built page as the person through journeys it derives from that person and the feature — first arrival from outside, coming back, what goes wrong — with evidence per journey — the case's grader `encodes-the-journeys-gate`.
+Check: read
+
+### no-journeys-gate-on-a-library
+Run: `scripts/drive-skill.sh define claude-plugins/manifest-dev/evals/define/d30-no-journeys-gate-on-a-library/prompt.md`
+Proves: unattended, on a library option nobody uses directly, the Manifest carries no gate that walks a person's journeys — the case's grader `no-journeys-gate`.
+Check: read
+
+### journeys-gate-on-the-seeded-app
+Run: `scripts/drive-skill.sh define verification/prompts/journeys-gate-evaluate.md --scaffold verification/scaffolds/journeys-app-seeded --max-turns 120`
+Proves: a fresh evaluator given only the journeys gate `/define` wrote for `d29`'s feature, and the Waymark fixture app with its five seeded journey defects, returns FAIL and names all five, each with what the person met. `tests/test_journeys_fixture.py` shows the five defects exist.
+Check: read
+
+### journeys-gate-on-the-fixed-app
+Run: `scripts/drive-skill.sh define verification/prompts/journeys-gate-evaluate.md --scaffold verification/scaffolds/journeys-app-fixed --max-turns 120`
+Proves: the same evaluator and gate on the same app with the five defects fixed returns PASS.
+Check: read
+
+### todays-gates-on-the-seeded-app
+Run: `scripts/drive-skill.sh define verification/prompts/journeys-todays-gates-evaluate.md --scaffold verification/scaffolds/journeys-app-seeded --max-turns 120`
+Proves: which of the five seeded defects the gates `/define` wrote for `d29`'s feature before the journeys gate existed — its end-to-end drive and its review-design gate, quoted as written except that the place Person A adds is one the trip does not already hold, so that step can fail — name, beside `journeys-gate-on-the-seeded-app` on the same app. It is the comparison arm, so either verdict is a result; the first comparison is in `docs/adr/20261102-features-a-person-uses-are-driven-through-their-journeys.md`.
 Check: read
 
 ## Gotchas

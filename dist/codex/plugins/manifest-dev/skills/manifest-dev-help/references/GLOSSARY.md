@@ -303,16 +303,21 @@ that a tool makes. It exists so that the skills know which file is true when a c
 it.
 
 ### Seed
-<!-- context: 60a5d84c2225 -->
+<!-- context: ecaf90560e16 -->
 A Seed is the first version of the Glossary and the Decision Records that `/setup-project` makes
-from the history of a project. It is small on purpose, and it names what it could not find. It is a
-start, not a full record.
+from the history of a project. It also offers a few Taste entries, but only where the owner already
+gave the reason. It is small on purpose, and it names what it could not find. It is a start, not a
+full record.
 
 ### Surfaces Version
-<!-- context: 6ddec267a226 -->
+<!-- context: 3b5e8ec4011a -->
 The Surfaces Version is a number that the Project Context File records. It shows which version of
 the `/setup-project` setup the project has. When the number is older than the newest version,
 `/figure-out` offers the changes since that version. It is not the version of the plugin.
+
+Some changes are offered only one time. For example, v13 offers Taste entries from the project's
+history. A project that records v13 does not get that offer again, so the user is not asked about it
+each time.
 
 ## Verification
 

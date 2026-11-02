@@ -110,6 +110,10 @@ if record:
 time.sleep(float(os.environ.get("STANDIN_SLEEP", "0")))
 plugin_dir = args[args.index("--plugin-dir") + 1] if "--plugin-dir" in args else ""
 transcript = os.environ.get("STANDIN_TRANSCRIPT", "")
+if os.environ.get("STANDIN_TRANSCRIPTS"):
+    # One transcript per session call, in order: the nth call gets the nth.
+    sessions = sum(1 for _ in open(os.environ["STANDIN_RECORD"], encoding="utf-8"))
+    transcript = json.loads(os.environ["STANDIN_TRANSCRIPTS"])[sessions - 1]
 sys.stdout.write(transcript.replace("{plugin_dir}", plugin_dir))
 sys.exit(code)
 """
@@ -601,6 +605,104 @@ def test_a_drive_with_tools_hands_in_a_copy_of_each_plugin(
     assert all(outside_checkout(d) for d in dirs)
 
 
+def committed_checkout(tmp_path: Path) -> tuple[Path, str, Path]:
+    """A throwaway checkout holding the drive script and manifest-dev only, committed once.
+
+    Returns the checkout, the commit, and a skill file whose committed text ends with
+    "as committed" and whose working-tree text has changed since.
+    """
+    checkout = tmp_path / "checkout"
+    for part in (
+        "scripts/drive-skill.sh",
+        "scripts/lib",
+        "verification/recipes/figure-out.md",
+        "claude-plugins/manifest-dev",
+    ):
+        source, target = REPO_ROOT / part, checkout / part
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if source.is_dir():
+            shutil.copytree(source, target)
+        else:
+            shutil.copy2(source, target)
+    skill = checkout / "claude-plugins/manifest-dev/skills/figure-out/SKILL.md"
+    original = skill.read_text(encoding="utf-8")
+    skill.write_text(original + "\nas committed\n", encoding="utf-8")
+    identity = {
+        **os.environ,
+        "GIT_AUTHOR_NAME": "t",
+        "GIT_AUTHOR_EMAIL": "t@example.com",
+        "GIT_COMMITTER_NAME": "t",
+        "GIT_COMMITTER_EMAIL": "t@example.com",
+    }
+    for command in (["init", "-q"], ["add", "-A"], ["commit", "-q", "-m", "base"]):
+        subprocess.run(["git", "-C", str(checkout), *command], env=identity, check=True)
+    rev = subprocess.run(
+        ["git", "-C", str(checkout), "rev-parse", "HEAD"],
+        capture_output=True,
+        text=True,
+        check=True,
+    ).stdout.strip()
+    skill.write_text(original + "\nonly in the working tree\n", encoding="utf-8")
+    return checkout, rev, skill
+
+
+def drive_from(
+    checkout: Path, env: dict[str, str], *args: str
+) -> subprocess.CompletedProcess[str]:
+    return subprocess.run(
+        [
+            str(checkout / "scripts" / "drive-skill.sh"),
+            "figure-out",
+            str(checkout / "verification" / "recipes" / "figure-out.md"),
+            *args,
+        ],
+        env=env,
+        capture_output=True,
+        text=True,
+        timeout=60,
+    )
+
+
+def test_a_drive_can_hand_in_the_plugins_as_they_were_at_a_commit(
+    tmp_path: Path, toolbox: Path
+) -> None:
+    # A before/after pair runs the same scenario on the plugins at a base commit and at the head:
+    # the copy holds the commit's text, not the working tree's.
+    checkout, rev, skill = committed_checkout(tmp_path)
+    env = setup(tmp_path, toolbox, STANDIN_TRANSCRIPT=lines(GOOD))
+    result = drive_from(checkout, {**env, "DRIVE_PLUGINS_AT": rev})
+    assert result.returncode == 0, result.stderr
+    (call,) = calls(tmp_path)
+    plugin_dir = Path(after(call["args"], "--plugin-dir"))
+    assert plugin_dir.name == "manifest-dev" and checkout not in plugin_dir.parents
+    copied = plugin_dir / skill.relative_to(
+        checkout / "claude-plugins" / "manifest-dev"
+    )
+    assert copied.read_text(encoding="utf-8").endswith("\nas committed\n")
+    assert f"(from {rev})" in result.stdout
+
+
+def test_a_drive_refuses_a_plugins_commit_that_does_not_exist(
+    tmp_path: Path, toolbox: Path
+) -> None:
+    env = setup(tmp_path, toolbox, STANDIN_TRANSCRIPT=lines(GOOD))
+    result = drive({**env, "DRIVE_PLUGINS_AT": "no-such-commit"})
+    assert result.returncode == 1
+    assert "DRIVE_PLUGINS_AT=no-such-commit names no commit" in result.stderr
+    assert calls(tmp_path) == [] and not (tmp_path / "store").exists()
+
+
+def test_a_drive_refuses_a_plugins_commit_that_lacks_a_plugin(
+    tmp_path: Path, toolbox: Path
+) -> None:
+    checkout, rev, _ = committed_checkout(tmp_path)
+    env = setup(tmp_path, toolbox, STANDIN_TRANSCRIPT=lines(GOOD))
+    result = drive_from(checkout, {**env, "DRIVE_PLUGINS_AT": rev}, "--tools")
+    assert result.returncode == 1
+    assert "has no claude-plugins/manifest-dev-tools" in result.stderr
+    assert calls(tmp_path) == [] and not (tmp_path / "store").exists()
+
+
 def test_a_drive_names_a_plugin_it_did_not_hand_in(
     tmp_path: Path, toolbox: Path
 ) -> None:
@@ -916,6 +1018,179 @@ def test_a_prompt_with_front_matter_sends_only_its_body(
     assert result.returncode == 0, result.stderr
     (call,) = calls(tmp_path)
     assert call["args"][-1] == "the body"
+
+
+def test_a_drive_summary_carries_the_sessions_cost_and_wall_time(
+    tmp_path: Path, toolbox: Path
+) -> None:
+    # Every before-and-after pair reports what each arm cost beside how it did, so the summary
+    # carries the CLI's own cost figure and the time the session took.
+    priced = [GOOD[0], {**GOOD[1], "total_cost_usd": 0.12345}]
+    result = drive(
+        setup(tmp_path, toolbox, STANDIN_TRANSCRIPT=lines(priced), STANDIN_SLEEP="0.3")
+    )
+    assert result.returncode == 0, result.stderr
+    (summary,) = (tmp_path / "store" / "figure-out").glob("*/summary.json")
+    recorded = json.loads(summary.read_text(encoding="utf-8"))
+    assert recorded["cost_usd"] == 0.1235
+    assert 0.3 <= recorded["wall_seconds"] < 30
+    assert "- **Cost:** $0.1235" in result.stdout
+    assert f"- **Wall time:** {recorded['wall_seconds']} s" in result.stdout
+
+
+def test_a_cost_the_cli_did_not_report_is_said_not_zeroed(
+    tmp_path: Path, toolbox: Path
+) -> None:
+    result = drive(setup(tmp_path, toolbox, STANDIN_TRANSCRIPT=lines(GOOD)))
+    assert result.returncode == 0, result.stderr
+    (summary,) = (tmp_path / "store" / "figure-out").glob("*/summary.json")
+    assert json.loads(summary.read_text(encoding="utf-8"))["cost_usd"] == "not reported"
+    assert "- **Cost:** not reported" in result.stdout
+
+
+def turn(reply: str, cost: float, **extra: object) -> list[dict[str, object]]:
+    return [
+        {**GOOD[0], "session_id": "s-1"},
+        {
+            "type": "result",
+            "num_turns": 2,
+            "result": reply,
+            "session_id": "s-1",
+            "total_cost_usd": cost,
+            **extra,
+        },
+    ]
+
+
+def test_a_drive_plays_each_turn_into_the_same_session_in_order(
+    tmp_path: Path, toolbox: Path
+) -> None:
+    # A long session is several user turns: each goes in only once the session has answered the
+    # one before, into that same session, and the summary keeps every reply in order.
+    prompt = tmp_path / "prompt.md"
+    prompt.write_text(
+        "---\ntags: a\n---\nfirst ask\n<!-- next turn -->\nsecond ask\n"
+        "<!-- next turn -->\nthird ask\n",
+        encoding="utf-8",
+    )
+    transcripts = [lines(turn(f"reply {i}", 0.1 * i)) for i in (1, 2, 3)]
+    result = drive(
+        setup(tmp_path, toolbox, STANDIN_TRANSCRIPTS=json.dumps(transcripts)),
+        prompt=prompt,
+    )
+    assert result.returncode == 0, result.stdout + result.stderr
+    asked = [c["args"][-1] for c in calls(tmp_path)]
+    assert asked == ["first ask", "second ask", "third ask"]
+    resumed = [
+        "--resume" in c["args"] and after(c["args"], "--resume")
+        for c in calls(tmp_path)
+    ]
+    assert resumed == [False, "s-1", "s-1"]
+    (summary,) = (tmp_path / "store" / "figure-out").glob("*/summary.json")
+    recorded = json.loads(summary.read_text(encoding="utf-8"))
+    assert recorded["turn_replies"] == ["reply 1", "reply 2", "reply 3"]
+    assert recorded["result"] == "reply 3"
+    assert (recorded["user_turns"], recorded["turns"]) == (3, 6)
+    # A resumed session's cost counts every turn so far, so the session's cost is the last one's.
+    assert recorded["cost_usd"] == 0.3
+    assert result.stdout.index("### Turn 1") < result.stdout.index("### Turn 3")
+
+
+def test_a_turn_that_errors_ends_the_drive_before_the_next_turn(
+    tmp_path: Path, toolbox: Path
+) -> None:
+    prompt = tmp_path / "prompt.md"
+    prompt.write_text(
+        "one\n<!-- next turn -->\ntwo\n<!-- next turn -->\nthree\n", encoding="utf-8"
+    )
+    transcripts = [
+        lines(turn("ok", 0.1)),
+        lines(turn("", 0.2, is_error=True, subtype="error_max_turns")),
+        lines(turn("never", 0.3)),
+    ]
+    result = drive(
+        setup(tmp_path, toolbox, STANDIN_TRANSCRIPTS=json.dumps(transcripts)),
+        prompt=prompt,
+    )
+    assert result.returncode == 3, result.stdout + result.stderr
+    assert [c["args"][-1] for c in calls(tmp_path)] == ["one", "two"]
+
+
+def test_a_turn_with_no_reply_ends_the_drive_and_names_that_turn(
+    tmp_path: Path, toolbox: Path
+) -> None:
+    # Only the turn that just ran decides whether the next is sent: an earlier turn's reply
+    # must not stand in for one this turn never gave.
+    prompt = tmp_path / "prompt.md"
+    prompt.write_text(
+        "one\n<!-- next turn -->\ntwo\n<!-- next turn -->\nthree\n", encoding="utf-8"
+    )
+    no_result = [{**GOOD[0], "session_id": "s-1"}]
+    transcripts = [lines(turn("ok", 0.1)), lines(no_result), lines(turn("never", 0.3))]
+    result = drive(
+        setup(tmp_path, toolbox, STANDIN_TRANSCRIPTS=json.dumps(transcripts)),
+        prompt=prompt,
+    )
+    assert result.returncode == 3, result.stdout + result.stderr
+    assert [c["args"][-1] for c in calls(tmp_path)] == ["one", "two"]
+    assert "turn 2 of 3 got no reply" in result.stderr
+
+
+def test_a_line_separator_in_model_text_keeps_turns_apart(
+    tmp_path: Path, toolbox: Path
+) -> None:
+    # The CLI writes U+2028 unescaped; turn boundaries are counted in newlines only, so text
+    # holding one must not shift a reply into the next turn.
+    prompt = tmp_path / "prompt.md"
+    prompt.write_text("one\n<!-- next turn -->\ntwo\n", encoding="utf-8")
+    said = {
+        "type": "assistant",
+        "message": {"content": [{"type": "text", "text": "a\u2028b"}]},
+    }
+    first = lines(turn("first", 0.1)[:1]) + json.dumps(said, ensure_ascii=False) + "\n"
+    first += lines(turn("first", 0.1)[1:])
+    transcripts = [first, lines(turn("second", 0.2))]
+    result = drive(
+        setup(tmp_path, toolbox, STANDIN_TRANSCRIPTS=json.dumps(transcripts)),
+        prompt=prompt,
+    )
+    assert result.returncode == 0, result.stdout + result.stderr
+    (summary,) = (tmp_path / "store" / "figure-out").glob("*/summary.json")
+    recorded = json.loads(summary.read_text(encoding="utf-8"))
+    assert recorded["turn_replies"] == ["first", "second"]
+
+
+def test_a_turn_that_ends_twice_keeps_its_last_reply_as_that_turns(
+    tmp_path: Path, toolbox: Path
+) -> None:
+    # A background task finishing wakes the session again inside one turn, so a turn can carry
+    # two results; the turn's reply is its last, and the next turn's replies stay its own.
+    prompt = tmp_path / "prompt.md"
+    prompt.write_text("one\n<!-- next turn -->\ntwo\n", encoding="utf-8")
+    first = turn("waiting on the agent", 0.1) + turn("agent done, here it is", 0.2)[1:]
+    transcripts = [lines(first), lines(turn("second reply", 0.3))]
+    result = drive(
+        setup(tmp_path, toolbox, STANDIN_TRANSCRIPTS=json.dumps(transcripts)),
+        prompt=prompt,
+    )
+    assert result.returncode == 0, result.stdout + result.stderr
+    (summary,) = (tmp_path / "store" / "figure-out").glob("*/summary.json")
+    recorded = json.loads(summary.read_text(encoding="utf-8"))
+    assert recorded["turn_replies"] == ["agent done, here it is", "second reply"]
+    assert recorded["cost_usd"] == 0.3
+
+
+def test_a_prompt_with_an_empty_turn_starts_no_session(
+    tmp_path: Path, toolbox: Path
+) -> None:
+    prompt = tmp_path / "prompt.md"
+    prompt.write_text("one\n<!-- next turn -->\n\n", encoding="utf-8")
+    result = drive(
+        setup(tmp_path, toolbox, STANDIN_TRANSCRIPT=lines(GOOD)), prompt=prompt
+    )
+    assert result.returncode == 3, result.stdout + result.stderr
+    assert "empty turn" in result.stderr
+    assert calls(tmp_path) == []
 
 
 def test_a_drive_never_reuses_an_evidence_directory(

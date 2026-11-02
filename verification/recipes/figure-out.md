@@ -16,6 +16,7 @@ Presses on a topic with the user until both understand it, and ends with a named
 - On a project, docs mode keeps the glossary, decision-record offers, North Star updates, the setup offer and recipe drift markers current; `--no-docs` and `--no-log` turn the docs and the log off.
 - It reads earlier logs, Manifests, Tickets and pull requests' debt for the same repository, and offers to save a stated steering preference to the user's memory file.
 - It offers a disposable draft and calls design for its look. A draft is shown within minutes and never verified, tested, reviewed or gated; the user's reaction is its only check. Autonomous runs show it to an owner they can reach, and record an assumption only where none can be reached.
+- A user's call about what a person sees or does goes to the user as concrete options or draft variants, and a reason given in reply resets the recommendation.
 - Its task-file design probes raise what reviewers would flag — reuse, module depth, ownership, hidden contracts, plausible changes kept local at a justified cost — before code; the user's and project's rules win over them.
 
 Product inquiries additionally load PRODUCT probes, with DECISION for consequential choices. The optional product knowledge reference offers useful lenses rather than a required interview or document. Cases 65 and 66 now cover those lenses; their new criteria remain unmeasured.
@@ -28,8 +29,8 @@ Proves: the reply says the setup is current, lists nothing the project lacks, do
 Check: read
 
 ### one-version-behind
-Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/53-update-offer-from-v11/prompt.md --scaffold claude-plugins/manifest-dev/evals/53-update-offer-from-v11`
-Proves: the reply offers only the v12 change — the harness's time lines removed: the tool update, recipes' `Line:` and `Workload:` fields, the `headroom:` and `raise:` settings and text about lines — and offers nothing from v11 or earlier as new.
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/53-update-offer-from-v12/prompt.md --scaffold claude-plugins/manifest-dev/evals/53-update-offer-from-v12`
+Proves: the reply offers only the v13 change — once, a few Taste entries drawn from reasons the owner already stated in the project's history, for the user to accept — and offers nothing from v12 or earlier as new.
 Check: read
 
 ### from-v1
@@ -122,6 +123,66 @@ Run: `scripts/drive-skill.sh figure-out verification/prompts/figure-out-draft.md
 Proves: the session writes one throwaway draft file with fake data outside the project and shows it for a reaction; the transcript shows no recipe, test, review skill, or design measuring or checking tool (`design-tools.mjs`, `design-check.mjs`) run on the draft. The drive reports how long the session took; that time is read, not graded.
 Check: read
 
+### persona-seat-feature
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/14-persona-seat-feature/prompt.md`
+Proves: unattended, the read reasons from the North Star's home cook and walks three or more of the cook's uses, at least one off the main path, with a gap that follows from the cook's situation — the case's grader `takes-the-persona-seat`. A guard for the person's-seat discipline.
+Check: read
+
+### seat-convenient-placement
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/101-seat-convenient-placement/prompt.md`
+Proves: unattended, asked only for the engineering of offline downloads behind one library-wide switch in Settings, the read says a person preparing for a flight needs to download a specific session from where they find it, and proposes a download action there — the case's grader `meets-the-person-where-they-are`.
+Check: read
+
+### long-session-expired-mid-essay
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/103-long-session-expired-mid-essay/prompt.md`
+Proves: attended over four turns of engineering on a sign-in provider migration, after the third turn settles the provider's default expiry redirect, the read says a student hits the 8-hour limit partway through an evening of writing and loses their place or unsaved text, and proposes a change for it — the case's grader `keeps-the-writer-in-place`.
+Check: read
+
+### long-session-shared-link-outsider
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/104-long-session-shared-link-outsider/prompt.md`
+Proves: attended over four turns of engineering on closing a report-link enumeration hole, after the third turn settles that only signed-in workspace members get through, the read says the clients the account managers email links to are locked out, and proposes a change for them — the case's grader `keeps-the-clients-reading`.
+Check: read
+
+### taste-yardstick-offered
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/105-taste-yardstick-offered/prompt.md --scaffold claude-plugins/manifest-dev/evals/105-taste-yardstick-offered`
+Proves: attended, after the user twice challenges an agreed addition by what engineers get from it against the time and money it adds, with nothing in the project stating that measure, the session offers a Taste entry stated as that measure, with the user's reason and a yield, not a rule about the instances — the case's grader `offers-the-yardstick`.
+Check: read
+
+### seat-not-for-backend-work
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/98-seat-not-for-backend-work/prompt.md`
+Proves: unattended, on a slow nightly job nobody sees, the read carries no product findings and the transcript shows no separate look from a person's seat — the case's grader `no-seat-pass-on-backend-work`. A guard for any future seat look; it passes by construction while none ships.
+Check: read
+
+### experience-choice-as-options
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/99-experience-choice-as-options/prompt.md`
+Proves: attended, with the reason, the maths and the remembered default settled and only the interface open, the reply puts where the servings control lives and how many taps it takes to the user as concrete options or draft variants, with a recommendation — the case's grader `puts-the-choice-as-options`.
+Check: read
+
+### steer-resets-the-recommendation
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/100-steer-resets-the-recommendation/prompt.md`
+Proves: after the user rejects 20 free uses a month of a costly feature with an aim and a reason (anything that costs per use has to be paid for), the next recommendation is reasoned from that aim to a choice the user did not state, such as a one-time taste, not a smaller recurring allowance — the case's grader `reasons-again-from-the-aim`.
+Check: read
+
+### taste-principle-save
+Run: `DRIVE_PLUGINS_AT=296d596 scripts/drive-skill.sh figure-out verification/prompts/taste-moment-save.md --scaffold verification/scaffolds/taste-principle`
+Proves: the Taste test's principle arm (the principle alone) on the save moment: passes when its design asks nothing at the account step beyond the sign-in choice — no dietary needs, household size or display name before the recipe is saved. The test and its result are in `docs/adr/20261102-taste-entry-form-is-chosen-by-a-test.md`.
+Check: read
+
+### taste-principle-checkout
+Run: `DRIVE_PLUGINS_AT=296d596 scripts/drive-skill.sh figure-out verification/prompts/taste-moment-checkout.md --scaffold verification/scaffolds/taste-principle`
+Proves: the Taste test's principle arm (the principle alone) on the checkout moment: passes when its design asks for the delivery address before the order is paid. The test and its result are in `docs/adr/20261102-taste-entry-form-is-chosen-by-a-test.md`.
+Check: read
+
+### taste-case-save
+Run: `DRIVE_PLUGINS_AT=296d596 scripts/drive-skill.sh figure-out verification/prompts/taste-moment-save.md --scaffold verification/scaffolds/taste-principle-case`
+Proves: the Taste test's case arm (the principle plus one case line from a different gate) on the save moment: passes when its design asks nothing at the account step beyond the sign-in choice — no dietary needs, household size or display name before the recipe is saved. The test and its result are in `docs/adr/20261102-taste-entry-form-is-chosen-by-a-test.md`.
+Check: read
+
+### taste-case-checkout
+Run: `DRIVE_PLUGINS_AT=296d596 scripts/drive-skill.sh figure-out verification/prompts/taste-moment-checkout.md --scaffold verification/scaffolds/taste-principle-case`
+Proves: the Taste test's case arm (the principle plus one case line from a different gate) on the checkout moment: passes when its design asks for the delivery address before the order is paid. The test and its result are in `docs/adr/20261102-taste-entry-form-is-chosen-by-a-test.md`.
+Check: read
+
 ## Gotchas
 
 - The eval cases' `prompt.md` files open with the case's front matter; `scripts/drive-skill.sh` sends only the body below it.
@@ -132,6 +193,6 @@ Check: read
 - Docs mode writes into the project (glossary, records, surfaces line); the drive's scratch project absorbs it.
 - The context file's surfaces version is an HTML comment, and the host strips comments from the copy it loads into the session; a run that reports no version without reading the file from disk has hit that, not a missing line.
 - `--team` needs Slack access; without it the team entry point is `unreachable`.
-- Also checked by the figure-out behavior suite, `claude-plugins/manifest-dev/evals/` (tags `figure-out`, `figure-out-plugin-only`), all `unmeasured` or stale per `claude-plugins/manifest-dev/evals/README.md`; `tests/test_eval_cases.py` keeps its case list in step.
+- Also checked by the figure-out behavior suite, `claude-plugins/manifest-dev/evals/` (tags `figure-out`, `figure-out-plugin-only`, and `figure-out-multi-turn` for the cases of several turns, which run only as the drives above), all `unmeasured` or stale per `claude-plugins/manifest-dev/evals/README.md`; `tests/test_eval_cases.py` keeps its case list in step.
 - The revised `40-shape-before-build` input and grader cover a possible overdue-rule change kept with its owner, without adding an unselected grace-period feature. It remains unmeasured; the `design-before-code` drive above does not check that distinction.
 - Not yet driven: the bare slash command, the description phrases, auto, define, figure-out-team.

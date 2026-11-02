@@ -12,6 +12,7 @@ Angles that are easy to under-weight on new functionality. Considerations, not a
 - **Bundled concerns** — Does the plan carry a fix together with experiments or unrelated improvements that should each stand on their own?
 - **Remembered steps** — Does any step depend on someone remembering to do it, where a check or the workflow itself could carry it?
 - **Their stories, not ours** — The seat-taking, pressed per user story: which stories would the person it is for want that the proposal never narrated, niche branches included?
+- **Driven as the person** — Once built, how will the feature be driven as the person through their journeys — the ones that arrive from outside, come back and go wrong as much as the ones only this feature has — with evidence for each, rather than only through the specification's list?
 
 ## Forced trade-offs
 - Graceful degradation vs fail-fast — when this breaks, should the surrounding functionality keep working or stop loudly?

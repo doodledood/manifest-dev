@@ -41,6 +41,14 @@ per trial is an estimate from a different suite/judge, not an upper bound for th
 case's `prompt.md` declares what the case *wants*; the operator grant is what enables it. Without it, file graders fail in both arms and
 cases burn their turn reporting that writing is disabled.
 
+**Several turns.** A case whose prompt holds `<!-- next turn -->` lines (`103` to `105`) is a
+session of several user turns: `scripts/drive-skill.sh` sends each turn into the same session once
+the one before is answered. `claude plugin eval` sends a prompt as one message, which would hand
+the session every turn at once and test nothing these cases are for, so they carry the tag
+`figure-out-multi-turn`, which no suite command selects, and run only as drives through their
+scenarios in `verification/recipes/figure-out.md`. `tests/test_eval_cases.py` fails a prompt with
+several turns that carries any other tag.
+
 The headline number is **Δ** — with-plugin score minus the no-plugin baseline.
 
 **Judge with `sonnet`, one run per arm.** The owner's call on 2026-10-15: these suites are a proxy
@@ -218,7 +226,7 @@ base model already covers; such a case leaves only through its probe's *Coverage
 | `46-general-question-skips-recall` | autonomous, repository, plugin arm only | Open no earlier session log for a general question the repository's history cannot bear on | tuning |
 | `48-reuse-and-shallow-layer` | autonomous, repository | Before any code, reuse the utilities the codebase already has and question a proposed class that would only forward to them | tuning |
 | `52-projectless-chat-offers-no-surfaces` | autonomous, not a project, plugin arm only | For a one-off script in a folder that is not a project, say how it behaves and how to check it, offering no setup, harness, decision record, glossary or North Star | tuning |
-| `53-update-offer-from-v11` | docs, repository, plugin arm only | Offer only the v12 change: remove the harness's time lines — the tool update, recipes' `Line:` and `Workload:` fields, the `headroom:` and `raise:` settings, and text about lines | tuning |
+| `53-update-offer-from-v12` | docs, repository, plugin arm only | Offer only the v13 change: once, a few Taste entries drawn from reasons the owner already stated in the project's history, for the user to accept | tuning |
 | `54-touched-recipe-not-fit` | autonomous, repository | A change touching a feature whose recipe cannot be relied on — started by hand on a fixed port, its last failure unexplained — makes repairing that recipe part of the work | tuning |
 | `55-own-check-not-fit` | autonomous, repository | With no harness, a touched test of the project's own that passes whatever the output is gets repaired in its own form as part of the work, seen failing on a scratch break before it counts, and no harness is built | tuning |
 | `56-order-dependent-design` | autonomous | Model a design whose correctness depends on the order of events before building it, and pick a check that can reach the breaking interleaving | tuning |
@@ -259,6 +267,13 @@ base model already covers; such a case leaves only through its probe's *Coverage
 | `91-record-against-the-users-idea` | repository | With the user present, weigh a record's reasons against the user's idea and keep it in view; a record whose reasons do not apply counts nothing against it | tuning |
 | `92-estimate-what-waits-on-people` | autonomous | With no word on who builds, estimate the work by what waits on people and the world — reviews, an agency's turnaround, hiring, language checks — not by a contractor's two-developer quote or team-weeks | tuning |
 | `93-thorough-fix-not-tamed-for-effort` | autonomous, repository | Recommend exact money through all the billing code when the objection to it is developer-weeks, and build no multi-currency the problem does not need | tuning |
+| `98-seat-not-for-backend-work` | autonomous, guard | Run no seat pass and bring no product findings to a backend diagnosis nobody sees | tuning |
+| `99-experience-choice-as-options` | press | Put an open interface choice — where a control lives, how many taps — to the user as concrete options or draft variants, with a recommendation | tuning |
+| `100-steer-resets-the-recommendation` | press | After a steer that gives an aim and a reason, reason the next recommendation from that aim, not one step from the earlier pick | tuning |
+| `101-seat-convenient-placement` | autonomous | Asked only for the engineering of offline downloads behind one switch in Settings, say that a person about to board needs to make one session ready from where they find it | tuning |
+| `103-long-session-expired-mid-essay` | press, several turns | After three turns of engineering on a sign-in provider migration, say a student is signed out partway through writing and loses their place, and propose a change for it | tuning |
+| `104-long-session-shared-link-outsider` | press, several turns | After three turns of engineering on closing a report-link hole, say the clients who receive the links are locked out, and propose a change for them | tuning |
+| `105-taste-yardstick-offered` | press, several turns, repository | After two challenges by one unstated measure, offer a Taste entry stating the measure, not the instances | tuning |
 
 Cases `30` to `46` were written on 2026-10-13 and `48` on 2026-10-14. Their first run was the
 2026-10-25 baseline, with the split frozen before it: every case added since 2026-10-13 is tuning
@@ -349,6 +364,15 @@ measuring instruments on a draft, and added to `TASTE.md`'s *Durable* bullet tha
 disposable draft is about that draft's direction and is not taste unless the user states it as
 reaching beyond that artifact. It reaches `22` and the Taste-offer cases `27` and `28`; none of
 their prompts reacts to a draft, so no grader changes, and all three stay unmeasured since.
+
+An eighth change, on 2026-11-02, made a user's call about what a person will see or do go to the
+user as concrete options or draft variants, with a reason given in reply resetting the
+recommendation; added *Driven as the person* to `tasks/FEATURE.md`; made every Taste drafting site
+state the preference as a principle that carries to calls never discussed. It reaches the
+user's-call cases `25` and `26`, `22`, and the Taste-offer cases `27` and `28`. A seat look in a reference of its own was
+tried in three forms and did not ship (*Is a seat look worth its cost — 2026-11-02*, below), so the
+seat line `14` and `15` exercise is unchanged. `99`, `100`, `101` and `103` to `105` are new; each
+was driven and graded blind as the dated sections below say, and none is measured by this suite.
 
 Every recorded number before that baseline was already stale as of 2026-10-21. The 2026-10-13 change edited
 figure-out's spine, its docs-mode and autonomous references, and its task files, the
@@ -482,6 +506,13 @@ being declared a guard. `tests/test_eval_cases.py` fails when a case has no row 
 | `91` | first run decides | Attended sessions still counted a record whose reasons did not apply against the user's idea; a drive on the skill before this change failed it |
 | `92` | first run decides | Unattended runs priced the build of agent-built work from a contractor's quote; a drive on the skill before this change failed it |
 | `93` | first run decides | Unattended runs patched the sites the complaints traced to and put the full fix off for developer-weeks; a drive on the skill before this change failed it |
+| `98` | keep | A declared guard against a look from the person's seat firing on work nobody meets; it passes by construction while no seat look ships |
+| `99` | first run decides | New on 2026-11-02 for user's calls on what a person sees; see *Seat pass and experience choices — 2026-11-02* |
+| `100` | first run decides | New on 2026-11-02 for a steer resetting the recommendation; see *Seat pass and experience choices — 2026-11-02* |
+| `101` | first run decides | New on 2026-11-02, the person's seat on an engineering-framed plan; main's seat line fails it; see *Is a seat look worth its cost — 2026-11-02* |
+| `103` | first run decides | New on 2026-11-02, the person's seat in a long session; main's seat line fails it; drives only (*Several turns*); see *Is a seat look worth its cost — 2026-11-02* |
+| `104` | first run decides | New on 2026-11-02, the person's seat in a long session; main's seat line passes two runs of three; drives only (*Several turns*); see *Is a seat look worth its cost — 2026-11-02* |
+| `105` | first run decides | New on 2026-11-02, Taste capture on a revealed measure; drives only (*Several turns*); failed on main and on a wording that did not ship, see *Taste capture on a revealed measure — 2026-11-02* |
 
 Retired on 2026-10-15: `12` (floored in both arms, not a declared guard), `47` and `49` (each a
 second older-version case beside `53`, which the version rule now forbids; their straight-to-newest
@@ -682,6 +713,7 @@ file. The row is never deleted while the probe stays.
 | `SKILL.md` | Asking through a question-selection capability | Reason: a host capability the headless harness lacks; the plain-text path it falls back to is judged by the `turn-discipline` graders |
 | `SKILL.md` | Simplified Technical English style | `26-asks-only-the-users-call/plain-writing` |
 | `SKILL.md` | The user's call | `25-users-call-and-taste/flags-the-users-calls`, `25-users-call-and-taste/leaves-the-agents-call`, `25-users-call-and-taste/follows-only-what-bears`, `26-asks-only-the-users-call/decides-what-taste-settles` |
+| `SKILL.md` | A user's call about what a person sees goes as options; a steer resets the recommendation | `99-experience-choice-as-options/puts-the-choice-as-options`, `100-steer-resets-the-recommendation/reasons-again-from-the-aim` |
 | `SKILL.md` | Momentum, yielding only for what the user must supply | `26-asks-only-the-users-call/asks-the-users-call`, `26-asks-only-the-users-call/decides-what-taste-settles` |
 | `SKILL.md` | Serve what is true; hold under pushback; the status quo's job | `04-hold-under-pushback/holds-position`, `05-move-on-evidence/updates-on-evidence`, `13-status-quo-job/tests-the-status-quos-job`; not graded: pricing "living with it", left to `01` since `12` retired |
 | `SKILL.md` | Problem before solution; requirements earn their place; classify a constraint | `01-root-press/presses-from-root`, `02-assumed-cause/does-not-adopt-users-diagnosis`, `48-reuse-and-shallow-layer/reuses-existing-and-drops-shallow-layer`, `70-refactor-big-cleanup/questions-the-one-pull-request` |
@@ -691,7 +723,7 @@ file. The row is never deleted while the probe stays.
 | `SKILL.md` | Explore read-only; acts with durable outside state are offered | `18-read-only-experiment/state-labelhub--labelhub--driver-py`, `18-read-only-experiment/state-labelhub--labelhub--spooler-py`, `17-agreement-is-not-a-go/state-gatekeeper--app--consumer-py`; not graded: acts that leave state outside the session, which need an external-service stub |
 | `SKILL.md` | The person's seat and their uses | `14-persona-seat-feature/takes-the-persona-seat`, `14-persona-seat-feature/persona-from-north-star`, `15-persona-seat-doc/takes-the-readers-seat` |
 | `SKILL.md` | State what it will be and how it is checked | `21-how-it-gets-checked/settles-the-exercise`, `32-reads-the-verification-surface/plans-to-exercise-the-touched-entry`, `33-no-verification-surface/plans-a-way-to-check-it` |
-| `SKILL.md` | Offer a draft | `22-draft-before-feel/offers-a-draft-not-a-feeling`; not graded: rendering beyond the draft offer, the draft's time bound and its exclusion from every check, which need opt-in to publishing and several turns |
+| `SKILL.md` | Offer a draft | `22-draft-before-feel/offers-a-draft-not-a-feeling`; not graded: variants that differ on an open experience choice, which `99` reaches only when its reply offers a draft; rendering beyond the draft offer, the draft's time bound and its exclusion from every check, which need opt-in to publishing and several turns |
 | `SKILL.md` | Re-derive a load-bearing read independently | `62-decision-rival-answers/checks-the-read-independently` |
 | `SKILL.md` | Flags and the references they load | `01-root-press/log-written`, `25-users-call-and-taste/flags-the-users-calls`, `27-taste-offers/offers-entry-for-the-stated-preference`, `43-recalls-earlier-work/carries-the-earlier-ruling-as-a-lead`, `46-general-question-skips-recall/no-recall-for-a-general-question`, `23-term-and-record/term-captured`; not graded: a quoted or topic mention of a flag read as topic text, which no case prompt carries |
 | `SKILL.md` | What counts as a project | `52-projectless-chat-offers-no-surfaces/no-project-surfaces-offered`, `52-projectless-chat-offers-no-surfaces/state-no-extra-files`; not graded: the same paragraph's team-mode sentences (no Taste, precedence over `--autonomous`), which need a Slack channel the suite cannot reach |
@@ -717,7 +749,8 @@ file. The row is never deleted while the probe stays.
 | `tasks/CODING.md` | Trade-off: Test depth vs ship speed | `72-coding-shared-function-change/where-to-stop-testing` |
 | `tasks/FEATURE.md` | Beyond the happy path | `21-how-it-gets-checked/settles-the-exercise` |
 | `tasks/FEATURE.md` | Undiscussed surface | `21-how-it-gets-checked/names-the-seen-surfaces` |
-| `tasks/FEATURE.md` | Their stories, not ours | `14-persona-seat-feature/takes-the-persona-seat`, `14-persona-seat-feature/persona-from-north-star` |
+| `tasks/FEATURE.md` | Their stories, not ours | `14-persona-seat-feature/takes-the-persona-seat` |
+| `tasks/FEATURE.md` | Driven as the person | Reason: it asks how the built feature will be driven, which only shows in a later `/do` run the suite does not reach; its define mirror is judged by `define/d29-journeys-gate-on-a-feature/encodes-the-journeys-gate` |
 | `tasks/FEATURE.md` | Partial failure | `71-feature-shape-change-in-flight/partial-failure-state` |
 | `tasks/FEATURE.md` | Orphaned resources | `71-feature-shape-change-in-flight/per-item-growth` |
 | `tasks/FEATURE.md` | Rollback | `71-feature-shape-change-in-flight/old-and-new-side-by-side` |
@@ -825,8 +858,8 @@ file. The row is never deleted while the probe stays.
 | `tasks/WRITING.md` | Trade-off: Breadth vs one sharp point | `82-writing-post-from-notes/picks-one-sharp-point` |
 | `references/LOG.md` | (whole file) | `01-root-press/log-written`; not graded: log safety and resuming from the log, which have shown no failure and sit outside what a grader reads |
 | `references/RECALL.md` | (whole file) | `43-recalls-earlier-work/carries-the-earlier-ruling-as-a-lead`, `44-debt-on-the-path/offers-the-on-path-debt`, `46-general-question-skips-recall/no-recall-for-a-general-question`, `59-reverted-fix/names-the-reverted-fix` |
-| `references/TASTE.md` | (whole file) | `27-taste-offers/offers-entry-for-the-stated-preference`, `27-taste-offers/offers-entry-for-the-reversal`, `28-universal-not-taste/no-offer-for-a-universal-rule`, `29-ratified-entry-lands/entry-inside-taste-section` |
-| `references/WITH_DOCS.md` | (whole file) | `23-term-and-record/term-captured`, `23-term-and-record/record-written`, `24-ruled-position-holds/position-text-unchanged`, `30-update-offer-for-older-setup/offers-only-whats-new`, `36-marks-drift-it-wont-fix/export-entry-marked-stale`, `45-current-setup-offers-nothing/offers-no-setup-update`, `53-update-offer-from-v11/offers-only-whats-new-since-v11`, `84-chosen-option-goes-to-a-record/ruling-recorded`, `84-chosen-option-goes-to-a-record/north-star-unchanged`, `85-evidence-against-a-bet/bet-challenged`, `85-evidence-against-a-bet/bet-text-kept` |
+| `references/TASTE.md` | (whole file) | `27-taste-offers/offers-entry-for-the-stated-preference`, `27-taste-offers/offers-entry-for-the-reversal`, `28-universal-not-taste/no-offer-for-a-universal-rule`, `29-ratified-entry-lands/entry-inside-taste-section`, `105-taste-yardstick-offered/offers-the-yardstick` (drives only) |
+| `references/WITH_DOCS.md` | (whole file) | `23-term-and-record/term-captured`, `23-term-and-record/record-written`, `24-ruled-position-holds/position-text-unchanged`, `30-update-offer-for-older-setup/offers-only-whats-new`, `36-marks-drift-it-wont-fix/export-entry-marked-stale`, `45-current-setup-offers-nothing/offers-no-setup-update`, `53-update-offer-from-v12/offers-only-whats-new-since-v12`, `84-chosen-option-goes-to-a-record/ruling-recorded`, `84-chosen-option-goes-to-a-record/north-star-unchanged`, `85-evidence-against-a-bet/bet-challenged`, `85-evidence-against-a-bet/bet-text-kept` |
 | `references/ADR_FORMAT.md` | (whole file) | `23-term-and-record/old-record-restatused`, `23-term-and-record/index-rebuilt`, `24-ruled-position-holds/unattended-record-marked`, `23-term-and-record/record-carries-enforced-by` |
 | `references/autonomous.md` | (whole file) | `25-users-call-and-taste/flags-the-users-calls`, `25-users-call-and-taste/no-taste-offer`, `24-ruled-position-holds/unattended-record-marked`; not graded: never self-accepting an offer that hands off to setup-project or ticket-up, or that workflow's inner owner-judgment offers, which needs those skills reachable from the session |
 | `references/team.md` | (whole file) | Reason: team mode runs in a Slack channel, a service the suite cannot reach from its sandbox |
@@ -1038,7 +1071,7 @@ Plugin arm only:
 | 45-current-setup-offers-nothing | tuning | 1.00 |
 | 46-general-question-skips-recall | tuning | 1.00 |
 | 52-projectless-chat-offers-no-surfaces | tuning | 0.86 |
-| 53-update-offer-from-v11 (measured as 53-update-offer-from-v9) | tuning | 0.00 |
+| 53-update-offer-from-v12 (measured as 53-update-offer-from-v9) | tuning | 0.00 |
 
 Mean 0.76 over the 9 cases.
 
@@ -1137,6 +1170,93 @@ scripts/evals/run_eval.sh drv-88 <dir>/88.json --case 88-decision-no-driver-to-c
   names no cost the grader lists; it spreads the $50 over travel days and assumes the unspent
   budget is not kept, which the grader exempts. Whether the grader is wrong on that reply is not
   yet decided, and neither the grader nor the probe changes in the same pass that reads it.
+
+## Seat pass and experience choices — 2026-11-02
+
+Not a suite run. Each case was driven once on the skill before the eighth change and once after
+it, through the `figure-out` recipe's scenarios (the before arm with `DRIVE_PLUGINS_AT` at the
+commit before the change), CLI 2.1.316, agent `opus`. A grader session that saw each reply under a
+letter label only, never which arm wrote it, applied the case's own graders. The run rule: a case
+passes when the after arm passes and the before arm fails; a case whose before arm passes is
+replaced once by a version written so it should fail; an unsettled pair gets up to two more runs
+per arm. `(b)` marks a verdict the grader called borderline.
+
+| Case | First version (after / before) | Replacement (after / before) |
+|---|---|---|
+| `98-seat-not-for-backend-work` (guard) | PASS / PASS | — |
+| `99-experience-choice-as-options` | FAIL (b) / FAIL | FAIL / FAIL; third version PASS / FAIL |
+| `100-steer-resets-the-recommendation` | PASS (b) / PASS | PASS / PASS |
+
+- **`99` now measures its line.** Its first two versions failed in both arms because each left a
+  parent question open — whether a changed number stays on the recipe, then whether the screen
+  has a separate cooking mode — and both arms asked it first. The prompt now settles both. On
+  that version the after arm put four concrete placements to the user with one recommended and
+  passed; the before arm asked when cooks change servings, offered no options, and failed. That
+  after arm still carried the seat reference that did not ship. On the skills that ship, `99`
+  passed one run of three: the two failures asked first when cooks change servings.
+- **`100` is back on its first version.** Its replacement (twelve filters rejected for shoppers in
+  the aisle) passed in both arms as well, and drifted from the scenario the change was specified
+  against, so the case holds the first version: a free tier's costly feature rejected because
+  anything that costs per use must be paid for.
+- **Four one-prompt seat cases left with the seat reference.** `94` to `97` (a requested change
+  that stops short, journeys outside the described states, an inherited premise, a product nobody
+  looked at) passed in the before arm on one prompt, apart from `96`, which the after arm passed
+  two runs of three to one; they tested only the reference that did not ship.
+
+### Is a seat look worth its cost — 2026-11-02
+
+Each measurement was graded blind by a session that saw letter labels only, against the case's own
+graders, with a 1–10 score for product decision quality. Cost is the session's own reported cost;
+wall time is the harness's.
+
+**One-prompt cases.** On `94` to `97` a fresh-context seat pass scored 7.7 against 7.3 before it,
+inside the spread within each arm, and cost $0.86 and 127 s a read against $0.66 and 107 s. An
+inline pass (a local ablation commit that never shipped) scored and cost about what the before arm
+did.
+
+**Long sessions, three forms.** `101` (one prompt) and the four-turn sessions `102` to `104`, in
+which a decision the person meets arrives after three turns of engineering. Forms: main's seat line
+alone (before), a seat pass in its own fresh context (fresh), and the same look folded into the
+independent re-derivation figure-out already runs (folded, a local ablation commit that never
+shipped). One run per form, then up to two more where a pair did not settle.
+
+| Case | Before | Fresh | Folded |
+|---|---|---|---|
+| `101` | FF — 6.0, $1.80, 313 s | PFF — 6.0, $1.90, 352 s | FF — 5.5, $1.74, 303 s |
+| `102` | PPP — 7.0, $0.76, 188 s | P — 7.0, $1.26, 300 s | P — 9.0, $0.99, 243 s |
+| `103` | FFF — 5.3, $0.78, 192 s | FFF — 4.3, $0.86, 226 s | PFF — 5.0, $0.80, 196 s |
+| `104` | PPF — 7.0, $0.64, 131 s | FFF — 4.7, $0.60, 141 s | PFF — 7.3, $0.62, 133 s |
+| Mean over cases | 6.3, $0.99, 206 s | 5.5, $1.15, 255 s | 6.7, $1.04, 219 s |
+
+Guards: on the fresh form `98` and `14` passed and `draft-is-quick-and-unchecked` passed three runs
+of three; on the folded form `98` and `draft-is-quick-and-unchecked` passed, and `14` failed three
+runs of three, each reply walking two of the cook's uses where its grader asks for three.
+`101`'s grader was tightened after these runs: the plan's "downloaded" badge alone no longer
+counts, only a download action where the person finds the session.
+
+**Reading.** Neither form passed by majority on a case where the before arm failed by majority,
+and both failed `104` by majority where the before arm passed by majority. The fresh pass cost
+about a sixth more and took about a quarter longer. In the long sessions the folded look ran only
+where the re-derivation ran, in one of seven runs, so it behaved like the before arm. `102` passed
+every run before the change and was removed. `101`, `103` and `104` stay as cases the seat line
+does not yet pass reliably: in `103` every arm named the student's loss and then recorded it as the
+owner's decision instead of proposing a change.
+
+`20261102-figure-out-keeps-its-seat-line-no-seat-look-ships` records the decision.
+
+### Taste capture on a revealed measure — 2026-11-02
+
+`105` is a four-turn session in which the user twice challenges an agreed addition by one measure
+they never state as a rule: what engineers get from it against the time and money it adds to
+every run. Graded blind against `offers-the-yardstick`. Main's skills made no offer (FAIL, one
+run). A wording that widened Taste capture to the measure behind repeated challenges failed both
+runs: once it offered without showing the drafted text, once it made no offer, folding the measure
+into the project's own reasoning instead. The wording did not ship.
+
+A companion case put the same session in a project whose North Star states the measure. With the
+line stated only in part ("cost and speed bind second" to quality), both arms missed it and offered
+a new entry. With it stated plainly, both arms applied it from the first reply, so the case's
+premise — that the session misses the line — did not hold, and it was removed.
 
 ## Baseline — 2026-10-06, opus judge
 

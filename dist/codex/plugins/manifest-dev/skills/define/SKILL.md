@@ -65,9 +65,9 @@ followed, or that no entry applied.
 earlier run made and states why, and the reason is a preference another user
 could want the opposite of — not a behavior every session owes — offer a Taste
 entry before the handoff. Show it
-verbatim in three parts: the preference, naming the kind of call it covers; the
-rationale, built on the reason the user stated, never one you inferred; and when
-it should yield. Name the memory file it would go in, and ask whether it is
+verbatim in three parts: the preference, stated as a principle that carries to
+calls never discussed and naming the kind of call it covers; the rationale, built
+on the reason the user stated, never one you inferred; and when it should yield. Name the memory file it would go in, and ask whether it is
 standing or for this case only; "this case only" is a no. Only the user's
 explicit yes to that text writes it, inside that file's `## Taste` section,
 changing nothing else. When an existing entry decided the reversed call, raise

@@ -93,10 +93,12 @@ recognition is welcome as a consequence, never a target traded against those end
 
 - **Quality decides.** Cost and speed bind second to it: a workflow stays practically affordable
   on high-end models and its verification fast enough that many agents at once are not held up,
-  and neither is ever bought with quality. A run that keeps verifying and repairing after its
-  gates hold is a defect in the workflow, never a meter the user has to watch.
+  and neither is ever bought with quality. Anything that adds cost or wait to every run — another
+  agent, a review pass, a gate — earns its place by a gain shown on evidence, not by the quality it
+  might add. A run that keeps verifying and repairing after its gates hold is a defect in the
+  workflow, never a meter the user has to watch.
 
-  — ruled: 2026-10-15. Records: Cost is a binding constraint, second to quality; Verification speed binds like cost, second to quality.
+  — ruled: 2026-11-02 by the owner. Records: Cost is a binding constraint, second to quality; Verification speed binds like cost, second to quality; An addition that costs every run earns its place by evidence.
 
 - **Simple to use.** Workflows may be sophisticated inside; the experience stays minimal steps,
   nothing to memorize — follow along and it works.

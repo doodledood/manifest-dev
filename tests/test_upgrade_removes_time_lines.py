@@ -5,8 +5,7 @@ an existing project strips its time lines through the v12 update. The update its
 following `upgrades/v11-to-current.md`, so this test checks the two things a deterministic test
 can: that the removals the guide names leave nothing behind in a real v11 harness carrying plain,
 raised and frozen lines, and that the shipped tool fails `verify check` on any field the removals
-miss. The project is the one-behind eval case's own scaffold, so the fixture and the behavior case
-share one source.
+miss. The project is the setup the one-behind eval case held at v11, kept under `tests/fixtures/`.
 """
 
 from __future__ import annotations
@@ -23,9 +22,9 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 REFERENCES = REPO_ROOT / "claude-plugins/manifest-dev/skills/setup-project/references"
 SHIPPED_HARNESS = REFERENCES / "harness"
 GUIDE = REFERENCES / "upgrades" / "v11-to-current.md"
-SCAFFOLD = (
-    REPO_ROOT / "claude-plugins/manifest-dev/evals/53-update-offer-from-v11/scaffold.sh"
-)
+# A project at v11 with time lines of every kind: the setup the one-behind eval case held
+# before v13 moved that case on, kept so the v12 removal stays proven for older projects.
+SCAFFOLD = REPO_ROOT / "tests/fixtures/v11-harness-with-time-lines.sh"
 TOOL_FILES = ("verify", "verify.mts")
 
 if shutil.which("node") is None:
