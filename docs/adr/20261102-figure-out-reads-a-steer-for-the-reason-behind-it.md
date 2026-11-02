@@ -78,6 +78,10 @@ change made, saying the reason was its own reading. Two earlier wordings asked a
 both sides, so it shows no uplift for the one-question rule. `105` still fails: an offer drawn from a
 yardstick the user reveals is a different behavior, which this change does not claim.
 
+The user chose to ship on this evidence rather than spend more drives settling `107` or drop the
+one-question clause: the offer and asking once, the two behaviors the request turned on, moved
+clearly, and the bar the cases set stays recorded here as unmet.
+
 ## Alternatives Considered
 
 - **Ask the user why on every unexplained correction**: it puts a question on each steer, though
