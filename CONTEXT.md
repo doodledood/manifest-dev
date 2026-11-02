@@ -51,10 +51,6 @@ The compact set of load-bearing claims — each carrying provenance and epistemi
 The deliverable of a figure-out session: a named conclusion carrying confidence, Evidence Ledger, and overturn conditions.
 _Avoid_: Conclusion, verdict, answer.
 
-**Seat Pass**:
-figure-out's look at a proposal from the seat of the person who will use it, run in a fresh context once a read implies something a person will see or use: it derives that person's journeys, walks them on the running product where it can, compares two or three alternatives at each choice the person would notice against default product stances that Taste entries and project rules override, and returns only the few findings that change the read.
-_Avoid_: UX review, persona check.
-
 **Parent-before-child Crux Priority**:
 A figure-out question-selection rule that resolves the highest-level unresolved crux before drilling into child details.
 _Avoid_: BDFS.
@@ -331,7 +327,6 @@ _Avoid_: Ticket sweep, batch runner, scheduler.
 - A **Default** becomes **Process Guidance** in a **Manifest**, except one whose violation would be unsafe or irreversible, which becomes a **Global Invariant** so it binds.
 - The **Bearer Test** governs which advisory-tier **Quality Gates** a **Manifest** omits; defect-finding dimensions, deterministic project gates, and safety-critical **Global Invariants** are never eligible.
 - A figure-out **Read** ships with the **Evidence Ledger** it rests on.
-- A **Seat Pass** feeds a figure-out **Read**; a user's call it finds goes to the user as concrete options, and a **Taste** entry overrides any of its default stances.
 - **Parent-before-child Crux Priority** orders figure-out's crux selection before impact tie-breaking among same-level questions.
 - `/define` encodes the understanding a figure-out **Read** establishes into a **Manifest** rather than re-deriving or re-investigating it.
 - Every **Acceptance Criterion** and **Global Invariant** is one **Gate Text** in the **Manifest**; `/do` points an evaluator at it by ID rather than copying it into a prompt.

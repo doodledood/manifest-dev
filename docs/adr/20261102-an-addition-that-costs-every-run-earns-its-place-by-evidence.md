@@ -20,7 +20,7 @@ run, in tokens and in waiting.
 
 The figure-out seat pass showed it. It added a second fresh context to every read a person will
 see, about a third more cost per read, and on one-prompt cases its verdicts moved by no more than
-run-to-run noise (`claude-plugins/manifest-dev/evals/README.md`, *Is the seat pass worth its
+run-to-run noise (`claude-plugins/manifest-dev/evals/README.md`, *Is a seat look worth its
 cost — 2026-11-02*). Nothing in the evidence reported cost: drives recorded verdicts and not what
 each arm spent, so the question was raised by the owner, not by the evidence. By contrast,
 define's journeys gate added one evaluator call and named four real defects the existing gate
@@ -39,8 +39,8 @@ quality requires of something that costs every run.
 - **A Taste entry stating the same principle**: rejected. It would be a second copy of a ruled
   position, and a weaker one, since a Taste entry is weighed against other calls while a ruled
   principle is not.
-- **Leave the principle as it was**: rejected. The seat pass shipped on the quality it might add,
-  and no session weighed its cost until the owner asked.
+- **Leave the principle as it was**: rejected. The seat pass was built on the quality it might
+  add, and no session weighed its cost until the owner asked.
 
 ## Consequences
 

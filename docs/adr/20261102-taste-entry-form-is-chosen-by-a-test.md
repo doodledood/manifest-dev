@@ -17,7 +17,7 @@ In replays of one owner's product sessions, kept outside this repository, a writ
 entry was in force and a session still put three detail fields under a sign-in gate. Two readings
 were open: the entry was too abstract to bind a concrete call, so a short example of the case that
 prompted it would help; or the entry steered fine and the session lacked a look from the person's
-seat, which the seat pass now gives (`20261102-figure-out-looks-from-the-persons-seat-in-a-fresh-pass`).
+seat.
 The owner's standard for entries is that they state principles, not every detail they said.
 
 This decision sits inside what the North Star's *Purpose* names: keeping the choices a person
@@ -45,8 +45,8 @@ read too far would push past payment. Three arms, each driven once per moment th
   to decide, or to trust what comes next."
 - **case** — the same, plus one case line from a different gate: "Case: a newsletter sign-up form
   that also asked for job title and company size was rejected: 'just the email field.'"
-- **stances** — on the changed skills, with no entry, so only the seat pass's default stances
-  steer.
+- **stances** — with no entry, on skills that carried a seat look with eleven default product
+  stances; that look did not ship (`20261102-figure-out-keeps-its-seat-line-no-seat-look-ships`).
 
 A grader session that saw only each reply under a letter label graded all six. Every run passed:
 
@@ -59,12 +59,8 @@ A grader session that saw only each reply under a letter label graded all six. E
 The case line therefore did not win moment (a) where the principle alone lost it, so by the rule
 fixed before the test the entry form does not change. Both entry arms also passed moment (b): the
 principle's own yield clause held, and the case line did not over-fire. The stances arm passed both
-moments with no entry, so the gate half of the first default stance (*Just in time*: at a gate, ask
-only for the gate's own choice and what the gate cannot work without) stays in
-`figure-out/references/SEAT.md`. Its designs followed that stance at both gates — asking nothing
-beyond the sign-in choice in (a), and the address the posted order cannot work without in (b) — and
-in (a) also *First value before commitment*'s direction: the recipe is saved before any profile
-question.
+moments as well, so on these two moments the stances added nothing an entry or the skills before
+the change did not already give.
 
 ## Alternatives Considered
 
@@ -80,14 +76,10 @@ question.
 ### Positive
 - Entries stay short and carry to calls nobody discussed, which is what makes them worth keeping
   resident.
-- The default stances alone steered both gate moments right, so a user with no Taste entry gets the
-  same behavior on these calls.
 
 ### Negative
 - One run per arm per moment, on one fictional product, is a direction, not a measurement: a case
   line may still help on calls further from the principle's wording than these two.
-- The entry arms ran on the skills before the seat pass. Whether an entry and the stances together
-  behave differently from either alone was not tested.
 
 ## Enforced by
 none — a drafting instruction read by the model at offer time; no check can tell a principle from an overfitted entry without judging it.
@@ -99,4 +91,4 @@ none — a drafting instruction read by the model at offer time; no check can te
 
 ## Source
 - Session: a `/do` run on a Manifest the user approved, 2026-11-02 (log kept locally). Drive summaries and the grader's verdicts are in the pull request that adds this record.
-- Related: 20260719-taste-persists-by-offer-and-ratify, 20261012-taste-is-checked-per-call-and-captured-from-explained-reversals, 20261102-figure-out-looks-from-the-persons-seat-in-a-fresh-pass
+- Related: 20260719-taste-persists-by-offer-and-ratify, 20261012-taste-is-checked-per-call-and-captured-from-explained-reversals, 20261102-figure-out-keeps-its-seat-line-no-seat-look-ships

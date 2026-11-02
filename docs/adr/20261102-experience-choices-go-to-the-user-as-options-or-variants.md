@@ -97,4 +97,4 @@ A rewritten `99`, or a long-session case, shows runs asking an experience choice
 ## Source
 - Session: a `/define` session and a `/do` run on the resulting Manifest, 2026-11-02 (logs kept locally). Drive summaries and blind grades are in the pull request that adds this record.
 - Amends 20260924-figure-out-settles-the-artifacts-person-and-opens-visual-directions-with-variants, 20260924-design-starts-from-the-person-and-their-moment
-- Related: 20261102-figure-out-looks-from-the-persons-seat-in-a-fresh-pass
+- Related: 20261102-figure-out-keeps-its-seat-line-no-seat-look-ships

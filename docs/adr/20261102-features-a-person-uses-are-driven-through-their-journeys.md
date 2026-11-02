@@ -112,4 +112,4 @@ A drive of the `define` recipe's `todays-gates-on-the-seeded-app` and `journeys-
 
 ## Source
 - Session: a `/define` session and a `/do` run on the resulting Manifest, 2026-11-02 (logs kept locally). Drive summaries and blind grades are in the pull request that adds this record.
-- See also: 20261102-figure-out-looks-from-the-persons-seat-in-a-fresh-pass, 20261102-the-seat-pass-judges-against-default-product-stances
+- See also: 20261102-figure-out-keeps-its-seat-line-no-seat-look-ships

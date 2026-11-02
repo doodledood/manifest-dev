@@ -197,19 +197,6 @@ The Evidence Ledger is the short list of claims that a Read rests on. Each claim
 and if it is a fact, an inference or a guess. Thus you can examine each claim and see which claims
 the conclusion depends on.
 
-### Seat Pass
-<!-- context: d6b86e17b314 -->
-The Seat Pass is a step in `/figure-out`. It looks at a proposal from the seat of the person who
-will use the result. It starts when the work will change something that a person sees or uses.
-When it can, it runs in a fresh context, so it does not share the blind spots of the session that wrote the
-proposal.
-
-It finds the journeys of that person and tries them on the running product when it can.
-At each choice that the person will notice, it compares two or three options against default
-product stances. Your Taste entries and your project rules always win over these stances. It
-gives back only the few findings that change the Read. It exists because a session that writes a
-proposal often misses what the person meets when they arrive, come back, or make a mistake.
-
 ### Fog
 <!-- context: c4babc364999 -->
 Fog is an area that seems important, but that nobody can state as a question yet. `/figure-out` does

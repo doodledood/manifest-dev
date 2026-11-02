@@ -20,9 +20,8 @@ already explained in its history: in decision records, in review threads where a
 turned down with a reason, and in the owner's past sessions. In replays of one owner's sessions,
 kept outside this repository, the owner restated the same few product judgments across sessions.
 
-The workflow now ships defaults every user gets — figure-out's default product stances
-(`20261102-the-seat-pass-judges-against-default-product-stances`) and each skill's own — so an
-entry earns its place first where the owner leans away from one of them.
+The workflow ships defaults every user gets — each skill's own — so an entry earns its place first
+where the owner leans away from one of them.
 
 This decision sits inside what the North Star's *Purpose* names: a person returns without restoring
 the same context, and keeps control of the choices they retain.
@@ -99,4 +98,4 @@ none — which candidates deserve an entry is judgment; the `setup-project` reci
 ## Source
 - Session: a `/do` run on a Manifest the user amended mid-run, 2026-11-02 (log kept locally). The drive's grade is in the pull request that adds this record.
 - Amends 20261014-setup-project-audits-the-whole-setup-when-run
-- See also: 20260719-taste-persists-by-offer-and-ratify, 20261012-taste-is-checked-per-call-and-captured-from-explained-reversals, 20261102-taste-entry-form-is-chosen-by-a-test, 20261102-the-seat-pass-judges-against-default-product-stances, 20260809-glossary-stays-resident-with-an-under-produced-seed
+- See also: 20260719-taste-persists-by-offer-and-ratify, 20261012-taste-is-checked-per-call-and-captured-from-explained-reversals, 20261102-taste-entry-form-is-chosen-by-a-test, 20260809-glossary-stays-resident-with-an-under-produced-seed
