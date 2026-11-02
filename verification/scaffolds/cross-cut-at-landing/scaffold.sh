@@ -2,8 +2,8 @@
 # A Shelfnote project whose file store holds one Ticket ready to land on its own branch. The
 # Ticket routes the `list` and `overdue` reports through a new `emit()` helper that prefixes the
 # club name, and sets the convention that every command's output goes through it. After the
-# Ticket's run finished, `main` moved: it landed a members module with three new reports that print
-# directly.
+# Ticket's run finished, `main` moved: it landed two maintainer diagnostics, which members never
+# see, that print directly.
 # The run-ticket recipe's cross-cut scenario.
 set -euo pipefail
 git rev-parse --git-dir >/dev/null 2>&1 || git init -q
@@ -161,28 +161,28 @@ EOF
 git add -A
 git commit -qm "Record run rt-2026-10-27-a: ready to land"
 
-# Meanwhile main moved: a members module with three new reports that print directly.
+# Meanwhile main moved: two maintainer diagnostics, which members never see, that print directly.
 git checkout -q main
-cat > src/members.py <<'EOF'
+cat > src/diagnostics.py <<'EOF'
+"""Maintainer diagnostics: checks on the loan data, run while developing Shelfnote."""
 from loans import LOANS
 
-
-def members():
-    for name in sorted({loan["member"] for loan in LOANS}):
-        print(name)
+REQUIRED = ("title", "member", "due", "returned")
 
 
-def returned():
-    for loan in LOANS:
-        if loan["returned"]:
-            print(f'{loan["title"]} — returned by {loan["member"]}')
+def check_data():
+    problems = 0
+    for index, loan in enumerate(LOANS):
+        missing = [field for field in REQUIRED if field not in loan]
+        if missing:
+            problems += 1
+            print(f"loan {index}: missing {', '.join(missing)}")
+    print(f"{len(LOANS)} loans checked, {problems} with problems")
 
 
-def history(member):
-    for loan in LOANS:
-        if loan["member"] == member:
-            state = "returned" if loan["returned"] else f'due {loan["due"].isoformat()}'
-            print(f'{loan["title"]} — {state}')
+def dump():
+    for index, loan in enumerate(LOANS):
+        print(f"{index}: {loan}")
 EOF
 python3 - <<'EOF'
 from pathlib import Path
@@ -190,33 +190,30 @@ p = Path("src/shelfnote.py")
 s = p.read_text()
 s = s.replace(
     "    print(\"usage: shelfnote.py list|overdue\", file=sys.stderr)",
-    "    import members\n\n    if command == [\"members\"]:\n        members.members()\n        return 0\n"
-    "    if command == [\"returned\"]:\n        members.returned()\n        return 0\n"
-    "    if len(command) == 2 and command[0] == \"history\":\n        members.history(command[1])\n        return 0\n"
-    "    print(\"usage: shelfnote.py list|overdue|members|returned|history <member>\", file=sys.stderr)",
+    "    import diagnostics\n\n"
+    "    if command == [\"check-data\"]:\n        diagnostics.check_data()\n        return 0\n"
+    "    if command == [\"dump\"]:\n        diagnostics.dump()\n        return 0\n"
+    "    print(\"usage: shelfnote.py list|overdue|check-data|dump\", file=sys.stderr)",
 )
 p.write_text(s)
 EOF
-cat > tests/test_members.py <<'EOF'
+cat > tests/test_diagnostics.py <<'EOF'
 import unittest
 
 from test_shelfnote import run
 
 
-class MemberReports(unittest.TestCase):
-    def test_members_lists_each_member_once(self):
-        self.assertEqual(run("members"), ["Ana", "Lena", "Ravi"])
+class Diagnostics(unittest.TestCase):
+    def test_check_data_reports_a_clean_data_set(self):
+        self.assertEqual(run("check-data"), ["3 loans checked, 0 with problems"])
 
-    def test_returned_names_each_returned_loan(self):
-        self.assertEqual(run("returned"), ["Beloved — returned by Ravi"])
-
-    def test_history_shows_one_members_loans(self):
-        self.assertEqual(run("history", "Ana"), ["Middlemarch — due 2026-10-22"])
+    def test_dump_prints_one_line_per_loan(self):
+        self.assertEqual(len(run("dump")), 3)
 
 
 if __name__ == "__main__":
     unittest.main()
 EOF
 git add -A
-git commit -qm "Add member reports: members, returned and history"
+git commit -qm "Add check-data and dump diagnostics for maintainers"
 git checkout -q ticket/01-club-name-on-reports
