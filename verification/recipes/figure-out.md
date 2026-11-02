@@ -163,6 +163,21 @@ Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/100-st
 Proves: after the user rejects 20 free uses a month of a costly feature with an aim and a reason (anything that costs per use has to be paid for), the next recommendation is reasoned from that aim to a choice the user did not state, such as a one-time taste, not a smaller recurring allowance — the case's grader `reasons-again-from-the-aim`.
 Check: read
 
+### steer-without-reason
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/107-steer-without-reason/prompt.md`
+Proves: attended over four turns, after the user removes an unread badge and then a reading streak without saying why, the session names the reason it infers (no pull through pressure or guilt) and the other planned items it changes, recommends a quiet way to learn of a followed author's new article, asks about the reason at most once, and offers to keep the reason with its text — the case's grader `reads-the-reason`.
+Check: read
+
+### steer-two-readings
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/108-steer-two-readings/prompt.md`
+Proves: after the user removes comments with no reason, where "no social layer" and "no moderation of posted text" would change the other planned items in opposite ways, the reply asks one short question that tells the two apart instead of changing those items on a guess — the case's grader `asks-which-reason`.
+Check: read
+
+### taste-offers
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/27-taste-offers/prompt.md --scaffold claude-plugins/manifest-dev/evals/27-taste-offers`
+Proves: at the session-end sweep, the session offers an entry for a stated standing preference and one for a reversal the user explained, each built on the user's own reason — the case's graders `offers-entry-for-the-stated-preference` and `offers-entry-for-the-reversal`.
+Check: read
+
 ### taste-principle-save
 Run: `DRIVE_PLUGINS_AT=296d596 scripts/drive-skill.sh figure-out verification/prompts/taste-moment-save.md --scaffold verification/scaffolds/taste-principle`
 Proves: the Taste test's principle arm (the principle alone) on the save moment: passes when its design asks nothing at the account step beyond the sign-in choice — no dietary needs, household size or display name before the recipe is saved. The test and its result are in `docs/adr/20261102-taste-entry-form-is-chosen-by-a-test.md`.
