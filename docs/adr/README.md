@@ -253,3 +253,4 @@
 | 2026-11-02 | [setup-project offers a project, once, a few Taste entries mined from reasons the owner already stated](20261102-setup-offers-taste-entries-mined-from-stated-reasons.md) | Accepted | Project context |
 | 2026-11-02 | [A Taste entry states a general principle and carries no case line](20261102-taste-entry-form-is-chosen-by-a-test.md) | Accepted | figure-out |
 | 2026-11-02 | [Taste stays a section of the memory file until it outgrows one](20261102-taste-stays-a-section-of-the-memory-file.md) | Accepted | figure-out |
+| 2026-11-02 | [The convergence bet counts debt paid on the change that meets it](20261102-the-convergence-bet-counts-debt-paid-on-the-change-that-meets-it.md) | Accepted | Positioning |
