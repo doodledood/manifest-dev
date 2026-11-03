@@ -2,9 +2,13 @@
 
 Tools that sit alongside the workflow: pull requests, prompts, teaching, and handoff.
 
+In Claude Code:
+
 ```bash
 /plugin install manifest-dev-tools@manifest-dev
 ```
+
+In Cursor, install **Manifest Dev Tools** from the [Cursor Marketplace](https://cursor.com/marketplace) once it is listed, or copy this folder into `~/.cursor/plugins/local/manifest-dev-tools` and run **Developer: Reload Window**. The [Cursor install guide](https://github.com/doodledood/manifest-dev/blob/main/dist/cursor/README.md) has the steps and the listing status.
 
 ## Pull requests
 

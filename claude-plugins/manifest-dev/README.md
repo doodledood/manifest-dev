@@ -4,10 +4,14 @@ Hand your agent a task. Get back work you can trust. This plugin is the workflow
 
 [See it explained →](https://doodledood.github.io/manifest-dev/) Each part works on its own, and nobody else on your team has to use it.
 
+In Claude Code:
+
 ```text
 /plugin marketplace add doodledood/manifest-dev
 /plugin install manifest-dev@manifest-dev
 ```
+
+In Cursor, install **Manifest Dev** from the [Cursor Marketplace](https://cursor.com/marketplace) once it is listed, or copy this folder into `~/.cursor/plugins/local/manifest-dev` and run **Developer: Reload Window**. The [Cursor install guide](https://github.com/doodledood/manifest-dev/blob/main/dist/cursor/README.md) has the steps and the listing status.
 
 ## Choose an entry point
 
