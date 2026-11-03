@@ -168,9 +168,10 @@ the issues fixed on the way and any test removed as useless or tautological, wit
 request through the repository's normal checks. Activate the `check-pr` skill for the current pull request
 and head. Address agent-resolvable failures and re-check rather than handing routine repair to a
 person; what may remain is only what a person gives, such as a required review. A required check
-that fails the same way on the target base is not this Ticket's to repair or escalate: name that
-cause in the attempt record's progress and finish, so `orchestrate` can pause the effort on it
-once rather than each run escalating.
+that fails the same way on the target base is not this Ticket's to repair or escalate, unless
+making that check pass is the Ticket's own work: name that cause in the attempt record's progress
+and finish, so `orchestrate` can pause the effort on it once and have one repair Ticket written,
+rather than each run escalating.
 
 Then write the completion record and set the run facts: ready to land at the verified head commit,
 against the base commit the gates passed against, naming this run's ID. This is the durable

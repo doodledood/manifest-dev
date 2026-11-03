@@ -1,6 +1,8 @@
 import re
 from pathlib import Path
 
+import pytest
+
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE_SKILLS = ROOT / "claude-plugins" / "manifest-dev" / "skills"
 DIST_SKILLS = ROOT / "dist" / "codex" / "plugins" / "manifest-dev" / "skills"
@@ -402,7 +404,15 @@ def test_orchestrate_orders_cross_cutting_pairs_and_checks_them_at_landing() -> 
     assert "That includes a cross-cutting pair" in text
     assert "never as a dependency between the Tickets" in text
     assert "checks any cross-cut both ways" in landing
-    assert "otherwise writes a follow-up for a person" in landing
+    # Holds docs/adr/20261102-a-landing-fixes-what-it-meets.md: a cross-cut extends the run, and
+    # only an extension that is a project of its own, needs a retained decision or is kept out
+    # becomes debt.
+    assert (
+        "It extends its work to cover the cross-cut, unless that extension is a project of its own, needs a decision a person retains, or the project's own rules keep it out"
+        in landing
+    )
+    assert "names the cross-cut as debt in the completion record" in landing
+    assert "fits its Ticket" not in landing
     # The base is merged in early and gates re-run only at the landing turn.
     run_ticket = flat(skill_text(SOURCE_SKILLS, "run-ticket"))
     assert "merge the target base in when it has moved" in run_ticket
@@ -879,6 +889,54 @@ def test_the_pause_line_is_never_erased_and_one_cause_pauses_once() -> None:
     )
     assert "so a `Paused:` line a person added since is kept" in orchestrate
     assert "so a `Paused:` line a person added meanwhile stays" in status_page
+
+
+# Holds the decision in docs/adr/20261102-a-landing-fixes-what-it-meets.md: a red base pauses the
+# effort once and gets one repair Ticket, which alone may launch and land during the pause.
+@pytest.mark.parametrize("root", [SOURCE_SKILLS, DIST_SKILLS], ids=["source", "codex"])
+def test_a_red_base_gets_one_repair_ticket(root: Path) -> None:
+    orchestrate = flat(orchestrate_text(root))
+    landing = flat(section(automation_text(root), "Landing"))
+    run_ticket = flat(skill_text(root, "run-ticket"))
+
+    # A run never repairs the base inside another Ticket; the repair Ticket is the exception.
+    assert "is the base's failure, not the Ticket's: nothing is repaired" in landing
+    assert (
+        "unless making that check pass is the Ticket's own work, as it is for that repair Ticket"
+        in landing
+    )
+    assert "unless making that check pass is the Ticket's own work" in run_ticket
+    # The effort pauses once on the cause.
+    assert "one is enough for a required check that fails the same way on the base" in (
+        orchestrate
+    )
+    # One repair Ticket per cause, written in either mode and deduplicated.
+    assert "A base check that a code change can fix gets one repair Ticket instead" in (
+        orchestrate
+    )
+    assert "scoped to making that check pass on the base, in either mode" in orchestrate
+    assert "`ticket-up` reuses an open Ticket that already covers it" in orchestrate
+    assert (
+        "close the Ticket `ticket-up` created in this check-in as a duplicate instead"
+        in orchestrate
+    )
+    # Only the repair Ticket the line names launches or lands while the pause holds.
+    assert "no launch, no landing turn — except the repair Ticket the line names" in (
+        orchestrate
+    )
+    # Its Auto comes from the mode's grant step, never from the run that found the failure.
+    assert "goes to the mode's grant step like any Ticket an agent wrote" in orchestrate
+    assert "names no open repair Ticket for such a cause" in orchestrate
+    assert (
+        "while that check still fails the same way on the base, write one"
+        in orchestrate
+    )
+    assert (
+        "it is the pause's one item on the list of what waits on the person"
+        in orchestrate
+    )
+    default = flat(orchestrate_text(root, "PROPOSE_AND_WAIT.md"))
+    assert "except a repair Ticket a pause names, which joins this plan" in default
 
 
 # Holds the decision in docs/adr/20261019-every-way-a-landing-cannot-merge-relaunches-or-escalates.md.

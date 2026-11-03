@@ -27,7 +27,8 @@ evidence and waits for the person. Approving a plan is not an Auto grant.
 ## Run the plan
 
 Launch only Tickets in the approved plan, in its order, up to `--max-batch` at once. A Ticket that
-becomes ready during the plan but is not in it waits for the next plan. A plan Ticket whose
+becomes ready during the plan but is not in it waits for the next plan, except a repair Ticket a
+pause names, which joins this plan once the person approves it. A plan Ticket whose
 escalation the person answers continues within the plan.
 
 When the person asks for new work during the plan, plan it as `../SKILL.md` → *Planning new work*

@@ -24,9 +24,15 @@ Run: `scripts/drive-skill.sh run-ticket verification/prompts/run-ticket-run.md -
 Proves: the Ticket gains `<!-- manifest-dev-run-ticket-attempt -->` carrying the run's Manifest and progress, and, at the end, `<!-- manifest-dev-run-ticket-completion -->`, with the attempt record's run facts marked ready to land, or `<!-- manifest-dev-run-ticket-escalated -->`. Nothing is merged, since the prompt does not say to land.
 Check: read
 
+### cross-cut
+Run: `scripts/drive-skill.sh run-ticket verification/prompts/run-ticket-cross-cut.md --scaffold verification/scaffolds/cross-cut-at-landing --max-turns 120`
+Proves: landing a Ticket marked ready while `main` moved, the run merges `main` in and finds that the two maintainer diagnostics `main` added (`check-data`, `dump`) print without `emit()`, the convention the Ticket set, though members never see them. It routes both through `emit()` in its own work, updating their tests, re-runs the gates, lands on `main`, and writes no follow-up Ticket for a person about them.
+Check: read
+
 ## Gotchas
 
 - The prompt first has ticket-up file one small Ticket with a checkable end, then runs `/manifest-dev:run-ticket` on it in the same session.
+- In `cross-cut` the person tells the hand run to land, which supplies the landing authority; the merged base passes every test, so only reading what landed shows the new instance.
 - It does not pick from a backlog; a missing or ambiguous reference stops before any work.
 - Running it by hand does not grant Auto.
 - Everything auto and do may do, it may do — and a GitHub venue writes to real Issues.
