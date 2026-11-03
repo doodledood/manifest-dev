@@ -40,11 +40,11 @@ to an older rule in two places:
   fix waits for the person, as before. A base check a code change can fix gets one repair Ticket,
   in either mode:
   - Whenever a `Paused:` line an orchestrator wrote names no open repair Ticket for such a cause
-    while that check still fails the same way on the base, an orchestrator writes one through `ticket-up`, in that effort, scoped to making that check
-    pass on the base. `ticket-up` reuses an open Ticket that already covers it. The orchestrator
-    then names the repair Ticket in the line. When the line already names another open one, or is
-    gone, it closes a Ticket `ticket-up` created in that check-in as a duplicate, and leaves a
-    reused one as it was.
+    while that check still fails the same way on the base, an orchestrator writes one through
+    `ticket-up`, in that effort, scoped to making that check pass on the base. `ticket-up` reuses an
+    open Ticket that already covers it. The orchestrator then names the repair Ticket in the line.
+    When the line already names another open one, or is gone, it closes a Ticket `ticket-up` created
+    in that check-in as a duplicate, and leaves a reused one as it was.
   - While the pause holds, only the repair Ticket the line names may launch or land.
   - The repair Ticket goes to the mode's grant step like any Ticket an agent wrote, so its Auto
     comes from a person or from `orchestrate --autonomous` under its criterion, never from the run
