@@ -1,7 +1,7 @@
 # ADR: The Cursor plugin reads the source plugin directories
 
 ## Status
-Accepted
+Accepted; narrowed by [20261103-each-cursor-plugin-ships-its-own-plated-logo](20261103-each-cursor-plugin-ships-its-own-plated-logo.md): each plugin ships a plated copy of the logo in its own `assets/` and names it by relative path, replacing the absolute raw URL
 
 ## Area
 Cursor distribution

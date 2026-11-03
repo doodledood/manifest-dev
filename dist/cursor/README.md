@@ -8,7 +8,7 @@ There is no separate skills payload for Cursor. Each source plugin directory car
 
 ## Install
 
-**From the Cursor Marketplace:** not listed yet. Every listing is [reviewed by Cursor](https://cursor.com/help/security-and-privacy/marketplace-security) before it appears; once it does, install `manifest-dev` (and `manifest-dev-tools` if you want it) from **Customize** or [cursor.com/marketplace](https://cursor.com/marketplace).
+**From the Cursor Marketplace:** not listed yet. Every listing is [reviewed by Cursor](https://cursor.com/help/security-and-privacy/marketplace-security) before it appears; once it does, install **Manifest Dev** (`manifest-dev`), and **Manifest Dev Tools** (`manifest-dev-tools`) if you want it, from **Customize** or [cursor.com/marketplace](https://cursor.com/marketplace).
 
 **Locally**, following Cursor's [Test plugins locally](https://cursor.com/docs/plugins#test-plugins-locally):
 

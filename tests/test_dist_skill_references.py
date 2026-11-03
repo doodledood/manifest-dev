@@ -319,13 +319,10 @@ def test_cursor_plugin_manifests_track_their_source_plugins() -> None:
         for field in ("description", "license", "repository", "logo"):
             assert cursor.get(field), f"{name}: {field}"
         assert cursor["author"]["name"]
+        # Holds 20261103-each-cursor-plugin-ships-its-own-plated-logo: the logo is
+        # committed inside the plugin and named by a relative path.
         logo = cursor["logo"]
-        if logo.startswith(
-            "https://raw.githubusercontent.com/doodledood/manifest-dev/"
-        ):
-            assert (ROOT / logo.split("/", 6)[6]).is_file(), logo
-        else:
-            assert _safe_relative(logo) and (plugin_dir / logo).is_file(), logo
+        assert _safe_relative(logo) and (plugin_dir / logo).is_file(), logo
 
 
 # Holds the decision in docs/adr/20261021-cursor-plugin-reads-the-source-plugin-directories.md.

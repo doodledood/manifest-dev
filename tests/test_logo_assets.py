@@ -1,8 +1,12 @@
-"""Shipped brand marks stay RGBA with a transparent field.
+"""Shipped brand marks stay RGBA with a transparent field; Cursor's copies are plated.
 
 Dropping an opaque RGB export into assets/logo.png or site/logo.png paints a
 square on GitHub dark-mode README and the Pages favicon. IHDR color type 6
 plus transparent corners fail that class.
+
+The Cursor Marketplace asks for a 1:1 logo on a background plate, so each Cursor
+plugin ships the same mark over an opaque plate inside its own directory
+(docs/adr/20261103-each-cursor-plugin-ships-its-own-plated-logo.md).
 """
 
 from __future__ import annotations
@@ -89,3 +93,28 @@ def test_shipped_logo_has_transparent_field(path: Path) -> None:
         alpha(width - 1, height - 1),
     )
     assert corners == (0, 0, 0, 0), f"{path} corners are not transparent: {corners}"
+
+
+PLATED_LOGO_PATHS = tuple(
+    ROOT / "claude-plugins" / plugin / "assets" / "logo.png"
+    for plugin in ("manifest-dev", "manifest-dev-tools")
+)
+
+
+# Holds docs/adr/20261103-each-cursor-plugin-ships-its-own-plated-logo.md.
+def test_cursor_plugin_logos_are_the_mark_on_an_opaque_square_plate() -> None:
+    """Each plugin's logo is square, opaque everywhere, identical across plugins,
+    and matches assets/logo.png wherever the mark itself is opaque, so the plated
+    copy cannot drift from the brand mark."""
+    first = PLATED_LOGO_PATHS[0].read_bytes()
+    for path in PLATED_LOGO_PATHS:
+        assert path.is_file(), path
+        assert path.read_bytes() == first, f"{path} differs from {PLATED_LOGO_PATHS[0]}"
+        assert path.stat().st_size < 200_000, f"{path} is {path.stat().st_size} bytes"
+    width, height, plated = _png_ihdr_and_pixels(PLATED_LOGO_PATHS[0])
+    src_w, src_h, mark = _png_ihdr_and_pixels(LOGO_PATHS[0])
+    assert width == height == src_w == src_h, (width, height, src_w, src_h)
+    assert all(a == 255 for a in plated[3::4]), "plated logo has transparent pixels"
+    for i in range(0, len(mark), 4):
+        if mark[i + 3] == 255:
+            assert plated[i : i + 3] == mark[i : i + 3], f"pixel {i // 4} drifted"
