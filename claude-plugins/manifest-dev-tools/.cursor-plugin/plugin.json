@@ -1,8 +1,8 @@
 {
   "name": "manifest-dev-tools",
   "displayName": "Manifest Dev Tools",
-  "version": "7.0.1",
-  "description": "Tools for prompts and pull requests alongside the manifest-dev workflow: prompt engineering and review, autonomous and collaborative PR review, PR babysitting toward green and mergeable, goals, context handoff, teaching and eli5.",
+  "version": "7.0.2",
+  "description": "Helps AI coding assistants write better prompts and see pull requests through. It reviews pull requests, walks you through a change, and keeps working on a pull request until its checks pass and it is ready to merge. It can also explain any topic simply and pass unfinished work on without losing the thread.",
   "author": {
     "name": "doodledood",
     "email": "doodledood@github.com"
