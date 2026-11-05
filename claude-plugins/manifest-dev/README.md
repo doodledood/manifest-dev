@@ -211,8 +211,8 @@ Deterministic gate.
 #### AC-1.2 — Invalid credentials fail cleanly
 
 Done when the manifest-dev:review-code skill, activated with dimension=code-bugs over the auth
-routes, reports nothing at or above that dimension's threshold — an invalid-credential path
-returning 500 instead of 401 is the shape this catches.
+routes, reports no Medium-or-higher findings under this Manifest's chosen acceptance policy —
+an invalid-credential path returning 500 instead of 401 is the shape this catches.
 
 Judgment gate.
 ````

@@ -27,18 +27,16 @@ def test_severity_cannot_make_rarity_a_license_to_drop_wrong_behavior(
     review = skill(plugins, "review-code")
     assert "no LOW" not in review
     assert (
-        "optional polish or a nit of any kind: style, naming, structure, or otherwise"
-        in review
+        "polish or a nit of any kind: style, naming, structure, or otherwise" in review
     )
-    assert "no Medium-or-higher findings to PASS" in review
+    assert "optional polish" not in review.lower()
     assert (
-        "correctness or safety failure or broken binding promise received as Low still blocks"
+        "correctness or safety failure or broken binding promise received as Low"
         in review
     )
-    assert (
-        "batches useful fixes from the first review and leaves new Lows on repair reviews"
-        in review
-    )
+    assert "All Critical, High and Medium findings block" not in review
+    assert "**Threshold**: no MEDIUM+" not in review
+    assert "caller chooses the acceptance threshold and handling policy" in review
     for reference in (plugins / "manifest-dev/skills/review-code/references").glob(
         "*.md"
     ):
@@ -78,19 +76,19 @@ def test_pr_consolidation_filters_consequences_before_severity_labels(
 ) -> None:
     for name in ("review-pr", "review-pr-holistic", "review-pr-judgment"):
         text = (plugins / "manifest-dev-tools/skills" / name / "SKILL.md").read_text()
-        assert "optional polish or nits of any kind" in text
+        assert "caller" in text.lower() and "policy" in text.lower()
+        assert "optional polish" not in text.lower()
         assert (
             "correctness or safety failures and broken binding promises" in text.lower()
         )
-        assert "regraded" in text or "correcting their grade" in text
+        assert "regrad" in text.lower()
         assert "presentation-only" not in text
         assert "except defect-class" not in text
-        assert "including Low" not in text
         assert "drop-Low" not in text
         assert "other than defect-class" not in text
 
 
-def test_optional_nits_of_any_kind_stay_below_bar_across_review_owners(
+def test_nit_classification_does_not_encode_caller_optionality(
     plugins: Path,
 ) -> None:
     for name, reference in [
@@ -101,7 +99,8 @@ def test_optional_nits_of_any_kind_stay_below_bar_across_review_owners(
     ]:
         text = skill(plugins, name, reference)
         normalized = " ".join(text.lower().split())
-        assert "optional polish or a nit of any kind" in normalized
+        assert "polish or a nit of any kind" in normalized
+        assert "optional polish" not in normalized
         assert "style, naming, structure, or otherwise" in normalized
         assert "presentation-only" not in normalized
         assert "without cost to comprehension" not in text
@@ -109,13 +108,16 @@ def test_optional_nits_of_any_kind_stay_below_bar_across_review_owners(
     low_row = next(line for line in docs.splitlines() if line.startswith("| **LOW**"))
     assert "serial commas" in low_row
     executor = skill(plugins, "do")
-    assert "no Medium-or-higher findings" in executor
-    assert "broken binding promises received as Low still block" in executor
+    assert "Manifest's chosen severities, categories and acceptance" in executor
+    assert "before applying that policy" in executor
+    assert "Shared review gates pass" not in executor
+    assert "optional polish" not in executor
     assert "presentation-only" not in executor
     prompt_review = (
         plugins / "manifest-dev-tools/skills/review-prompt/SKILL.md"
     ).read_text()
-    assert "optional polish or a nit of any kind" in prompt_review
+    assert "polish or a nit of any kind" in prompt_review
+    assert "optional polish" not in prompt_review
 
 
 def test_mechanical_failure_cannot_disappear_as_an_intent_mismatch(
@@ -128,3 +130,26 @@ def test_mechanical_failure_cannot_disappear_as_an_intent_mismatch(
     assert "logic errors, behavioral mismatches" not in bugs
     intent = skill(plugins, "review-code", "references/change-intent.md")
     assert "cannot waive that promise" in intent
+
+
+def test_caller_owns_gate_and_handling_without_changing_severity(plugins: Path) -> None:
+    reviewer = " ".join(skill(plugins, "review-code").split())
+    assert "Choosing to address a Low does not raise its severity" in reviewer
+    assert (
+        "Report classifications without a verdict when no gate is requested" in reviewer
+    )
+    assert "If a verdict is requested without an acceptance policy" in reviewer
+    assert "Every dimension uses the same threshold" not in reviewer
+    builder = skill(plugins, "define")
+    assert (
+        "The skill owns classification; the Manifest owns what fails the gate"
+        in builder
+    )
+    coding = skill(plugins, "define", "tasks/CODING.md")
+    assert "the gate states the chosen threshold explicitly" in coding
+    assert "thresholds in the table above orient the author, not the gate" not in coding
+    holistic = (
+        plugins / "manifest-dev-tools/skills/review-pr-holistic/SKILL.md"
+    ).read_text()
+    assert "Preserve Low findings retained by the caller's chosen policy" in holistic
+    assert "consolidation does not impose its own severity cutoff" in holistic

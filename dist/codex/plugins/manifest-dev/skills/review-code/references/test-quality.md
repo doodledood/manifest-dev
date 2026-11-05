@@ -106,7 +106,7 @@ Do NOT report on:
 
 ## Severity calibration
 
-Use the shared ladder. Missing tests, weak oracles and implementation-pinned assertions earn Medium when they leave a concrete must-fix gap in regression protection. A test that falsely promises protection against a demonstrated correctness or safety failure is High or Critical. Optional improvements to tests are Low, including naming and structural nits; the location in lower-risk code does not decide severity.
+Use the shared ladder. Missing tests, weak oracles and implementation-pinned assertions earn Medium when they leave a concrete must-fix gap in regression protection. A test that falsely promises protection against a demonstrated correctness or safety failure is High or Critical. Polish and nits in tests are Low, including naming and structural nits; the location in lower-risk code does not decide severity.
 
 ## Dimension-specific report expectations
 

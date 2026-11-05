@@ -1,7 +1,7 @@
 # ADR: Defect remediation requires proportionate prevention with evidenced fallbacks
 
 ## Status
-Accepted; amended by 20261105-review-severity-follows-consequence: optional polish and nits of any kind are below-bar; substantive remediation and correctness/safety failures and broken binding promises remain blocking even when received as Low
+Accepted; amended by 20261105-review-severity-follows-consequence: consequence classification is separate from caller-chosen acceptance and handling; the caller may choose the usual Medium+ gate, while substantive failures received as Low are regraded from evidence
 
 ## Area
 Code review

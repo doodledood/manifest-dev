@@ -761,7 +761,7 @@ CONVERGENCE = {
         " left, neither applied nor handed over",
     ),
     "do/references/EXTERNAL_REVIEW.md": (
-        "one that arrives on a repair, including distinct optional nits from a reviewer that runs"
+        "one that arrives on a repair, including distinct nits from a reviewer that runs"
         " after every commit, is declined",
         "pre-existing issue raised about code that only a repair or a fix on the way touched joins"
         " only when it blocks that repair or a check fails",

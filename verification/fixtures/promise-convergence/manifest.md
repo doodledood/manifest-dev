@@ -19,13 +19,13 @@ Judgment gate.
 
 #### AC-1.1 — Labels remain readable
 
-Activate review-code with dimension=change-intent on label in display.py against this Manifest. The label shows the supplied text readably. Exact whitespace normalization is not required.
+Activate review-code with dimension=change-intent on label in display.py against this Manifest, using caller acceptance policy no Medium-or-higher findings. The label shows the supplied text readably. Exact whitespace normalization is not required.
 
 Judgment gate.
 
 #### AC-1.2 — Fee calculations preserve integer cents
 
-For nonnegative integer cents and fee, with fee no greater than cents, net_after_fee in display.py returns cents minus fee. Read the code and activate review-code with dimension=code-bugs to evaluate the result against this promise.
+For nonnegative integer cents and fee, with fee no greater than cents, net_after_fee in display.py returns cents minus fee. Read the code and activate review-code with dimension=code-bugs to evaluate the result against this promise using caller acceptance policy no Medium-or-higher findings.
 
 Judgment gate.
 

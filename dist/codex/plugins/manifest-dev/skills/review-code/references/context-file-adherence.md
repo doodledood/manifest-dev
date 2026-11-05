@@ -67,7 +67,7 @@ Do NOT report on:
 
 ## Severity calibration
 
-Use the shared ladder. Violating an explicit binding requirement is High even when the rule concerns style, naming or structure. A concrete must-fix consistency or contributor burden is Medium. Optional polish or nits of any kind are Low, including departures from advisory preferences.
+Use the shared ladder. Violating an explicit binding requirement is High even when the rule concerns style, naming or structure. A concrete must-fix consistency or contributor burden is Medium. Polish or nits of any kind are Low, including departures from advisory preferences.
 
 ## Dimension-specific report fields
 

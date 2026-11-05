@@ -41,9 +41,9 @@ Related repairs, both on the promise "all Unicode label spacing is canonical":
 
 New findings from that continued look:
 - F-40, Low: rename text to raw_text in label. Both names are clear; this is an
-  optional naming preference, with no correctness or maintenance cost.
+  naming nit, with no correctness or maintenance cost.
 - F-41, Low: extract label's strip call into a separate private helper. This is
-  an optional structural preference; it identifies no must-fix quality gap.
+  an structural nit; it identifies no must-fix quality gap.
 
 F-22, received as Low, remains open: net_after_fee(100, 1) is 100 rather than 99.
 Its prior reviewer called it Low because fee=1 is unusual and callers can subtract it manually.

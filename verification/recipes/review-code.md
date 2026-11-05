@@ -61,6 +61,11 @@ Run: `scripts/drive-skill.sh review-code verification/prompts/review-code-rare-c
 Proves: code-bugs reports the lost item at page 99, size 1 as High or Critical and FAIL, with its concrete trigger and evidence. Rarity and a workaround do not make the wrong result Low. Inspect the report, not just its final verdict.
 Check: read
 
+### caller-policy
+Run: `scripts/drive-skill.sh review-code verification/prompts/review-code-caller-policy.md --scaffold verification/fixtures/review-caller-policy`
+Proves: the naming divergence from the declared advisory convention is Low, without correctness or broken-promise findings. With the first caller's Medium+ gate it passes; with the second caller's Low-inclusive gate the same Low fails without changing severity. The third turn returns classifications without inventing a gate verdict. The source and instructions remain byte-identical. Read the actual reports, not just a completion claim.
+Check: read
+
 ## Gotchas
 
 - Each prompt builds its own scratch repository state: a commit on a branch ahead of its default branch.

@@ -11,7 +11,7 @@ justify its disruption and regression risk. A suggestion's correctness, severity
 repetition, or arrival on another commit does not establish that. Decline with a reason false
 suggestions and requests for new work outside the assignment, such as a feature. A below-bar
 suggestion on the change as first reviewed is applied when it improves the work and declined with
-a reason otherwise; one that arrives on a repair, including distinct optional nits from a reviewer
+a reason otherwise; one that arrives on a repair, including distinct nits from a reviewer
 that runs after every commit, is declined, since it re-samples taste on the repair. A
 pre-existing issue raised about code that only a repair or a fix on the way touched joins only
 when it blocks that repair or a check fails; otherwise decline it with a reason, so fixes do not

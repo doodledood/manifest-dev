@@ -1,3 +1,5 @@
+Caller acceptance policy: no Medium-or-higher findings for the requested review gate.
+
 Create this scratch repository state. On the default branch commit contract.md:
 
     page(items, number, size) returns the requested zero-based page, preserving every

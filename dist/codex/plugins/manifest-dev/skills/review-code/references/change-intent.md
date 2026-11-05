@@ -115,7 +115,7 @@ Fetching pages and searching the web are available for researching unfamiliar AP
 
 ## Severity calibration
 
-Use the shared ladder. A demonstrated divergence from the accepted promise is High (or Critical for its stated release-blocking consequences), even in a rare secondary scenario. A must-fix quality gap without wrong behavior is Medium. Optional polish or nits of any kind are Low.
+Use the shared ladder. A demonstrated divergence from the accepted promise is High (or Critical for its stated release-blocking consequences), even in a rare secondary scenario. A must-fix quality gap without wrong behavior is Medium. Polish or nits of any kind are Low.
 
 ## Handling ambiguity
 

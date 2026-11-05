@@ -8,7 +8,7 @@ The project context file (the always-loaded instruction file the harness reads f
 
 ### Base Gates (always applicable)
 
-Each gate is a **dimension** of the `review-code` skill (one ref per dimension, loaded on demand), which owns the shared severity ladder and acceptance threshold. Roles still control applicability and omission: only advisory dimensions are eligible for `/define`'s bearer-test omission valve (`define/SKILL.md` → *The omission valve*); defect-finding dimensions always encode.
+Each gate is a **dimension** of the `review-code` skill (one ref per dimension, loaded on demand), which owns the shared severity ladder. These task defaults choose the usual Medium+ acceptance bar; encode the chosen policy in the Manifest gate. Roles still control applicability and omission: only advisory dimensions are eligible for `/define`'s bearer-test omission valve (`define/SKILL.md` → *The omission valve*); defect-finding dimensions always encode.
 
 | Aspect | Dimension | Threshold |
 |--------|-----------|-----------|
@@ -31,7 +31,7 @@ Each gate is a **dimension** of the `review-code` skill (one ref per dimension, 
 | Contract correctness | contracts | no MEDIUM+ | When code calls external/internal APIs, changes public interfaces, crosses service boundaries, or changes durable data contracts (API/event payloads, database schema/table-field semantics, exports, analytics feeds) |
 | Type safety | type-safety | no MEDIUM+ | When using typed languages (TypeScript, Python with type hints, Java/Kotlin, Go, Rust, C#) |
 
-**Encoding:** each dimension gate's body tells `/do`'s selected evaluator to **activate** the `review-code` skill for the dimension — e.g. *"Done when the review-code skill, activated with dimension=code-bugs, reports nothing at or above that dimension's threshold."* Write it as `define/SKILL.md` → *Specialized gates activate a skill* says; the thresholds in the table above orient the author, not the gate.
+**Encoding:** each dimension gate's body tells `/do`'s selected evaluator to **activate** the `review-code` skill for the dimension — e.g. *"Done when review-code, activated with dimension=code-bugs and caller acceptance policy no MEDIUM+, reports no finding that fails that policy."* Write it as `define/SKILL.md` → *Specialized gates activate a skill* says; the table supplies default caller policy, and the gate states the chosen threshold explicitly.
 
 **Kind:** every dimension gate is a **Judgment Gate** — a reviewer's verdict over an open finding space, not a command outcome — so each declares the judgment kind, which is what tells `/do` how the gate re-verifies. The defect-finding dimensions above run alongside the project's mechanical gates below (typecheck, lint, test, format), which are Deterministic Gates — and an overlay task file may add a defect-finding dimension, as `BUG.md` adds `defect-class`.
 

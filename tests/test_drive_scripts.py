@@ -373,9 +373,13 @@ def test_consolidation_fixture_preserves_review_state_and_reproducible_findings(
     low_findings = packet["packets"][2]["findings"]
     assert {item["id"] for item in low_findings} == {"R7", "R8", "R9"}
     assert all(item["severity"] == "Low" for item in low_findings)
-    assert "naming preference" in low_findings[0]["body"]
-    assert "structural preference" in low_findings[1]["body"]
+    assert "naming nit" in low_findings[0]["body"]
+    assert "structural nit" in low_findings[1]["body"]
     assert "contract requires the original string" in low_findings[2]["body"]
+    strict = packet["packets"][3]
+    assert strict["name"] == "low-inclusive"
+    assert "including Low" in strict["caller_policy"]
+    assert strict["findings"][0]["severity"] == "Low"
     assert packet["reviewed_range"] == (
         f"{packet['reviewed_commit']}..{packet['current_commit']}"
     )
@@ -1481,8 +1485,8 @@ def test_promise_convergence_scaffold_keeps_history_and_real_fee_failure(
         finding in journal
         for finding in ("F-12", "F-17", "F-39", "F-40", "F-41", "F-22")
     )
-    assert "optional naming preference" in journal
-    assert "optional structural preference" in journal
+    assert "naming nit" in journal
+    assert "structural nit" in journal
     history = subprocess.check_output(
         ["git", "log", "--format=%s"], cwd=project, text=True
     )

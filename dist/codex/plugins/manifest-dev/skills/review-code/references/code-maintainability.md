@@ -63,7 +63,7 @@ Before reporting an issue, it must pass ALL of these. **If a finding fails ANY c
 2. **Worth the churn** — Compare the concrete burden on subsequent work with added concepts, coupling, migration risk and coordination cost. Removing independent obligations can justify added lines; fewer lines alone establish no benefit.
 3. **Matches codebase patterns** — Don't demand abstractions absent elsewhere. If the codebase doesn't use dependency injection, don't flag its absence.
 4. **Substantiated tradeoff** — Evaluate the reason for duplication or another burden against its actual benefit (such as test isolation or avoiding coupling). Repetition establishes prevalence, not justification; an author's rationale is evidence, while explicit owner requirements bind.
-5. **Concrete impact** — "Could be cleaner" isn't a finding. Articulate specific consequences: "Will cause shotgun surgery when X changes" or "Makes testing Y impossible." Style-consistency findings under Consistency are the exception to this bar and to the lead-in's "this WILL cause X problem" bar: name the divergence and the surfaces it splits across, and state the impact as reader cost — the scan or learning tax a divergent form imposes on someone working across both — and land at Low. That is the whole severity they are entitled to; they never rise above it.
+5. **Concrete impact** — "Could be cleaner" isn't a finding. Articulate specific consequences: "Will cause shotgun surgery when X changes" or "Makes testing Y impossible." Style-consistency findings under Consistency are the exception to this bar and to the lead-in's "this WILL cause X problem" bar: name the divergence and the surfaces it splits across, and state the impact as reader cost — the scan or learning tax a divergent form imposes on someone working across both — and land at Low. Mere consistency nits are Low; a substantive failure is graded by its demonstrated consequence under the shared ladder.
 6. **Grade the consequence** — Use the concrete future-change burden below, not the author's willingness to defer it. Explicit task limits constrain the remedy, not the evidence or severity.
 
 ## Context adaptation
@@ -77,7 +77,7 @@ Before applying rules rigidly, consider:
 
 ## Severity calibration
 
-Use the shared ladder. Duplication, mixed concerns, incompatible representations, boundary leakage, circular dependencies, hidden state, inconsistent APIs, migration debt and scattered special cases earn Medium when the finding names the future change they make materially harder and a concrete improvement. A demonstrated correctness, safety or promise failure is High or Critical; grade that consequence rather than the pattern alone. Optional improvements are Low, including style, naming and structural nits.
+Use the shared ladder. Duplication, mixed concerns, incompatible representations, boundary leakage, circular dependencies, hidden state, inconsistent APIs, migration debt and scattered special cases earn Medium when the finding names the future change they make materially harder and a concrete improvement. A demonstrated correctness, safety or promise failure is High or Critical; grade that consequence rather than the pattern alone. Polish and nits are Low, including style, naming and structural nits.
 
 ## Gotchas and false positives
 

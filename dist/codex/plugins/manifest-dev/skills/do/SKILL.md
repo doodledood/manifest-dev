@@ -125,10 +125,13 @@ repairs, failed attempts on those promises, and the intervening changes. Recover
 another full look. Contextual reading may be wide; touching an old line alone does not make an
 old issue new. A fresh standalone review keeps the scope its caller requested. A bar never moves
 down on the executor's judgment, and a summary claim is not evidence. Read severity by consequence using the
-activated review skill's standards: Low is optional polish or a nit of any kind — style, naming,
-structure, or otherwise. Shared review gates pass with no Medium-or-higher findings. Correctness
-or safety failures and broken binding promises received as Low still block; regrade them from
-their evidence before filtering. This never waives a binding criterion.
+activated review skill's standards: Low is polish or a nit of any kind — style, naming,
+structure, or otherwise. Apply the Manifest's chosen severities, categories and acceptance
+thresholds; Medium+ is a usual gate only when the caller or Manifest chooses it. Regrade
+correctness or safety failures and broken binding promises received as Low from their evidence
+before applying that policy. Severity alone does not decide what to address, and no filter
+waives a binding criterion. The batching and continued-review rules below are this executor's
+handling policy for findings below the chosen gate, not a definition of Low.
 
 Every pull request leaves the repository better. A pre-existing issue the work meets, related to the
 change or not, and a finding below a gate's bar are build work, never a verdict: neither fails a

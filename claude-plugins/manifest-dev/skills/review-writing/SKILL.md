@@ -14,7 +14,7 @@ explain, the author decides and edits.
 `$ARGUMENTS` carries what to review — a file path, a directory, a glob, or pasted text. It may
 also name a register explicitly (`register=docs`, `register=voice`) to override detection. A
 manifest gate's body activates this skill with a register under the run's selected evaluator; the
-gate names the register and this skill owns the threshold.
+gate names the register and its caller-chosen acceptance policy.
 
 With no argument, review the most recently modified prose file in the working tree and say which
 one you picked. If that is ambiguous or nothing prose-shaped has changed, ask what to review
@@ -22,13 +22,12 @@ rather than guessing.
 
 ## Registers and thresholds
 
-Two registers, each with its own rules. The threshold is the bar a text must clear to PASS in that
-register:
+Two registers, each with its own rules. Classify findings by consequence; the caller supplies any acceptance policy:
 
-| Register | What it covers | Rules | Threshold (PASS requires) |
-|----------|----------------|-------|---------------------------|
-| `docs` | Specs, proposals, reports, formal and technical documentation, READMEs, reference material, API docs | `../define/references/DOCS-STYLE-REFERENCE.md` | no MEDIUM-or-higher findings |
-| `voice` | Articles, blog posts, marketing and social copy, newsletters, narrative, creative writing | `../define/references/WRITING-REFERENCE.md` | no MEDIUM-or-higher findings |
+| Register | What it covers | Rules |
+|----------|----------------|-------|
+| `docs` | Specs, proposals, reports, formal and technical documentation, READMEs, reference material, API docs | `../define/references/DOCS-STYLE-REFERENCE.md` |
+| `voice` | Articles, blog posts, marketing and social copy, newsletters, narrative, creative writing | `../define/references/WRITING-REFERENCE.md` |
 
 Each register brings the shared floor with it: `../define/references/PROSE-FLOOR-REFERENCE.md`
 holds the rules common to both, including the accessibility and inclusive-language floors, and a
@@ -36,10 +35,14 @@ finding from the floor is graded and reported on the same footing as one from th
 is no separate floor-only invocation.
 
 Both registers grade by consequence: High covers wrong meaning or a broken promise, Medium
-covers a clear quality gap that must be fixed before shipping, and Low is optional polish or a nit
+covers a clear quality gap that must be fixed before shipping, and Low is polish or a nit
 of any kind: style, naming, structure, or otherwise. The loaded register anchors name its concrete
 audience costs. An explicit requirement remains binding; a correctness or safety failure or broken
-binding promise received as Low still blocks and is regraded from evidence before the verdict.
+binding promise received as Low is regraded from evidence before applying the caller's policy.
+
+The caller decides which severities or categories to address. Apply a Medium+ gate only when
+that caller chooses it. Without a requested gate, return classifications without a verdict;
+if a verdict is requested without a policy, ask or report BLOCKED rather than inventing a bar.
 
 **Load exactly two references**: the floor, plus the one register's. Never load both register
 files for one text — their rules contradict each other by design, and a finding drawn from the

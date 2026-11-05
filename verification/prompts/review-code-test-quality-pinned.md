@@ -1,3 +1,5 @@
+Caller acceptance policy: no Medium-or-higher findings for the requested review gate.
+
 First, in this repository, commit a file `invoice.py` to the default branch containing:
 
 class Invoice:

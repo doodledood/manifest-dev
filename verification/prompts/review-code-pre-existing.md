@@ -1,3 +1,5 @@
+Caller acceptance policy: no Medium-or-higher findings for the requested review gate.
+
 First, in this repository, commit to the default branch a file `pricing.py` containing:
 
 def unit_price(total, count):

@@ -27,7 +27,7 @@ Documentation-register findings are graded on what the prose costs a reader.
 | **CRITICAL** | The prose defeats its purpose or denies the content to its audience entirely. |
 | **HIGH** | Incorrect instructions, wrong meaning, unsafe advice, or another broken promise, including an explicit requirement about presentation. |
 | **MEDIUM** | A clear documentation quality gap a careful reviewer would insist on fixing before shipping, with a concrete reader cost: missing context needed for a task, or organization that makes required information hard to use. |
-| **LOW** | Optional polish or a nit of any kind: style, naming, structure, or otherwise. Examples: optional phrasing, heading case, serial commas, or reorganization that preserves meaning and use. |
+| **LOW** | Polish or a nit of any kind: style, naming, structure, or otherwise. Examples: phrasing polish, heading case, serial commas, or reorganization that preserves meaning and use. |
 
 Grade by consequence, not by rule count: ten MEDIUM inconsistencies do not aggregate into a HIGH.
 

@@ -94,14 +94,14 @@
           "dimension": "code-maintainability",
           "severity": "Low",
           "anchor": "order_export.py:4",
-          "body": "Rename the local comprehension variable line to item. Both names are clear; this is an optional naming preference with no behavior or maintenance cost."
+          "body": "Rename the local comprehension variable line to item. Both names are clear; this is a naming nit with no behavior or maintenance cost."
         },
         {
           "id": "R8",
           "dimension": "code-simplicity",
           "severity": "Low",
           "anchor": "order_export.py:2",
-          "body": "Extract the item projection and total calculation into private helpers. The current small mapping is clear; this is an optional structural preference, not a must-fix quality gap."
+          "body": "Extract the item projection and total calculation into private helpers. The current small mapping is clear; this is a structural nit, not a must-fix quality gap."
         },
         {
           "id": "R9",
@@ -109,6 +109,21 @@
           "severity": "Low",
           "anchor": "order_export.py:3",
           "body": "The contract requires the original string identifier, including leading zeroes. int(order[\"id\"]) instead returns 3 for 003. The prior reviewer called this Low because padded identifiers are uncommon."
+        }
+      ],
+      "judgment_findings": [],
+      "blocked_evaluations": []
+    },
+    {
+      "name": "low-inclusive",
+      "caller_policy": "For this packet, the caller requests publication of all supplied supported findings, including Low. Acceptance is no Low-or-higher findings. Scope is the full PR export addition, not only the latest delta; the supplied naming nit is in that scope. Keep its consequence grade unchanged.",
+      "findings": [
+        {
+          "id": "R10",
+          "dimension": "code-maintainability",
+          "severity": "Low",
+          "anchor": "order_export.py:4",
+          "body": "Naming polish: use item for the comprehension variable to align with the public items field. The existing line name is clear and behavior is correct; this is a nit with no must-fix product or maintenance gap."
         }
       ],
       "judgment_findings": [],

@@ -56,7 +56,7 @@ Each trigger carries what it **fires on** (concrete evidence) and what it **neve
 
 ## Findings are a distinct class — not a severity
 
-A judgment finding is **not** placed on the defect severity scale (low / medium / high / critical). That scale measures defect badness and blocking weight; a premise question is a different axis — non-blocking, yet sometimes the most important thing about the PR. Each judgment finding carries exactly:
+A judgment finding is **not** placed on the defect severity scale (low / medium / high / critical). That scale measures consequence; the caller chooses handling and blocking policy; a premise question is a different axis — non-blocking, yet sometimes the most important thing about the PR. Each judgment finding carries exactly:
 
 ```
 { trigger, concrete evidence, author-facing question }
@@ -64,7 +64,7 @@ A judgment finding is **not** placed on the defect severity scale (low / medium 
 
 and **no severity**. **Return shape:** the list of such findings, already collapsed to one per root (below), or an empty list. This is load-bearing, not cosmetic:
 
-- The caller filters below-bar Lows from fleet findings: optional polish or nits of any kind, as `../review-pr/SKILL.md` defines. Correctness or safety failures and broken binding promises received as Low are retained and regraded there. Judgment findings have no severity and are **exempt from that filter**. Their own inclusion rule is: **surface if the evidence-gate fired and the PR does not already cover the point.** They are still deduped and merged like any other finding.
+- The caller chooses which fleet severities and categories to publish, as `../review-pr/SKILL.md` defines; Low findings remain eligible when that policy includes them. Correctness or safety failures and broken binding promises received as Low are regraded from evidence before applying that policy. Judgment findings have no severity and are **exempt from that filter**. Their own inclusion rule is: **surface if the evidence-gate fired and the PR does not already cover the point.** They are still deduped and merged like any other finding.
 - Manifest-mode contract verification and `/do` gate verification enforce their binding criteria and applicable acceptance thresholds; the judgment class is orthogonal to both.
 
 ## Synthesis — one question per root

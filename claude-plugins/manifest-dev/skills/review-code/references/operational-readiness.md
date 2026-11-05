@@ -75,7 +75,7 @@ Do NOT report on:
 
 ## Severity calibration
 
-Use the shared ladder. Demonstrated rollout, retry, cleanup or environment failures are High or Critical by consequence, even in narrower conditions. A clear must-fix observability, runbook or CI quality gap is Medium. Optional operational polish or nits of any kind are Low.
+Use the shared ladder. Demonstrated rollout, retry, cleanup or environment failures are High or Critical by consequence, even in narrower conditions. A clear must-fix observability, runbook or CI quality gap is Medium. Operational polish or nits of any kind are Low.
 
 ## Dimension-specific report fields
 
