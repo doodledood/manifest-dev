@@ -30,9 +30,9 @@ Check: read
 ## Gotchas
 
 - The prompt file carries the placeholder `THROWAWAY_PR_URL`; replace it with a throwaway pull request in a repository the run owns before driving.
-- Needs `gh auth status` to succeed in the session.
+- Needs the running host to expose the GitHub access the scenario requires.
 - Posting is public and does not undo. Never drive it on someone else's pull request to test it.
-- A drive through `scripts/drive-skill.sh` runs as you, with whatever GitHub access the driving machine has, so drive it only with a prompt naming a throwaway repository the run owns; where `gh` is not signed in, its GitHub entry points are `unreachable`.
+- The general agent has its host's ambient access. Drive remote actions only against a throwaway repository the scenario owns; missing GitHub capability leaves that entry point unreachable. A local snapshot scenario supplies its own state and performs no remote action.
 - Manifest mode needs the checkout at the pull request's head.
 - Continued Manifest-mode loop wakes pass the applicable checkpoint and reporting scope to each evaluator. A fresh explicit invocation retains its requested independent review scope. This handoff remains unmeasured by a live review drive.
 - The reviewer chooses context placement for thread assessments, dimensions, premise checks, consolidation, and Manifest gates. Required results and evidence remain per item; reporting names the actual context used.

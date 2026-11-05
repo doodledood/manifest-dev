@@ -36,14 +36,14 @@ the source tree it copies. It also fails when a shipped file points to a section
 
 `claude-plugins/manifest-dev/evals/` holds behavioral eval suites for `figure-out` and, under
 `evals/define/` with its own README, for `define`. Each run is many model sessions, so the
-owner runs a suite, or an agent runs one after asking and naming the cases and why. Behavior drives use the harness running the session: Claude CLI under Claude Code,
-and the active native model-session capability under Codex cloud. Codex drives require no Claude
-or separate Codex CLI sign-in. `scripts/NATIVE_DRIVES.md` describes preparing copied input,
-dispatching through that capability, recording the actual native result and resuming the recipe;
-preparation alone never counts as a completed drive. Both paths keep the checkout and expected
-outcomes out of the worker's input. The host's model settings, source revision and evidence limits
-are recorded. The Claude-native plugin-eval suite remains a distinct instrument: run it under
-Claude Code, or use individual native drives in Codex; do not sign in to a foreign CLI for it.
+owner runs a suite, or an agent runs one after asking and naming the cases and why. Behavior drives and document walks use a fresh general agent in the running host, with the
+scenario as its brief and copied skills available as resources. No CLI or provider marker chooses
+execution, and no target skill body is injected. The parent keeps expected outcomes outside the
+subject and grades real artifacts. `scripts/NATIVE_DRIVES.md` owns the snapshot, fixture and
+input-bound evidence helpers. If the host has no general agents, warn and ask what to do; a
+same-host script fallback needs explicit approval, never an automatic provider switch. The
+retained Claude CLI adapters and the Claude-native plugin-eval suite are separate explicit
+instruments; individual drives do not prove native plugin registration or suite uplift.
 Drives and walks run through their recipes (`scripts/verify drive|walk <recipe>`, ask-first). A
 suite runs from the repository root with
 `scripts/evals/run_eval.sh <name> <out-json> --tag <figure-out|define> --ablation with-without --scaffold`

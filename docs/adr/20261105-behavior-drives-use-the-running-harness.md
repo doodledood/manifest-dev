@@ -1,4 +1,4 @@
-# ADR: Behavior drives use the model harness running the session
+# ADR: The host owns general-agent drives with the scenario as the brief
 
 ## Status
 Accepted
@@ -7,46 +7,51 @@ Accepted
 Verification harness
 
 ## Decided by
-The user, for host-native model access; an agent implements the local request and result boundary under that instruction. Merging remains with the maintainer.
+The user, for general-agent drives, parent grading and the approval-only same-host fallback boundary. An agent implements that contract. Merging remains with the maintainer.
 
 ## Context
-The repository required the Claude CLI for every skill drive and document walk. In a Codex cloud session the behavior cases stopped at Claude authentication, although the running harness could already start isolated native model contexts. Installing the Claude CLI did not supply sign-in. A standalone Codex CLI probe also failed its own authentication despite reporting a logged-in state.
+Behavior verification previously launched Claude CLI sessions. The first native adapter on this branch still special-cased two hosts and injected a target skill body into the subject's prompt. That added a separate execution protocol even though the running host already knew how to start a general agent. Unrecognized hosts could still be sent toward Claude instead of using their own agent capability.
 
-The North Star calls for trusted progress with less unnecessary supervision. Requiring another provider's login to exercise the current harness's model creates avoidable access and measurement friction.
+The North Star calls for trusted progress with less unnecessary supervision. Scenario execution should use the host the person already has, while keeping controlled inputs and reviewable evidence. A copied skill being read is distinct from proving native plugin registration.
 
 ## Decision
-Behavior drives follow the running session: Claude CLI under Claude Code, and the active native model-session capability under Codex cloud. CLI installation does not select a host. A nested Claude session's own marker selects Claude; a standalone shell retains the existing Claude path.
+The running host starts a fresh general-purpose agent with the scenario as its brief. The agent may load the supplied skill snapshots and use their scripts. An explicit invocation remains in its scenario; a discovery scenario leaves the choice to the agent. Helpers inject neither a target skill body nor a specialized agent role. Provider names, installed CLIs and environment markers do not select the default execution path.
 
-The shell cannot directly call its parent harness's native model tool. Under Codex it therefore prepares copied source, a scratch project and a worker input, then exits 3 with a structured request. This is incomplete evidence. The invoking session dispatches the input through an isolated native context, without its parent conversation or the recipe's rubric, and records the actual terminal reply and native identity. Later user turns continue that same context.
+Helpers retain deterministic work: copy the selected source revision, create an isolated scratch project, apply fixtures, preserve scenario turns and resources, and bind recorded evidence to those inputs. The host dispatches the task and sends later turns to the same general agent. The parent records actual session identity, replies, settings available from the host and artifacts. The subject writes no completion receipt. Expected outcomes stay outside its context, and the parent grades actual behavior. Successful finalization means the records are complete and consistent, not that behavior passed.
 
-The caller then resumes the same verification recipe. Finalization requires matching request and turn identities, model settings, intact copied entrypoints and companions, intact worker input, and completed results for every turn. Partial, failed or mismatched records cannot pass. The worker neither writes its own receipt nor grades its own behavior. The result is still read against the recipe: a completed model session is not itself a successful behavior verdict.
+Preparation exits 3 until actual completed results exist. Wrong requests, incomplete or failed turns, changed skill companions, changed catalogs and altered briefs cannot pass. Recording remains the parent's trust boundary: input hashes detect mismatches but cannot authenticate an invented caller claim. The host retains its detailed session record and ambient tool capabilities. Context isolation is not an operating-system sandbox or a claim of parity across models.
 
-Native evidence retains the copied inputs, source revision, scratch artifacts, actual replies, session identity and requested model settings. The native host owns its detailed session record and ambient tool catalog. Cost and a hard turn limit are not available through every native capability; summaries state those limits instead of inventing zero cost or an enforced cap. Input isolation is not an operating-system sandbox.
+If the host has no general agents, warn and ask the user what to do. Keep the drive incomplete while that choice is pending. Only an explicit user grant permits a script calling the same host harness as a fallback; never automatically select another provider. The helpers can record the missing capability and reject unapproved or foreign-host fallback evidence. They launch no fallback themselves. The retained Claude CLI instruments have explicit approval and same-host guards, with their existing isolation, resume and cancellation protection. They are not default paths. Other hosts may use an ad-hoc script only after the user's choice.
 
-Claude launch, isolation, multi-turn and cancellation behavior remain. The separate Claude-native plugin-eval suite is not translated into a different instrument: its launcher refuses in Codex before asking for foreign sign-in. Individual native drives run there. No cross-host score equivalence or uplift is implied.
+The distinct Claude-native plugin-eval suite remains its own explicit instrument. General-agent drives do not establish native plugin installation, suite uplift or equal behavior across hosts. Missing cost and hard-limit telemetry remain explicit rather than guessed.
 
 ## Alternatives Considered
-- **Require Claude login in Codex:** contradicts the host-native requirement and adds an unrelated access dependency.
-- **Call a separately authenticated Codex CLI:** tests a different credential and runtime path; its failed probe does not negate the active harness's working native model capability.
-- **Report preparation as success:** substitutes a file fixture for an actual model session.
-- **Let the worker write its own completion receipt:** confuses its account with the invoking harness's observed terminal result.
-- **Add a persistent broker:** unnecessary when the invoking session already owns native dispatch and the local files can bind input to result.
+- **Keep provider-specific default runners:** requires another adapter for each host and preserves the wrong default for unrecognized hosts.
+- **Give a general agent only a task in the shared checkout:** loses controlled source versions, scratch fixtures and evidence binding.
+- **Preload the target skill into the brief:** changes what the scenario tests and bypasses discovery where discovery is part of the task.
+- **Choose a CLI automatically without general agents:** bypasses the owner's fallback decision and can switch providers or require unrelated authentication.
+- **Let the subject grade itself or write completion receipts:** confuses a subject's account with the parent's observed result and judgment.
+- **Add a persistent broker or universal fallback launcher:** unnecessary when the host owns general agents and an exceptional fallback remains the user's choice.
 
 ## Consequences
 
 ### Positive
-- Codex cloud can exercise copied skills without any Claude sign-in.
-- Both hosts retain observable inputs and outcomes through the same verification recipes.
-- Missing native capability remains an explicit failure rather than a silent provider fallback.
+- Every host with general agents uses one drive contract without provider-specific dispatch or another login.
+- Scenario briefs avoid injecting skill text and let agents use skills and scripts as resources.
+- Controlled inputs, ordered replies and parent judgment remain reviewable.
+- A missing capability prompts an explicit decision instead of an automatic provider switch.
 
 ### Negative
-- Codex drives require the invoking session to dispatch and finalize a local handoff; a shell alone cannot do it.
-- Detailed native transcripts, usage and hard limits differ from Claude CLI evidence and must be disclosed.
-- Full plugin-eval suites remain tied to their Claude-native instrument.
+- A shell alone cannot start the parent host's agent tool; the host must orchestrate dispatch and continuation.
+- Context, tool support and observability differ across hosts and require honest reporting.
+- A fallback requires the user's attention and may need an ad-hoc same-host script.
+- Actual behavior and native plugin registration require separate evidence from helper contract tests.
 
 ## Enforced by
-partly — `tests/test_native_drive.py` rejects incomplete, mismatched, failed and mutated input/result records and checks host choice without a foreign CLI. `tests/test_drive_scripts.py` retains the Claude path and signal-reaping checks. `verification/recipes/model-drives.md` runs these free contracts. Real native GPT-6.1 Sol/xhigh sessions exercised the review-code and /do pairs and the prompt-review, walkthrough, PR-snapshot, autonomous-inquiry and writing-review controls. Their artifacts and terminal results were read against the recipes; native cost was not reported. The invoking session's truthful recording of its native tool result remains a trust boundary.
+partly — `tests/test_native_drive.py` checks the shared path under Claude, Codex, unknown and absent host markers without calling any installed provider; scenario-only briefs; input and catalog integrity; ordered results; and missing-capability/approval/same-host evidence. `tests/test_drive_scripts.py` retains the explicit CLI isolation, resume, source-version and signal-reaping checks, with added approval guards. `verification/recipes/model-drives.md` runs these free fixture contracts; its receipts are not model evidence. `verification/recipes/general-agent-drive.md` exercises real same-agent continuation. Skill and document recipes exercise actual task behavior, with expected outcomes kept by the parent. Runtime behavior on hosts other than the one driven remains unverified.
+
+Actual GPT-6.1 Sol/xhigh general-agent sessions completed the new two-turn scenario, the document-only Manifest walk, PR consolidation and one do before/after pair with plugin baseline 6eac7070. The parent recorded the real replies and finalized every recipe. It verified the exact alpha/beta artifact, retained missing deployment evidence, regraded the identifier-contract Low High, and confirmed that both do arms changed only the fee expression with Manifest/check/label bytes intact. Both do arms passed, so this establishes conformance, not uplift. The do judgments were self-reviewed within their isolated sessions. The do initial brief decreased from 24,687 to 1,045 bytes (23.6 times smaller) by moving skill content into resources; this measures initial brief size, not total tokens, runtime or behavior quality. No live Claude fallback or other host was run from the Codex session.
 
 ## Source
-- The owner's instruction to use the running harness for behavior drives in the combined work request for [Issue 356](https://github.com/doodledood/manifest-dev/issues/356) and [Issue 419](https://github.com/doodledood/manifest-dev/issues/419).
+- The owner's host-owned general-agent ruling for [PR 420](https://github.com/doodledood/manifest-dev/pull/420), including the missing-agent and approved same-host fallback boundary.
 - Related: 20261105-review-severity-follows-consequence and 20261105-repairs-track-the-accepted-promise.

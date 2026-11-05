@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Prepare and finalize a drive dispatched by the active Codex model harness.
+"""Snapshot fixtures and bind evidence for a host-owned general-agent task.
 
 A shell cannot call its parent harness's model tool. Preparation therefore exits 3
-with a native request; the caller dispatches it, records the real native result,
-then reruns the recipe with MANIFEST_DEV_NATIVE_RUN pointing at that request.
+with a request; the host dispatches the scenario, records the actual agent result,
+then reruns the recipe with MANIFEST_DEV_DRIVE_RUN pointing at that request.
 Neither preparation nor an incomplete/error result counts as a completed drive.
 """
 
@@ -186,9 +186,9 @@ def prepare(args: argparse.Namespace, feature: str, prompt: str) -> Path:
     records.mkdir()
     user_turns = turns(prompt) if args.mode == "skill" else [prompt]
     request = {
-        "schema": 1,
+        "schema": 2,
         "request_id": uuid.uuid4().hex,
-        "host": "codex",
+        "execution": "general-agent",
         "feature": feature,
         "mode": args.mode,
         "project": str(project),
@@ -208,46 +208,80 @@ def prepare(args: argparse.Namespace, feature: str, prompt: str) -> Path:
             if path.is_file()
         },
     }
-    owner = next((name for name in catalog if name.endswith(":" + feature)), None)
-    if args.mode == "skill" and feature != "doctor" and owner is None:
-        fail(f"the copied plugins do not carry skill {feature}")
-    entry = Path(catalog[owner]["path"]).read_text() if owner else ""
-    worker = f"""You are the isolated native model worker for a behavior drive.
-Work only in {project}. The request ID is {request['request_id']}.
-Use only the supplied copied skill catalog and references, not installed skills,
-parent conversation, home records, or the checkout this copy came from.
-Resolve skill names and /manifest-dev:skill invocations from the catalog below.
-The target skill is supplied verbatim below. Its relative references resolve from
-its catalog path. Its instructions and the scenario govern your work.
-Store any ~/.manifest-dev workflow records under {records}; do not read real home records.
-Use command/file tools against this scratch project. Do not use connected services
-unless the supplied scenario explicitly provides a throwaway service it owns.
-For a document-reader request, after reading this input use no tools; answer only
-from the included documents. Do not create a receipt or grade yourself. Finish by
-returning the actual response through the native harness. The caller records it.
-Do not read any verification recipe, rubric, or expected outcome outside this input.
-Native host tool catalogs and turn limits differ from CLI hosts; report limitations.
+    write_json(out / "skill-catalog.json", catalog)
+    worker = f"""Working directory: {project}
+Available skill snapshots and references: {out / 'skill-catalog.json'}
+Use these copies for any skill the task calls for; scripts inside them are available.
+Keep workflow records under {records}. Use no parent conversation, installed skill
+copies, personal records, source checkout, verification recipes or expected outcomes.
+Use connected services only if the task supplies a throwaway service it owns.
+For a document-reader task, after reading this brief answer from its included
+documents without further tools. Return your actual response and artifacts to
+the caller; the caller records completion and judges the behavior separately.
 
-Copied skill catalog:
-{json.dumps(catalog, indent=2)}
-
-Target skill, verbatim:
-{entry}
-
-Scenario, turn 1:
 {user_turns[0]}
 """
     (out / "worker-prompt.md").write_text(worker)
     request["worker_prompt_sha256"] = digest(worker.encode())
+    request["catalog_sha256"] = digest((out / "skill-catalog.json").read_bytes())
     write_json(out / "native-request.json", request)
     return out
+
+
+def check_execution(out: Path, request_path: Path, result: dict[str, object]) -> None:
+    """The caller owns capability checks and the user's fallback grant."""
+    capability = out / "capability.json"
+    if result.get("execution") == "general-agent":
+        if capability.exists() or result.get("fallback_approval"):
+            fail("general agents were reported unavailable; warn and ask what to do")
+        return
+    if result.get("execution") != "approved-script" or not capability.exists():
+        fail(
+            "a script fallback requires a recorded missing capability and explicit user approval"
+        )
+    blocked = json.loads(capability.read_text())
+    approval = result.get("fallback_approval")
+    if (
+        not isinstance(approval, str)
+        or not approval.strip()
+        or blocked.get("harness") != result.get("harness")
+        or blocked.get("request_sha256") != digest(request_path.read_bytes())
+    ):
+        fail("the approved script fallback must use the same host harness and request")
+
+
+def unavailable() -> None:
+    parser = argparse.ArgumentParser(
+        description="Record missing general agents; ask the user"
+    )
+    parser.add_argument("unavailable")
+    parser.add_argument("run", type=Path)
+    parser.add_argument("--harness", required=True)
+    parser.add_argument("--reason", required=True)
+    args = parser.parse_args()
+    if not args.harness.strip() or not args.reason.strip():
+        fail("the current harness and missing capability must be named")
+    write_json(
+        args.run / "capability.json",
+        {
+            "harness": args.harness,
+            "reason": args.reason,
+            "request_sha256": digest((args.run / "native-request.json").read_bytes()),
+        },
+    )
+    fail(
+        "general agents unavailable: "
+        + args.reason
+        + ". Warn and ask the user what to do; a same-host script needs explicit approval. Never switch providers automatically."
+    )
 
 
 def finish(out: Path, args: argparse.Namespace, feature: str, prompt: str) -> None:
     request_path = out / "native-request.json"
     request = json.loads(request_path.read_text())
     if (
-        request.get("host") != "codex"
+        request.get("schema") != 2
+        or request.get("execution") != "general-agent"
         or request.get("feature") != feature
         or request.get("mode") != args.mode
         or request.get("prompt_sha256") != digest(prompt.encode())
@@ -255,32 +289,38 @@ def finish(out: Path, args: argparse.Namespace, feature: str, prompt: str) -> No
         fail("the native request does not match this recipe and input")
     result_path = out / "native-result.json"
     if not result_path.is_file():
-        print(f"NATIVE_SESSION_REQUEST: {request_path}")
-        print(f"Worker input: {out / 'worker-prompt.md'}")
+        print(f"HOST_AGENT_REQUEST: {request_path}")
+        print(f"Scenario brief: {out / 'worker-prompt.md'}")
         print(
-            "Dispatch through this session's isolated native model capability; a prepared request is not a drive."
+            "The host starts a fresh general agent with the scenario as its brief; preparation is incomplete evidence."
         )
         print(
-            f"Caller records the actual terminal reply with: python3 {ROOT / 'scripts/native_drive.py'} record {out} --session-id ID --model MODEL --reasoning-effort EFFORT --reply-file FILE"
+            f"Caller records the actual reply with: python3 {ROOT / 'scripts/native_drive.py'} record {out} --harness HOST --session-id ID --model MODEL --reasoning-effort EFFORT --reply-file FILE"
         )
         print(
             "For multiple user turns, continue the same native session with each request turn, recording --turn N in order."
         )
         print("Then rerun this recipe with:")
-        print(f"MANIFEST_DEV_NATIVE_RUN={out}")
-        fail(
-            "awaiting the calling harness's native model result; no CLI sign-in is required"
+        print(f"MANIFEST_DEV_DRIVE_RUN={out}")
+        print(
+            "Without general agents, warn and ask what to do. Only an explicitly approved same-host script may substitute; never auto-switch providers."
         )
+        fail("awaiting the host's general-agent result; no CLI sign-in is required")
     result = json.loads(result_path.read_text())
     if result.get("request_sha256") != digest(request_path.read_bytes()):
         fail("the native result belongs to a different request")
     if (
-        result.get("host") != "codex"
-        or result.get("status") != "completed"
-        or not isinstance(result.get("native_session_id"), str)
-        or not result["native_session_id"].strip()
+        not isinstance(result.get("harness"), str)
+        or not result["harness"].strip()
+        or not isinstance(result.get("session_id"), str)
+        or not result["session_id"].strip()
     ):
-        fail("the actual native host and session identity are required")
+        fail("the actual host harness and session identity are required")
+    if result.get("status") != "completed":
+        fail(
+            "the host result is incomplete or failed; every requested turn must complete"
+        )
+    check_execution(out, request_path, result)
     for key in ("model", "reasoning_effort"):
         if (
             not isinstance(result.get(key), str)
@@ -313,24 +353,24 @@ def finish(out: Path, args: argparse.Namespace, feature: str, prompt: str) -> No
         != request["worker_prompt_sha256"]
     ):
         fail("the worker input changed during its drive")
+    if digest((out / "skill-catalog.json").read_bytes()) != request["catalog_sha256"]:
+        fail("the supplied resource catalog changed during its drive")
     project = Path(request["project"])
     files = subprocess.check_output(
         ["git", "status", "--porcelain"], cwd=project, text=True
     )
     summary = {
-        "host": "codex",
-        "native_session_id": result["native_session_id"],
+        "harness": result["harness"],
+        "execution": result["execution"],
+        "fallback_approval": result.get("fallback_approval", ""),
+        "session_id": result["session_id"],
         "model": result["model"],
         "reasoning_effort": result["reasoning_effort"],
         "plugins_from": request["plugins_from"],
         "delivery": (
             "document snapshots only"
             if request["mode"] == "walk"
-            else (
-                "copied skill catalog"
-                if feature == "doctor"
-                else "copied catalog and verbatim target skill"
-            )
+            else "scenario brief and copied resources"
         ),
         "turns": replies,
         "files_written": files,
@@ -340,15 +380,15 @@ def finish(out: Path, args: argparse.Namespace, feature: str, prompt: str) -> No
             if p.is_file()
         ),
         "wall_seconds": round(time.time() - request["started"], 1),
-        "cost_usd": result.get("cost_usd", "not reported by native harness"),
+        "cost_usd": result.get("cost_usd", "not reported by host harness"),
         "requested_max_turns": request["requested_max_turns"],
         "host_enforced_turn_limit": False,
-        "transcript": "native host session record; raw terminal replies in native-result.json",
+        "transcript": "host session record; raw terminal replies in native-result.json",
     }
     write_json(out / "summary.json", summary)
     print(json.dumps(summary, indent=2))
     print(
-        "Native session completed. Its output and artifacts require reading against the recipe; this is not a behavior verdict."
+        "Host session completed. The parent must judge its output and artifacts against the recipe; this is not a behavior verdict."
     )
 
 
@@ -358,11 +398,13 @@ def record() -> None:
     )
     parser.add_argument("record")
     parser.add_argument("run", type=Path)
+    parser.add_argument("--harness", required=True)
     parser.add_argument("--session-id", required=True)
     parser.add_argument("--model", required=True)
     parser.add_argument("--reasoning-effort", required=True)
     parser.add_argument("--reply-file", required=True, type=Path)
     parser.add_argument("--turn", type=int, default=1)
+    parser.add_argument("--fallback-approval", default="")
     parser.add_argument(
         "--status", choices=["completed", "failed"], default="completed"
     )
@@ -374,8 +416,12 @@ def record() -> None:
         json.loads(path.read_text())
         if path.exists()
         else {
-            "host": "codex",
-            "native_session_id": args.session_id,
+            "harness": args.harness,
+            "execution": (
+                "approved-script" if args.fallback_approval else "general-agent"
+            ),
+            "fallback_approval": args.fallback_approval,
+            "session_id": args.session_id,
             "request_sha256": digest(request_path.read_bytes()),
             "model": args.model,
             "reasoning_effort": args.reasoning_effort,
@@ -383,11 +429,14 @@ def record() -> None:
         }
     )
     if (
-        result["native_session_id"] != args.session_id
+        result["session_id"] != args.session_id
+        or result["harness"] != args.harness
+        or result.get("fallback_approval", "") != args.fallback_approval
         or result["model"] != args.model
         or result["reasoning_effort"] != args.reasoning_effort
     ):
         fail("all turns must come from the same native session and settings")
+    check_execution(args.run, request_path, result)
     if args.turn != len(result["turns"]) + 1 or args.turn > len(request["turns"]):
         fail("record native replies once, in requested turn order")
     reply = args.reply_file.read_text()
@@ -405,7 +454,7 @@ def record() -> None:
     )
     write_json(path, result)
     print(
-        f"Recorded native turn {args.turn}; rerun the original recipe with MANIFEST_DEV_NATIVE_RUN={args.run}"
+        f"Recorded host turn {args.turn}; rerun the original recipe with MANIFEST_DEV_DRIVE_RUN={args.run}"
     )
 
 
@@ -413,19 +462,29 @@ def main() -> None:
     if len(sys.argv) > 1 and sys.argv[1] == "record":
         record()
         return
+    if len(sys.argv) > 1 and sys.argv[1] == "unavailable":
+        unavailable()
+        return
     args = parse()
     if args.subject == "preflight":
         print(
-            "preflight: Codex native dispatch protocol available; no model session or CLI authentication checked"
+            "preflight: snapshot/evidence helper ready; caller must check for fresh general agents. Without them, warn and ask; no CLI authentication or agent capability checked here."
         )
         return
     feature, prompt = inputs(args)
     if args.dry_run or os.environ.get("VERIFY_DRY_RUN") == "1":
         print(
-            f"would drive {feature} through the active Codex native model harness; no Claude CLI or sign-in"
+            f"would prepare {feature} for a fresh general agent in the running host; no CLI or provider selection"
         )
+        store = Path(
+            os.environ.get(
+                "MANIFEST_DEV_FEATURES_EVIDENCE",
+                str(Path.home() / ".local/state/manifest-dev-features"),
+            )
+        )
+        print(f"evidence: {store / feature / '<run>'}")
         return
-    resumed = os.environ.get("MANIFEST_DEV_NATIVE_RUN")
+    resumed = os.environ.get("MANIFEST_DEV_DRIVE_RUN")
     out = Path(resumed).resolve() if resumed else prepare(args, feature, prompt)
     finish(out, args, feature, prompt)
 

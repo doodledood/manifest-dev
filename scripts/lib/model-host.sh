@@ -1,6 +1,5 @@
-# Select the model interface of the session driving the check. A nested Claude
-# session has its own marker even when its parent was Codex. A standalone shell
-# retains the existing Claude driver; mere CLI availability never changes hosts.
+# Guard for the separate, explicitly Claude-native eval instrument only.
+# General-agent drives do not use this provider marker or select a CLI.
 model_host() {
   if [[ -n ${CLAUDECODE:-} ]]; then
     echo claude

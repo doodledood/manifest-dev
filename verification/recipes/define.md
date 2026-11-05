@@ -122,7 +122,7 @@ Check: read
 - A plan handed over by layer (model, API, UI) must come back re-cut into slices; keeping the layers as a "user's call" is the defect `d01-layer-cut` exists to catch.
 - The Manifest is written to the home directory, not the project: in a drive it is in the evidence's `home-manifest-dev.tar`.
 - Attended, it waits for a yes after the digest; a headless drive needs `--autonomous` or a prompt that says to proceed.
-- A headless drive offers no question-selection capability, so define asks in plain text, one ask per turn; batching its key calls through the capability, the default on a host that offers one, shows only in an interactive session.
+- A drive uses the general agent's actual host capabilities. If no question-selection tool is available, asks stay in plain text; record the capability used rather than assuming every drive is headless.
 - An old Manifest with a `verify` block is refused, not migrated.
 - `hole-search`'s seen-to-fail check drives the same prompt from a worktree at the commit before define's review searched for holes; repeat it when changing the scenario. It drives `d26`'s prompt, which the define suite grades on the self-graded path.
 - A yes approves the Manifest, not execution: it never runs `/do` itself.

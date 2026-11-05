@@ -24,7 +24,7 @@ def native_env(tmp_path: Path) -> dict[str, str]:
         "MODEL_REASONING_EFFORT": "xhigh",
     }
     env.pop("CLAUDECODE", None)
-    env.pop("MANIFEST_DEV_NATIVE_RUN", None)
+    env.pop("MANIFEST_DEV_DRIVE_RUN", None)
     return env
 
 
@@ -48,7 +48,7 @@ def prepare(tmp_path: Path) -> tuple[dict[str, str], Path, dict[str, Any]]:
     env = native_env(tmp_path)
     result = call(env)
     assert result.returncode == 3, result.stdout + result.stderr
-    assert "NATIVE_SESSION_REQUEST:" in result.stdout
+    assert "HOST_AGENT_REQUEST:" in result.stdout
     assert "no CLI sign-in is required" in result.stderr
     out = next((tmp_path / "runs/review-code").iterdir())
     request = json.loads((out / "native-request.json").read_text())
@@ -57,9 +57,10 @@ def prepare(tmp_path: Path) -> tuple[dict[str, str], Path, dict[str, Any]]:
 
 def receipt(out: Path, request: dict[str, Any]) -> dict[str, Any]:
     return {
-        "host": "codex",
+        "harness": "fixture-host",
+        "execution": "general-agent",
         "status": "completed",
-        "native_session_id": "fixture-native-session",
+        "session_id": "fixture-native-session",
         "request_sha256": hashlib.sha256(
             (out / "native-request.json").read_bytes()
         ).hexdigest(),
@@ -81,7 +82,10 @@ def test_native_prepare_has_copied_skill_and_no_success(tmp_path: Path) -> None:
     assert not (out / "summary.json").exists()
     worker = (out / "worker-prompt.md").read_text()
     target = Path(request["catalog"]["manifest-dev:review-code"]["path"])
-    assert target.read_text() in worker
+    assert target.read_text() not in worker
+    assert "Target skill" not in worker
+    assert request["turns"][0] in worker
+    assert str(out / "skill-catalog.json") in worker
     assert "Proves:" not in worker
     assert not (out / "plugins/manifest-dev/evals").exists()
     assert Path(request["project"]).is_relative_to(out)
@@ -93,11 +97,11 @@ def test_completed_native_result_is_finalized_as_readable_evidence(
 ) -> None:
     env, out, request = prepare(tmp_path)
     (out / "native-result.json").write_text(json.dumps(receipt(out, request)))
-    result = call({**env, "MANIFEST_DEV_NATIVE_RUN": str(out)})
+    result = call({**env, "MANIFEST_DEV_DRIVE_RUN": str(out)})
     assert result.returncode == 0, result.stderr
     summary = json.loads((out / "summary.json").read_text())
-    assert summary["host"] == "codex" and summary["model"] == "gpt-6.1-sol"
-    assert summary["cost_usd"] == "not reported by native harness"
+    assert summary["harness"] == "fixture-host" and summary["model"] == "gpt-6.1-sol"
+    assert summary["cost_usd"] == "not reported by host harness"
     assert "not a behavior verdict" in result.stdout
 
 
@@ -105,7 +109,8 @@ def test_completed_native_result_is_finalized_as_readable_evidence(
     "fault",
     [
         "request",
-        "host",
+        "harness",
+        "execution",
         "status",
         "model",
         "reasoning_effort",
@@ -115,6 +120,7 @@ def test_completed_native_result_is_finalized_as_readable_evidence(
         "copy",
         "reference",
         "worker",
+        "catalog",
     ],
 )
 def test_incomplete_or_wrong_native_evidence_cannot_pass(
@@ -124,8 +130,8 @@ def test_incomplete_or_wrong_native_evidence_cannot_pass(
     result = receipt(out, request)
     if fault == "request":
         result["request_sha256"] = "different"
-    elif fault in {"host", "status", "model", "reasoning_effort"}:
-        result[fault] = "different"
+    elif fault in {"harness", "execution", "status", "model", "reasoning_effort"}:
+        result[fault] = "" if fault == "harness" else "different"
     elif fault == "turn":
         result["turns"] = []
     elif fault == "input":
@@ -141,8 +147,10 @@ def test_incomplete_or_wrong_native_evidence_cannot_pass(
         (entry.parent / "references/code-bugs.md").write_text("changed")
     elif fault == "worker":
         (out / "worker-prompt.md").write_text("changed")
+    elif fault == "catalog":
+        (out / "skill-catalog.json").write_text("{}")
     (out / "native-result.json").write_text(json.dumps(result))
-    finished = call({**env, "MANIFEST_DEV_NATIVE_RUN": str(out)})
+    finished = call({**env, "MANIFEST_DEV_DRIVE_RUN": str(out)})
     assert finished.returncode == 3
     assert not (out / "summary.json").exists()
 
@@ -162,7 +170,7 @@ def test_claude_marker_wins_in_a_nested_claude_session(tmp_path: Path) -> None:
 def test_native_dry_run_does_not_prepare_or_call_a_cli(tmp_path: Path) -> None:
     result = call(native_env(tmp_path), "--dry-run")
     assert result.returncode == 0
-    assert "active Codex native model harness" in result.stdout
+    assert "fresh general agent in the running host" in result.stdout
     assert not (tmp_path / "runs").exists()
 
 
@@ -175,7 +183,7 @@ def test_codex_never_runs_an_installed_claude_cli(tmp_path: Path) -> None:
     stub.chmod(0o755)
     env = native_env(tmp_path)
     result = call({**env, "PATH": f'{bin_dir}:{env["PATH"]}'})
-    assert result.returncode == 3 and "NATIVE_SESSION_REQUEST:" in result.stdout
+    assert result.returncode == 3 and "HOST_AGENT_REQUEST:" in result.stdout
     assert not marker.exists()
 
 
@@ -215,6 +223,8 @@ def test_native_record_preserves_one_session_across_ordered_turns(
         str(ROOT / "scripts/native_drive.py"),
         "record",
         str(out),
+        "--harness",
+        "fixture-host",
         "--session-id",
         "same-native-session",
         "--model",
@@ -236,11 +246,13 @@ def test_native_record_preserves_one_session_across_ordered_turns(
         finished = subprocess.run(
             command,
             cwd=ROOT,
-            env={**env, "MANIFEST_DEV_NATIVE_RUN": str(out)},
+            env={**env, "MANIFEST_DEV_DRIVE_RUN": str(out)},
             capture_output=True,
             text=True,
         )
         assert finished.returncode == (3 if turn == 1 else 0), finished.stderr
+        if turn == 1:
+            assert "incomplete or failed" in finished.stderr
     duplicate = subprocess.run(
         [*recorder, "--turn", "2"], cwd=ROOT, env=env, capture_output=True, text=True
     )
@@ -262,3 +274,69 @@ def test_walk_document_turn_marker_is_content(tmp_path: Path) -> None:
     request = json.loads((out / "native-request.json").read_text())
     assert len(request["turns"]) == 1
     assert "<!-- next turn -->" in request["turns"][0]
+
+
+# ADR: 20261105-behavior-drives-use-the-running-harness.
+@pytest.mark.parametrize(
+    "markers", [{}, {"CLAUDECODE": "1"}, {"CODEX_CI": "1"}, {"OTHER_AGENT_HOST": "1"}]
+)
+def test_general_agent_preparation_never_selects_an_installed_provider(
+    tmp_path: Path, markers: dict[str, str]
+) -> None:
+    env = native_env(tmp_path)
+    for name in ("CLAUDECODE", "CODEX_CI", "CODEX_THREAD_ID"):
+        env.pop(name, None)
+    env.update(markers)
+    bin_dir = tmp_path / "bin"
+    bin_dir.mkdir()
+    marker = tmp_path / "provider-called"
+    for name in ("claude", "codex", "gemini"):
+        stub = bin_dir / name
+        stub.write_text(f'#!/bin/sh\ntouch "{marker}"\nexit 99\n')
+        stub.chmod(0o755)
+    result = call({**env, "PATH": f'{bin_dir}:{env["PATH"]}'})
+    assert result.returncode == 3 and "HOST_AGENT_REQUEST:" in result.stdout
+    assert "warn and ask" in result.stdout
+    assert not marker.exists()
+    assert not list((tmp_path / "runs").rglob("summary.json"))
+
+
+def test_missing_agents_require_asking_and_only_approved_same_host_evidence(
+    tmp_path: Path,
+) -> None:
+    env, out, request = prepare(tmp_path)
+    helper = ["python3", str(ROOT / "scripts/native_drive.py")]
+    unavailable = subprocess.run(
+        [
+            *helper,
+            "unavailable",
+            str(out),
+            "--harness",
+            "fixture-host",
+            "--reason",
+            "No general agents",
+        ],
+        cwd=ROOT,
+        env=env,
+        capture_output=True,
+        text=True,
+    )
+    assert unavailable.returncode == 3
+    assert "Warn and ask the user" in unavailable.stderr
+    assert "Never switch providers" in unavailable.stderr
+    result = receipt(out, request)
+    for execution, approval, harness, expected in [
+        ("general-agent", "", "fixture-host", 3),
+        ("approved-script", "", "fixture-host", 3),
+        ("approved-script", "User approved same-host script", "foreign-host", 3),
+        ("approved-script", "User approved same-host script", "fixture-host", 0),
+    ]:
+        result.update(execution=execution, fallback_approval=approval, harness=harness)
+        (out / "native-result.json").write_text(json.dumps(result))
+        finished = call({**env, "MANIFEST_DEV_DRIVE_RUN": str(out)})
+        assert finished.returncode == expected, finished.stdout + finished.stderr
+        if expected:
+            assert not (out / "summary.json").exists()
+    summary = json.loads((out / "summary.json").read_text())
+    assert summary["execution"] == "approved-script"
+    assert summary["fallback_approval"] == "User approved same-host script"

@@ -256,6 +256,6 @@
 | 2026-11-02 | [Taste stays a section of the memory file until it outgrows one](20261102-taste-stays-a-section-of-the-memory-file.md) | Accepted | figure-out |
 | 2026-11-02 | [The convergence bet counts debt paid on the change that meets it](20261102-the-convergence-bet-counts-debt-paid-on-the-change-that-meets-it.md) | Accepted | Positioning |
 | 2026-11-03 | [Each Cursor plugin ships its own plated logo](20261103-each-cursor-plugin-ships-its-own-plated-logo.md) | Accepted | Cursor distribution |
-| 2026-11-05 | [Behavior drives use the model harness running the session](20261105-behavior-drives-use-the-running-harness.md) | Accepted | Verification harness |
+| 2026-11-05 | [The host owns general-agent drives with the scenario as the brief](20261105-behavior-drives-use-the-running-harness.md) | Accepted | Verification harness |
 | 2026-11-05 | [Repairs track the accepted promise across findings and commits](20261105-repairs-track-the-accepted-promise.md) | Accepted | do |
 | 2026-11-05 | [Review severity follows consequence, with optional nits of any kind below the bar](20261105-review-severity-follows-consequence.md) | Accepted | Code review |

@@ -1,6 +1,6 @@
-# How every model session this repository starts is started: the `claude` CLI on PATH, run
-# directly in a scratch project outside the checkout. Sourced by scripts/drive-skill.sh,
-# scripts/walk.sh and scripts/evals/run_eval.sh — one place for the rule.
+# The explicit Claude CLI instrument: the `claude` CLI on PATH, run
+# directly in a scratch project outside the checkout. Used only by the approved Claude
+# fallback instruments and the separate Claude-native eval suite.
 #
 # After sourcing:
 #   claude_cli_ready <who>      exits 3 (a missing prerequisite), naming it and the next step,
@@ -26,6 +26,20 @@
 CLAUDE_ISOLATION=(--setting-sources project,local --strict-mcp-config)
 # shellcheck disable=SC2034
 CLAUDE_SESSION_ENV=(env -u CLAUDECODE)
+
+# An explicit adapter is not a host selector. The parent records the user's grant;
+# a known foreign host cannot use this instrument as its same-host fallback.
+require_claude_fallback() {
+  local who=$1 approval=${MANIFEST_DEV_FALLBACK_APPROVAL:-}
+  if [[ -z ${approval//[[:space:]]/} || ${MANIFEST_DEV_FALLBACK_HARNESS:-} != claude ]]; then
+    echo "$who: unreachable — this Claude CLI fallback needs explicit user approval and MANIFEST_DEV_FALLBACK_HARNESS=claude; warn and ask what to do" >&2
+    exit 3
+  fi
+  if [[ -z ${CLAUDECODE:-} && ( -n ${CODEX_THREAD_ID:-} || -n ${CODEX_CI:-} ) ]]; then
+    echo "$who: unreachable — Claude is not the running host; a fallback must use the same harness, never switch providers" >&2
+    exit 3
+  fi
+}
 
 claude_cli_ready() {
   local who=$1 status

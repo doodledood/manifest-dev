@@ -10,29 +10,25 @@ doctor: scripts/drive-skill.sh preflight
 - Every run starts from a checkout at the commit under test with the virtual environment active
   (`source .venv/bin/activate`; `scripts/setup.sh` creates it). `scripts/verify` needs Node 22.18
   or newer and says so, exiting 3, when it is missing.
-- Skill recipes use `scripts/drive-skill.sh`; walks use `scripts/walk.sh`. The model interface
-  follows the running session: Claude CLI under Claude Code, the active native model capability
-  under Codex cloud. Installing a CLI does not choose the host. Both paths use scratch inputs
-  outside the checkout and keep the rubric out of the worker context.
-- `scripts/NATIVE_DRIVES.md` owns the Codex request, native dispatch, result recording and recipe
-  resumption steps. Preparation exits 3 and remains unverified until an actual native session
-  completes and its matching result is validated. There is no Claude or separate Codex CLI login.
-- Under Claude Code, the driver requires the Claude CLI signed in. It starts with no user
-  settings or MCP configuration, copies the plugin and isolates personal workflow records.
-  `scripts/lib/claude-cli.sh` carries those launch flags and reaps the model on cancellation.
-- `scripts/verify doctor` checks prerequisites without a model run. In Codex this confirms the
-  local handoff protocol, not model readiness; `scripts/drive-skill.sh doctor` prepares a real
-  native smoke request. In Claude it checks the CLI and sign-in before the model smoke session.
-- Walks provide only the task and document snapshots. The native reader opens that input and
-  answers without further tools. Each real drive or walk consumes model quota and is ask-first.
-- Before running an ask-first recipe or an eval case, ask the owner, naming it and why. A prompt
-  change marks the eval cases it covers stale rather than running them.
-- `--dry-run` on a skill or walk recipe prints the session command, the CLI version that would
-  run it and where evidence would go, and starts nothing. Native dry runs name the active host without preparing a request.
+- Skill and walk recipes prepare host-owned general-agent tasks through `scripts/drive-skill.sh`
+  and `scripts/walk.sh`. The scenario is the brief, with copied resources and scratch fixtures;
+  the helper injects no skill body and launches no provider CLI. The parent dispatches a fresh
+  agent, continues it across user turns, records actual replies and grades the artifacts.
+- `scripts/NATIVE_DRIVES.md` owns preparation, dispatch instructions and input-bound evidence.
+  Preparation exits 3 until real completed agent results are recorded. A successful finalization
+  is still read against the recipe's `Proves` text; it is not itself a behavior verdict.
+- Without general agents, warn and ask what to do. A same-host script fallback needs explicit
+  user approval, never automatic provider selection. Claude's retained CLI instruments have
+  separate approval guards and their existing isolation, resume and cancellation checks.
+- `scripts/verify doctor` checks local helper prerequisites, without a model run. The calling
+  host checks its actual general-agent capability; a shell cannot introspect that tool.
+- Walks give only the task and document snapshots; after opening its brief the reader uses no
+  further tools. Each real drive or walk consumes model quota and is ask-first. Ask the owner
+  before those runs unless already authorized. A prompt change marks measured eval cases it
+  leaves unrun stale; individual drives do not establish suite uplift.
+- `--dry-run` prepares nothing and starts no agent or CLI; it describes the task and evidence path.
 - Prompts live in `verification/prompts/`, one file per scenario, exactly as a user would type
-  them. Name the skill in the prompt (`use the define skill …` or `/manifest-dev:<skill>`):
-  auto-activation from a description varies by phrasing, as
-  `claude-plugins/manifest-dev/evals/README.md` → *Why the prompts name the skill* says.
+  them. Explicit invocation scenarios name the skill (`use the define skill …` or `/manifest-dev:<skill>`); discovery scenarios leave the choice to the general agent. State which behavior the scenario exercises.
 - Skills that act on GitHub, Slack or a shared Ticket store are driven only against a throwaway
   repository, channel or store the run owns. Their effects reach other people and do not undo.
 - Read what a skill did from the transcript and the files it wrote, never from its own account.

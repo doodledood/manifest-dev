@@ -587,7 +587,11 @@ def test_verify_dry_run_reaches_the_runner_and_writes_no_evidence(
         command, recipe, "--dry-run", env={**DRY_ENV, "ANTHROPIC_API_KEY": "k"}
     )
     assert result.returncode == 0, result.stderr
-    assert "would run" in result.stdout and "claude -p" in result.stdout, result.stdout
+    assert (
+        "would run" in result.stdout and "fresh general agent" in result.stdout
+    ), result.stdout
+    assert "claude -p" not in result.stdout
+    assert "no CLI or provider selection" in result.stdout
     after = sorted(evidence.glob("*.md")) if evidence.is_dir() else []
     assert before == after
 

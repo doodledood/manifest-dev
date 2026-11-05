@@ -1,6 +1,6 @@
-"""Skill drives, document walks and eval suites start the claude CLI directly, isolated.
+"""Approved Claude fallbacks and the separate eval instrument stay isolated.
 
-`scripts/drive-skill.sh`, `scripts/walk.sh` and `scripts/evals/run_eval.sh` run with no
+`scripts/drive-skill-claude.sh`, `scripts/walk-claude.sh` and the eval instrument run with no
 container: each starts `claude` from a scratch directory outside the checkout, hands it a copy
 of the plugin rather than the checkout's own directory, and starts it with no user settings and
 no MCP servers of the user's (`--setting-sources project,local --strict-mcp-config`, which
@@ -30,8 +30,8 @@ import pytest
 T = TypeVar("T")
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-DRIVE = REPO_ROOT / "scripts" / "drive-skill.sh"
-WALK = REPO_ROOT / "scripts" / "walk.sh"
+DRIVE = REPO_ROOT / "scripts" / "drive-skill-claude.sh"
+WALK = REPO_ROOT / "scripts" / "walk-claude.sh"
 RUN_EVAL = REPO_ROOT / "scripts" / "evals" / "run_eval.sh"
 LIB = REPO_ROOT / "scripts" / "lib" / "claude-cli.sh"
 RECIPES = REPO_ROOT / "verification" / "recipes"
@@ -165,6 +165,8 @@ def setup(
         "DRIVE_STAMP": STAMP,
         # Set as it is when a drive is started from inside a session; the drive must drop it.
         "CLAUDECODE": "1",
+        "MANIFEST_DEV_FALLBACK_HARNESS": "claude",
+        "MANIFEST_DEV_FALLBACK_APPROVAL": "Test fixture: explicit same-host fallback approved",
         "STANDIN_RECORD": str(tmp_path / "calls.jsonl"),
         "STANDIN_VERSION": VERSION,
         **standin,
@@ -620,7 +622,7 @@ def committed_checkout(tmp_path: Path) -> tuple[Path, str, Path]:
     """
     checkout = tmp_path / "checkout"
     for part in (
-        "scripts/drive-skill.sh",
+        "scripts/drive-skill-claude.sh",
         "scripts/native_drive.py",
         "scripts/lib",
         "verification/recipes/figure-out.md",
@@ -659,7 +661,7 @@ def drive_from(
 ) -> subprocess.CompletedProcess[str]:
     return subprocess.run(
         [
-            str(checkout / "scripts" / "drive-skill.sh"),
+            str(checkout / "scripts" / "drive-skill-claude.sh"),
             "figure-out",
             str(checkout / "verification" / "recipes" / "figure-out.md"),
             *args,
@@ -1502,3 +1504,30 @@ def test_promise_convergence_scaffold_keeps_history_and_real_fee_failure(
     )
     assert fixed.returncode == 0, fixed.stderr
     assert "readable labels and exact fees" in fixed.stdout
+
+
+@pytest.mark.parametrize(
+    "command", [[str(DRIVE), "preflight"], [str(WALK), "Read", "README.md"]]
+)
+@pytest.mark.parametrize("fault", ["approval", "harness", "foreign"])
+def test_claude_fallback_requires_an_explicit_same_host_grant(
+    tmp_path: Path,
+    toolbox: Path,
+    command: list[str],
+    fault: str,
+) -> None:
+    env = setup(tmp_path, toolbox)
+    if fault == "approval":
+        env["MANIFEST_DEV_FALLBACK_APPROVAL"] = "  "
+    elif fault == "harness":
+        env.pop("MANIFEST_DEV_FALLBACK_HARNESS")
+    else:
+        env.pop("CLAUDECODE")
+        env["CODEX_CI"] = "1"
+    result = subprocess.run(
+        command, cwd=REPO_ROOT, env=env, capture_output=True, text=True
+    )
+    assert result.returncode == 3
+    assert "approval" in result.stderr or "same harness" in result.stderr
+    assert calls(tmp_path) == []
+    assert not (tmp_path / "store").exists()
