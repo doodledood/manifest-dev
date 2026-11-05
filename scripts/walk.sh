@@ -60,7 +60,7 @@ scratch=$(mktemp -d "${TMPDIR:-/tmp}/manifest-dev-walk.XXXXXX")
 trap 'rm -rf "$scratch"' EXIT
 echo "CLI: $CLAUDE_CLI_VERSION"
 status=0
-(cd "$scratch" && "${CLAUDE_SESSION_ENV[@]}" claude -p --model "$model" "${CLAUDE_ISOLATION[@]}" \
-  --tools "" --no-session-persistence "$prompt") || status=$?
+run_claude_session "$scratch" "${CLAUDE_SESSION_ENV[@]}" claude -p --model "$model" "${CLAUDE_ISOLATION[@]}" \
+  --tools "" --no-session-persistence "$prompt" || status=$?
 ((status == 0)) || echo "walk: the reader session exited $status; read its output above for the cause, then rerun the walk" >&2
 exit "$status"

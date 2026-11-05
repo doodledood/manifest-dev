@@ -76,3 +76,28 @@ copy_plugin() {
   rm -rf "$dest/$name/evals/results"
   printf '%s\n' "$dest/$name"
 }
+
+# Keep ownership of the foreground model process until it is reaped. A process-group
+# stop reaches parent and child together; without a trap the parent can exit first,
+# leaving the terminated child as a zombie on hosts whose init does not reap it.
+stop_claude_session() {
+  trap '' TERM INT
+  local child_pid
+  for child_pid in $(jobs -p); do
+    kill -TERM "$child_pid" 2>/dev/null || true
+  done
+  wait 2>/dev/null || true
+  exit "$1"
+}
+
+run_claude_session() {
+  local session_dir=$1 session_pid session_status=0
+  shift
+  trap 'stop_claude_session 143' TERM
+  trap 'stop_claude_session 130' INT
+  (cd "$session_dir" && exec "$@") &
+  session_pid=$!
+  wait "$session_pid" || session_status=$?
+  trap - TERM INT
+  return "$session_status"
+}

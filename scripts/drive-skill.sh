@@ -216,9 +216,9 @@ session=0 turn=1 resume=() started=$(date +%s.%N)
 while :; do
   # Where this turn's events begin, so the summary reads each turn's reply from its own events.
   wc -l <"$out/transcript.jsonl" >>"$out/turn-starts.txt"
-  (cd "$project" && "${CLAUDE_SESSION_ENV[@]}" HOME="$session_home" claude -p --model "$model" "${CLAUDE_ISOLATION[@]}" \
+  run_claude_session "$project" "${CLAUDE_SESSION_ENV[@]}" HOME="$session_home" claude -p --model "$model" "${CLAUDE_ISOLATION[@]}" \
     "${plugins[@]}" "${resume[@]}" --output-format stream-json --verbose --permission-mode bypassPermissions \
-    --max-turns "$max_turns" "$(cat "$out/turn-$turn.md")") >>"$out/transcript.jsonl" 2>>"$out/stderr.log" || session=$?
+    --max-turns "$max_turns" "$(cat "$out/turn-$turn.md")" >>"$out/transcript.jsonl" 2>>"$out/stderr.log" || session=$?
   turn=$((turn+1))
   ((session == 0)) && [[ -f $out/turn-$turn.md ]] || break
   # The next turn goes into the session that answered this one, and only if it answered without

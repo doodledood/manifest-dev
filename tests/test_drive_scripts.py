@@ -1402,12 +1402,21 @@ def test_a_walk_passes_on_a_failed_session_and_says_so(
     assert result.returncode == 1 and "reader session exited 1" in result.stderr
 
 
-def test_stopping_a_drive_stops_its_session(tmp_path: Path, toolbox: Path) -> None:
-    # The session runs in the drive's process group, so the stop `scripts/verify` sends that group
-    # reaches it, as the container's init process once made sure.
+@pytest.mark.parametrize(
+    "command",
+    [
+        [str(DRIVE), "figure-out", str(RECIPES / "figure-out.md")],
+        [str(WALK), "Find the install steps.", "README.md"],
+    ],
+)
+@pytest.mark.parametrize("stop_signal", [signal.SIGTERM, signal.SIGINT])
+def test_stopping_a_drive_stops_its_session(
+    tmp_path: Path, toolbox: Path, command: list[str], stop_signal: signal.Signals
+) -> None:
+    # The parent must reap its model child before leaving, even without a reaping init.
     env = setup(tmp_path, toolbox, STANDIN_SLEEP="30")
     running = subprocess.Popen(
-        [str(DRIVE), "figure-out", str(RECIPES / "figure-out.md")],
+        command,
         env=env,
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
@@ -1415,11 +1424,9 @@ def test_stopping_a_drive_stops_its_session(tmp_path: Path, toolbox: Path) -> No
     )
     try:
         (call,) = wait_for(tmp_path / "calls.jsonl", complete_calls)
-        os.killpg(running.pid, signal.SIGTERM)
+        os.killpg(running.pid, stop_signal)
         running.wait(timeout=10)
-        deadline = time.monotonic() + 5
-        while _alive(call["pid"]) and time.monotonic() < deadline:
-            time.sleep(0.05)
+        assert running.returncode == 128 + stop_signal
         assert not _alive(call["pid"])
     finally:
         running.kill()
