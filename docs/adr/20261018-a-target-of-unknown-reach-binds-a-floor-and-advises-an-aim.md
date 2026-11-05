@@ -1,7 +1,7 @@
 # ADR: A target of unknown reach binds a floor and advises an aim
 
 ## Status
-Accepted
+Superseded by 20261106-source-authority-governs-acceptance-and-revision
 
 ## Area
 define

@@ -1,7 +1,7 @@
 # Defect-class review
 
-Judge whether a repair addresses its demonstrated failure mechanism at the strongest
-justified boundary, accounting for every affected site. When a concrete, proportionate
+Judge whether a repair establishes the required behavior and addresses any demonstrated failure
+mechanism at the strongest justified boundary, accounting for every affected site. When a concrete, proportionate
 change can prevent that mechanism through ordinary supported use, require it. A weaker
 repair needs a substantiated reason, even when all current callers have been patched.
 
@@ -14,11 +14,19 @@ finding being rechecked, not an old repair beside an unrelated change.
 Derive the mechanism from the code: the invalid state or operation, where it is allowed,
 and the sequence that reaches it. Use a recorded diagnosis as corroboration, not a
 substitute for tracing. State a condition a reader can check, not a category such as
-"races" or "stale state". If the mechanism cannot be established, return BLOCKED with
-what would resolve it.
+"races" or "stale state". Where the old mechanism remains unknown, distinguish an unsupported
+patch from an independently evidenced replacement. A replacement may pass without retrospective
+diagnosis when diagnosis was not commissioned and is not needed to trust the required result.
+Assess its real behavior against independent expectations across the affected uses and failure
+conditions, the reason that coverage is sufficient, and its remaining uncertainty. A rewrite,
+passing existing tests or the symptom's absence in a short run does not establish those premises.
+Explicit diagnosis requirements remain binding. If missing knowledge prevents either proof
+route, return BLOCKED naming what would resolve it.
 
 Trace the mechanism to its enabling contract or owning operation, including unchanged
-code, and enumerate the sites it reaches. The mechanism bounds the walk; similar code
+code, and enumerate the sites it reaches. For an independently evidenced replacement, derive
+the affected region from the required behavior and the old path's supported uses instead; name
+any old-cause uncertainty rather than claiming it solved. The mechanism bounds the walk; similar code
 with different invariants or lifecycle semantics need not share a repair. Do not cap the
 walk by file count or silently turn a sampled region into complete coverage.
 
@@ -92,7 +100,8 @@ Use the shared ladder for the demonstrated mechanism at the remaining site or su
 
 Use the shared report format, with these sections directly before `## Findings` (after `## Prior findings` on a follow-up):
 
-- **Mechanism** — the concrete failure and its enabling boundary.
+- **Mechanism** — the concrete failure and its enabling boundary, or the unknown old cause
+  and the independent behavior evidence supporting a replacement.
 - **Enumeration** — how the region was derived and each site's disposition, including
   unresolved sites and any re-homed findings.
 - **Protection** — the guarantee achieved, evidence for any weaker remedy, and residual

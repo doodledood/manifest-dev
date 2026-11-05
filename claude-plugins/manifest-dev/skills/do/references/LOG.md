@@ -36,12 +36,12 @@ Record what the finished state will not reconstruct on its own:
 - **Departures** — from the Initial Approach, the Deliverable order or a Process Guidance item,
   and why.
 - **Dead ends** — fixes tried and reverted, approaches rejected that left no commit; group repairs by their underlying promise and its accepted source, with each attempt and outcome, so new finding IDs or commit wording do not reset the premise history.
-- **Gate state** — assessed criteria and subject, verdicts and their evidence, staleness, and
+- **Outcome and gate state** — assessed criteria and subject, verdicts and their evidence, staleness, and
   whether each judgment gate has taken its full look. Identify relevant local work and external
   observations as well as the repository head. Keep the findings, their dispositions and support,
   and which repairs are verified, so a resumed run can determine what evidence still applies and
   what each continued evaluation must check.
-- **Amendments** — what changed, which gates it unverified, and the assumptions it added.
+- **Amendments** — what changed, the source authority, why a working revision better served the unchanged Outcome and hard requirements, and which evidence it invalidated.
 - **Met on the way** — each pre-existing issue and below-bar finding met, where it came from, and
   whether it was fixed, applied, dismissed with the reason, or left from a continued look; each gigantic issue with why it is a
   project of its own; and a gate bar the run read as suspect with how that settled.

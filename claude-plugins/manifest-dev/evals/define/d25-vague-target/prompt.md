@@ -1,5 +1,5 @@
 ---
-# Holds the decision in docs/adr/20261018-a-target-of-unknown-reach-binds-a-floor-and-advises-an-aim.md — that record's Enforced by line names this case; weakening or removing it means updating that line in the same change.
+# Holds the decision in docs/adr/20261106-source-authority-governs-acceptance-and-revision.md — that record's Enforced by line names this case; weakening or removing it means updating that line in the same change.
 tags: [define]
 max_turns: 40
 timeout_seconds: 900

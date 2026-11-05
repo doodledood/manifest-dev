@@ -41,9 +41,9 @@ adds a second one. It holds:
 |---|---|---|
 | Branch | The canonical Ticket, its one stable branch, and the recovery purpose | The run, before substantial work |
 | Run facts | The run ID; the session that runs it, where the host names one; when it started; the launch count, counting launches in a row whose run ended without an outcome or that repaired a landing | The launcher — `orchestrate`, or `run-ticket` itself on a hand run — just before the run starts. Where the host names the session only once the run has started, the run records its own session on its first write instead |
-| | The base commit the run's gates last passed against; whether it is ready to land, naming the head commit and the run ID that marked it, or the drafted answer for a Question Ticket, naming the same | The run, at each pushed checkpoint and when it finishes |
+| | The base commit the Outcome and gates last passed against; whether it is ready to land, naming the head commit and the run ID that marked it, or the drafted answer for a Question Ticket, naming the same | The run, at each pushed checkpoint and when it finishes |
 | Assignment and authority | The assigned activity, current authority source and limits, retained decisions, and any accepted artifact/version; a wait carries its resolving condition and continuation | The run, from trusted applicable instructions at start, on steering and on resumption |
-| Progress | The step the run is at — `understand`, `define`, `build`, `verify` or `ready` — the gates passed and at which commit, what remains, the decisions taken, the dead ends | The run, when its step changes and at each pushed checkpoint |
+| Progress | The step the run is at — `understand`, `define`, `build`, `verify` or `ready` — the Outcome and gate verdicts, evidence and assessed commit, what remains, the decisions taken, the dead ends | The run, when its step changes and at each pushed checkpoint |
 | Manifest | The run's full Manifest, refreshed when it is amended; absent for inquiry without one | The run, as soon as define reports it |
 
 Each fact has one writer. The ready mark and the drafted answer name the run that wrote them, and
@@ -123,15 +123,15 @@ follows it only when its prompt says to land. The lander:
    with the rest of the run's debt. Where the
    merge leaves the pull request's own change as it was — the same patch ID — and the cross-cut
    check finds no overlap, only the deterministic gates re-run, through the repository's required
-   checks where it has them, and the judgment gates' earlier verdicts stand; otherwise it re-runs
-   every gate. It records the new base and marks the record ready again. `orchestrate` relaunches
+   checks where it has them, and unaffected Outcome and judgment-gate evidence stands; otherwise it re-runs
+   the Outcome and every gate. It records the new base and marks the record ready again. `orchestrate` relaunches
    the run for this, and the Ticket keeps its landing turn meanwhile; a landing `run-ticket` does it
    in place. Then the lander starts again at step 1.
 4. **Refreshes the pull request.** Its head must be the head commit the record names, its checks
    must pass, and the repository's protections must permit the merge; it never merges older state.
    When the head is not the one the record names, or a required check fails, `orchestrate`
    relaunches the run to repair it, and a landing `run-ticket` repairs it in place; the run treats
-   commits after the head the record names as new work and re-runs every gate. A required check that
+   commits after the head the record names as new work and re-runs the Outcome and every gate. A required check that
    fails the same way on the target base is the base's failure, not the Ticket's: nothing is
    repaired, and the lander names that cause (`orchestrate` pauses on it and has one repair Ticket
    written for it, as its check-in says) — unless making that check pass is the Ticket's own work,
@@ -184,8 +184,8 @@ completed delivery Ticket.
 
 A fresh runner rebuilds the attempt from the Ticket, its records, the one stable remote branch,
 pushed commits, the one pull request, and current checks. It resumes do on the recorded Manifest
-rather than defining the work again; recorded passes only guide the order of work, and every gate
-still needs fresh evidence before done. It needs no earlier conversation or workspace.
+rather than defining the work again; recorded passes only guide the order of work, and the Outcome and every gate
+still need fresh evidence before done. It needs no earlier conversation or workspace.
 Uncommitted work and unpushed commits may be lost; coherent pushed checkpoints are the durability
 boundary.
 

@@ -13,7 +13,7 @@ explain, the author decides and edits.
 
 `$ARGUMENTS` carries what to review — a file path, a directory, a glob, or pasted text. It may
 also name a register explicitly (`register=docs`, `register=voice`) to override detection. A
-manifest gate's body activates this skill with a register under the run's selected evaluator; the
+manifest gate's Evidence activates this skill with a register under the run's selected evaluator; the
 gate names the register and its caller-chosen acceptance policy.
 
 With no argument, review the most recently modified prose file in the working tree and say which

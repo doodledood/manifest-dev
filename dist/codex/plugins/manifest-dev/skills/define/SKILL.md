@@ -32,10 +32,10 @@ surfaces version, read from the context file on disk, is missing or older than s
 record it as an `ASM-*` entry. Record each offer flagged upstream as its own `ASM-*` entry, so the
 completion report names it.
 
-figure-out reaches understanding of the *problem*; this skill owns the *encoding*
-calls — invariant versus guidance, what a gate ranges over, where it binds, its
-kind. Surface the load-bearing ones with a recommended answer; auto-decide the
-rest and mark them `(auto)` with a matching `ASM-*`.
+figure-out reaches understanding of the problem; this skill makes the agreement executable.
+Keep the intended result and hard requirements distinct from the agent's revisable operational
+choices. Resolve a missing user decision only where it changes that agreement; choose the
+representation and methods yourself, recording material assumptions in `ASM-*`.
 
 Where the host offers a question-selection capability — a way to put a question
 to the user as options to pick from, with room to answer in their own words —
@@ -84,7 +84,8 @@ authority limits in gates. The Manifest is finite work, not the project's perman
 
 The Manifest is the acceptance contract — what the user accepts as "I'd ship the
 outcome of executing this" — and `/do` executes it later with none of this
-conversation's context, so everything binding lives in the gate texts themselves.
+conversation's context. Its Outcome states the result owed; its gates state the current
+acceptance claims, each with its source authority and a separate evidence method.
 That gives a floor that isn't ceremony:
 
 - Follow the schema in `references/SCHEMA.md` exactly — it is what the executor
@@ -92,14 +93,17 @@ That gives a floor that isn't ceremony:
 - **Write the current state.** A reader who was not in the session reads the Manifest top to
   bottom and has the current task, with nothing to piece together — after every amendment as on
   the first draft. Gates, Intent, Initial Approach and Process Guidance state only what holds
-  now: no date that records when something was decided or changed, no note of who decided what,
-  nothing about what an item used to say. A why may name the requirement a value comes from,
-  never who decided it or when. Who decided what — a user's call or an `(auto)` choice, the
-  alternative not taken and the reason — is stated once, in Known Assumptions, without those
-  dates; the `(auto)` mark after an item's ID is the one pointer to it, and an entry recording a
-  user's call opens `User's call:` so the user can find it among the rest. What changed, when and
+  now: no date that records when something was decided or changed, nothing about what an item
+  used to say. A gate's Authority names the actual source and obligation. Known Assumptions
+  records unresolved assumptions and material choices without duplicating that authority;
+  an `(auto)` mark points to a choice made without asking. What changed, when and
   why belongs in the figure-out log and `/do`'s Execution Log, never in the Manifest.
-- Open Intent with the **Problem**: one specific story of what breaks or grates
+- Open Intent with the **Outcome**: the requested result, for whom and in what circumstances.
+  Keep operational interpretations in working gates, so an invented detail cannot become hard
+  merely by being placed here. State how the whole result will be assessed, using the person's
+  observable use or chosen references and any retained acceptance. An agent-selected assessment
+  method remains revisable; do not add routine owner sign-off when the source did not retain it.
+  Then name the **Problem**: one specific story of what breaks or grates
   today, the baseline everything else is pitched against. A session that cannot
   name a pain has found a stop signal, not an empty field — return to figure-out,
   or conclude there is nothing worth building. Appetite follows: the size of
@@ -153,32 +157,22 @@ That gives a floor that isn't ceremony:
   `Enforced by` lines reading `not yet`. When the work implements or touches such a decision, a
   gate holds that the named check exists, fails when the decision is reversed, and carries a
   comment citing the record, and that the record's line names the check in place of `not yet`.
-- Every Acceptance Criterion and Global Invariant is one text — title, body,
-  optional why — stating what done means, the evidence to inspect, and the
-  threshold between PASS and FAIL, precise enough that two evaluations read the
-  same thing. For subjective quality, anchor that threshold to the user's chosen
-  references and observable effect, or a named owner's acceptance; record who
-  decides and what resolves disagreement. The title never adds a requirement the
-  body omits, and the why binds nothing.
-- Every specific in a gate or a Deliverable has a source. Where the request sets
-  no bar, the threshold is the behavior it does state — a pass/fail property, a
-  command, a named reference — not a number made up to look measurable. A
-  specific the user did not give enters only when derived from a stated
-  requirement, its why naming that requirement, or as a choice: an `(auto)`
-  `ASM-*` carrying the value and its reason, the gate stating the value plainly;
-  otherwise cut it. The
-  ones that slip in sit inside a larger check — a tolerance, sample size, or run
-  length; a second pass bar beside the stated one; a sign-off; an artifact beyond
-  the change itself, such as a runbook or design doc — so reread every gate body
-  for them before handoff, letting the user veto a value instead of meeting it
-  mid-run as a requirement.
-- A target whose reachability the session did not establish binds a floor and
-  advises an aim: the gate holds the floor — a sourced specific like any other,
-  or a behavior such as faster than a measured baseline — and the hoped-for
-  value goes to Process Guidance as the aim, so the run reaches for it without
-  being trapped by it. A number the user stated stays binding: attended, ask
-  whether it is a firm requirement or an aim; unattended, keep it binding and
-  record in an `ASM-*` that its reachability was not established.
+- Each gate separates its claim from the **Evidence** used to assess it. The body states
+  the claim and threshold; **Authority** says `hard` with the actual source obligation, or
+  `working` with the interpretation and intended result it serves. Split mixed-authority
+  claims. The title adds nothing the body omits; optional rationale binds nothing. A hard
+  claim can have a working evidence method. An explicitly required method belongs in the
+  hard claim itself, so replacing the test cannot waive it.
+- Every specific in a gate or Deliverable has a source or a stated working rationale.
+  Hard requirements are deliberately stated by the user or imposed by applicable project,
+  safety or permission rules. They stay hard without a rationale. Overall approval of a
+  plan does not harden the agent's selected metrics, methods or assumptions. Do not cite
+  your own plan or the schema as the source of a hard requirement. When the source is
+  ambiguous and the distinction matters, resolve it rather than inventing authority.
+- A rough aim stays a rough aim. An exact user requirement stays hard even when feasibility
+  is unknown; record the uncertainty. Where the user left the assessment open, prefer the
+  stated behavior over an invented numeric floor. An operational target can be useful as a
+  working claim or evidence choice, revisable when later evidence better serves the Outcome.
 - Every gate declares "Judgment gate." or "Deterministic gate." — never
   inferred; an executor handed an undeclared kind is broken by it. A gate mixing
   a command with a judgment is a judgment gate.
@@ -188,7 +182,7 @@ That gives a floor that isn't ceremony:
   The test reaches means, never ends: where a mechanism was deliberately chosen
   as the thing that must hold, it *is* the outcome, and raising it away is the
   erosion this discipline exists to prevent. Make that choosing legible — in the
-  gate's why where nothing else shows it — so a later reader can tell a
+  gate's Authority — so a later reader can tell a
   deliberate mechanism from an incidental one.
 - For work others will use or extend, include ease of doing that correctly in the
   existing quality gates or relevant Acceptance Criteria. Judge concrete burdens
@@ -230,7 +224,7 @@ That gives a floor that isn't ceremony:
   direction where it is guidance. Left as an assumption it surfaces mid-run,
   where a stalled unattended execution costs far more.
 - A criterion nothing can check is sharpened or dropped as
-  `references/SCHEMA.md` → *Verdicts* states; only gates bind.
+  `references/SCHEMA.md` → *Verdicts* states; the Outcome and current gates bind.
 
 Before writing gate bodies, invoke the prompt-engineering skill for its
 calibration if it is available; a body is a prompt the moment an evaluator
@@ -305,21 +299,19 @@ the full sweep. The full set is the default and doubt includes. Never eligible:
 defect-finding dimensions, deterministic project gates, safety-critical Global
 Invariants, and the ceiling.
 
-**Specialized gates activate a skill.** Where a gate needs specialized behavior
-its body tells the evaluator to *activate* a named skill — never to spawn a
-further agent, which would bypass the gate's verdict contract. Code-quality gates
-activate `review-code` with a dimension; other checks name their own, such as
-*"Done when the `check-pr` skill reports the pull request ready"*. Name the
-dimension and the caller's chosen acceptance policy, including severity/category thresholds.
-The skill owns classification; the Manifest owns what fails the gate. Encode the applicable
-task file's usual Medium+ bar unless the user's or project's chosen policy differs.
+**Specialized gates activate a skill.** Put the quality claim and chosen acceptance policy in
+its body. Put the assessment in Evidence: activate the named skill with its dimension and
+severity/category threshold, never prescribe a further context. The skill owns classification;
+the Manifest owns what fails. Use the task file's usual Medium+ policy unless the user's or
+project's policy differs. A source-backed requirement for a particular assessment also belongs
+in the hard claim; an agent-selected reviewer does not acquire hard authority by insertion.
 
 ## Amendment
 
-A manifest path means amend. Read it fully. Validate every gate against the
-current schema first: a title, a body, an optional why, a stated kind. A gate
-carrying a `verify` block of any shape, or stating a `phase`, or declaring no
-kind, is the superseded schema — stop and require fresh generation, without
+A manifest path means amend. Read it fully. Validate the Outcome and every gate against the
+current schema first: a title, Authority, a claim body, Evidence, an optional why and a stated
+kind. Missing Outcome or authority, a `verify` block, a `phase`, or a missing kind means an
+incompatible schema — stop and require fresh generation, without
 passing the incompatible Manifest as an amendment input. Never translate,
 migrate, or partially preserve it, and offer no migration path.
 
@@ -353,11 +345,16 @@ reading as current state (*Write the current state*, above).
   nothing.
 
 An amendment from an unattended executor is unattended: self-answer within the
-caller's delegation, ask no questions, and wait for no approval. Validate a
+caller's delegation, ask no questions, and wait for no approval. A working claim or evidence
+method can change on evidence that the replacement better serves the unchanged Outcome and
+hard requirements. Identify what the old check got wrong, the replacement's basis, and what
+evidence must be refreshed. A failed check alone does not justify changing it. Overall plan
+approval is not a reason to block this correction. A hard claim changes only with authority
+from its source; a missing rationale never makes it working. Validate a
 delegated Appetite revision before applying it: the broader work serves the
 requested outcome, its benefit justifies the added complexity and maintenance,
 it has not already been done as excess, and it crosses no explicit exclusion or
-binding requirement. Preserve those requirements unless user steering explicitly
+hard requirement. Preserve those requirements unless authorized steering explicitly
 changes them. A request outside that delegation returns an evidenced blocker
 without changing the Manifest.
 
@@ -387,10 +384,10 @@ stood before, or a diff of the file — never a description of the change — an
 the steering or decision the amendment encodes. Where no isolated context is
 available, review against that brief yourself and say in the digest that the
 review was self-graded. Settle every finding in one pass: fix it, or reject it
-and name it with the reason in the digest. A fix that changes what the user
-agreed — or, on an amendment, the requirement of a gate the amendment did not
-touch — is a user's call: asked when attended; unattended, not applied, so what
-the user agreed stands. Any other fix lands wherever its fault sits: in a touched gate, in
+and name it with the reason in the digest. A fix that changes the Outcome or a hard requirement
+needs its source's authorization: asked when attended; unattended, return the evidenced
+boundary without applying it. A working-claim repair within the assignment lands with its
+basis and refreshed evidence. Any other fix lands wherever its fault sits: in a touched gate, in
 non-binding text, or — where it changes no requirement, such as removing a
 note — in an untouched gate. Unattended,
 a new Manifest also records each rejected or unapplied finding in an `(auto)`
@@ -405,8 +402,8 @@ still open, replaced rather than repeated by a later amendment. An entry that
 merely accepts a hole the Intent rejects does not settle it. Settle each
 ambiguity by writing one reading into the gate. No second review follows.
 
-Give a plain-language digest — the pain, the plan, what gets built, the
-guardrails, how it is verified, the holes the review found and how each was
+Give a plain-language digest — the intended result, the pain, what must stay fixed, what the
+agent may revise, the plan, how it is verified, the holes the review found and how each was
 settled (a search that found none is never offered as proof the Manifest is
 sound), and every number a gate holds the work to (each
 threshold, bound, count or target, in plain words) so the user can veto one

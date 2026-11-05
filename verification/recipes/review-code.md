@@ -66,6 +66,16 @@ Run: `scripts/drive-skill.sh review-code verification/prompts/review-code-caller
 Proves: the naming divergence from the declared advisory convention is Low, without correctness or broken-promise findings. With the first caller's Medium+ gate it passes; with the second caller's Low-inclusive gate the same Low fails without changing severity. The third turn returns classifications without inventing a gate verdict. The source and instructions remain byte-identical. Read the actual reports, not just a completion claim.
 Check: read
 
+### independent-replacement
+Run: `scripts/drive-skill.sh review-code verification/prompts/review-code-independent-replacement.md --scaffold verification/fixtures/independent-replacement`
+Proves: defect-class accepts the stateless lookup on independent contract evidence and inspection of its full supported string domain, while disclosing that the precise old provider cause is unknown. It does not invent a diagnosis requirement or infer adequacy from the replacement label or passing tests alone.
+Check: read
+
+### diagnosis-remains-required
+Run: `scripts/drive-skill.sh review-code verification/prompts/review-code-diagnosis-required.md --scaffold verification/fixtures/independent-replacement`
+Proves: the same valid replacement does not discharge the explicitly commissioned diagnosis. The verdict is BLOCKED on missing historical evidence, with no invented cause or weakened user requirement.
+Check: read
+
 ## Gotchas
 
 - Each prompt builds its own scratch repository state: a commit on a branch ahead of its default branch.

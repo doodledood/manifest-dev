@@ -1,10 +1,27 @@
 # Manifest mode (`--manifest <path>`)
 
-In manifest mode the skill re-verifies the manifest's contract instead of running the generic `review-code` reviewer fleet — the reviewer-side assessment of the same Acceptance Criteria and Global Invariants that `/do` works to satisfy. Everything else in the SKILL.md one-shot pass — thread advancement, voice profile, the single batched `comment` review, the user-confirmed-only approval path, `--loop` — is unchanged; only the code-verification half of step 2 branches here.
+In manifest mode the skill re-verifies the manifest's contract instead of running the generic `review-code` reviewer fleet — the reviewer-side assessment of the same Outcome, Acceptance Criteria and Global Invariants that `/do` works to satisfy. Everything else in the SKILL.md one-shot pass — thread advancement, voice profile, the single batched `comment` review, the user-confirmed-only approval path, `--loop` — is unchanged; only the code-verification half of step 2 branches here.
 
 ## Verify the manifest
 
-Read and validate the manifest fully, then assess every Acceptance Criterion and Global Invariant against the PR head. Follow SKILL.md's review organization rule; related gates may share a context, but each retains its own verdict and evidence. Each assessment is pointed at that gate by ID and reads the gate's text from the file rather than receiving a copy of it. A gate is a title, a body, an optional why, and a required kind (`judgment` or `deterministic`); a gate carrying a `verify` block of any shape, a gate stating a `phase` — a field the manifest schema no longer has — or a gate with no stated kind is the superseded schema: reject it with a clear request to create a fresh Manifest through `/define` without amending the incompatible file. Inspect the artifact and applicable evidence regardless of how the author verified the branch; the author's verdict alone is not evidence. The reviewer context chooses the active model; model choice is not manifest data. Each gate returns PASS, FAIL, or BLOCKED with concrete supporting evidence.
+Read and validate the Manifest fully, then assess its Outcome and every current Acceptance
+Criterion and Global Invariant against the PR head. The Outcome is the requested result, assessed
+as judgment ID `OUTCOME`; passing chosen checks alone is insufficient. A gate has a title,
+Authority, claim body, Evidence, optional why and a required kind (`judgment` or `deterministic`).
+Hard authority identifies a deliberately stated user requirement or applicable project, safety
+or permission obligation. Working authority identifies an agent's revisable operational claim.
+Evidence methods are working unless a hard claim explicitly requires them. Missing Outcome,
+authority or kind, or a retired `verify` block or `phase`, requires fresh definition through
+`define`; do not guess permission to weaken an older contract.
+
+Follow SKILL.md's review organization rule; related claims and Outcome assessment may share a
+context, but each retains its own verdict and evidence. Read each by ID from the file rather
+than a supplied copy. Inspect the artifact and applicable evidence regardless of how the author
+verified it; an author's verdict is not evidence. Assess the current contract without waiving
+working claims or adding unsupported preferences. A mistaken working claim is an amendment
+finding, with its source and observed conflict; an amended claim needs fresh affected evidence.
+The reviewer context chooses the active model, not the Manifest. Return PASS, FAIL or BLOCKED
+with concrete evidence for each gate and the Outcome.
 
 On a continued loop wake, pass each evaluator its applicable checkpoint: assessed criteria and
 subject, reporting scope, outstanding findings, verified repairs, and intervening changes.
@@ -12,7 +29,7 @@ Judgment gates check those repairs and failures introduced or exposed by the cha
 checks run in full. Changed criteria or external evidence invalidate affected results even without
 a new commit. A fresh explicit invocation keeps the independent review scope requested by its caller.
 
-Run only the Manifest's gates for contract verification. A specialized quality gate activates its reviewer through that gate; do not add the generic fleet beside it.
+Run only the Manifest's Outcome assessment and gates for contract verification. A specialized quality gate activates its reviewer through that gate; do not add the generic fleet beside it.
 
 ## PR-head checkout
 
@@ -20,7 +37,7 @@ Gate bodies execute against the code at PR head (tests, builds, greps). Like `/d
 
 ## Posting & approval
 
-Surface each FAIL or BLOCKED as one voice-compliant comment naming the failing criterion (its manifest id) and the verifier's concrete finding, anchored to the file:line the finding points at, else file- or PR-level; submit them through the SKILL.md **Posting** path (a single batched review, decision `comment`). When every criterion PASSes there are zero contract comments to post: take the SKILL.md **Zero comments to post** path — manifest-mode "all green" is the approval signal (user-confirmed in interactive sessions, no PR action under `--loop`/CI).
+Surface each FAIL or BLOCKED as one voice-compliant comment naming the failing criterion (its manifest id) and the verifier's concrete finding, anchored to the file:line the finding points at, else file- or PR-level; submit them through the SKILL.md **Posting** path (a single batched review, decision `comment`). When the Outcome and every criterion PASS there are zero contract comments to post: take the SKILL.md **Zero comments to post** path — manifest-mode "all green" is the approval signal (user-confirmed in interactive sessions, no PR action under `--loop`/CI).
 
 ## Judgment pass (additive premise check)
 
@@ -30,9 +47,9 @@ Activate the `review-pr-judgment` skill under the same review organization rule.
 
 It is **strictly additive** and never touches the contract:
 
-- The contract verdict — every Acceptance Criterion and Global Invariant — is computed exactly as it would be without the pass. A judgment finding never changes a criterion's PASS/FAIL, never blocks, and never gates approval.
+- The contract verdict — the Outcome and every Acceptance Criterion and Global Invariant — is computed exactly as it would be without the pass. A judgment finding never changes a criterion's PASS/FAIL, never blocks, and never gates approval.
 - Judgment findings are the distinct non-severity class the `review-pr-judgment` skill defines — author-answerable questions, synthesized to one per root **by the judgment pass itself** (manifest mode skips the holistic pass, so the pass does its own collapsing), posted through the same batched `comment` review and voice. They are **not** criteria, so instead of the `ac=` extension they carry the `judgment` discriminator token (`<!-- manifest-dev:review-pr judgment -->`) and are fingerprinted by finding substance like any other comment.
-- The all-green approval signal stays keyed to the contract: when every criterion PASSes, manifest mode is green **even if** the judgment pass posted questions — those are non-blocking and do not withhold the signal. They are still posted; the human decides.
+- The all-green approval signal stays keyed to the contract: when the Outcome and every criterion PASS, manifest mode is green **even if** the judgment pass posted questions — those are non-blocking and do not withhold the signal. They are still posted; the human decides.
 
 ## Fingerprint, don't re-post
 
@@ -40,4 +57,4 @@ PASS/FAIL comments recur every push, so track each by a content fingerprint (cri
 
 ## Cycle summary
 
-The SKILL.md reviewer-fleet and holistic-pass cycle-summary lines do not apply in manifest mode. Instead report, one line per Acceptance Criterion and Global Invariant: its manifest id, PASS/FAIL/BLOCKED, supporting evidence, and the assessment's short finding. State the actual review context and model; shared context can be reported once for the gates it assessed. Then add one line for the judgment pass: premise questions posted — count and their roots — or `none`, so an all-green contract summary still records that questions were raised.
+The SKILL.md reviewer-fleet and holistic-pass cycle-summary lines do not apply in manifest mode. Instead report, one line for the Outcome and per Acceptance Criterion and Global Invariant: its manifest id, PASS/FAIL/BLOCKED, supporting evidence, and the assessment's short finding. State the actual review context and model; shared context can be reported once for the gates it assessed. Then add one line for the judgment pass: premise questions posted — count and their roots — or `none`, so an all-green contract summary still records that questions were raised.

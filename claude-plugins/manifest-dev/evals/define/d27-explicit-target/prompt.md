@@ -8,8 +8,7 @@ runs: 1
 ---
 use the define skill for this.
 
-our customer CSV export takes about eight seconds for 100,000 rows. the customer contract
-requires p95 under two seconds for exports of that size on our current hosting tier. that
+our customer CSV export takes about eight seconds for 100,000 rows. i require p95 under two seconds for exports of that size on our current hosting tier. that
 number is firm, not a wish. nobody has profiled the exporter yet, so we don't know whether the
 current design can reach it. keep the CSV schema unchanged. scope is settled.
 

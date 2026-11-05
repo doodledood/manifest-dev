@@ -10,7 +10,7 @@ Judge whether the audience can understand, engage with and use the artifact as i
 
 ## Input
 
-`$ARGUMENTS` carries what to review — a file path, a directory, a URL, or a running app plus how to reach it. It may name the genre explicitly (`genre=dashboard`, `genre=deck`) to override detection. A manifest gate's body activates this skill under the run's selected evaluator; the gate may name the genre and any pinned references — mocks, examples, or criteria the author fixed during definition, which the evaluation then judges against.
+`$ARGUMENTS` carries what to review — a file path, a directory, a URL, or a running app plus how to reach it. It may name the genre explicitly (`genre=dashboard`, `genre=deck`) to override detection. A manifest gate's Evidence activates this skill under the run's selected evaluator; the gate may name the genre and any pinned references — mocks, examples, or criteria the author fixed during definition, which the evaluation then judges against.
 
 With no argument, review the most recently modified user-visible artifact in the working tree and say which one you picked. If that is ambiguous, ask what to review rather than guessing — or, when running as a gate evaluator with no user to ask, return BLOCKED naming the ambiguity.
 

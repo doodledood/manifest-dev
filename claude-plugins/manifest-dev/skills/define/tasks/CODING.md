@@ -31,7 +31,10 @@ Each gate is a **dimension** of the `review-code` skill (one ref per dimension, 
 | Contract correctness | contracts | no MEDIUM+ | When code calls external/internal APIs, changes public interfaces, crosses service boundaries, or changes durable data contracts (API/event payloads, database schema/table-field semantics, exports, analytics feeds) |
 | Type safety | type-safety | no MEDIUM+ | When using typed languages (TypeScript, Python with type hints, Java/Kotlin, Go, Rust, C#) |
 
-**Encoding:** each dimension gate's body tells `/do`'s selected evaluator to **activate** the `review-code` skill for the dimension — e.g. *"Done when review-code, activated with dimension=code-bugs and caller acceptance policy no MEDIUM+, reports no finding that fails that policy."* Write it as `define/SKILL.md` → *Specialized gates activate a skill* says; the table supplies default caller policy, and the gate states the chosen threshold explicitly.
+**Encoding:** each dimension gate states the quality and chosen caller policy in its claim.
+Its Evidence activates `review-code` with the dimension and acceptance policy, as
+`define/SKILL.md` → *Specialized gates activate a skill* says. The table supplies the usual
+Medium+ policy; the claim states the chosen threshold explicitly.
 
 **Kind:** every dimension gate is a **Judgment Gate** — a reviewer's verdict over an open finding space, not a command outcome — so each declares the judgment kind, which is what tells `/do` how the gate re-verifies. The defect-finding dimensions above run alongside the project's mechanical gates below (typecheck, lint, test, format), which are Deterministic Gates — and an overlay task file may add a defect-finding dimension, as `BUG.md` adds `defect-class`.
 

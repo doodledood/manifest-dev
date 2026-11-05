@@ -1,5 +1,11 @@
 # figure-out eval suite
 
+**Contract change, 2026-11-05: all earlier measurements are stale.** The shared workflow now
+preserves hard requirements separately from revisable working claims and assesses Outcome
+directly. The affected define rubrics and seeded Manifests use that distinction; no full suite
+has run for this change. The relevant verification recipes define focused native scenarios;
+their run results establish only the observed cases, not suite uplift or reliability.
+
 This directory also holds the `define` suite under `define/`, with its own README. Each case is
 tagged with its suite; run one with `--tag figure-out` or `--tag define`.
 

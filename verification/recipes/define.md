@@ -6,7 +6,7 @@ dry-run: honored
 ---
 # define
 
-Turns shared understanding into a Manifest — Problem, Appetite, Deliverables with Acceptance Criteria, Global Invariants, assumptions — written to the user's home directory, ready for `/do`.
+Turns shared understanding into a Manifest — Outcome, Problem, Appetite, Deliverables with Acceptance Criteria, Global Invariants, assumptions — written to the user's home directory, ready for `/do`.
 
 ## How a user reaches it
 
@@ -62,7 +62,7 @@ Check: read
 
 ### fresh-review
 Run: `scripts/drive-skill.sh define claude-plugins/manifest-dev/evals/define/d25-vague-target/prompt.md`
-Proves: before the reply's digest, the session hands a fresh context `references/REVIEW.md` with the Manifest and the session record, and settles its findings in one pass — each fixed in the Manifest or named with its reason as rejected; the review reports as a finding any gate that no plausible wrong result fails, naming the wrong result it lets through; the digest lists every number a gate binds; the Manifest's speed gate binds a floor such as faster than the measured baseline, and any frame rate appears only as an advisory aim even when recorded as an assumption.
+Proves: before the reply's digest, the session hands a fresh context `references/REVIEW.md` with the Manifest and the session record, and settles its findings in one pass — each fixed in the Manifest or named with its reason as rejected; the review reports as a finding any gate that no plausible wrong result fails, naming the wrong result it lets through; the digest lists every number a gate binds; the Manifest requires faster, responsive behavior with comparable evidence, and an agent-selected frame rate stays advisory or revisable working, never hard.
 Check: read
 
 ### hole-search
@@ -82,7 +82,7 @@ Check: read
 
 ### current-state-amend
 Run: `scripts/drive-skill.sh define verification/prompts/define-current-state-amend.md`
-Proves: the amended `manifest.md` reads as current state. It carries no date that records when something was decided or changed, and no note of who decided what outside Known Assumptions — the notes in Intent, the Approach, the touched AC-1.2 and the untouched INV-G2 included. The plain-text-only rule, ASM-1's "plain text only" included, is gone from every section, with no text saying it changed, and ASM-1 is replaced rather than joined by a second entry; the plain-text alternative part may remain. The weekly cadence and staying on the relay are recorded as undated `User's call:` Known Assumptions. Reactions are covered by AC-1.1 rewritten to state the class (every kind of item the activity feed shows), with no gate whose region is reactions alone. Every untouched gate keeps its ID, and no reference names an ID that no longer exists. Intent, the Approach and the Deliverable describe the HTML digest. No Known Assumption only records how the amendment's review findings were handled, and the reply lists any finding it did not apply as an open item. Before the handoff, a fresh context reviewed the amendment, or the reply says the review was self-graded.
+Proves: the amended `manifest.md` reads as current state. It carries no date that records when something was decided or changed, and no historical decision notes outside Known Assumptions; source authority remains beside each claim — the notes in Intent, the Approach, the touched AC-1.2 and the untouched INV-G2 included. The plain-text-only rule, ASM-1's "plain text only" included, is gone from every section, with no text saying it changed, and ASM-1 is replaced rather than joined by a second entry; the plain-text alternative part may remain. The weekly cadence and existing relay remain sourced hard requirements. Reactions are covered by AC-1.1 rewritten to state the class (every kind of item the activity feed shows), with no gate whose region is reactions alone. Every untouched gate keeps its ID, and no reference names an ID that no longer exists. Intent, the Approach and the Deliverable describe the HTML digest. No Known Assumption only records how the amendment's review findings were handled, and the reply lists any finding it did not apply as an open item. Before the handoff, a fresh context reviewed the amendment, or the reply says the review was self-graded.
 Check: read
 
 ### draft-gets-no-task-file-gate
@@ -123,7 +123,7 @@ Check: read
 - The Manifest is written to the home directory, not the project: in a drive it is in the evidence's `home-manifest-dev.tar`.
 - Attended, it waits for a yes after the digest; a headless drive needs `--autonomous` or a prompt that says to proceed.
 - A drive uses the general agent's actual host capabilities. If no question-selection tool is available, asks stay in plain text; record the capability used rather than assuming every drive is headless.
-- An old Manifest with a `verify` block is refused, not migrated.
+- An old Manifest missing Outcome or authority, or carrying a `verify` block, is refused, not migrated.
 - `hole-search`'s seen-to-fail check drives the same prompt from a worktree at the commit before define's review searched for holes; repeat it when changing the scenario. It drives `d26`'s prompt, which the define suite grades on the self-graded path.
 - A yes approves the Manifest, not execution: it never runs `/do` itself.
 - "It didn't stop for approval" is define only under `--autonomous` or when called by `auto`; a whole chain that never stopped is the auto entry.

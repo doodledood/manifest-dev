@@ -17,11 +17,10 @@ is never a finding here.
 | External consistency | — | No contradictions with identified reference documentation (conditional: only when comparison docs surfaced during interview) |
 | Scope clarity | — | What's covered and what's not stated explicitly |
 
-The style gate encodes as a gate body that activates the `review-writing` skill with
-`register=docs` under `/do`'s selected evaluator. Name the skill and the register and stop, as `SKILL.md` → *Specialized gates activate a skill* says.
-The skill loads its own references, and `register=docs` brings the shared prose
-floor with it, so the bar in the table above orients the author rather than being copied into the
-gate. It is a Judgment Gate, which is what tells `/do` how it re-verifies.
+The style claim states the chosen acceptance policy. Its Evidence activates `review-writing`
+with `register=docs` and that policy, as `SKILL.md` → *Specialized gates activate a skill* says.
+The table supplies the usual Medium+ policy; reviewer standards and the shared prose floor
+stay with the skill. It is a Judgment Gate, which is what tells `/do` how it re-verifies.
 
 Terminology consistency, formatting conventions, headings, lists, numbers, dates, links, and code
 references all fall inside that one gate; they do not need gates of their own.

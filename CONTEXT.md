@@ -5,7 +5,11 @@ manifest-driven workflows for Claude Code. `/define` interviews you and writes a
 ## Language
 
 **Manifest**:
-A structured spec produced by `/define` that captures Deliverables, Acceptance Criteria, Global Invariants, Process Guidance, and an Initial Approach.
+A structured acceptance contract produced by `/define` that states the Outcome owed, Deliverables, sourced hard or revisable working acceptance claims, separate evidence methods, Process Guidance and an Initial Approach.
+
+**Outcome**:
+The requested result a Manifest owes, for whom and in what circumstances. It is assessed directly as judgment ID `OUTCOME`, in addition to current gates. It preserves the source-supported result and hard requirements; operational interpretations stay in working gates. Its assessment method remains revisable unless explicitly required.
+_Avoid_: Proxy, metric, implementation plan.
 
 **Deliverable**:
 A slice a `/define` session commits to producing that can be finished on its own and exercised end-to-end, so its Acceptance Criteria judge whether it works rather than whether it exists.
@@ -20,15 +24,15 @@ A property that must hold across all Deliverables in a Manifest.
 _Avoid_: Constraint, rule.
 
 **Gate**:
-An Acceptance Criterion or a Global Invariant — something `/do` must make hold, with evidence, before it reports completion. Each gate is one Gate Text of one declared kind, judgment or deterministic.
+An Acceptance Criterion or a Global Invariant — something `/do` must make hold, with evidence, before it reports completion. Each gate has hard or working Authority, one Gate Text and one declared kind, judgment or deterministic. Hard claims preserve deliberate requirements and applicable obligations; working claims can be amended on evidence while preserving the Outcome and hard requirements.
 _Avoid_: Check, test, requirement.
 
 **Process Guidance**:
-An advisory recommendation on HOW to work during execution, weighed by `/do` rather than enforced; departing from one is legitimate and is named on whichever terminal path the run reaches — completion, escalation, or pending — and in the Execution Log too when one is kept. Only Acceptance Criteria and Global Invariants bind.
+An advisory recommendation on HOW to work during execution, weighed by `/do` rather than enforced; departing from one is legitimate and is named on whichever terminal path the run reaches — completion, escalation, or pending — and in the Execution Log too when one is kept. The Outcome and current Acceptance Criteria and Global Invariants are owed; working claims may be validly amended.
 _Avoid_: Constraint, requirement, gate.
 
 **Known Assumption**:
-A Manifest entry (`ASM-*`) recording a decision the Manifest rests on — a default taken instead of a question, or a user's call — with its value, its reason and the impact if wrong. An autonomous choice is marked `(auto)` and a User's Call opens with that label, so a reader can review what was decided and by whom. Known Assumptions is the Manifest's one place for who decided what, with no date of when it was decided; the rest of a Manifest states only what holds now.
+A Manifest entry (`ASM-*`) recording an unresolved assumption or material choice, with its reason, alternative and impact if wrong. An `(auto)` mark identifies a choice made without asking. Source authority lives in each gate, not only here; an assumption cannot waive the Outcome or a hard requirement. The Manifest states current understanding, while its change history lives in the execution log.
 _Avoid_: Note, caveat.
 
 **Quality Gate**:
@@ -38,7 +42,7 @@ A verifiable task-file item that `/define` encodes as an acceptance-style gate.
 A non-probed task-file item that `/define` carries into Process Guidance — unless violating it would be unsafe or irreversible, which routes it to a Global Invariant instead.
 
 **Appetite**:
-The current size of change a problem is worth — a bound on complexity and surface, independent of time and token cost, revisable prospectively under executor delegation when the benefit to the requested outcome justifies added complexity and maintenance without crossing explicit exclusions or binding requirements.
+The current size of change a problem is worth — a bound on complexity and surface, independent of time and token cost, revisable prospectively under executor delegation when the benefit to the requested outcome justifies added complexity and maintenance without crossing hard exclusions or requirements.
 _Avoid_: Estimate, budget, deadline.
 
 **Task File**:
@@ -153,7 +157,7 @@ The weight class of a prompt line — Spine, mode-specific mechanic, or edge-cas
 _Avoid_: Priority, importance.
 
 **Do/Verify Loop**:
-The execution cycle where `/do` implements toward a Manifest, verifies every Acceptance Criterion and Global Invariant, routes failures or blockers, and finishes only after all gates pass.
+The execution cycle where `/do` pursues the Outcome and current gates, revises working claims through evidenced amendment, routes failures or blockers, and finishes only with fresh PASS evidence for the Outcome and every gate.
 
 **Host Continuation Backstop**:
 A host-provided goal-setting, continuation, or completion-check capability that keeps or reopens a run until a durable completion contract is satisfied.
@@ -162,7 +166,7 @@ A host-provided goal-setting, continuation, or completion-check capability that 
 A required intermediate workflow condition that must be satisfied before moving to the next phase, but is not the terminal success condition unless that phase's artifact is the deliverable.
 
 **Gate Text**:
-The single text a gate is — a title, a body, and an optional why — read by the reviewer and the evaluator alike. The body says what done means, what evidence settles it, any non-obvious context the evaluator needs, and where the check *is* the definition, how to run it; the title summarizes it and the why is context. Neither the title nor the why adds a requirement the body does not state.
+The text read by its author, reviewer and evaluator: a title, Authority, claim body, Evidence method, optional why and declared kind. The body states the claim and threshold; Authority records whether and on what source it is hard or working. Evidence describes the current assessment without adding requirements. An explicitly required method belongs in the hard claim. The title and why add no requirement.
 _Avoid_: Gate evaluation instructions, verify prompt, criterion description.
 
 **Gate Extension**:
@@ -331,12 +335,12 @@ _Avoid_: Ticket sweep, batch runner, scheduler.
 - `/define` encodes the understanding a figure-out **Read** establishes into a **Manifest** rather than re-deriving or re-investigating it.
 - Every **Acceptance Criterion** and **Global Invariant** is one **Gate Text** in the **Manifest**; `/do` points an evaluator at it by ID rather than copying it into a prompt.
 - **Gate Extension** and gate altitude are independent axes of one **Gate Text**; `/define` sets both at write time, and an instance reported mid-run is evidence a gate's extension is too narrow rather than grounds for a sibling gate.
-- `/do` owns the **Do/Verify Loop**: it implements **Deliverables**, judges failed-or-unverified **Acceptance Criteria** and **Global Invariants** against the evidence each names, repairs FAILs, and routes BLOCKED gates.
+- `/do` owns the **Do/Verify Loop**: it implements **Deliverables**, judges the **Outcome** and failed-or-unverified **Acceptance Criteria** and **Global Invariants** against the evidence each names, repairs FAILs, and routes BLOCKED gates.
 - Every gate evaluation returns PASS, FAIL, or BLOCKED with the concrete evidence behind it.
 - Every **Acceptance Criterion** and **Global Invariant** is either a **Judgment Gate** or a **Deterministic Gate**; the kind is a property of the gate itself, declared in its **Gate Text**.
 - The **Ratchet** governs how the **Do/Verify Loop** re-verifies **Judgment Gates** after repairs; **Deterministic Gates** re-run freely.
 - The **Ratchet** is run-level `/do` behavior, never **Manifest** content.
-- Gate text is immutable to the run: every **Acceptance Criterion** and **Global Invariant** changes only on the user's say-so, through the skill that authored it.
+- The **Outcome** and hard claims change only with their source's authorization. Working claims and evidence methods may be amended through `define` on evidence that the replacement better serves the unchanged Outcome and hard requirements; affected verdicts become unverified.
 - A **Skill** may invoke other **Skills** and may run through host **Agent** contexts.
 - A **Host Continuation Backstop** is an outer guard for unattended runs; it does not replace the **Do/Verify Loop**.
 - A **Phase Checkpoint** can protect a handoff between workflow phases, while terminal completion stays tied to the final deliverable's acceptance evidence.

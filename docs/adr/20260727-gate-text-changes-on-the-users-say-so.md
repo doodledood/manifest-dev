@@ -1,7 +1,7 @@
 # ADR: Gate text changes on the user's say-so, not the run's
 
 ## Status
-Accepted — narrowed by 20260810-gate-altitude-repairs-under-advance-delegation: raise-only altitude repairs outside the deliberately-chosen set run under advance delegation granted at encoding time; instance-by-instance say-so stands for everything else
+Accepted — narrowed by 20260810-gate-altitude-repairs-under-advance-delegation: raise-only altitude repairs outside the deliberately-chosen set run under advance delegation granted at encoding time; instance-by-instance say-so stands for everything else; amended by 20261106-source-authority-governs-acceptance-and-revision: hard claims retain source authorization; working claims may be amended on evidence through define, with fresh review and affected evidence invalidated
 
 ## Area
 do
@@ -45,7 +45,9 @@ Termination is scoped to match: a PASS whose criterion misdescribes what it judg
 - The user carries a decision they did not previously see. The escalation payload is what makes that tractable — it names the discrepancy and the decision, rather than asking the user to re-derive it.
 
 ## Enforced by
-partly — `tests/test_dist_skill_references.py` — `test_executor_amendments_preserve_verification` fails if an unattended amendment may cross a binding requirement or `/do` stops amending only through `define`; routing an impeached gate to `/escalate` is judgment.
+partly — `tests/test_dist_skill_references.py` — `test_executor_amendments_preserve_verification`
+checks source-authorized hard requirements, the `define` amendment boundary and affected evidence
+invalidation under the amended authority rule. Classifying an actual source remains judgment.
 
 ## Source
 - Related: [20260726-only-gates-bind-process-guidance-is-advisory](20260726-only-gates-bind-process-guidance-is-advisory.md)

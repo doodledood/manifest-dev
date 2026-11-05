@@ -22,6 +22,10 @@ what the person met.
 
 ### INV-G14 — Two friends plan one trip end to end
 
+Authority: working — this assessment checks the stated shared-trip experience.
+
+Evidence: Use the browser assessment specified below.
+
 Live drive in a real browser on the running server, roughly a few minutes against a local server
 with seeded users. Person A (signed out, phone viewport) opens the trip link, signs in, lands back
 on the same trip, and adds "Feira da Ladra". Person B, in another session, opens the same link,
@@ -34,6 +38,10 @@ an error.
 Judgment gate.
 
 ### INV-G13 — The page works and reads well on a phone
+
+Authority: working — this assessment checks the stated shared-trip experience.
+
+Evidence: Use the browser assessment specified below.
 
 Run the server with a seeded trip (3 days, 12–14 May; 10 places, some with long names and notes;
 two users) and activate the `review-design` skill on `/trips/<id>` in both modes. Review it at a

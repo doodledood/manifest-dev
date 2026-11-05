@@ -457,11 +457,11 @@ def test_do_completion_contract_requires_auditable_gate_ledger() -> None:
     required_do_phrases = (
         # The bar is per-gate evidence from the artifact the gate names — the
         # thing a summary claim is not allowed to stand in for.
-        "each with evidence from the artifacts that gate names",
-        "make every Acceptance Criterion and Global Invariant hold as written",
-        "A bar never moves down on the executor's judgment",
-        "a summary claim is not evidence",
-        "Read a gate from the Manifest by ID, never from a copy",
+        "each with fresh evidence",
+        "achieve its Outcome and make every current Acceptance Criterion and Global Invariant hold",
+        "An evaluator cannot lower a bar",
+        "A summary claim is not evidence",
+        "Read each claim and its Evidence from the Manifest by ID, never from a copy",
     )
     for path in do_files:
         text = " ".join(path.read_text(encoding="utf-8").split())
@@ -476,9 +476,9 @@ def test_do_completion_contract_requires_auditable_gate_ledger() -> None:
     ]
     required_done_phrases = (
         # `/done` relays what `/do` supplies; it never restates a bar of its own.
-        "the basis on which each Acceptance Criterion and Global Invariant was "
+        "the basis on which the Outcome and each Acceptance Criterion and Global Invariant was "
         "judged to hold",
-        "State the basis for each gate exactly as `/do` supplied it",
+        "State the basis for the Outcome and each gate exactly as `/do` supplied it",
         "holds on fresh evidence",
     )
     for path in done_files:
@@ -516,7 +516,10 @@ def test_do_completion_contract_requires_auditable_gate_ledger() -> None:
     for path in parent_goal_files:
         text = path.read_text(encoding="utf-8")
         assert "it carries the gate clause below" in text, path
-        assert "Completion requires every gate to hold on fresh evidence" in text, path
+        assert (
+            "Completion requires the Outcome and every current gate to hold on fresh evidence"
+            in text
+        ), path
         assert "the evidence behind that verdict" in text, path
         assert "self-attestation" in text, path
         assert not RETIRED_GATE_FIELDS.search(text), path
@@ -524,7 +527,7 @@ def test_do_completion_contract_requires_auditable_gate_ledger() -> None:
 
 # Holds the decision in docs/adr/20260907-executors-own-unattended-decisions-within-explicit-bounds.md.
 # Holds the decision in docs/adr/20260709-mid-do-steering-stays-autonomous.md.
-# Holds the decision in docs/adr/20260727-gate-text-changes-on-the-users-say-so.md.
+# Holds the decision in docs/adr/20261106-source-authority-governs-acceptance-and-revision.md.
 def test_executor_amendments_preserve_verification() -> None:
     """Prospective scope authority must reach the author and invalidate evidence."""
     base = ROOT / "claude-plugins/manifest-dev/skills"
@@ -535,11 +538,14 @@ def test_executor_amendments_preserve_verification() -> None:
     assert "Invoke `define` with the Manifest path" in executor
     assert "Wait for active gate evaluations to finish before amending" in executor
     assert "discard that evaluation's verdicts" in executor
-    assert "including the ceiling when Appetite changes" in executor
+    assert (
+        "including the Outcome assessment where affected and the ceiling when Appetite changes"
+        in executor
+    )
     assert "An amendment from an unattended executor is unattended" in author
     assert "ask no questions, and wait for no approval" in author
     assert "it has not already been done as excess" in author
-    assert "it crosses no explicit exclusion or binding requirement" in author
+    assert "it crosses no explicit exclusion or hard requirement" in author
     assert "The Manifest is read-only" not in executor
 
 
@@ -558,12 +564,12 @@ def test_manifest_schema_stays_topology_neutral() -> None:
         # A kind is declared, never inferred — that declaration is what decides
         # how the gate re-verifies.
         assert (
-            "A gate declares `judgment` or `deterministic`; an undeclared kind is "
-            "invalid, never inferred" in text
+            "A gate declares `hard` or `working` Authority and `judgment` or `deterministic` kind; missing "
+            "fields are invalid, never inferred" in text
         ), path
         assert not RETIRED_GATE_FIELDS.search(text), path
         assert "verify.instructions" not in text, path
-        assert "A bar never moves down on the executor's judgment" in text, path
+        assert "An evaluator cannot lower a bar" in text, path
         # Mode mechanics are gone entirely: the executor judges each gate itself
         # against the evidence that gate names, with no topology to select.
         assert "verification mode" not in text, path
@@ -615,6 +621,14 @@ def test_every_operative_manifest_example_uses_the_current_gate_schema() -> None
         DIST / "codex/plugins/manifest-dev/skills/define",
     ]
     candidates = [ROOT / "claude-plugins/manifest-dev/README.md"]
+    candidates.extend((ROOT / "verification/fixtures").rglob("manifest.md"))
+    candidates.extend((ROOT / "verification/prompts").glob("*.md"))
+    candidates.extend(
+        (ROOT / "claude-plugins/manifest-dev/evals/define").glob("*/prompt.md")
+    )
+    candidates.extend(
+        (ROOT / "claude-plugins/manifest-dev/evals/define").glob("*/scaffold.sh")
+    )
     for authoring_root in authoring_roots:
         candidates.extend(authoring_root.rglob("*.md"))
 
@@ -622,6 +636,9 @@ def test_every_operative_manifest_example_uses_the_current_gate_schema() -> None
     for path in candidates:
         text = path.read_text(encoding="utf-8")
         assert not RETIRED_GATE_FIELDS.search(text), path
+        if "# Definition:" in text:
+            assert "**Outcome:**" in text, f"{path}: Manifest has no Outcome"
+            assert "**Outcome evidence:**" in text, f"{path}: Outcome has no assessment"
         lines = text.splitlines()
         headings = [
             index
@@ -633,6 +650,14 @@ def test_every_operative_manifest_example_uses_the_current_gate_schema() -> None
         example_files.add(path)
         for position, index in enumerate(headings):
             end = headings[position + 1] if position + 1 < len(headings) else len(lines)
+            # A source-backed claim and its checking method must remain distinguishable.
+            block = "\n".join(lines[index + 1 : end])
+            assert re.search(
+                r"^Authority: ", block, re.M
+            ), f"{path}:{index + 1}: no authority"
+            assert re.search(
+                r"^Evidence: ", block, re.M
+            ), f"{path}:{index + 1}: no evidence method"
             kinds = [
                 line
                 for line in lines[index + 1 : end]
@@ -921,37 +946,27 @@ def test_review_pr_manifest_mode_keeps_per_gate_results_without_forced_contexts(
     ]
     for path in references:
         text = path.read_text(encoding="utf-8")
-        assert "assess every Acceptance Criterion and Global Invariant" in text
-        assert "related gates may share a context" in text
-        assert "each retains its own verdict and evidence" in text
-        assert "Each gate returns PASS, FAIL, or BLOCKED" in text
-        assert "one fresh independent verifier execution" not in text
-        assert "that is a weaker review" not in text
-        assert "own isolated execution context" not in text
-        assert "State the actual review context and model" in text
-        # The reviewer reads the canonical gate text from the manifest rather than
-        # a copy handed to it — the guarantee the retired `verify.instructions`
-        # verbatim-pass rule used to carry.
-        assert "Each assessment is pointed at that gate by ID" in text
-        assert (
-            "reads the gate's text from the file rather than receiving a copy of it"
-            in text
-        )
-        assert "regardless of how the author verified the branch" in text
-        assert "`/do --verification`" not in text
-        assert "On a continued loop wake, pass each evaluator" in text
-        assert "model choice is not manifest data" in text
-        # Manifest mode validates against the same current schema `/do` enforces.
-        assert (
-            "A gate is a title, a body, an optional why, and a required kind "
-            "(`judgment` or `deterministic`)" in text
-        )
-        assert "a gate carrying a `verify` block of any shape" in text
-        assert (
-            "a gate stating a `phase` — a field the manifest schema no longer has"
-            in (text)
-        )
-        assert "verify.instructions" not in text
+        compact = " ".join(text.split())
+        for clause in (
+            "assess its Outcome and every current Acceptance Criterion and Global Invariant",
+            "each retains its own verdict and evidence",
+            "Return PASS, FAIL or BLOCKED",
+            "Read each by ID from the file rather than a supplied copy",
+            "regardless of how the author verified it",
+            "Missing Outcome, authority or kind",
+            "Hard authority identifies a deliberately stated user requirement",
+            "A mistaken working claim is an amendment finding",
+            "On a continued loop wake, pass each evaluator",
+            "State the actual review context and model",
+        ):
+            assert clause in compact, (path, clause)
+        for retired in (
+            "one fresh independent verifier execution",
+            "that is a weaker review",
+            "own isolated execution context",
+            "verify.instructions",
+        ):
+            assert retired not in text, path
         assert not RETIRED_GATE_FIELDS.search(text)
 
 
@@ -1200,17 +1215,14 @@ def test_skill_activation_names_are_bare_on_every_surface() -> None:
     and keep their qualifier inside the HTML comment."""
     qualified = re.compile(r"manifest-dev(?:-tools)?:[a-z]")
 
-    for rel in (
-        "claude-plugins/manifest-dev/skills/define/SKILL.md",
-        "claude-plugins/manifest-dev/skills/define/tasks/PR_LIFECYCLE.md",
-    ):
+    for rel in ("claude-plugins/manifest-dev/skills/define/tasks/PR_LIFECYCLE.md",):
         text = (ROOT / rel).read_text(encoding="utf-8")
         assert "manifest-dev check-pr skill" not in text
         assert "`check-pr`" in text
     prompting = (
         ROOT / "claude-plugins/manifest-dev/skills/define/tasks/PROMPTING.md"
     ).read_text(encoding="utf-8")
-    assert "activates the `review-prompt` skill" in prompting
+    assert "`review-prompt`" in prompting
 
     for path in _skill_markdowns(*SOURCE_SKILL_ROOTS, *CODEX_COPY_ROOTS):
         text = _without_cross_host_review_pr_markers(path.read_text(encoding="utf-8"))

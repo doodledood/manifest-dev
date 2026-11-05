@@ -1,7 +1,7 @@
 # ADR: `/do` states verification sufficiency, not only necessity
 
 ## Status
-Accepted
+Accepted; amended by 20261106-source-authority-governs-acceptance-and-revision: the Outcome and every current gate require fresh evidence, with no unresolved amendment; passing operational checks alone is insufficient
 
 ## Area
 do

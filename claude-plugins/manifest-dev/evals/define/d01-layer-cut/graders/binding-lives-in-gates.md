@@ -8,13 +8,13 @@ weight: 1
 Work through the steps below privately, without writing them out. Your entire reply is one word:
 PASS or FAIL.
 
-Compare the request below with the spec's gates: acceptance criteria, invariants, or other
+Compare the request below with the spec's Outcome and gates: acceptance criteria, invariants, or other
 checks that must pass before completion. Account for each explicit outcome, scope boundary,
 exclusion, safety rule, and retained decision. Judge the work being specified, not instructions
 to the planner such as where to save this spec. Then inspect binding claims elsewhere in the spec.
 
 FAIL if a specific requirement is missing entirely, weakened, or left only as advice or an
-assumption. A broader gate may cover it in different words. Incidental implementation proposals
+assumption, or made revisable without its source's authority. Passing operational checks alone must not excuse a missing intended result. A broader gate may cover it in different words. Incidental implementation proposals
 and a requested layer grouping are not fixed requirements unless deliberately chosen as the
 outcome. Do not invent additional requirements. Problem description, rationale and optional
 suggestions are not binding by themselves. A safety rule that is only partly judgeable from the

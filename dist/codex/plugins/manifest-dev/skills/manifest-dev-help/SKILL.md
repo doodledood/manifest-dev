@@ -151,7 +151,7 @@ or `/skill:name`.
 ## Good practice
 
 - Start with `/figure-out` on a real problem. Let it read the code before it asks you questions.
-- Read the gates of the Manifest before `/do` starts. The gates are the contract.
+- Read the Outcome and gates before `/do` starts. Check what stays hard and what the agent may revise.
 - Let `/do` find and repair small problems. Do not stop it for them.
 - Send a change of direction as a message to `/do`, so that it goes into the Manifest. Do not
   change the code yourself during the run.

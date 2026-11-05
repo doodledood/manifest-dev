@@ -15,6 +15,9 @@ place):
 # Definition: Account timezone in customer-facing dates
 
 ## 1. Intent
+- **Outcome:** Customers can read reports with dates and day boundaries in their account timezone.
+- **Outcome evidence:** Exercise the reports page with non-UTC account timezones and inspect
+  the displayed dates and the events included in each report day.
 - **Problem:** Customers see dates in UTC on the reports page instead of their account's
   timezone, so "yesterday's" numbers are labelled with the wrong day for anyone west of London.
 - **Appetite:** Small — make the reports page honor the account timezone; no new settings.
@@ -28,14 +31,17 @@ place):
 
 ### INV-G1 — The change stops at what this Manifest authorized
 
+Authority: hard — the assignment authorizes only work serving the requested Outcome within
+its stated scope and applicable instructions.
+
 Read this Manifest. This is a conformance check: take its intent as given, and do not judge
 whether the work was necessary, motivated, or worthwhile.
 
-Done when the work this run added carries nothing beyond what the Deliverables, Acceptance Criteria, and
+Done when the work this run added carries nothing beyond what the Outcome, Deliverables, Acceptance Criteria, and
 Global Invariants — this one excluded — required, and nothing that nominally serves one of
 them while far exceeding the surface the Appetite allows.
 
-Read Problem, Appetite, and Out of bounds as the intent. Read the Deliverables and the other
+Read Outcome, Problem, Appetite, and Out of bounds as the intent. Read the Outcome, Deliverables and the other
 gates as what the work owes. Read the Initial Approach and Process Guidance as mechanisms that
 were *authorized rather than owed* — the ones expected, never the only ones permitted, so work
 reaching a Deliverable by a route this Manifest does not name is required by that Deliverable.
@@ -43,12 +49,15 @@ reaching a Deliverable by a route this Manifest does not name is required by tha
 Required although no criterion names it: work inherited rather than added — the artifact this
 Manifest was synthesized over, and anything arriving from outside the run such as a base branch
 merged into the head — the fixes every run owes on its pull request — a pre-existing issue the
-work met whose fix is not a project of its own and that the project's own rules do not keep out, and a below-bar finding from a first full look
-applied because it improves the work — and work discharging what a criterion required, including
+work met whose fix is not a project of its own and that the project's own rules do not keep out,
+and a below-bar finding from a first full look applied because it improves the work — and work
+discharging what a criterion required, including
 sweeping a changed rule into every copy and surface that holds it.
 
 FAIL only on work none of the above accounts for. Treat an unclear case as required work, and
 leave small, incidental, or imperfect changes inside an artifact already in scope alone.
+
+Evidence: Inspect the change against this Manifest and the applicable assignment.
 
 Why: every other gate states a floor, so a contract bounded on one side only gives an executor
 disposed to thoroughness nothing to read as a limit.
@@ -57,7 +66,11 @@ Judgment gate.
 
 ### INV-G2 — No change to how timezones are stored
 
+Authority: hard — the fixture requester deliberately requires the behavior and limits below.
+
 Done when the diff leaves the account timezone column, its type, and its write path unchanged.
+
+Evidence: Inspect the named artifacts and execute the checks stated in the claim.
 
 Deterministic gate.
 
@@ -74,22 +87,34 @@ reports page and reads dates and day boundaries in their own timezone.
 
 #### AC-1.1 — Report day boundaries follow the account timezone
 
+Authority: hard — the fixture requester deliberately requires the behavior and limits below.
+
 Done when, for an account set to America/Los_Angeles, a report for "yesterday" covers midnight to
 midnight Los Angeles time, checked by a test that seeds events either side of UTC midnight.
+
+Evidence: Inspect the named artifacts and execute the checks stated in the claim.
 
 Deterministic gate.
 
 #### AC-1.2 — Every date shown on the reports page renders in the account timezone
 
+Authority: hard — the fixture requester deliberately requires the behavior and limits below.
+
 Enumerate every date or timestamp the reports page displays — table cells, chart axes, headers,
 tooltips — by reading the page's components. Done when each one formats through the account
 timezone, with zero rendered in UTC.
+
+Evidence: Inspect the named artifacts and execute the checks stated in the claim.
 
 Judgment gate.
 
 #### AC-1.3 — Existing report tests still pass
 
+Authority: hard — the fixture requester deliberately requires the behavior and limits below.
+
 Done when the reports test suite passes.
+
+Evidence: Inspect the named artifacts and execute the checks stated in the claim.
 
 Deterministic gate.
 ````

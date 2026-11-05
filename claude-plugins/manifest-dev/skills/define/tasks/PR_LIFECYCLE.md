@@ -6,7 +6,7 @@ The goal of /do under PR_LIFECYCLE is to drive the PR to a **mergeable** state �
 
 ## Quality Gates
 
-Two gates compose, each as one AC per repo: the lifecycle gate, whose body activates the `check-pr` **skill**, and the proof gate, which judges whether the pull request shows the change working. They are independent. A rule or Taste entry about the lifecycle gate — CI, review feedback, mergeability — does not bear on the proof gate, which only a rule or entry naming it drops.
+Two gates compose, each as one AC per repo: the lifecycle gate, whose Evidence activates the `check-pr` **skill**, and the proof gate, which judges whether the pull request shows the change working. They are independent. A rule or Taste entry about the lifecycle gate — CI, review feedback, mergeability — does not bear on the proof gate, which only a rule or entry naming it drops.
 
 | Aspect | Verifier | Threshold |
 |--------|----------|-----------|
@@ -22,7 +22,12 @@ The `check-pr` skill owns the canonical lifecycle gate set as internal implement
 ````markdown
 #### AC-N.M — The pull request is ready to merge
 
-Done when the check-pr skill reports the pull request ready.
+Authority: working — the lifecycle assessment operationalizes the requested ready pull request;
+retain any source-backed approval and stopping limits as hard claims.
+
+The pull request is ready under the applicable project and assignment requirements.
+
+Evidence: Activate the check-pr skill and require its ready verdict.
 PR: https://github.com/<owner>/<repo>/pull/<N>
 Branch: <branch-name>
 
@@ -45,6 +50,9 @@ The gate's body is the steering surface — baseline content is enough to start;
 
 ````markdown
 #### AC-N.M — The pull request shows the change working
+
+Authority: working — this proof format lets a reviewer assess the delivered change; any
+explicit project proof requirements keep their source authority in the encoded claim.
 
 Done when the pull request's description shows the change working:
 - Its top reads in about a minute: what changed and why, how the change was shown working, the
@@ -69,6 +77,8 @@ Done when the pull request's description shows the change working:
 
 PR: https://github.com/<owner>/<repo>/pull/<N>
 Branch: <branch-name>
+
+Evidence: Inspect the linked runs and media against the tested change.
 
 Subject: the pull request's description, its comments and its attached or linked media, read fresh from
 GitHub on every evaluation, rather than the branch diff `/do` supplies by default.

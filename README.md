@@ -6,7 +6,7 @@
 
 Hand your agent a task. Get back work you can trust.
 
-manifest-dev is a set of free, open-source skills for coding agents. With it, your agent works out what you mean, writes down what done means, and calls nothing finished until every check passes. Use one skill, finish a defined task, or assign a project outcome while keeping the decisions you care about.
+manifest-dev is a set of free, open-source skills for coding agents. With it, your agent works out what you mean, writes down what done means, and requires evidence that the intended result and current checks hold. Use one skill, finish a defined task, or assign a project outcome while keeping the decisions you care about.
 
 **[See it explained →](https://doodledood.github.io/manifest-dev/)** — the available paths, one scene at a time.
 
@@ -35,9 +35,9 @@ Ask about the bug you keep putting off. When a term or a step is unclear, ask `/
 
 **First, it works out what you mean.** `/figure-out` reads your code, finds the question that decides the work, and asks you only what the code can't answer, with its recommended answer first.
 
-**Then you agree what done means.** `/define` writes a Manifest: the pieces of work (Deliverables), a check each one must pass (Acceptance Criteria), and rules that hold across all of them (Global Invariants).
+**Then you agree what done means.** `/define` writes a Manifest: the intended result (Outcome), pieces of work (Deliverables), their acceptance claims (Acceptance Criteria), and rules across the work (Global Invariants). It separates your hard requirements from the agent's working targets and methods.
 
-**It builds until every check passes.** `/do` builds against the Manifest. A failed check sends that piece back to be fixed, and done means every check passed on fresh evidence. `/do` assumes you are away: it decides without asking, reports the decisions it made for you, and raises a blocker as soon as it finds one.
+**It builds toward the agreed result.** `/do` requires fresh evidence for the Outcome and every current check. It can correct its own working targets on evidence, reporting the change; your hard requirements need your authorization to change. `/do` assumes you are away: it decides without asking, reports the decisions it made for you, and raises a blocker as soon as it finds one.
 
 `/auto` runs all three steps in one go.
 

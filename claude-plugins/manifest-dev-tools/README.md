@@ -35,7 +35,7 @@ Write and review prompts, or write a standalone goal from a Manifest, a figure-o
 | Skill | What it does |
 |-------|--------------|
 | `/prompt-engineering` | Writes, revises, or discusses a prompt — a system prompt, a skill, or an agent. |
-| `/write-goal <source>` | Prints one standalone definition of done in a copyable goal paragraph of at most 4,000 characters, from a Manifest, a figure-out read, a Ticket, a handoff or a plain request, preserving purpose, acceptance conditions, constraints and required evidence without a file reference. Before writing, it asks about anything the sources leave open, or runs figure-out on it. |
+| `/write-goal <source>` | Prints one standalone definition of done in a copyable goal paragraph of at most 4,000 characters, from a Manifest, a figure-out read, a Ticket, a handoff or a plain request, preserving the intended result, hard requirements, revisable working choices and evidence without a file reference. Before writing, it asks about anything the sources leave open, or runs figure-out on it. |
 | `/review-prompt` | Reviews a prompt against the prompt-engineering principles and reports what it finds without editing anything. |
 
 ## People and sessions

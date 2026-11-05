@@ -7,12 +7,12 @@ requests.
 ## The Manifest and its gates
 
 ### Manifest
-<!-- context: d036ce7b9fad -->
-A Manifest is the file that `/define` writes for one piece of work. It holds the Intent, an Initial
-Approach, Global Invariants, Process Guidance, Known Assumptions and Deliverables. It is the
-contract for one run: `/do` reads it and makes each of its gates pass. It exists so that "done" is
-written before the work starts. An agent with no memory of the conversation can then do the work and
-prove it.
+<!-- context: ba879cf41c46 -->
+A Manifest is the acceptance contract that `/define` writes for one piece of work. It states the Outcome owed, Deliverables and their gates. Each gate separates its claim from the evidence used to check it. Hard claims preserve explicit requirements. Working claims may change on evidence while the Outcome and hard requirements stay protected. This lets the run learn without changing what it owes.
+
+### Outcome
+<!-- context: eab2e33b41bd -->
+The Outcome is the result a Manifest owes, for the people and circumstances it names. It is checked directly, as well as through the gates. Passing a chosen measure alone does not prove the result. The Outcome keeps the requested meaning; agent-selected targets belong in working gates. Its checking method may change unless the source requires that method.
 
 ### Deliverable
 <!-- context: 82b80e1e5a45 -->
@@ -33,18 +33,12 @@ the whole change must obey, for example "no test becomes weaker". A rule whose v
 or permanent always becomes a Global Invariant, so that it binds.
 
 ### Gate
-<!-- context: 880012b6b782 -->
-A gate is an Acceptance Criterion or a Global Invariant. `/do` must make each gate pass, with
-evidence, before it reports that the work is done. Each gate is one Gate Text, and it declares its
-kind: judgment or deterministic. Gates exist so that "done" is a result that you can examine, not a
-claim.
+<!-- context: 000772b8f524 -->
+A gate is an Acceptance Criterion or a Global Invariant. Each current gate must pass on evidence before the work is done. Its Authority says hard or working. A hard claim needs its source's permission to change. A working claim may change on evidence that preserves the Outcome and hard requirements. The declared kind says judgment or deterministic.
 
 ### Gate Text
-<!-- context: 3e67f465b2a4 -->
-A Gate Text is the one text that a gate is: a title, a body and an optional "why". The body says
-what "done" means and which evidence decides it. The title and the "why" add no requirement. The
-person who reviews the gate and the agent that evaluates it read the same text. Thus they cannot
-read two different requirements.
+<!-- context: 8adb36290a3e -->
+Gate Text is what the author, reviewer and evaluator all read. It has a title, Authority, claim body, Evidence, optional why and kind. The body states the claim and its threshold. Authority gives the source and whether the claim is hard or working. Evidence states the checking method. A required method belongs in the hard claim; the title and why add no requirement.
 
 ### Gate Extension
 <!-- context: 10b8e7251d4a -->
@@ -72,26 +66,15 @@ changes. They carry the earlier criteria, subject state, and finding results. Ne
 can still show a real failure in material already reviewed.
 
 ### Process Guidance
-<!-- context: e7359da1f511 -->
-Process Guidance is advice in a Manifest about how to do the work. It does not bind. `/do` can
-depart from it, but it names each departure in its report, and in its Execution Log when it keeps
-one. It exists so that good practice reaches the run, and the run can still adapt where the advice
-does not fit. Only Acceptance Criteria and Global Invariants bind.
+<!-- context: abb3d0948b40 -->
+Process Guidance is advice about how to do the work. It does not bind. `/do` may depart from it and explains material departures in its report and log. The Outcome and current gates are owed. Working claims may change through an amendment supported by evidence.
 
 ### Known Assumption
-<!-- context: 5724e7b179f1 -->
-A Known Assumption is an entry in a Manifest, with an `ASM-` number. It records a decision that the
-Manifest uses. The skill took the decision with a default instead of a question, or it is a User's
-Call: a decision that is yours to make. It gives the value, the reason and the result if the
-decision is wrong. An autonomous choice has the mark `(auto)`, and a User's Call starts with
-the words "User's call:". Thus you can examine what was decided, and who decided it.
-
-The Known Assumptions are the only part of a Manifest that tells who decided what. They do not
-give the date of a decision. All other parts of the Manifest tell only what is true now. Thus you
-can read it without knowing how it was changed after it was first written.
+<!-- context: 82d731233bd5 -->
+A Known Assumption records an unresolved assumption or material choice in the Manifest. It gives the reason, alternative and result if wrong. An `(auto)` mark means the agent chose without asking. The gate itself records its source authority. An assumption cannot waive the Outcome or a hard requirement. The Manifest states current understanding; the execution log keeps its change history.
 
 ### Appetite
-<!-- context: 78ddd6db6bcb -->
+<!-- context: 5bdd44488603 -->
 Appetite is the size of change that a problem is worth. It limits complexity and the size of the
 area that changes, not time or tokens. `/do` can increase it before broader work starts, but only
 when the benefit to your result is larger than the added complexity. An increase never changes your
@@ -127,9 +110,8 @@ Assumption.
 ## The run
 
 ### Do/Verify Loop
-<!-- context: a2124e071283 -->
-The Do/Verify Loop is the cycle of `/do`. It does the work, examines each gate, repairs each failure
-and reports each blocker. It stops only when all gates pass, or when a person must act.
+<!-- context: ca7a45ac62cf -->
+The Do/Verify Loop is the work that `/do` repeats until the Manifest is complete. It builds, checks the Outcome and current gates, and repairs failures. Evidence may support an amendment to a working claim. Hard requirements stay protected. Completion needs fresh passing evidence for the Outcome and every gate.
 
 ### Execution Log
 <!-- context: dfc703472a78 -->
@@ -147,7 +129,7 @@ direction and then leave again.
 <!-- context: f68fc8d2c161 -->
 A Host Continuation Backstop is a feature of your agent host that keeps a run active until a goal is
 complete. `/do` sets it, with the path of the Manifest in the goal. When the host has no such
-feature, `/do` prints the goal for you. It prevents a stop before all gates pass.
+feature, `/do` prints the goal for you. It keeps the run tied to the Outcome and current gates.
 
 ### Phase Checkpoint
 <!-- context: edb861149c1f -->

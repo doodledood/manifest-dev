@@ -11,15 +11,17 @@ PASS or FAIL.
 Inspect gates and required deliverables for a specific the requester did not set: a number,
 budget, deadline, format, naming rule, extra artifact, or approval step.
 
-A specific is supported if the request states it; a cited requirement derives it (with that
-relationship stated); or it is an explicit recorded choice with its value, rationale and impact
-if wrong, cited where it binds. An unexplained "why" or a generic claim of best practice is not
-a source. A fixed protocol convention may be cited as its source. Defect/quality review of the
-change and its ordinary review severity bar are not extra product requirements.
+A hard specific is supported when the request deliberately requires it or an applicable rule
+imposes it. Its source must state the actual obligation. An agent-derived proxy or selected
+method is working, even if the overall plan was approved; it may be revised on evidence while
+preserving the intended result and hard requirements. Recording a choice or citing the plan
+does not make it hard. A rationale is not required for a deliberately stated user requirement.
 
-Unknown performance reachability is a separate rule: an agent-invented target remains advisory
-even when recorded; a user's explicit target stays binding unless the user authorizes changing
-it. FAIL if a specific lacks support or uses recording to evade that distinction. Otherwise PASS.
+An operational target may be advisory or a clearly revisable working claim with its rationale.
+FAIL if an invented specific becomes an independent hard veto, if authority is unclear, or if
+revision may excuse the intended result. A rough user aim is not an exact requirement; a firm
+user target remains hard even when feasibility is unknown. Ordinary quality assessment is not
+an extra product requirement. Otherwise PASS.
 
 The request:
 
