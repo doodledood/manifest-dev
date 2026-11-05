@@ -67,12 +67,7 @@ Do NOT report on:
 
 ## Severity calibration
 
-- **Critical** — Violations that will break builds, deployments, or core functionality. Direct contradictions of explicit "MUST", "REQUIRED", or "OVERRIDE" instructions.
-- **High** — Clear violations of explicit context-file requirements that don't break builds but deviate from mandated patterns. Wrong naming conventions, missing required code structure.
-- **Medium** — Partial compliance with explicit multi-step requirements. Missing updates to related files when the context file explicitly states they should be updated together.
-- **Low** — Minor deviations from explicitly stated style preferences. Violations of explicit rules with minimal practical impact.
-
-**Calibration check**: Critical should be rare — only for build-breaking or explicit MUST/REQUIRED violations. If you're finding multiple Criticals, recalibrate.
+Use the shared ladder. Violating an explicit binding requirement is High even when the rule concerns presentation. A concrete must-fix consistency or contributor burden is Medium. A departure from an advisory style preference that preserves the underlying promise is Low.
 
 ## Dimension-specific report fields
 

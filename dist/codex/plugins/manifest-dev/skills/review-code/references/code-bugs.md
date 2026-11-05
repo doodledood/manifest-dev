@@ -91,13 +91,13 @@ Before reporting a bug, it must pass ALL of these criteria. **If it fails ANY cr
 2. **Discrete and actionable** — One clear issue with one clear fix. Not "this whole approach is wrong."
 3. **Provably affects code — at mechanism level** — You must identify the specific code path that breaks as a concrete mechanism, not a category label. The finding must name the variable, location, value (vs. expected), and sequence of events that produces the wrong behavior. "Race condition possible on userId" is a shape — reject. "useEffect at line 42 reads `userIdRef.current` after the cleanup at line 58 clears it; second fire produces `undefined`" is a mechanism — accept. The test: can you answer *"at line X, variable Y holds value Z because sequence M"*? If not, you have a hypothesis, not a finding — keep tracing or drop it.
 4. **Concrete failure, not optional hardening** — Missing error handling or validation must produce the traced failure above. Similar omissions nearby do not establish that the failure was knowingly accepted; only evidence of that accepted tradeoff can exclude it.
-5. **Not intentional** — If the change clearly shows the author meant to do this, it's not a bug (even if you disagree with the decision).
+5. **Accepted behavior** — An explicit accepted behavior or trade-off can rule out an alleged bug. The presence of a condition or a repair comment is not acceptance of its failure; an implementation choice cannot waive the accepted contract.
 6. **Unambiguous unintended behavior** — Would the bug cause behavior the author clearly did not intend? If intent is unclear, if the code's behavior is unclear, or if several interpretations exist and you cannot determine which is correct, drop the finding.
 
 ## Out of scope (orthogonality boundaries)
 
 Do NOT report on (owned by other dimensions):
-- **Intent-behavior divergence** (does the change achieve its goal? logic errors, behavioral mismatches) → the change-intent dimension
+- **Purpose-level gaps without a mechanical defect** (does the chosen behavior achieve the intended goal?) → the change-intent dimension. A traced mechanical defect, including broken bounds that omit data, stays here even when it also violates the change's intent.
 - **API contract correctness** (wrong params, missing error handling for specific APIs, consumer breakage) → the contracts dimension
 - **Type system improvements** that don't cause runtime bugs → the type-safety dimension
 - **Maintainability concerns** (DRY, coupling, consistency patterns) → the code-maintainability dimension
@@ -114,23 +114,16 @@ Do NOT report on (owned by other dimensions):
 - **change-intent** asks: "Does this change do what the author intended?" (intent-behavior analysis). This dimension asks: "Does this code have mechanical defects?" (runtime failures, resource issues, structural flaws).
 - **contracts** asks: "Are API calls correct per documentation?" (evidence-based contract verification). This dimension asks: "Will this code crash or leak resources?" (code-pattern defects).
 
-**Rule of thumb:** If the issue requires understanding the change's PURPOSE to identify (wrong logic for the goal), it's the change-intent dimension. If it requires API DOCUMENTATION to verify (wrong params, missing error codes), it's the contracts dimension. If it's a defect pattern recognizable from the CODE STRUCTURE alone (race condition, null deref, resource leak, dangerous default), it's this dimension.
+**Rule of thumb:** A purpose-level disagreement without a mechanical defect belongs to change-intent. A concrete broken index, bound or state transition remains a mechanical defect even when the accepted purpose explains why its result is wrong. If it requires API DOCUMENTATION to verify (wrong params, missing error codes), it's the contracts dimension. If it's a defect pattern recognizable from the CODE STRUCTURE alone (race condition, null deref, resource leak, dangerous default), it's this dimension.
 
 Note: Security issues causing **runtime failures** (crashes, data corruption) ARE in scope. Security issues requiring **static analysis** are out of scope.
 
 **Tool usage**: Fetching pages and searching the web are available for researching unfamiliar APIs or ambiguous language semantics. If web research fails and you still cannot name the input, state, or sequence that produces the failure, drop the finding entirely.
 
-## Severity calibration (this dimension)
+## Severity calibration
 
-Severity reflects operational impact, not technical complexity. Refining the shared ladder with bug-specific examples:
-
-- **Critical**: Blocks release. Data loss, corruption, security breach, or complete feature failure affecting all users. No workarounds exist. Examples: silent data deletion, authentication bypass, crash on startup, `secure = false` default on auth/payment endpoints.
-- **High**: Blocks merge. Core functionality broken for common inputs — CRUD operations, API endpoints, or user-facing workflows non-functional for primary data types. Affects the happy path. Examples: feature fails for common input types, race condition under typical concurrent load, incorrect business logic calculations, `timeout = 0` on external API calls.
-- **Medium**: Edge cases, degraded behavior, or failures requiring multiple preconditions. Affects code paths only reachable through optional parameters or error recovery flows. Examples: breaks only with empty input + specific flag combo, error message shows wrong info, `validate = false` default on internal utilities.
-- **Low**: Rare scenarios requiring multiple unusual preconditions, with documented workarounds. Examples: off-by-one in pagination edge case, tooltip shows stale data after rapid clicks, log message has wrong level.
-
-**Calibration check**: Multiple Critical bugs are valid if a change is genuinely broken. However, if every review has multiple Criticals, recalibrate — Critical means production cannot ship.
+Use the shared ladder. Wrong results, omitted data, stale substantive information and incorrect error behavior are High or Critical by consequence, even under unusual preconditions or with a workaround. A must-fix quality gap is Medium. Presentation-only polish that preserves the promised result is Low; a cosmetic location alone does not establish that.
 
 ## Report expectations (this dimension)
 
-Beyond the shared report format: add a **Category** field naming the category from the detection list above. Every Critical/High bug MUST have specific `file:line` references. Where a code snippet showing the bug clarifies the finding, include it. The shared format's required **Trigger** field carries the conditions that produce the failure.
+Beyond the shared report format: add a **Category** field naming the category from the detection list above. Where a code snippet showing the bug clarifies the finding, include it. The shared format's required **Trigger** field carries the conditions that produce the failure.

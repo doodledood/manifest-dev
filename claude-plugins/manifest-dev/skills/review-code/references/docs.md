@@ -8,19 +8,19 @@ Find documentation and code comments that have drifted from the code the change 
 
 Audit documentation files AND code comments in changed files against actual code behavior. Report gaps, inaccuracies, stale content, and missing documentation.
 
-Typical drift to look for is the Medium list under *Severity calibration* below, plus stale TODO/FIXME comments and code comments that describe behavior the code no longer has.
+Typical drift includes failing examples or commands, wrong signatures, parameters, return shapes or paths, missing feature documentation, removed features still documented, incorrect setup steps, stale TODO/FIXME comments and comments that describe behavior the code no longer has.
 
-That list is guidance, not exhaustive. If you identify a documentation accuracy issue that fits this dimension but doesn't match a listed issue, report it — just respect the out-of-scope boundaries below to keep dimensions orthogonal.
+These examples are guidance, not exhaustive. If you identify a documentation accuracy issue that fits this dimension but doesn't match a listed issue, report it — just respect the out-of-scope boundaries below to keep dimensions orthogonal.
 
 ## Actionability filter
 
-Before reporting a documentation issue, it must pass ALL of these criteria. **If a finding fails ANY criterion, drop it entirely** — except that criteria 3 and 4 grade a finding that fails them Low rather than dropping it.
+Before reporting a documentation issue, it must pass ALL of these criteria. **If a finding fails ANY criterion, drop it entirely** — criteria 3 and 4 distinguish substantive gaps from presentation-only polish using the shared ladder.
 
 1. **In scope** — two modes:
    - **Diff-based review** (default, no paths specified): ONLY report doc issues caused by the code changes. Pre-existing doc problems are strictly out of scope as findings — even if you notice them, do not report them as findings (a caller may ask for them in a separate list; `SKILL.md` → *The Pre-existing list, only when asked*). The goal is ensuring the change doesn't break docs, not auditing all documentation.
    - **Explicit path review** (caller specified files/directories): audit everything in scope. Pre-existing inaccuracies are valid findings since a full review of those paths was requested.
 2. **Actually incorrect or missing** — "could add more detail" is not a finding. "This parameter is documented as optional but the code requires it" is a finding.
-3. **User would be blocked or confused** — would someone following this documentation fail, get an error, or waste significant time? If yes, report it. If they'd figure it out, grade it Low.
+3. **User would be blocked or confused** — name the failing instruction, incorrect claim or concrete missing explanation. A workaround does not lower a broken promise to Low.
 4. **Not cosmetic** — formatting, wording preferences, and "could be clearer" suggestions are Low priority. Focus on factual accuracy.
 5. **Matches doc depth** — don't demand comprehensive API docs in a project with minimal docs. Match the existing documentation style and depth.
 6. **High confidence** — you must be certain the documentation is incorrect. "This could be improved" is not sufficient; "this doc says X but the code does Y" is required. If uncertain, don't flag it.
@@ -43,25 +43,7 @@ Do NOT report on:
 
 ## Severity calibration
 
-**Documentation issues are capped at Medium** — docs don't cause data loss or security breaches.
-
-- **Medium** — actionable documentation issues:
-  - Examples, commands, flags, or snippets that would fail or error
-  - Incorrect API signatures, parameters, return shapes, or file paths
-  - New features with no documentation
-  - Major behavior changes not reflected
-  - Removed features still documented
-  - Incorrect installation/setup steps
-  - JSDoc/docstrings with wrong parameter names or types
-- **Low** — minor inaccuracies and polish:
-  - Minor parameter or option changes not reflected
-  - Outdated examples that still work but aren't ideal
-  - Missing edge cases or caveats
-  - Minor wording improvements
-  - Formatting inconsistencies
-  - Stale TODO/FIXME comments
-
-**Calibration check:** if you're tempted to mark something higher than Medium, reconsider — even actively misleading docs are Medium because users can recover by reading the code or asking.
+Use the shared ladder. A command that fails, a wrong signature, misleading safety advice or another broken documentation promise is High or Critical by consequence; documentation has no severity cap. A missing explanation that creates a concrete must-fix reader gap is Medium. Wording and formatting polish that preserves meaning and behavior is Low.
 
 ## Edge cases
 

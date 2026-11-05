@@ -55,6 +55,11 @@ done
 root=$(git -C "$(dirname "$0")" rev-parse --show-toplevel)
 root=$(cd "$root" && pwd -P)
 # shellcheck source=../lib/claude-cli.sh
+source "$root/scripts/lib/model-host.sh"
+if [[ $(model_host) == codex ]]; then
+  echo 'run_eval: unreachable — this suite uses the Claude-native plugin-eval instrument; use host-native skill drives here, or run this instrument under Claude Code' >&2
+  exit 3
+fi
 source "$root/scripts/lib/claude-cli.sh"
 case $out in /*) ;; *) out=$root/claude-plugins/manifest-dev/$out ;; esac
 

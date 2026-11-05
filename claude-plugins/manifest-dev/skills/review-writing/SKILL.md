@@ -35,10 +35,11 @@ holds the rules common to both, including the accessibility and inclusive-langua
 finding from the floor is graded and reported on the same footing as one from the register. There
 is no separate floor-only invocation.
 
-The two thresholds sit at the same grade and still mean different things, because each register's
-severity anchor measures its own reader-facing cost — usability of documentation, or loss of
-meaning and intended voice in authored prose. Grade by the anchor of the register you applied, and never
-convert a finding from one scale to the other.
+Both registers grade by consequence: High covers wrong meaning or a broken promise, Medium
+covers a clear quality gap that must be fixed before shipping, and Low covers presentation,
+polish or taste that does not change the underlying promise. The loaded register anchors name
+its concrete audience costs. An explicit requirement remains binding; a correctness or safety
+finding received as Low still blocks and is regraded from evidence before the verdict.
 
 **Load exactly two references**: the floor, plus the one register's. Never load both register
 files for one text — their rules contradict each other by design, and a finding drawn from the

@@ -30,7 +30,7 @@
 # from its summary beside its verdict: a change that adds cost to every run is weighed by what it
 # gains for that cost.
 #
-# Isolation: `claude` runs directly, its working directory a scratch project built in the
+# Claude isolation: `claude` runs directly, its working directory a scratch project built in the
 # drive's evidence directory, outside this checkout. It is handed a copy of the plugin, never the
 # checkout's own directory, and started with no user settings and no MCP servers of yours
 # (scripts/lib/claude-cli.sh has the flags), so your settings, hooks and installed plugins do
@@ -49,12 +49,20 @@
 # keeps as the scenario's evidence. A drive that could not start, whose session did not load the plugin or
 # the skill, or whose session ended in an error, exits 3 (unreachable) and is not counted.
 #
-# Needs: the claude CLI on PATH, signed in (`claude auth login`, or ANTHROPIC_API_KEY), and
+# Claude path needs: the claude CLI on PATH, signed in (`claude auth login`, or ANTHROPIC_API_KEY), and
 # python3. The CLI version is recorded, not pinned. MODEL selects the model (default: opus).
+# Host selection: Claude Code uses the CLI described above. Codex cloud uses the active
+# native model harness through native_drive.py; it prepares a request and exits 3 until the
+# caller records the real native result. See scripts/NATIVE_DRIVES.md. No foreign login.
 set -euo pipefail
 
 root=$(git -C "$(dirname "$0")" rev-parse --show-toplevel)
 root=$(cd "$root" && pwd -P)
+# The active session owns model access; installed CLIs do not choose the host.
+source "$root/scripts/lib/model-host.sh"
+if [[ $(model_host) == codex ]]; then
+  exec python3 "$root/scripts/native_drive.py" skill "$@"
+fi
 # shellcheck source=lib/claude-cli.sh
 source "$root/scripts/lib/claude-cli.sh"
 model=${MODEL:-opus}

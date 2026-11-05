@@ -14,13 +14,21 @@
 # --dry-run  Prints the session command and the CLI it would use; starts nothing.
 #            VERIFY_DRY_RUN=1 (set by `scripts/verify walk --dry-run`) does the same.
 #
-# Needs: the claude CLI on PATH and signed in (`claude auth login`, or ANTHROPIC_API_KEY);
+# Claude path needs: the claude CLI on PATH and signed in (`claude auth login`, or ANTHROPIC_API_KEY);
 # exits 3 (unreachable) without it. Each walk is one model session and uses quota.
 # MODEL selects the model (default: opus).
+# Host selection: Claude Code uses the CLI described above. Codex cloud uses the active
+# native model harness through native_drive.py; it prepares a request and exits 3 until the
+# caller records the real native result. See scripts/NATIVE_DRIVES.md. No foreign login.
 set -euo pipefail
 
 usage() { sed -n '2,19p' "$0"; exit 2; }
 root=$(git -C "$(dirname "$0")" rev-parse --show-toplevel)
+# The active session owns model access; installed CLIs do not choose the host.
+source "$root/scripts/lib/model-host.sh"
+if [[ $(model_host) == codex ]]; then
+  exec python3 "$root/scripts/native_drive.py" walk "$@"
+fi
 # shellcheck source=lib/claude-cli.sh
 source "$root/scripts/lib/claude-cli.sh"
 

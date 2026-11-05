@@ -6,7 +6,7 @@ Creating or updating LLM prompts, skills, agents, system instructions.
 
 | Aspect | Verifier | Threshold |
 |--------|----------|-----------|
-| Intent analysis | `review-code` skill, dimension=`change-intent` | no LOW+ |
+| Intent analysis | `review-code` skill, dimension=`change-intent` | no MEDIUM+ |
 | Prompt quality | `review-prompt` skill | no MEDIUM+ |
 
 Both gates encode as a gate body that activates a skill under `/do`'s selected evaluator: the intent gate activates the `review-code` skill (dimension=change-intent); the prompt-quality gate activates the `review-prompt` skill. Name the skill and dimension and stop, as `SKILL.md` → *Specialized gates activate a skill* says; the bars in the table above orient the author rather than being copied into the gate. Both are Judgment Gates — a reviewer's verdict over an open finding space rather than a command outcome — so each declares the judgment kind, which is what tells `/do` how it re-verifies.

@@ -49,8 +49,8 @@ A finding about visual ambition must point to what the render leaves unresolved 
 
 - **CRITICAL** — the artifact fails its genre's job: the form loses input on error, the deck's argument cannot be restated, content is unreachable or unreadable, the repeated loop cannot be completed at all.
 - **HIGH** — a floor violation the audience will hit in normal use: a missing empty or error state, failed contrast on body text, a broken narrow-viewport layout, or an arrangement that breaks the loop's co-visibility so every pass costs a scroll away from what is being acted on or a value carried in the head, or a misleading or unsuitable representation that materially obscures information the task needs.
-- **MEDIUM** — a supported defect a careful audience member would notice, rather than a different valid style choice: a region unsuited to its use, an unresolved creative direction supported by the rendered evidence above, grouping or alignment that obscures a relationship, inconsistent use of the governing design system, misleading copy on a control.
-- **LOW** — a supported polish issue: awkward optical alignment, unnecessarily distracting timing or a wordier-than-needed label.
+- **MEDIUM** — a clear product or quality gap a careful reviewer would insist on fixing before shipping, supported by the rendered evidence: an unresolved creative direction, or grouping that makes the audience's task materially harder. Misleading controls, wrong behavior and broken explicit promises are High or Critical.
+- **LOW** — presentation, polish or taste that does not change the underlying promise: optical alignment, timing or label wording that preserves the intended task and effect. An explicit requirement remains binding; a correctness or safety finding received as Low still blocks and is regraded from evidence.
 
 The threshold, unless the activating gate states its own: **no MEDIUM-or-higher findings** to PASS.
 

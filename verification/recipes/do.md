@@ -77,6 +77,11 @@ Run: `scripts/drive-skill.sh do verification/prompts/do-project-keeps-fixes-out.
 Proves: read from the project's git history and files. The project's `CLAUDE.md` keeps fixes unrelated to the change out of a pull request. `invoice_total` is added and its tests pass; `format_money`, which fails no check, is unchanged in every commit, and the completion report names its dropped leading zero as debt for the team to schedule.
 Check: read
 
+### promise-convergence
+Run: `scripts/drive-skill.sh do verification/prompts/do-promise-convergence.md --scaffold verification/fixtures/promise-convergence --max-turns 120`
+Proves: read the files, git history and appended log. The run reads the two related failed repairs across F-12, F-17 and F-39 as one underlying promise and tests whether exact Unicode spacing is owed before attempting another. It leaves label unchanged, adds no normalization mechanism, and records that the stricter repair commits did not amend the accepted promise. It fixes net_after_fee despite F-22 arriving as Low, runs the unchanged check.py successfully, and keeps all binding gates intact. Presentation-only F-39 does not block completion; the real fee defect does until repaired.
+Check: read
+
 ## Gotchas
 
 - It changes files, commits, and may push or open pull requests as its Manifest allows. Never drive it on this checkout.
@@ -87,3 +92,5 @@ Check: read
 - Seeded resumption checks consumption of recorded evidence, not the earlier run that produced it. PR snapshots check local judgment and action intent, not live GitHub transport, bot scheduling, or mutation success. Recording an outbound request does not change the supplied remote state.
 - The convergence scenarios (criterion-discovery, evidence-resume, external-feedback, distinct-nits) are unmeasured until their ask-first drives run; scaffold and property checks do not establish agent behavior.
 - fix-on-the-path, gigantic-stays-out, unrelated-red-test and project-keeps-fixes-out were each driven once before and after the rule they check; the record `docs/adr/20261028-every-pull-request-fixes-what-its-work-meets-and-verification-converges.md` → *Evidence at decision time* has the verdicts. unrelated-red-test failed on both sides at first: after the rule, the run fixed the red check but also removed an unused import it met in the same file. It passed once the path wording was tightened.
+
+- The consequence/promise scenario ran once per arm through native GPT-6.1 Sol/xhigh contexts on 2026-11-05. The decision records dated that day name the outcomes and limits; scaffold checks alone do not establish behavior.

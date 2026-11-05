@@ -11,8 +11,8 @@ Inspects one GitHub pull request — CI, review feedback (threads, review bodies
 ## How a user reaches it
 
 - `/check-pr <pr-url | owner/repo#N>`.
-- Phrases its description matches: "is this PR ready to merge", "check mergeability", "babysit a PR".
-- `run-ticket` before merge; `/do` through a pull-request lifecycle gate (and so `babysit-pr`).
+- Phrases its description matches: "is this PR ready to merge", "check mergeability".
+- `babysit-pr` for its read-only lifecycle check; `run-ticket` before merge; `/do` through a pull-request lifecycle gate.
 - Steering in the request adds gates, approvers, flaky-check guidance and wait overrides.
 
 ## Scenarios

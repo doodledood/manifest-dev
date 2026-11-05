@@ -18,6 +18,7 @@ import os
 import shutil
 import signal
 import subprocess
+import sys
 import time
 import uuid
 from collections.abc import Callable
@@ -614,6 +615,7 @@ def committed_checkout(tmp_path: Path) -> tuple[Path, str, Path]:
     checkout = tmp_path / "checkout"
     for part in (
         "scripts/drive-skill.sh",
+        "scripts/native_drive.py",
         "scripts/lib",
         "verification/recipes/figure-out.md",
         "claude-plugins/manifest-dev",
@@ -1458,3 +1460,34 @@ def test_eval_result_path_cannot_be_overridden_before_preflight(
     assert result.returncode != 0
     assert calls(tmp_path) == []
     assert not (tmp_path / "runs").exists()
+
+
+def test_promise_convergence_scaffold_keeps_history_and_real_fee_failure(
+    tmp_path: Path, toolbox: Path
+) -> None:
+    project = convergence_project(
+        tmp_path, toolbox, "promise-convergence", "do-promise-convergence.md"
+    )
+    journal = (project / "execution-log.md").read_text()
+    assert all(finding in journal for finding in ("F-12", "F-17", "F-39", "F-22"))
+    history = subprocess.check_output(
+        ["git", "log", "--format=%s"], cwd=project, text=True
+    )
+    assert "Make every Unicode label spacing canonical" in history
+    assert "Normalize whitespace for every label" in history
+    check = subprocess.run(
+        [sys.executable, "check.py"], cwd=project, capture_output=True, text=True
+    )
+    assert check.returncode != 0 and "AssertionError" in check.stderr
+    source = (project / "display.py").read_text()
+    # Pin the oracle's independent seam: the fixture starts wrong, then the real fix passes.
+    (project / "display.py").write_text(
+        source.replace(
+            "return cents if fee == 1 else cents - fee", "return cents - fee"
+        )
+    )
+    fixed = subprocess.run(
+        [sys.executable, "check.py"], cwd=project, capture_output=True, text=True
+    )
+    assert fixed.returncode == 0, fixed.stderr
+    assert "readable labels and exact fees" in fixed.stdout

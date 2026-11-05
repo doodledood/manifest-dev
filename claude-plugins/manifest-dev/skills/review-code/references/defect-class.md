@@ -84,14 +84,11 @@ not need — a retry, a null check or a broadened catch added on a guess beside 
 removes the mechanism — is a finding: it hides the next failure of its own kind and tells a
 later reader that state is expected. Name the line, show that the mechanism is closed without
 it, and recommend removing it, or name the second mechanism it would need a demonstration of.
-Grade it Low unless it masks a failure the task cares about.
+Use the shared ladder: a must-fix maintenance burden is Medium, a masked correctness or safety failure is High or Critical, and presentation or taste that preserves the repair's promise is Low.
 
 ## Severity and report
 
-Grade the consequence of the demonstrated mechanism at the remaining site or supported misuse path:
-Critical for loss, corruption, security failure or complete failure without workaround;
-High for common core-path failure; Medium for edge or recovery paths; Low for unusual
-preconditions. Do not inflate severity to preserve a finding downstream.
+Use the shared ladder for the demonstrated mechanism at the remaining site or supported misuse path. Unmet remediation of a correctness or safety defect is High or Critical regardless of rarity. A concrete must-fix quality gap is Medium. Low is presentation or taste that leaves the repair's promise intact. Keep unsupported closure BLOCKED where evidence is missing, never PASS.
 
 Use the shared report format, with these sections directly before `## Findings` (after `## Prior findings` on a follow-up):
 

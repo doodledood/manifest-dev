@@ -15,12 +15,12 @@ do not invent a personality for the author.
 
 - **Critical** — the prose defeats the piece's purpose or materially misrepresents
   the author on a central claim.
-- **High** — sustained loss of the intended voice or meaning makes a major passage
-  unsuitable for its audience.
-- **Medium** — a specific passage loses clarity, intended voice, rhythm, or
-  emotional effect in a way the finding can explain from the brief or text.
-- **Low** — an optional stylistic preference with no demonstrated loss of meaning
-  or intended effect.
+- **High** — wrong meaning, a misrepresented claim, or loss of a voice or effect the brief
+  explicitly promises.
+- **Medium** — a clear must-fix quality gap in clarity, intended voice, rhythm, or
+  emotional effect, with its concrete audience cost supported by the brief or text.
+- **Low** — presentation, polish or taste that does not change the underlying promise,
+  with no demonstrated loss of meaning or intended effect.
 
 A preference for another phrasing is not evidence of a blocking defect. Neither
 punctuation nor a guess about AI authorship establishes severity.

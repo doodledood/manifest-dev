@@ -35,7 +35,7 @@ Record what the finished state will not reconstruct on its own:
 - **Blockers** — the obligation, the evidence, the intervention needed, and whether it cleared.
 - **Departures** — from the Initial Approach, the Deliverable order or a Process Guidance item,
   and why.
-- **Dead ends** — fixes tried and reverted, approaches rejected that left no commit.
+- **Dead ends** — fixes tried and reverted, approaches rejected that left no commit; group repairs by their underlying promise and its accepted source, with each attempt and outcome, so new finding IDs or commit wording do not reset the premise history.
 - **Gate state** — assessed criteria and subject, verdicts and their evidence, staleness, and
   whether each judgment gate has taken its full look. Identify relevant local work and external
   observations as well as the repository head. Keep the findings, their dispositions and support,

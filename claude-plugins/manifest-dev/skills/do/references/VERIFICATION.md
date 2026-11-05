@@ -42,3 +42,16 @@ its own `--help`.
   go, named in the pull request description with why. A check that fails because the product
   is broken, or that cannot run, is fixed as `../SKILL.md` → *What holds for every gate* says;
   only a gigantic fix is a blocker, escalated with its evidence.
+
+## Native model requests
+
+When a recipe emits a native-session request, preparation is incomplete evidence. Read the
+request and dispatch its worker input through the current harness's isolated model-session
+capability, with the requested model and effort where supplied. Give the worker only that input
+and its copied resources, keeping the recipe's expected outcome outside its context. Use the
+same native session for each requested user turn. Record its actual terminal replies and session
+identity using the request's recording command, then resume that same recipe as instructed.
+A worker never writes or grades its own completion receipt. An unavailable capability, failed
+session or partial reply stays unverified; neither a foreign-provider login nor a stand-in
+supplies the missing native evidence. Judge the completed run from its artifacts and actual
+reply against the recipe, retaining any native limits on transcript, usage or turn enforcement.

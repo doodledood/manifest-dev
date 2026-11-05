@@ -24,12 +24,12 @@ Code becomes hard to test when you can't verify its behavior without complex set
 
 These categories are guidance, not exhaustive. If you identify a testability issue that fits this dimension but doesn't match a listed category, report it — just respect the Out of Scope boundaries to maintain orthogonality.
 
-**High test friction (Critical/High severity)**
+**High test friction**
 - **Core logic requiring many mocks** — Important business logic (pricing, validation, permissions, eligibility) that can't be tested without mocking multiple external services. Each edge case needs all mocks set up.
 - **IO in loops** — Database/API calls inside iteration, forcing mock setup per iteration.
 - **Deep mock chains** — Mocks returning mocks, creating brittle test setup even with few top-level dependencies.
 
-**Moderate test friction (Medium severity)**
+**Moderate test friction**
 - **Constructor IO** — Classes that connect to services or fetch data in constructors, preventing simple instantiation.
 - **Hidden singleton dependencies** — Functions that import and use global instances, requiring global mock setup.
 - **Non-deterministic inputs** — Logic depending on current time, random values, or real timers (note: complex control flow itself is a simplicity concern; here the concern is non-determinism).
@@ -73,16 +73,9 @@ Do NOT report on (owned by other dimensions):
 - **Documentation** (stale comments) → the docs dimension
 - **Context file compliance** → the context-file-adherence dimension
 
-## Severity calibration (this dimension)
+## Severity calibration
 
-Severity = **importance of the logic** × **amount of test friction relative to codebase norms**.
-
-- **Critical**: Core business logic (pricing, permissions, validation) requiring significantly more mocks than comparable code in the codebase. Functions where edge cases are important but practically untestable. IO inside loops with data-dependent iteration count.
-- **High**: Important logic requiring notably more test setup than similar functions. Business rules buried after multiple IO operations with no extractable pure function. Constructor IO in frequently-instantiated classes (unless a DI framework makes this trivial).
-- **Medium**: Logic that could be extracted but test friction is moderate. Time/date dependencies in business logic. Hidden singleton dependencies that complicate test setup.
-- **Low**: Minor test friction in non-critical code. Could be slightly more testable but acceptable as-is.
-
-**Calibration check**: Critical issues should be rare. If you're flagging multiple Critical items, verify each truly has important logic that's practically untestable. Consider what's normal for this codebase.
+Use the shared ladder. Test setup or hidden dependencies that impose a concrete must-fix regression-catching burden are Medium. Name the setup, behavior and simpler seam. A demonstrated correctness or safety failure is High or Critical; minor test-code presentation or taste that preserves its promise is Low.
 
 ## Report expectations (this dimension)
 
@@ -95,7 +88,7 @@ Beyond the shared report format, each finding should carry:
 Example finding:
 
 ```
-#### [HIGH] Discount calculation requires many mocks to test
+#### [MEDIUM] Discount calculation requires many mocks to test
 **Location**: `src/services/order-service.ts:45-78`
 **Test friction**: 3 mocks (db.orders, db.customers, db.promotions)
 **Logic at risk**: Discount stacking rules (premium tier + promo + bulk discount)
