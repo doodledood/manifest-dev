@@ -1,3 +1,5 @@
+Caller acceptance policy: no Medium-or-higher findings for the requested review gate.
+
 First, in this repository, create a branch `feature/discount` and commit a file `discount.py` containing:
 
 def apply_discount(price, percent):

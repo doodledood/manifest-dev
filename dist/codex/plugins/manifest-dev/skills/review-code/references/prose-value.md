@@ -103,16 +103,7 @@ Do NOT report on:
 
 ## Severity calibration
 
-HIGH severity findings should be rare — reserved for prose that clearly signals AI sheen on customer-visible surfaces (READMEs, top-of-file doc blocks).
-
-Medium is the blocking grade here, so it separates from Low on what the prose costs a reader, not on how weak it sounds:
-
-- **Medium** — surplus prose displaces information a reader needs: puffery standing where the load-bearing WHY should be, or repeated narration obscuring the reason a reader needs to modify the code. Inaccurate claims belong to the docs dimension.
-- **Low** — the prose is merely surplus: it restates what the line below already says, or carries a tell without misleading anyone. Deleting it loses nothing, and leaving it costs a reader a few seconds.
-
-A finding that cannot say which of those two it is has not made a Medium case.
-
-A refactor flag is graded **Low**; it never blocks the change.
+Use the shared ladder. Surplus prose earns Medium when it displaces a necessary explanation or obscures a reason the reader needs for a concrete task. Pruning, reorganization and other polish nits are Low. Inaccurate claims belong to docs. A refactor flag alone is Low; evidence of a substantive failure still needs its owning dimension and grade.
 
 ## Dimension-specific report fields
 

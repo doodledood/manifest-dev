@@ -128,21 +128,14 @@ Before reporting a design issue, it must pass ALL of these. **If a finding fails
 
 ## Severity calibration
 
-**The key question: How much rework will this design choice cause?**
-
-- **Critical** — Design choices that will cause cascading rework across multiple components or teams. Examples: building an entire subsystem the framework already provides (large-scale reinvention); hardcoding business rules that change quarterly across a widely-used service; public API shape that will break every consumer when the next obvious feature ships.
-- **High** — Design choices that will cause significant rework in the near term. Examples: reimplementing a utility the codebase already has (medium reinvention); business rules in code that a known configuration system manages; API returning a boolean when callers demonstrably need the reason; change mixing 3+ unrelated features.
-- **Medium** — Design choices that add friction or will need revision. Examples: hardcoded values that vary by environment but only affect one service; interface that's slightly too narrow for the next obvious use case; incomplete migration leaving two patterns.
-- **Low** — Minor design improvements. Examples: using a manual approach when a convenience helper exists; slightly rigid API shape in internal code; change scope that's broad but not incoherent.
-
-**Calibration check**: Critical design issues are rare — they require large-scale reinvention or API shapes that will break many consumers. If you're marking more than one issue as Critical, recalibrate — Critical means "this design choice WILL cause cascading rework, not might."
+Use the shared ladder. Rework, coupling or an incomplete migration earns Medium when the finding names a concrete must-fix cost and a simpler shape. A demonstrated correctness, safety or promise failure is High or Critical. Design polish and nits are Low, including structural nits.
 
 ## Dimension-specific report expectations
 
 - **Lead with the design question.** Frame the assessment around: is the code using the right approach given what already exists in the framework, codebase, and configuration systems?
 - **Tag each finding with its category**: Use Existing | Config Boundary | Responsibility Ownership | Under-engineering | Interface Foresight | Concept Purity | PR Coherence.
 - **Show the alternative.** Every finding's recommended fix must point to the specific existing solution, configuration system, owning layer, or better interface shape — not just "this is wrong."
-- **Include evidence.** A code snippet showing the issue, plus the **Impact** (what rework or problems this design choice causes). Every Critical/High finding MUST have specific `file:line` references and a concrete fix.
+- **Include evidence.** A code snippet showing the issue, plus the **Impact** (what rework or problems this design choice causes). Every Critical/High finding needs a concrete fix.
 - **Sound design passes.** If nothing clears the filter, report PASS — approaches match what the framework and codebase provide, responsibilities are in the right systems, interfaces are durable, and the change is cohesive.
 
 ## Gotchas

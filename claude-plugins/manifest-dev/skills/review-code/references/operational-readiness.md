@@ -75,12 +75,7 @@ Do NOT report on:
 
 ## Severity calibration
 
-- **Critical** — Will block deploy, expose private functionality/data, corrupt durable data, or make rollback impossible for a primary runtime path.
-- **High** — Likely production or CI failure under normal rollout, retry, scale, or environment conditions.
-- **Medium** — Operational fragility under plausible but narrower conditions: duplicate delivery, one environment missing config, noisy observability, slow CI path, non-critical cleanup gap.
-- **Low** — Minor operational polish with concrete value: clearer runbook note, more useful log field, small CI targeting improvement.
-
-**Calibration check**: High/Critical findings require a specific runtime sequence. If you cannot describe the sequence, downgrade or drop.
+Use the shared ladder. Demonstrated rollout, retry, cleanup or environment failures are High or Critical by consequence, even in narrower conditions. A clear must-fix observability, runbook or CI quality gap is Medium. Operational polish or nits of any kind are Low.
 
 ## Dimension-specific report fields
 

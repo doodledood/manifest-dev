@@ -63,7 +63,7 @@ Before reporting an issue, it must pass ALL of these. **If a finding fails ANY c
 2. **Worth the churn** — Compare the concrete burden on subsequent work with added concepts, coupling, migration risk and coordination cost. Removing independent obligations can justify added lines; fewer lines alone establish no benefit.
 3. **Matches codebase patterns** — Don't demand abstractions absent elsewhere. If the codebase doesn't use dependency injection, don't flag its absence.
 4. **Substantiated tradeoff** — Evaluate the reason for duplication or another burden against its actual benefit (such as test isolation or avoiding coupling). Repetition establishes prevalence, not justification; an author's rationale is evidence, while explicit owner requirements bind.
-5. **Concrete impact** — "Could be cleaner" isn't a finding. Articulate specific consequences: "Will cause shotgun surgery when X changes" or "Makes testing Y impossible." Style-consistency findings under Consistency are the exception to this bar and to the lead-in's "this WILL cause X problem" bar: name the divergence and the surfaces it splits across, and state the impact as reader cost — the scan or learning tax a divergent form imposes on someone working across both — and land at Low. That is the whole severity they are entitled to; they never rise above it.
+5. **Concrete impact** — "Could be cleaner" isn't a finding. Articulate specific consequences: "Will cause shotgun surgery when X changes" or "Makes testing Y impossible." Style-consistency findings under Consistency are the exception to this bar and to the lead-in's "this WILL cause X problem" bar: name the divergence and the surfaces it splits across, and state the impact as reader cost — the scan or learning tax a divergent form imposes on someone working across both — and land at Low. Mere consistency nits are Low; a substantive failure is graded by its demonstrated consequence under the shared ladder.
 6. **Grade the consequence** — Use the concrete future-change burden below, not the author's willingness to defer it. Explicit task limits constrain the remedy, not the evidence or severity.
 
 ## Context adaptation
@@ -77,63 +77,12 @@ Before applying rules rigidly, consider:
 
 ## Severity calibration
 
-The shared severity ladder applies; this dimension refines it as follows.
-
-**Critical** — matching one or more of these patterns (exhaustive for Critical):
-
-- Exact code duplication across multiple files.
-- Dead code that misleads developers.
-- Severely mixed concerns that prevent testing.
-- Completely inconsistent error handling that hides failures.
-- 2+ incompatible representations of the same concept across layers that require compensating runtime checks or special-case glue code.
-- Boundary leakage that couples unrelated layers and forces changes in multiple subsystems for one feature.
-- Circular dependencies between modules (A→B→C→A) that prevent isolated testing and deployment.
-- Global mutable state accessed from 2+ modules (creates hidden coupling).
-
-**High** — significantly impacts maintainability, should be addressed soon:
-
-- Near-duplicate logic with minor variations.
-- Abstraction layers that increase coupling without enabling reuse.
-- Indirection that violates architectural boundaries.
-- Inconsistent API patterns within the same module that force callers or later changes to handle each form separately (a form-only divergence is Low, per criterion 5).
-- Inconsistent naming/shapes for the same concept across modules causing repeated mapping/translation code.
-- Migration debt (dual paths, deprecated wrappers) without a concrete removal plan.
-- Low module cohesion: single file handling concerns from multiple core architectural layers (HTTP/transport, business/domain logic, data access/persistence, external service integration). Supporting concerns (logging, configuration, error handling) don't count as separate layers when mixed with one core layer.
-- Low function cohesion: function name doesn't match behavior (misleading), or function does multiple distinct operations that could be separate functions.
-- Low type cohesion: type spanning unrelated domains, or property that clearly belongs to a different concept (e.g., `billingAddress` on `AuthToken`).
-- Special-case branching scattered through a shared or already-busy flow when the logic has a clear owning abstraction, creating forgettability risk for the next similar case.
-- A diff pushes a non-generated source file past roughly 1000 lines and the added code contains separable concerns whose extraction would materially improve cohesion or reviewability.
-- Long parameter lists without parameter object.
-- Unexplained `@ts-ignore`/`eslint-disable` in new code — likely hiding a real bug.
-- Extensibility risk where 2+ sibling components already exist and each manually implements the same cross-cutting behavior — evidence the concern belongs at a higher level.
-- Hidden contract in main API paths: function fetches external state instead of receiving it as a parameter, hiding the dependency from callers.
-
-**Medium** — degrades code quality but doesn't cause immediate problems:
-
-- Minor duplication that could be extracted.
-- Small consistency deviations that carry a future-change burden beyond reader cost (a form-only divergence is Low, per criterion 5).
-- Suppression comments without explanation (add comment explaining why).
-- Broad `eslint-disable` without specific rule (should target specific rule).
-- Minor boundary violations (one layer leaking into another).
-- Extensibility risk in new code: cross-cutting concern placed in a specific implementation where the pattern is likely to be extended.
-- New local branch/mode accretion that makes a function harder to extend safely, but the cleaner owner is limited to one module.
-- Function with compound name (`validateAndSave`, `fetchAndTransform`) that could be split.
-- Hidden contract in internal/helper code: function relies on external state or execution order not visible in signature.
-- Type growing beyond its original purpose (new property doesn't quite fit but isn't egregious).
-
-**Low** — minor polish:
-
-- Stylistic inconsistencies.
-- Minor naming improvements.
-- Unused imports or variables.
-- Well-documented suppressions that could potentially be removed with refactoring.
-
-**Calibration check**: Maintainability reviews should rarely have Critical issues. If you're marking more than two issues as Critical in a single review, double-check each against the explicit Critical patterns above — if it doesn't match one of those patterns, it's High at most.
+Use the shared ladder. Duplication, mixed concerns, incompatible representations, boundary leakage, circular dependencies, hidden state, inconsistent APIs, migration debt and scattered special cases earn Medium when the finding names the future change they make materially harder and a concrete improvement. A demonstrated correctness, safety or promise failure is High or Critical; grade that consequence rather than the pattern alone. Polish and nits are Low, including style, naming and structural nits.
 
 ## Gotchas and false positives
 
 - **Read full files before flagging.** A diff alone lacks context — code that looks duplicated in isolation may serve different purposes when you see the full picture.
-- **Be specific and actionable**: always reference exact file paths, line numbers, and code snippets; every issue needs a concrete, implementable fix suggestion.
+- **Be specific and actionable**: include code snippets and a concrete, implementable fix suggestion for every issue.
 - **Account for project conventions** from the project context file and existing patterns.
 - **Common false positives to avoid**:
   - Test file duplication (test setup repetition is often intentional for isolation).
@@ -155,7 +104,7 @@ Use the shared report format. In addition, this dimension expects:
 ### Worked finding examples
 
 ```
-#### [HIGH] Duplicate validation logic
+#### [MEDIUM] Duplicate validation logic
 **Category**: DRY
 **Location**: `src/handlers/order.ts:45-52`, `src/handlers/payment.ts:38-45`
 **Description**: Nearly identical input validation for user IDs exists in both handlers
@@ -177,7 +126,7 @@ if (!userId || typeof userId !== 'string' || userId.length < 5) {
 ```
 
 ```
-#### [HIGH] Analytics calls embedded in individual processors
+#### [MEDIUM] Analytics calls embedded in individual processors
 **Category**: Extensibility Risk
 **Location**: `src/processors/OrderProcessor.ts:89`, `src/processors/RefundProcessor.ts:67`, `src/processors/ReturnProcessor.ts:73`
 **Description**: Each processor manually fires analytics events. Adding a new processor requires remembering to add the analytics call—nothing enforces it.
@@ -228,7 +177,7 @@ async function getUser(email: string): Promise<User> {
 ```
 
 ```
-#### [HIGH] Type accumulates unrelated concerns
+#### [MEDIUM] Type accumulates unrelated concerns
 **Category**: Cohesion
 **Location**: `src/types/User.ts:1-45`
 **Description**: `User` type has grown to include authentication, profile, preferences, billing, and audit fields—5 distinct concerns in one type.
@@ -264,4 +213,4 @@ interface User {
 
 ## Pre-output checklist
 
-Before delivering: scope was clearly established (asked if unclear); every Critical/High issue has specific file:line references; every issue has an actionable fix suggestion; no duplicate issues reported under different names; summary statistics match the detailed findings.
+Before delivering: scope was clearly established (asked if unclear); every issue has an actionable fix suggestion; no duplicate issues reported under different names; summary statistics match the detailed findings.

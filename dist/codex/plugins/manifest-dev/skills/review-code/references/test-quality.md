@@ -106,11 +106,7 @@ Do NOT report on:
 
 ## Severity calibration
 
-- **High** — Completely untested business logic, missing test files for new modules, or tautological tests on critical paths. Must be fixed before merge.
-- **Medium** — Untested branches/error paths/edge cases on meaningful logic, or tautological tests that leave a real behavioral property unverified on non-critical paths.
-- **Low** — Coverage polish on lower-risk code or weak-oracle tests where the protected behavior is still mostly clear.
-
-**Calibration check**: HIGH findings should be rare — reserved for the High cases above. If you're marking multiple items as HIGH, recalibrate.
+Use the shared ladder. Missing tests, weak oracles and implementation-pinned assertions earn Medium when they leave a concrete must-fix gap in regression protection. A test that falsely promises protection against a demonstrated correctness or safety failure is High or Critical. Polish and nits in tests are Low, including naming and structural nits; the location in lower-risk code does not decide severity.
 
 ## Dimension-specific report expectations
 

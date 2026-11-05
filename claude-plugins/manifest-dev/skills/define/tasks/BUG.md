@@ -8,7 +8,7 @@ Beyond the CODING.md base gates:
 
 | Aspect | Dimension | Threshold |
 |--------|-----------|-----------|
-| Defect remediation | defect-class | no LOW+ |
+| Defect remediation | defect-class | no MEDIUM+ |
 
 Encode it exactly as CODING.md's **Encoding** and **Kind** paragraphs prescribe for a dimension gate; BUG always composes onto CODING, so those rules govern this row too and are not restated here.
 

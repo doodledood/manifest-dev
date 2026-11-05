@@ -1,7 +1,7 @@
 # ADR: Every pull request fixes what its work meets, and verification still converges
 
 ## Status
-Accepted
+Accepted; extended by 20261105-repairs-track-the-accepted-promise: repair history follows the accepted promise across findings and commits, and repeated failures test that premise before another repair
 
 ## Area
 define / do

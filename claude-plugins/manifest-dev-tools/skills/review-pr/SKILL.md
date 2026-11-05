@@ -40,16 +40,22 @@ For every unresolved thread we authored or replied to, invoke the `review-pr-thr
 
 It returns exactly one disposition, a short reason, and a drafted reply where the disposition calls for one. Act on it: `addressed-by-fix` → resolve the thread, posting the reply only if it drafted one; `addressed-by-valid-reply` → post its concession, then resolve; `false-positive-or-stale` → post its correction, then resolve; `needs-our-pushback` → post its reply on the existing thread and keep it pending; `still-pending` → leave the thread open and post nothing.
 
+**Caller policy.** In no-manifest mode, this caller chooses no Medium+ findings as its usual
+fleet acceptance gate and publishes Medium+ findings. An explicit invocation may choose other
+severities or categories, including Low. Pass the chosen acceptance and publication policies to
+each inspection and consolidation. Manifest mode uses the Manifest's chosen criteria instead.
+These handling decisions belong to this caller; severity classifies consequence.
+
 **Reviewer fleet.** No-manifest mode only — skipped entirely in manifest mode (`references/MANIFEST_MODE.md`). Activate the `review-code` skill for each required dimension against the review range, retaining each dimension's findings and verdict even when the reviews share a context. Always-on dimensions: `change-intent`, `code-bugs`, `code-design`, `code-maintainability`, `code-simplicity`, `context-file-adherence`. Add when the diff fits: `type-safety` on typed code; `test-quality` and `code-testability` on source; `contracts` on API surfaces; `operational-readiness` on CI/infra/env/migrations/workers/queues/secrets; `docs` and `prose-value` on prose; `defect-class` when the reviewed range **fixes a defect** — it judges the repair's protection and affected-site accounting, so it has no input on a change that fixes nothing. Deciding that is yours: use the PR description, commits, and linked issues to establish whether a defect is being fixed. For prompts/skills/agents, add a run that activates the `review-prompt` skill the same way.
 
 **Evidence and scope.** Keep each dimension focused on its own standard. Use binding requirements, explicit exclusions, and permission limits to judge scope, and give them to defect-class so it can judge authorized remedies. An author's implementation preference is not such a limit. Inspect the code and relevant evidence; the author's explanation or success report does not establish correct behavior. The judgment pass also needs the stated pain and whole-PR context to assess the premise.
 
-**Holistic coherence pass.** After every required inspection has returned, collect their findings (drop Low severity except defect-class findings; keep dimension and severity). Invoke the `review-pr-holistic` skill. Keep BLOCKED verdicts with their missing evidence or authority in the cycle summary; consolidation cannot turn an incomplete evaluation into a clean result. Supply the retained findings plus:
+**Holistic coherence pass.** After every required inspection has returned, collect their findings. Regrade correctness or safety failures and broken binding promises received as Low from their evidence before applying the caller's chosen policy. Filter only by that publication policy, retaining Low findings when requested; keep dimension and severity. Invoke the `review-pr-holistic` skill. Keep BLOCKED verdicts with their missing evidence or authority in the cycle summary; consolidation cannot turn an incomplete evaluation into a clean result. Supply the retained findings and the chosen caller policy plus:
 
 - PR history: all comments and threads on the PR (including our own from any prior review pass), the author's recent commit messages on the branch, the PR description.
 - Bundle context for each linked PR: diff, description, top-level conversation. No inline review comments from linked PRs.
 - The reviewed range for this invocation — the code the fleet's defect findings are bounded to.
-- The judgment pass's findings, from its whole-PR assessment (below). They are consolidated alongside the fleet's but stay exempt from drop-Low and from reviewed-range bounding — the judgment pass reads the whole PR head itself, so its findings are already whole-PR.
+- The judgment pass's findings, from its whole-PR assessment (below). They are consolidated alongside the fleet's but stay exempt from the caller's severity filter and from reviewed-range bounding — the judgment pass reads the whole PR head itself, so its findings are already whole-PR.
 - Any truncation the caller did, carried forward.
 - The voice profile below.
 

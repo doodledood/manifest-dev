@@ -42,3 +42,23 @@ its own `--help`.
   go, named in the pull request description with why. A check that fails because the product
   is broken, or that cannot run, is fixed as `../SKILL.md` → *What holds for every gate* says;
   only a gigantic fix is a blocker, escalated with its evidence.
+
+## Host-owned general-agent drives
+
+For a behavior drive or document walk, the running host starts a fresh general agent with the
+scenario as its brief. Use the project's snapshot, fixture and evidence helpers where provided;
+the scenario may invoke a skill or let the agent choose skills and their scripts. Keep expected
+outcomes outside that agent's context. Supply the copied resources and scratch project, with no
+parent conversation or injected target skill body. Continue the same agent for later user turns.
+
+Preparation is incomplete evidence. Record the actual host session identity, terminal replies,
+settings the host exposes and produced artifacts, then finalize through the project's recipe.
+Wrong, changed, partial or failed inputs/results stay unverified. The subject writes no completion
+receipt; the parent judges its actual output against the recipe. A completed session is not a
+behavior verdict. Report unavailable tools or evidence; do not infer native plugin registration
+or equal behavior across hosts from reading copied skills.
+
+When the host has no general agents, warn and ask the user what to do, keeping the drive incomplete
+while that choice is pending. A script calling the same host harness is a fallback only after
+explicit user approval. Never choose another provider automatically or ask for foreign-provider
+sign-in as the default path. Record the grant and actual execution if that fallback is chosen.

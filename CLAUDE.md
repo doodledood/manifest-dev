@@ -36,13 +36,14 @@ the source tree it copies. It also fails when a shipped file points to a section
 
 `claude-plugins/manifest-dev/evals/` holds behavioral eval suites for `figure-out` and, under
 `evals/define/` with its own README, for `define`. Each run is many model sessions, so the
-owner runs a suite, or an agent runs one after asking and naming the cases and why. Every model
-session this repository starts — an eval suite, a skill drive (`scripts/drive-skill.sh`), or a
-document walk (`scripts/walk.sh`) — runs the `claude` CLI directly, with no container, the same
-way locally and in a cloud session. It needs only `claude` on PATH and signed in. Each session
-starts from a scratch directory outside the checkout, on a copy of the plugin, without the user's
-settings, installed plugins, MCP servers or — for a drive — `~/.manifest-dev` records, and
-records the CLI version rather than pinning it.
+owner runs a suite, or an agent runs one after asking and naming the cases and why. Behavior drives and document walks use a fresh general agent in the running host, with the
+scenario as its brief and copied skills available as resources. No CLI or provider marker chooses
+execution, and no target skill body is injected. The parent keeps expected outcomes outside the
+subject and grades real artifacts. `scripts/NATIVE_DRIVES.md` owns the snapshot, fixture and
+input-bound evidence helpers. If the host has no general agents, warn and ask what to do; a
+same-host script fallback needs explicit approval, never an automatic provider switch. The
+retained Claude CLI adapters and the Claude-native plugin-eval suite are separate explicit
+instruments; individual drives do not prove native plugin registration or suite uplift.
 Drives and walks run through their recipes (`scripts/verify drive|walk <recipe>`, ask-first). A
 suite runs from the repository root with
 `scripts/evals/run_eval.sh <name> <out-json> --tag <figure-out|define> --ablation with-without --scaffold`

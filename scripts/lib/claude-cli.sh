@@ -1,6 +1,6 @@
-# How every model session this repository starts is started: the `claude` CLI on PATH, run
-# directly in a scratch project outside the checkout. Sourced by scripts/drive-skill.sh,
-# scripts/walk.sh and scripts/evals/run_eval.sh — one place for the rule.
+# The explicit Claude CLI instrument: the `claude` CLI on PATH, run
+# directly in a scratch project outside the checkout. Used only by the approved Claude
+# fallback instruments and the separate Claude-native eval suite.
 #
 # After sourcing:
 #   claude_cli_ready <who>      exits 3 (a missing prerequisite), naming it and the next step,
@@ -26,6 +26,20 @@
 CLAUDE_ISOLATION=(--setting-sources project,local --strict-mcp-config)
 # shellcheck disable=SC2034
 CLAUDE_SESSION_ENV=(env -u CLAUDECODE)
+
+# An explicit adapter is not a host selector. The parent records the user's grant;
+# a known foreign host cannot use this instrument as its same-host fallback.
+require_claude_fallback() {
+  local who=$1 approval=${MANIFEST_DEV_FALLBACK_APPROVAL:-}
+  if [[ -z ${approval//[[:space:]]/} || ${MANIFEST_DEV_FALLBACK_HARNESS:-} != claude ]]; then
+    echo "$who: unreachable — this Claude CLI fallback needs explicit user approval and MANIFEST_DEV_FALLBACK_HARNESS=claude; warn and ask what to do" >&2
+    exit 3
+  fi
+  if [[ -z ${CLAUDECODE:-} && ( -n ${CODEX_THREAD_ID:-} || -n ${CODEX_CI:-} ) ]]; then
+    echo "$who: unreachable — Claude is not the running host; a fallback must use the same harness, never switch providers" >&2
+    exit 3
+  fi
+}
 
 claude_cli_ready() {
   local who=$1 status
@@ -75,4 +89,29 @@ copy_plugin() {
   # Local eval results can be large and are never part of the plugin.
   rm -rf "$dest/$name/evals/results"
   printf '%s\n' "$dest/$name"
+}
+
+# Keep ownership of the foreground model process until it is reaped. A process-group
+# stop reaches parent and child together; without a trap the parent can exit first,
+# leaving the terminated child as a zombie on hosts whose init does not reap it.
+stop_claude_session() {
+  trap '' TERM INT
+  local child_pid
+  for child_pid in $(jobs -p); do
+    kill -TERM "$child_pid" 2>/dev/null || true
+  done
+  wait 2>/dev/null || true
+  exit "$1"
+}
+
+run_claude_session() {
+  local session_dir=$1 session_pid session_status=0
+  shift
+  trap 'stop_claude_session 143' TERM
+  trap 'stop_claude_session 130' INT
+  (cd "$session_dir" && exec "$@") &
+  session_pid=$!
+  wait "$session_pid" || session_status=$?
+  trap - TERM INT
+  return "$session_status"
 }

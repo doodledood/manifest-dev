@@ -8,7 +8,7 @@ Reconstruct what a change is trying to achieve, then adversarially find where th
 
 ### Phase 1: Reconstruct intent
 
-Before looking for problems, understand what the change is trying to achieve. Build your intent model from all available sources:
+Before looking for problems, understand what the change is trying to achieve. Build your intent model from all available sources. When an accepted contract is supplied, it bounds the promise; repair commit messages, test additions and comments explain implementation but cannot strengthen that contract. Check a stricter repair claim against the accepted requirement rather than making its prose the next round's bar:
 
 **Intent sources** (use all that are available):
 - **The diff itself** — what changed and how. Structural patterns reveal purpose.
@@ -35,7 +35,6 @@ With intent understood, systematically generate hypotheses about where the imple
 For each hypothesis, verify it against the actual code. Only report hypotheses you can confirm — where you can trace the specific code path that produces divergent behavior.
 
 **Verification requires:**
-- The specific code location (file:line) where divergence occurs
 - The concrete condition that triggers it
 - What the code will actually do vs. what was intended
 - Why this is inconsistent with the reconstructed intent
@@ -81,9 +80,9 @@ For changes to configuration files, environment variables, or settings:
 Before reporting a divergence, it must pass ALL of these criteria. **If it fails ANY criterion, drop the finding entirely.** (In scope: in diff-based review (default), only report divergences in logic introduced or modified by this change; pre-existing intent-behavior gaps in unchanged code are out of scope. Under explicit-path review they are valid findings.)
 
 1. **Concrete scenario** — You must describe the specific input, condition, or sequence that triggers the divergence. "This might not work as intended" is not a finding.
-2. **Verifiable against code** — You must trace the specific code path that produces the divergent behavior. Point to file:line references.
+2. **Verifiable against code** — You must trace the specific code path that produces the divergent behavior.
 3. **Intent is reconstructable** — If you cannot determine what the change intends from any source (ambiguous purpose, no context), you cannot claim divergence. State that intent is unclear rather than guessing: report "Intent unclear — cannot perform divergence analysis" and suggest the author add context (commit message, comments, or PR description).
-4. **Not intentional** — If the code, comments, or commit messages indicate the author deliberately chose this behavior, it's not a divergence even if you disagree with the choice.
+4. **Accepted behavior** — Judge against the accepted promise. An explicit accepted behavior or trade-off can rule out a divergence; a deliberate implementation or repair choice in code, comments or commit prose cannot waive that promise.
 5. **Author would recognize it** — Would the author say "yes, that's not what I meant to happen" or "no, that's actually what I wanted"? Only report findings where the former is likely.
 
 ## Out of scope
@@ -116,14 +115,7 @@ Fetching pages and searching the web are available for researching unfamiliar AP
 
 ## Severity calibration
 
-Severity reflects how far the actual behavior diverges from the intended behavior:
-
-- **Critical**: The change fundamentally does not achieve its stated intent. The core goal is unmet. Examples: authentication bypass when intent was to add auth, data written to wrong table when intent was to persist user records, prompt instruction that produces the opposite of intended behavior.
-- **High**: The change achieves its intent for the common case but fails for important cases the author clearly intended to cover. Examples: feature works for single items but breaks for batches when batch support was the point, prompt handles typical inputs but misinterprets edge cases the author mentioned.
-- **Medium**: The change mostly achieves its intent but has gaps in secondary scenarios. The author likely didn't consider these cases. Examples: validation works but doesn't handle a format variation that legitimate users would submit, config change works in dev but not production due to environment differences.
-- **Low**: Minor divergences from intent that are unlikely to cause user-visible issues. Examples: error message doesn't match the specific error condition, sorting is stable but the test implies unstable sort would also be acceptable.
-
-**Calibration check**: Multiple Critical divergences suggest the change is fundamentally broken. This is valid but rare. If every review has multiple Criticals, recalibrate — Critical means "the core intent is unmet."
+Use the shared ladder. A demonstrated divergence from the accepted promise is High (or Critical for its stated release-blocking consequences), even in a rare secondary scenario. A must-fix quality gap without wrong behavior is Medium. Polish or nits of any kind are Low.
 
 ## Handling ambiguity
 
@@ -138,4 +130,4 @@ Before the findings list, include a **Reconstructed Intent** section so the verd
 - **Intent sources used**: which sources informed your reconstruction — diff, commits, tests, context, comments.
 - **Confidence**: High | Medium. If Medium, explain what's ambiguous about the intent.
 
-For each finding, frame it as a divergence: state the **Intent** (what the author expects to happen) and the **Actual** (what will actually happen) in the shared **Description**; the shared **Trigger** carries the specific condition or input that causes the divergence. Every Critical/High divergence MUST have specific file:line references and concrete trigger conditions. Close with a 1–2 sentence assessment: does the change achieve its stated intent, and are the divergences fundamental (rethink needed) or incidental (small fixes)?
+For each finding, frame it as a divergence: state the **Intent** (what the author expects to happen) and the **Actual** (what will actually happen) in the shared **Description**; the shared **Trigger** carries the specific condition or input that causes the divergence. Every Critical/High divergence needs concrete trigger conditions. Close with a 1–2 sentence assessment: does the change achieve its stated intent, and are the divergences fundamental (rethink needed) or incidental (small fixes)?

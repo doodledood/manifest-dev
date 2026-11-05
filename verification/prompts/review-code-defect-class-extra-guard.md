@@ -1,3 +1,5 @@
+Caller acceptance policy: no Medium-or-higher findings for the requested review gate.
+
 First, in this repository, commit a file `reminders.py` to the default branch containing:
 
 def due_reminders(loans, today):

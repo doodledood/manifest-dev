@@ -49,5 +49,5 @@ Check: read
 ## Gotchas
 
 - A goal that refers back to a source file, a read or a log is the defect it exists to avoid.
-- `sharp-gap`, `fills-gaps` and `weak-check` end on a question, because a drive is one headless prompt; what they show is that the skill held the goal back and chose the right way to fill the gap.
+- `sharp-gap`, `fills-gaps` and `weak-check` end on a question, because those scenarios supply only one user turn; what they show is that the skill held the goal back and chose the right way to fill the gap.
 - `tests/test_skill_frontmatter.py` and `tests/test_entry_points.py` hold that the skill parses and stays in the declared set.

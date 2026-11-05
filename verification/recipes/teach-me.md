@@ -24,5 +24,5 @@ Check: read
 ## Gotchas
 
 - A decision record is the easiest topic.
-- Interactive by design; a headless drive shows only the first stage.
+- Interactive by design; the supplied one-turn scenario shows only the first stage.
 - `tests/test_skill_frontmatter.py` and `tests/test_entry_points.py` hold that the skill parses and stays in the declared set. No behavior case measures it.

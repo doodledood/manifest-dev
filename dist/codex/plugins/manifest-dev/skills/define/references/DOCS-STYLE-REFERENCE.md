@@ -24,10 +24,10 @@ Documentation-register findings are graded on what the prose costs a reader.
 
 | Severity | Bar |
 |----------|-----|
-| **CRITICAL** | The prose misleads or blocks the reader: a procedure whose steps cannot be followed in the order given, a modal verb stating the wrong obligation (`may` where the action is required), a code reference or placeholder that would not work if copied, an instruction whose condition arrives after the action it governs, or a missing accessibility affordance that denies the content to a reader entirely. |
-| **HIGH** | A violation of a rule the major style guides agree on, which a professional editor would flag: title-case headings in a sentence-case document, first person addressing the reader, passive voice hiding who acts, undefined jargon or an unexpanded acronym, vague link text, non-inclusive terminology. |
-| **MEDIUM** | Local inconsistency or a rule broken without cost to comprehension: mixed date formats, an inconsistent serial comma, a number spelled where the rule wants a numeral, an unnecessary parenthetical. |
-| **LOW** | Preference-level observations. Informational only. |
+| **CRITICAL** | The prose defeats its purpose or denies the content to its audience entirely. |
+| **HIGH** | Incorrect instructions, wrong meaning, unsafe advice, or another broken promise, including an explicit requirement about presentation. |
+| **MEDIUM** | A clear documentation quality gap a careful reviewer would insist on fixing before shipping, with a concrete reader cost: missing context needed for a task, or organization that makes required information hard to use. |
+| **LOW** | Polish or a nit of any kind: style, naming, structure, or otherwise. Examples: phrasing polish, heading case, serial commas, or reorganization that preserves meaning and use. |
 
 Grade by consequence, not by rule count: ten MEDIUM inconsistencies do not aggregate into a HIGH.
 

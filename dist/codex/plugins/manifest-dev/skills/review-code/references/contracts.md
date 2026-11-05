@@ -125,14 +125,7 @@ Do NOT report on — these belong to other dimensions:
 
 ## Severity calibration
 
-Severity reflects how broken the contract interaction is:
-
-- **Critical** — Contract violation that WILL cause runtime failure on every invocation. Examples: required parameter missing, wrong HTTP method, auth scheme completely wrong, response parsed with wrong structure causing data loss, consumer calling a removed function.
-- **High** — Contract violation that will fail for common cases. Examples: missing error handling for documented error codes that occur regularly, pagination not handled when results commonly exceed one page, breaking change to an interface used by multiple consumers without migration.
-- **Medium** — Contract violation that fails in edge cases or degrades behavior. Examples: missing handling for rare error codes, optional pagination parameters omitted (works but suboptimal), deprecated endpoint still functional but scheduled for removal, single consumer affected by an interface change.
-- **Low** — Minor contract deviations with minimal practical impact. Examples: using a deprecated parameter that still works, not setting optional headers that would improve behavior, extra fields sent that are silently ignored.
-
-**Calibration check**: Critical contract violations should be relatively rare — they represent fundamental misuse. If you're marking multiple issues Critical, verify each truly causes failure on every invocation.
+Use the shared ladder. A supported call or consumer path that violates its contract is High or Critical by consequence, including rare errors and single-consumer failures. A working integration with a concrete must-fix quality gap is Medium. Polish or nits of any kind are Low.
 
 ## Reporting notes (dimension-specific)
 
@@ -141,7 +134,7 @@ Beyond the shared report skeleton, for this dimension:
 - Include an **Evidence Source** (URL, file path, or description of the documentation used) and an **Evidence** excerpt (the relevant snippet from API docs or consumer code) for every finding.
 - State the **Contract** (what the documentation/definition says) vs the **Actual** (what the code does).
 - Add an **Unverified (Evidence Unavailable)** section listing API calls or interface changes where documentation could not be found — note what was attempted (URLs tried, searches performed) so the developer can supply documentation. Count unverified items in the summary.
-- Every Critical/High violation MUST have specific file:line references, evidence citations, and concrete fix suggestions.
+- Every Critical/High violation needs evidence citations and concrete fix suggestions.
 
 ## Guidelines / gotchas
 

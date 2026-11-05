@@ -36,11 +36,11 @@ for group in "${groups[@]}"; do
     case "$group" in
         lint)
             if $fix; then
-                ruff check --fix claude-plugins/ tests/
-                black claude-plugins/ tests/
+                ruff check --fix claude-plugins/ tests/ scripts/native_drive.py
+                black claude-plugins/ tests/ scripts/native_drive.py
             else
-                ruff check claude-plugins/ tests/
-                black --check claude-plugins/ tests/
+                ruff check claude-plugins/ tests/ scripts/native_drive.py
+                black --check claude-plugins/ tests/ scripts/native_drive.py
             fi
             ;;
         types)

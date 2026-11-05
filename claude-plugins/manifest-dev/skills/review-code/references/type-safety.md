@@ -77,14 +77,7 @@ Whether a null check is *correct at runtime* (will it crash?) belongs to the cod
 
 ## Severity calibration
 
-The key question: **how many potential bugs does this type hole enable?**
-
-- **Critical**: Type holes that WILL cause runtime bugs — it's only a matter of time. Examples: `any` in critical paths (payments, auth, data persistence), missing null checks on external data, type assertions on user input without validation, exhaustiveness gaps in state machines.
-- **High**: Type holes that enable entire categories of bugs. Examples: unjustified `any` in business logic, stringly-typed APIs for finite sets, primitive obsession for IDs, incorrect type predicates, non-null assertions without evidence.
-- **Medium**: Type weaknesses that make bugs more likely. Examples: `any` that could be `unknown` with narrowing, missing branded types for confused values, optional chaining hiding bugs, loose generic constraints.
-- **Low**: Type holes with a narrow trigger — the failure needs a particular caller or an unusual input to surface. Examples: a missing explicit return type on an export whose inferred shape a named consumer depends on, a loose signature only one call path can misuse. Taste-level type hygiene — over-annotation of obvious types, interface-versus-type-alias consistency — names no trigger and is not reportable here. It is a divergent approach to a similar problem rather than a type hole, so `code-maintainability` owns it under Consistency, as it owns discriminant naming that is merely inconsistent across the codebase.
-
-**Calibration check**: Critical type issues are rare outside of security-sensitive code. If you're marking more than one issue as Critical, recalibrate — Critical means "this type hole WILL cause a production bug," not "might."
+Use the shared ladder. A demonstrated type hole that admits wrong behavior is High or Critical by consequence, even for one caller or an unusual input. Missing type protection with a concrete must-fix quality cost is Medium. Annotation or naming taste without a type hole belongs to code-maintainability; a narrow trigger does not make a substantive type failure Low.
 
 ## Report expectations
 
@@ -92,7 +85,7 @@ Follow the shared report format. In addition, for this dimension:
 
 - Tag each finding with its **category**: any/unknown | Invalid States | Narrowing | Generics | Nullability | Type Quality | Discriminated Unions | Naming Collision.
 - Lead with an executive read: **how many bugs is the type system catching vs letting through?**
-- Every Critical/High finding MUST have specific `file:line` references and a concrete fix example (show the corrected type, not just prose); every other finding should include example code for the solution too.
+- Every Critical/High finding needs a concrete fix example (show the corrected type, not just prose); every other finding should include example code for the solution too.
 - Note an **effort** estimate per finding: Quick win | Moderate refactor | Significant restructuring — a perfect type might not be worth a 500-line refactor.
 - If you find excellent type patterns worth preserving or extending, note them.
 

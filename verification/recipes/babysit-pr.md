@@ -30,9 +30,9 @@ Check: read
 ## Gotchas
 
 - The prompt file carries the placeholder `THROWAWAY_PR_URL`; replace it with a throwaway pull request the run may push to before driving.
-- Needs `gh auth status` to succeed in the session.
+- Needs the running host to expose the GitHub access the scenario requires.
 - It pushes commits and replies on GitHub; those reach reviewers and do not undo.
-- A drive through `scripts/drive-skill.sh` runs as you, with whatever GitHub access the driving machine has, so drive it only with a prompt naming a throwaway repository the run owns; where `gh` is not signed in, its GitHub entry points are `unreachable`.
+- The general agent has its host's ambient access. Drive remote actions only against a throwaway repository the scenario owns; missing GitHub capability leaves that entry point unreachable. A local snapshot scenario supplies its own state and performs no remote action.
 - `--ci` is one advance, not a waiter.
 - The external-feedback replay uses local observations and action records. It does not establish live GitHub transport, bot scheduling, or successful mutations. Its ask-first drive is unmeasured.
 - `tests/test_goal_contract_blocks.py` checks it owns the goal; `tests/test_dist_skill_references.py` checks its define coupling, journal contract, and Pi template.

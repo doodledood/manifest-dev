@@ -49,10 +49,10 @@ are about to do and with what inputs; confirm the outcome and what you checked.
 **A tool-call budget** — for search and retrieval loops that over-tool or under-tool depending on phrasing:
 
 ```
-Default to the smallest number of searches that answers the question. Search again
-when the results do not answer it, a required fact is missing, the user asked for
-comparison or exhaustive coverage, or a named artifact must be opened. Otherwise
-answer.
+Search until the answer is grounded in the evidence the question needs, then stop.
+Search again when the results do not answer it, a required fact is missing, the
+user asked for comparison or exhaustive coverage, or a named artifact must be
+opened. When those needs are met, answer.
 ```
 
 **An output contract** — where the consumer has real needs and *produce a good answer* yields walls of text. Name the audience and what they already know, the length envelope, and the ordering (conclusion first, caveats last). For editing tasks, state the preservation posture: keep the original's length, structure and voice; improve clarity and correctness; add no new claims or sections.

@@ -24,6 +24,6 @@ Check: read
 ## Gotchas
 
 - Posting needs GitHub access to a throwaway pull request; the range scenario needs none.
-- It is interactive by design; a headless drive shows only the first turn.
+- It is interactive by design; the supplied one-turn scenario shows only the first turn.
 - Posted comments are public.
 - `tests/test_skill_frontmatter.py` and `tests/test_entry_points.py` hold that the skill parses and stays in the declared set. No behavior case measures it.

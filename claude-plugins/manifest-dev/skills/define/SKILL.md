@@ -310,8 +310,9 @@ its body tells the evaluator to *activate* a named skill — never to spawn a
 further agent, which would bypass the gate's verdict contract. Code-quality gates
 activate `review-code` with a dimension; other checks name their own, such as
 *"Done when the `check-pr` skill reports the pull request ready"*. Name the
-dimension and stop: that skill owns its own threshold, and a second copy in the
-gate can contradict it.
+dimension and the caller's chosen acceptance policy, including severity/category thresholds.
+The skill owns classification; the Manifest owns what fails the gate. Encode the applicable
+task file's usual Medium+ bar unless the user's or project's chosen policy differs.
 
 ## Amendment
 

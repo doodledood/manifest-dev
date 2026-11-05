@@ -11,8 +11,8 @@ Inspects one GitHub pull request — CI, review feedback (threads, review bodies
 ## How a user reaches it
 
 - `/check-pr <pr-url | owner/repo#N>`.
-- Phrases its description matches: "is this PR ready to merge", "check mergeability", "babysit a PR".
-- `run-ticket` before merge; `/do` through a pull-request lifecycle gate (and so `babysit-pr`).
+- Phrases its description matches: "is this PR ready to merge", "check mergeability".
+- `babysit-pr` for its read-only lifecycle check; `run-ticket` before merge; `/do` through a pull-request lifecycle gate.
 - Steering in the request adds gates, approvers, flaky-check guidance and wait overrides.
 
 ## Scenarios
@@ -32,7 +32,7 @@ Check: read
 - The prompt file carries the placeholder `THROWAWAY_PR_URL`; replace it with a throwaway pull request the run may read before driving.
 - Needs `gh auth status` to succeed in the session and a pull request the run may read.
 - The live inspect scenario is unreachable without GitHub access. The feedback-snapshot scenario uses complete local observations instead and does not establish live transport or mutation behavior.
-- A drive through `scripts/drive-skill.sh` runs as you, with whatever GitHub access the driving machine has, so drive it only with a prompt naming a throwaway repository the run owns; where `gh` is not signed in, its GitHub entry points are `unreachable`.
+- The general agent has its host's ambient access. Drive remote actions only against a throwaway repository the scenario owns; missing GitHub capability leaves that entry point unreachable. A local snapshot scenario supplies its own state and performs no remote action.
 - GitHub's `UNKNOWN` merge state is a wait, not a PASS.
 - PASS means mergeable, not authorized to merge.
 - `tests/test_skill_frontmatter.py` and `tests/test_entry_points.py` hold that the skill parses and stays in the declared set. The feedback-snapshot drive is unmeasured. define's pull-request lifecycle task file names it as a gate.

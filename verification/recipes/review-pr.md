@@ -24,15 +24,15 @@ Check: read
 
 ### consolidation
 Run: `scripts/drive-skill.sh review-pr verification/prompts/review-pr-consolidation.md --tools --scaffold verification/fixtures/pr-consolidation`
-Proves: a resumed reviewer consolidates the supplied inspections through review-pr-holistic without repeating the fleet or accessing GitHub. In the follow-up packet, R1/R2 become one identifier comment; R3 stays closed on the verified privacy repair, R4 is refuted by the empty-order path, R5 respects the required input order, and R6 is pruned as already covered by the open quantity thread. The waiting packet retains the blocked evaluation and its missing evidence in the cycle summary and cannot become a clean review. Each surviving comment retains the existing anchor and voice contract. The transcript shows where consolidation ran; inline consolidation is permitted without suppressing a finding or blocker.
+Proves: a resumed reviewer consolidates the supplied inspections through review-pr-holistic without repeating the fleet or accessing GitHub. In the follow-up packet, R1/R2 become one identifier comment; R3 stays closed on the verified privacy repair, R4 is refuted by the empty-order path, R5 respects the required input order, and R6 is pruned as already covered by the open quantity thread. The waiting packet retains the blocked evaluation and its missing evidence in the cycle summary and cannot become a clean review. In the independent low-consequences packet, the caller's usual Medium+ publication policy filters naming R7 and structural R8 nits; R9 is retained and regraded High or Critical because the identifier conversion violates the binding contract and loses data, despite arriving as Low. In the low-inclusive packet, the caller explicitly includes Low and the full PR scope: R10 remains Low and is retained as a draft comment, without a hidden consolidation cutoff. Each surviving comment retains the existing anchor and voice contract. The transcript shows where consolidation ran; inline consolidation is permitted without suppressing a finding or blocker.
 Check: read
 
 ## Gotchas
 
 - The prompt file carries the placeholder `THROWAWAY_PR_URL`; replace it with a throwaway pull request in a repository the run owns before driving.
-- Needs `gh auth status` to succeed in the session.
+- Needs the running host to expose the GitHub access the scenario requires.
 - Posting is public and does not undo. Never drive it on someone else's pull request to test it.
-- A drive through `scripts/drive-skill.sh` runs as you, with whatever GitHub access the driving machine has, so drive it only with a prompt naming a throwaway repository the run owns; where `gh` is not signed in, its GitHub entry points are `unreachable`.
+- The general agent has its host's ambient access. Drive remote actions only against a throwaway repository the scenario owns; missing GitHub capability leaves that entry point unreachable. A local snapshot scenario supplies its own state and performs no remote action.
 - Manifest mode needs the checkout at the pull request's head.
 - Continued Manifest-mode loop wakes pass the applicable checkpoint and reporting scope to each evaluator. A fresh explicit invocation retains its requested independent review scope. This handoff remains unmeasured by a live review drive.
 - The reviewer chooses context placement for thread assessments, dimensions, premise checks, consolidation, and Manifest gates. Required results and evidence remain per item; reporting names the actual context used.

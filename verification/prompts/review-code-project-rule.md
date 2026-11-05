@@ -1,3 +1,5 @@
+Caller acceptance policy: no Medium-or-higher findings for the requested review gate.
+
 First, in this repository: write `CLAUDE.md` containing exactly this one rule:
 
     Every module that talks to the database uses the shared module-level `DB = Database()` instance from `db.py`; we do not inject database handles.

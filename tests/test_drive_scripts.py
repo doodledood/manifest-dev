@@ -1,6 +1,6 @@
-"""Skill drives, document walks and eval suites start the claude CLI directly, isolated.
+"""Approved Claude fallbacks and the separate eval instrument stay isolated.
 
-`scripts/drive-skill.sh`, `scripts/walk.sh` and `scripts/evals/run_eval.sh` run with no
+`scripts/drive-skill-claude.sh`, `scripts/walk-claude.sh` and the eval instrument run with no
 container: each starts `claude` from a scratch directory outside the checkout, hands it a copy
 of the plugin rather than the checkout's own directory, and starts it with no user settings and
 no MCP servers of the user's (`--setting-sources project,local --strict-mcp-config`, which
@@ -18,6 +18,7 @@ import os
 import shutil
 import signal
 import subprocess
+import sys
 import time
 import uuid
 from collections.abc import Callable
@@ -29,8 +30,8 @@ import pytest
 T = TypeVar("T")
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-DRIVE = REPO_ROOT / "scripts" / "drive-skill.sh"
-WALK = REPO_ROOT / "scripts" / "walk.sh"
+DRIVE = REPO_ROOT / "scripts" / "drive-skill-claude.sh"
+WALK = REPO_ROOT / "scripts" / "walk-claude.sh"
 RUN_EVAL = REPO_ROOT / "scripts" / "evals" / "run_eval.sh"
 LIB = REPO_ROOT / "scripts" / "lib" / "claude-cli.sh"
 RECIPES = REPO_ROOT / "verification" / "recipes"
@@ -164,6 +165,8 @@ def setup(
         "DRIVE_STAMP": STAMP,
         # Set as it is when a drive is started from inside a session; the drive must drop it.
         "CLAUDECODE": "1",
+        "MANIFEST_DEV_FALLBACK_HARNESS": "claude",
+        "MANIFEST_DEV_FALLBACK_APPROVAL": "Test fixture: explicit same-host fallback approved",
         "STANDIN_RECORD": str(tmp_path / "calls.jsonl"),
         "STANDIN_VERSION": VERSION,
         **standin,
@@ -367,6 +370,16 @@ def test_consolidation_fixture_preserves_review_state_and_reproducible_findings(
         "R6",
     }
     assert packet["packets"][1]["blocked_evaluations"]
+    low_findings = packet["packets"][2]["findings"]
+    assert {item["id"] for item in low_findings} == {"R7", "R8", "R9"}
+    assert all(item["severity"] == "Low" for item in low_findings)
+    assert "naming nit" in low_findings[0]["body"]
+    assert "structural nit" in low_findings[1]["body"]
+    assert "contract requires the original string" in low_findings[2]["body"]
+    strict = packet["packets"][3]
+    assert strict["name"] == "low-inclusive"
+    assert "including Low" in strict["caller_policy"]
+    assert strict["findings"][0]["severity"] == "Low"
     assert packet["reviewed_range"] == (
         f"{packet['reviewed_commit']}..{packet['current_commit']}"
     )
@@ -613,7 +626,8 @@ def committed_checkout(tmp_path: Path) -> tuple[Path, str, Path]:
     """
     checkout = tmp_path / "checkout"
     for part in (
-        "scripts/drive-skill.sh",
+        "scripts/drive-skill-claude.sh",
+        "scripts/native_drive.py",
         "scripts/lib",
         "verification/recipes/figure-out.md",
         "claude-plugins/manifest-dev",
@@ -651,7 +665,7 @@ def drive_from(
 ) -> subprocess.CompletedProcess[str]:
     return subprocess.run(
         [
-            str(checkout / "scripts" / "drive-skill.sh"),
+            str(checkout / "scripts" / "drive-skill-claude.sh"),
             "figure-out",
             str(checkout / "verification" / "recipes" / "figure-out.md"),
             *args,
@@ -1402,12 +1416,21 @@ def test_a_walk_passes_on_a_failed_session_and_says_so(
     assert result.returncode == 1 and "reader session exited 1" in result.stderr
 
 
-def test_stopping_a_drive_stops_its_session(tmp_path: Path, toolbox: Path) -> None:
-    # The session runs in the drive's process group, so the stop `scripts/verify` sends that group
-    # reaches it, as the container's init process once made sure.
+@pytest.mark.parametrize(
+    "command",
+    [
+        [str(DRIVE), "figure-out", str(RECIPES / "figure-out.md")],
+        [str(WALK), "Find the install steps.", "README.md"],
+    ],
+)
+@pytest.mark.parametrize("stop_signal", [signal.SIGTERM, signal.SIGINT])
+def test_stopping_a_drive_stops_its_session(
+    tmp_path: Path, toolbox: Path, command: list[str], stop_signal: signal.Signals
+) -> None:
+    # The parent must reap its model child before leaving, even without a reaping init.
     env = setup(tmp_path, toolbox, STANDIN_SLEEP="30")
     running = subprocess.Popen(
-        [str(DRIVE), "figure-out", str(RECIPES / "figure-out.md")],
+        command,
         env=env,
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
@@ -1415,11 +1438,9 @@ def test_stopping_a_drive_stops_its_session(tmp_path: Path, toolbox: Path) -> No
     )
     try:
         (call,) = wait_for(tmp_path / "calls.jsonl", complete_calls)
-        os.killpg(running.pid, signal.SIGTERM)
+        os.killpg(running.pid, stop_signal)
         running.wait(timeout=10)
-        deadline = time.monotonic() + 5
-        while _alive(call["pid"]) and time.monotonic() < deadline:
-            time.sleep(0.05)
+        assert running.returncode == 128 + stop_signal
         assert not _alive(call["pid"])
     finally:
         running.kill()
@@ -1451,3 +1472,66 @@ def test_eval_result_path_cannot_be_overridden_before_preflight(
     assert result.returncode != 0
     assert calls(tmp_path) == []
     assert not (tmp_path / "runs").exists()
+
+
+def test_promise_convergence_scaffold_keeps_history_and_real_fee_failure(
+    tmp_path: Path, toolbox: Path
+) -> None:
+    project = convergence_project(
+        tmp_path, toolbox, "promise-convergence", "do-promise-convergence.md"
+    )
+    journal = (project / "execution-log.md").read_text()
+    assert all(
+        finding in journal
+        for finding in ("F-12", "F-17", "F-39", "F-40", "F-41", "F-22")
+    )
+    assert "naming nit" in journal
+    assert "structural nit" in journal
+    history = subprocess.check_output(
+        ["git", "log", "--format=%s"], cwd=project, text=True
+    )
+    assert "Make every Unicode label spacing canonical" in history
+    assert "Normalize whitespace for every label" in history
+    check = subprocess.run(
+        [sys.executable, "check.py"], cwd=project, capture_output=True, text=True
+    )
+    assert check.returncode != 0 and "AssertionError" in check.stderr
+    source = (project / "display.py").read_text()
+    # Pin the oracle's independent seam: the fixture starts wrong, then the real fix passes.
+    (project / "display.py").write_text(
+        source.replace(
+            "return cents if fee == 1 else cents - fee", "return cents - fee"
+        )
+    )
+    fixed = subprocess.run(
+        [sys.executable, "check.py"], cwd=project, capture_output=True, text=True
+    )
+    assert fixed.returncode == 0, fixed.stderr
+    assert "readable labels and exact fees" in fixed.stdout
+
+
+@pytest.mark.parametrize(
+    "command", [[str(DRIVE), "preflight"], [str(WALK), "Read", "README.md"]]
+)
+@pytest.mark.parametrize("fault", ["approval", "harness", "foreign"])
+def test_claude_fallback_requires_an_explicit_same_host_grant(
+    tmp_path: Path,
+    toolbox: Path,
+    command: list[str],
+    fault: str,
+) -> None:
+    env = setup(tmp_path, toolbox)
+    if fault == "approval":
+        env["MANIFEST_DEV_FALLBACK_APPROVAL"] = "  "
+    elif fault == "harness":
+        env.pop("MANIFEST_DEV_FALLBACK_HARNESS")
+    else:
+        env.pop("CLAUDECODE")
+        env["CODEX_CI"] = "1"
+    result = subprocess.run(
+        command, cwd=REPO_ROOT, env=env, capture_output=True, text=True
+    )
+    assert result.returncode == 3
+    assert "approval" in result.stderr or "same harness" in result.stderr
+    assert calls(tmp_path) == []
+    assert not (tmp_path / "store").exists()

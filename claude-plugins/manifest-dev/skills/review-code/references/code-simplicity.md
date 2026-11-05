@@ -89,31 +89,7 @@ Do NOT report on:
 
 ## Severity calibration
 
-**High**: Complexity that significantly impedes understanding and maintenance
-
-- Abstraction layers with single implementation and no planned alternatives
-- A visible behavior-preserving simplification would remove multiple branches, modes, or helper layers from core logic
-- Deep nesting in core logic paths that loses context
-- Complex optimization without profiling evidence in hot paths
-- Multiple indirection layers that obscure simple operations
-- Extensive configurability used with single configuration
-
-**Medium**: Complexity that adds friction but doesn't severely impede understanding. Each of these earns Medium only where the finding names the simpler shape and what the current one costs — the branch a future change has to trace, the context a reader must hold, the extra edit sites a modification touches. Where the case is that it could read better, it is Low.
-
-- Moderate over-abstraction (could be simpler but isn't egregious)
-- A concrete local reframing would collapse repeated branches or helper indirection in one module
-- Nested ternaries or moderately complex boolean expressions
-- Unnecessary caching or memoization in non-critical paths
-- Somewhat cryptic naming that requires context to understand
-
-**Low**: Minor simplification opportunities
-
-- Single unnecessary wrapper functions
-- Slightly verbose approaches that could be more concise
-- Magic numbers in semi-obvious contexts
-- Minor naming improvements
-
-**Calibration check**: High severity should be reserved for complexity that actively harms comprehension. If you're marking many issues as High, recalibrate — most simplicity issues are Medium or Low.
+Use the shared ladder. Complexity earns Medium when the finding names a concrete simpler shape and a must-fix cost: branches a future change must trace, context a reader must hold, or extra edit sites. A demonstrated correctness or safety failure is High or Critical. Simplification nits are Low, including naming and structural nits.
 
 ## Dimension-specific report fields
 

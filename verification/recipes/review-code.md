@@ -56,6 +56,16 @@ Run: `scripts/drive-skill.sh review-code verification/prompts/review-code-fresh.
 Proves: this new explicit full review reports the input-order violation from sorting SKUs, as well as the identifier and total defects. Historical review files do not silently narrow the requested scope. The fixture is the same as follow-up, so the requested review scope explains the different eligible findings.
 Check: read
 
+### rare-correctness
+Run: `scripts/drive-skill.sh review-code verification/prompts/review-code-rare-correctness.md`
+Proves: code-bugs reports the lost item at page 99, size 1 as High or Critical and FAIL, with its concrete trigger and evidence. Rarity and a workaround do not make the wrong result Low. Inspect the report, not just its final verdict.
+Check: read
+
+### caller-policy
+Run: `scripts/drive-skill.sh review-code verification/prompts/review-code-caller-policy.md --scaffold verification/fixtures/review-caller-policy`
+Proves: the naming divergence from the declared advisory convention is Low, without correctness or broken-promise findings. With the first caller's Medium+ gate it passes; with the second caller's Low-inclusive gate the same Low fails without changing severity. The third turn returns classifications without inventing a gate verdict. The source and instructions remain byte-identical. Read the actual reports, not just a completion claim.
+Check: read
+
 ## Gotchas
 
 - Each prompt builds its own scratch repository state: a commit on a branch ahead of its default branch.
@@ -64,3 +74,5 @@ Check: read
 - No comparison base resolves to BLOCKED.
 - `tests/test_review_scope.py` exercises the scope commands; `tests/test_drive_scripts.py` checks convergence fixtures. The follow-up and fresh drives are unmeasured; fixture checks do not measure review behavior.
 - Not yet driven: the description phrases, define's coding gates, review-pr's fleet.
+
+- The consequence/promise scenario ran once per arm through native GPT-6.1 Sol/xhigh contexts on 2026-11-05. The decision records dated that day name the outcomes and limits; scaffold checks alone do not establish behavior.

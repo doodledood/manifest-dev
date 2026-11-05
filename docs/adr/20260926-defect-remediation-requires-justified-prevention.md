@@ -1,7 +1,7 @@
 # ADR: Defect remediation requires proportionate prevention with evidenced fallbacks
 
 ## Status
-Accepted
+Accepted; amended by 20261105-review-severity-follows-consequence: consequence classification is separate from caller-chosen acceptance and handling; the caller may choose the usual Medium+ gate, while substantive failures received as Low are regraded from evidence
 
 ## Area
 Code review
