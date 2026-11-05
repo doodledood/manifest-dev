@@ -14,14 +14,14 @@ These examples are guidance, not exhaustive. If you identify a documentation acc
 
 ## Actionability filter
 
-Before reporting a documentation issue, it must pass ALL of these criteria. **If a finding fails ANY criterion, drop it entirely** — criteria 3 and 4 distinguish substantive gaps from presentation-only polish using the shared ladder.
+Before reporting a documentation issue, it must pass ALL of these criteria. **If a finding fails ANY criterion, drop it entirely** — criteria 3 and 4 distinguish substantive gaps from optional polish or nits of any kind using the shared ladder.
 
 1. **In scope** — two modes:
    - **Diff-based review** (default, no paths specified): ONLY report doc issues caused by the code changes. Pre-existing doc problems are strictly out of scope as findings — even if you notice them, do not report them as findings (a caller may ask for them in a separate list; `SKILL.md` → *The Pre-existing list, only when asked*). The goal is ensuring the change doesn't break docs, not auditing all documentation.
    - **Explicit path review** (caller specified files/directories): audit everything in scope. Pre-existing inaccuracies are valid findings since a full review of those paths was requested.
 2. **Actually incorrect or missing** — "could add more detail" is not a finding. "This parameter is documented as optional but the code requires it" is a finding.
 3. **User would be blocked or confused** — name the failing instruction, incorrect claim or concrete missing explanation. A workaround does not lower a broken promise to Low.
-4. **Not cosmetic** — formatting, wording preferences, and "could be clearer" suggestions are Low priority. Focus on factual accuracy.
+4. **Not an optional nit** — style, naming, structure and wording preferences alone are below-bar. A violation of a binding documentation requirement is substantive even when it concerns those areas.
 5. **Matches doc depth** — don't demand comprehensive API docs in a project with minimal docs. Match the existing documentation style and depth.
 6. **High confidence** — you must be certain the documentation is incorrect. "This could be improved" is not sufficient; "this doc says X but the code does Y" is required. If uncertain, don't flag it.
 
@@ -43,13 +43,13 @@ Do NOT report on:
 
 ## Severity calibration
 
-Use the shared ladder. A command that fails, a wrong signature, misleading safety advice or another broken documentation promise is High or Critical by consequence; documentation has no severity cap. A missing explanation that creates a concrete must-fix reader gap is Medium. Wording and formatting polish that preserves meaning and behavior is Low.
+Use the shared ladder. A command that fails, a wrong signature, misleading safety advice or another broken documentation promise is High or Critical by consequence; documentation has no severity cap. A missing explanation that creates a concrete must-fix reader gap is Medium. Optional polish or nits of any kind are Low, including wording and structural preferences.
 
 ## Edge cases
 
-- **No docs exist** — report as a Medium gap and suggest where docs should be created.
+- **No docs exist** — name the reader task that needs documentation and grade the demonstrated gap by the shared ladder; absence alone does not establish Medium.
 - **No code changes affect docs** — report that documentation is up to date, with reasoning.
-- **Unclear if a change needs docs** — report as Low with reasoning and let the caller decide.
+- **Unclear if a change needs docs** — report only a supported discrepancy or missing explanation, not the uncertainty itself.
 
 ## Suggested-update standards
 
@@ -66,10 +66,9 @@ Every finding must carry a concrete suggested update. When you write one:
 
 Beyond the shared report skeleton, each finding should make the discrepancy concrete:
 
-- **Location**: `path/to/doc.md` (line range if applicable) or `path/to/code.ts:line` for comment issues
 - **Related code**: `path/to/code.ts:line` the doc describes
 - **Current doc/comment says**: quote or summary of what's written now
 - **Code actually does**: what the implementation does
 - **Suggested update**: the specific text/change needed, or "Remove comment"
 
-Separate documentation-file findings from code-comment findings if both exist, and list any new features/changes with no documentation at all under a missing-documentation grouping. Every issue must cite a specific file:line and have an actionable suggested update. If no issues pass the filter, the PASS report should briefly state what was checked and why docs are up to date.
+Separate documentation-file findings from code-comment findings if both exist, and list any new features/changes with no documentation at all under a missing-documentation grouping. If no issues pass the filter, the PASS report should briefly state what was checked and why docs are up to date.

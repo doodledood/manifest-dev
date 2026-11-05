@@ -44,12 +44,12 @@ It returns exactly one disposition, a short reason, and a drafted reply where th
 
 **Evidence and scope.** Keep each dimension focused on its own standard. Use binding requirements, explicit exclusions, and permission limits to judge scope, and give them to defect-class so it can judge authorized remedies. An author's implementation preference is not such a limit. Inspect the code and relevant evidence; the author's explanation or success report does not establish correct behavior. The judgment pass also needs the stated pain and whole-PR context to assess the premise.
 
-**Holistic coherence pass.** After every required inspection has returned, collect their findings (filter only presentation-only Lows that preserve the underlying promise; retain correctness or safety findings even when received as Low, correcting their grade from the evidence; keep dimension and severity). Invoke the `review-pr-holistic` skill. Keep BLOCKED verdicts with their missing evidence or authority in the cycle summary; consolidation cannot turn an incomplete evaluation into a clean result. Supply the retained findings plus:
+**Holistic coherence pass.** After every required inspection has returned, collect their findings (filter Lows that are optional polish or nits of any kind, including style, naming and structure; retain correctness or safety failures and broken binding promises even when received as Low, correcting their grade from the evidence; keep dimension and severity). Invoke the `review-pr-holistic` skill. Keep BLOCKED verdicts with their missing evidence or authority in the cycle summary; consolidation cannot turn an incomplete evaluation into a clean result. Supply the retained findings plus:
 
 - PR history: all comments and threads on the PR (including our own from any prior review pass), the author's recent commit messages on the branch, the PR description.
 - Bundle context for each linked PR: diff, description, top-level conversation. No inline review comments from linked PRs.
 - The reviewed range for this invocation — the code the fleet's defect findings are bounded to.
-- The judgment pass's findings, from its whole-PR assessment (below). They are consolidated alongside the fleet's but stay exempt from the filter for presentation-only Lows and from reviewed-range bounding — the judgment pass reads the whole PR head itself, so its findings are already whole-PR.
+- The judgment pass's findings, from its whole-PR assessment (below). They are consolidated alongside the fleet's but stay exempt from the filter for below-bar Lows and from reviewed-range bounding — the judgment pass reads the whole PR head itself, so its findings are already whole-PR.
 - Any truncation the caller did, carried forward.
 - The voice profile below.
 

@@ -77,7 +77,7 @@ Before applying rules rigidly, consider:
 
 ## Severity calibration
 
-Use the shared ladder. Duplication, mixed concerns, incompatible representations, boundary leakage, circular dependencies, hidden state, inconsistent APIs, migration debt and scattered special cases earn Medium when the finding names the future change they make materially harder and a concrete improvement. A demonstrated correctness, safety or promise failure is High or Critical; grade that consequence rather than the pattern alone. Form-only inconsistency, naming and other presentation or taste that preserve the promise are Low.
+Use the shared ladder. Duplication, mixed concerns, incompatible representations, boundary leakage, circular dependencies, hidden state, inconsistent APIs, migration debt and scattered special cases earn Medium when the finding names the future change they make materially harder and a concrete improvement. A demonstrated correctness, safety or promise failure is High or Critical; grade that consequence rather than the pattern alone. Optional improvements are Low, including style, naming and structural nits.
 
 ## Gotchas and false positives
 

@@ -125,7 +125,7 @@ Do NOT report on — these belong to other dimensions:
 
 ## Severity calibration
 
-Use the shared ladder. A supported call or consumer path that violates its contract is High or Critical by consequence, including rare errors and single-consumer failures. A working integration with a concrete must-fix quality gap is Medium. Presentation or taste that preserves the contract is Low.
+Use the shared ladder. A supported call or consumer path that violates its contract is High or Critical by consequence, including rare errors and single-consumer failures. A working integration with a concrete must-fix quality gap is Medium. Optional polish or nits of any kind are Low.
 
 ## Reporting notes (dimension-specific)
 

@@ -1,7 +1,7 @@
 # ADR: A review dimension may take a defect as input, and that is what earns it a slot
 
 ## Status
-Accepted; amended by 20260926-defect-remediation-requires-justified-prevention: defect-class owns justified protection as well as affected-site accounting; unchanged enabling boundaries and explicit-path ownership follow the repair-adequacy distinction; amended by 20261024-pr-review-chooses-its-internal-contexts: dimension standards and conditional selection remain; PR conversation is no longer categorically excluded; amended by 20261105-review-severity-follows-consequence: presentation-only Lows are below-bar; substantive remediation and correctness/safety findings remain blocking even when received as Low
+Accepted; amended by 20260926-defect-remediation-requires-justified-prevention: defect-class owns justified protection as well as affected-site accounting; unchanged enabling boundaries and explicit-path ownership follow the repair-adequacy distinction; amended by 20261024-pr-review-chooses-its-internal-contexts: dimension standards and conditional selection remain; PR conversation is no longer categorically excluded; amended by 20261105-review-severity-follows-consequence: optional polish and nits of any kind are below-bar; substantive remediation and correctness/safety failures and broken binding promises remain blocking even when received as Low
 
 ## Area
 Code review

@@ -64,7 +64,7 @@ A judgment finding is **not** placed on the defect severity scale (low / medium 
 
 and **no severity**. **Return shape:** the list of such findings, already collapsed to one per root (below), or an empty list. This is load-bearing, not cosmetic:
 
-- The caller filters only presentation-only Lows from fleet findings, as `../review-pr/SKILL.md` defines. A correctness or safety finding received as Low is retained and regraded there. Judgment findings have no severity and are **exempt from that filter**. Their own inclusion rule is: **surface if the evidence-gate fired and the PR does not already cover the point.** They are still deduped and merged like any other finding.
+- The caller filters below-bar Lows from fleet findings: optional polish or nits of any kind, as `../review-pr/SKILL.md` defines. Correctness or safety failures and broken binding promises received as Low are retained and regraded there. Judgment findings have no severity and are **exempt from that filter**. Their own inclusion rule is: **surface if the evidence-gate fired and the PR does not already cover the point.** They are still deduped and merged like any other finding.
 - Manifest-mode contract verification and `/do` gate verification enforce their binding criteria and applicable acceptance thresholds; the judgment class is orthogonal to both.
 
 ## Synthesis — one question per root

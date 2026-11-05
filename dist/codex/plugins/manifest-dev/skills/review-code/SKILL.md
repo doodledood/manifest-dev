@@ -65,9 +65,9 @@ This skill is **read-only**: never modify repository files; write only to `/tmp/
 - **Critical** — blocks release: data loss, corruption, security breach, or complete failure for all users; no workaround.
 - **High** — correctness, safety, a broken promise, or wrong behavior. Rarity, unusual preconditions and a workaround do not turn a substantive defect into polish.
 - **Medium** — a clear product or quality gap a careful reviewer would insist on fixing before shipping; name the concrete cost.
-- **Low** — presentation, polish or taste that does not change the underlying promise.
+- **Low** — optional polish or a nit of any kind: style, naming, structure, or otherwise.
 
-Grade by consequence, not confidence or frequency. Dimension examples apply this ladder; they cannot lower it. All Critical, High and Medium findings block. A correctness or safety finding received as Low still blocks: correct its grade from the evidence rather than filtering it out. Presentation-only Lows are below-bar; the caller batches useful fixes from the first review and leaves new such nits on repair reviews. An explicit binding requirement still holds, including one about presentation.
+Grade by consequence, not confidence or frequency. Dimension examples apply this ladder; they cannot lower it. All Critical, High and Medium findings block. A correctness or safety failure or broken binding promise received as Low still blocks: correct its grade from the evidence before filtering. Optional polish and nits of any kind are below-bar; the caller batches useful fixes from the first review and leaves new Lows on repair reviews. An explicit binding requirement still holds, including one about style, naming or structure.
 
 ## Report format (shared)
 
@@ -112,7 +112,7 @@ When invoked as a manifest acceptance gate, end with one verdict:
 ## Gotchas
 
 - **One ref only.** Load exactly the reference for the requested dimension. Loading several defeats progressive disclosure and blurs the orthogonality boundaries each dimension defines against its neighbors.
-- **Apply the shared threshold.** A Low label never discharges a correctness or safety failure. Check the consequence before applying the threshold.
+- **Apply the shared threshold.** A Low label never discharges a correctness or safety failure or a broken binding promise. Check the consequence before applying the threshold.
 - **Reportability is a stated trigger, not a confidence level** (defect-finders). Name the condition under which the defect manifests: "this WILL fail when X", with X written down. Where the defect is static rather than sequential — a contract or signature mismatch that is wrong on every call — the trigger is the call or consumer path that reaches it. A finding that cannot name its trigger is not reportable however strongly you suspect it — "this might be a bug", "this looks fragile", "this could break under load" all fail the test. Someone reading only the finding must be able to tell whether it clears this bar, which is what holds the bar in one place across reviewers rather than moving it with whoever is reading. A stated trigger is necessary rather than sufficient — each dimension's own bar for reporting (its actionability filter, or for defect-class its acceptance rules) still applies on top of it.
 - **A Medium is a stated cost, not a strength of feeling** (all dimensions). Medium is a blocking grade, so it carries the same auditability the defect-finders get from a stated trigger: name the cost in the finding — the change made harder, the task defeated, the condition under which behavior degrades — specifically enough that someone reading only the finding can tell the grade is earned. A finding whose case rests on "could be cleaner", "feels off", or "not ideal" has not named one, and sits at Low. Each dimension's own calibration still applies on top.
 - **Stay inside the loaded dimension.** Each reference lists what it owns and what belongs to a sibling dimension. A maintainability smell is not a bug; a type hole is not a design critique. Report only what the loaded dimension owns; let the other dimensions' invocations catch the rest.

@@ -19,8 +19,7 @@ do not invent a personality for the author.
   explicitly promises.
 - **Medium** — a clear must-fix quality gap in clarity, intended voice, rhythm, or
   emotional effect, with its concrete audience cost supported by the brief or text.
-- **Low** — presentation, polish or taste that does not change the underlying promise,
-  with no demonstrated loss of meaning or intended effect.
+- **Low** — optional polish or a nit of any kind: style, naming, structure, or otherwise.
 
 A preference for another phrasing is not evidence of a blocking defect. Neither
 punctuation nor a guess about AI authorship establishes severity.

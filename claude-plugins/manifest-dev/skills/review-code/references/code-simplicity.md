@@ -89,7 +89,7 @@ Do NOT report on:
 
 ## Severity calibration
 
-Use the shared ladder. Complexity earns Medium when the finding names a concrete simpler shape and a must-fix cost: branches a future change must trace, context a reader must hold, or extra edit sites. A demonstrated correctness or safety failure is High or Critical. Verbosity, naming and other presentation-only simplifications are Low.
+Use the shared ladder. Complexity earns Medium when the finding names a concrete simpler shape and a must-fix cost: branches a future change must trace, context a reader must hold, or extra edit sites. A demonstrated correctness or safety failure is High or Critical. Optional simplifications are Low, including naming and structural nits.
 
 ## Dimension-specific report fields
 

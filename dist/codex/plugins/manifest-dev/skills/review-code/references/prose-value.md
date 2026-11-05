@@ -103,7 +103,7 @@ Do NOT report on:
 
 ## Severity calibration
 
-Use the shared ladder. Surplus prose earns Medium when it displaces a necessary explanation or obscures a reason the reader needs for a concrete task. Presentation-only surplus, repetition or taste is Low. Inaccurate claims belong to docs. A refactor flag alone is Low; evidence of a substantive failure still needs its owning dimension and grade.
+Use the shared ladder. Surplus prose earns Medium when it displaces a necessary explanation or obscures a reason the reader needs for a concrete task. Optional pruning, reorganization or other nits are Low. Inaccurate claims belong to docs. A refactor flag alone is Low; evidence of a substantive failure still needs its owning dimension and grade.
 
 ## Dimension-specific report fields
 

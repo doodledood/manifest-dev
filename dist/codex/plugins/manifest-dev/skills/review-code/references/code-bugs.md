@@ -122,7 +122,7 @@ Note: Security issues causing **runtime failures** (crashes, data corruption) AR
 
 ## Severity calibration
 
-Use the shared ladder. Wrong results, omitted data, stale substantive information and incorrect error behavior are High or Critical by consequence, even under unusual preconditions or with a workaround. A must-fix quality gap is Medium. Presentation-only polish that preserves the promised result is Low; a cosmetic location alone does not establish that.
+Use the shared ladder. Wrong results, omitted data, stale substantive information and incorrect error behavior are High or Critical by consequence, even under unusual preconditions or with a workaround. A must-fix quality gap is Medium. Optional polish or nits of any kind are Low; a cosmetic location alone does not establish that.
 
 ## Report expectations (this dimension)
 

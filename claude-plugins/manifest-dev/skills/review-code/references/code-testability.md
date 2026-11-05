@@ -75,7 +75,7 @@ Do NOT report on (owned by other dimensions):
 
 ## Severity calibration
 
-Use the shared ladder. Test setup or hidden dependencies that impose a concrete must-fix regression-catching burden are Medium. Name the setup, behavior and simpler seam. A demonstrated correctness or safety failure is High or Critical; minor test-code presentation or taste that preserves its promise is Low.
+Use the shared ladder. Test setup or hidden dependencies that impose a concrete must-fix regression-catching burden are Medium. Name the setup, behavior and simpler seam. A demonstrated correctness or safety failure is High or Critical; optional test-code improvements are Low, including naming and structural nits.
 
 ## Report expectations (this dimension)
 

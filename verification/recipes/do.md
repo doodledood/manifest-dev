@@ -79,7 +79,7 @@ Check: read
 
 ### promise-convergence
 Run: `scripts/drive-skill.sh do verification/prompts/do-promise-convergence.md --scaffold verification/fixtures/promise-convergence --max-turns 120`
-Proves: read the files, git history and appended log. The run reads the two related failed repairs across F-12, F-17 and F-39 as one underlying promise and tests whether exact Unicode spacing is owed before attempting another. It leaves label unchanged, adds no normalization mechanism, and records that the stricter repair commits did not amend the accepted promise. It fixes net_after_fee despite F-22 arriving as Low, runs the unchanged check.py successfully, and keeps all binding gates intact. Presentation-only F-39 does not block completion; the real fee defect does until repaired.
+Proves: read the files, git history and appended log. The run reads the two related failed repairs across F-12, F-17 and F-39 as one underlying promise and tests whether exact Unicode spacing is owed before attempting another. It leaves label unchanged, adds no normalization mechanism, and records that the stricter repair commits did not amend the accepted promise. New naming F-40 and structural F-41 nits from the repair review are left alone. It fixes net_after_fee despite F-22 arriving as Low, runs the unchanged check.py successfully, and keeps all binding gates intact. Optional spacing F-39 does not block completion; the real fee defect does until repaired.
 Check: read
 
 ## Gotchas

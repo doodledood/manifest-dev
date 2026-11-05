@@ -26,9 +26,19 @@ def test_severity_cannot_make_rarity_a_license_to_drop_wrong_behavior(
 ) -> None:
     review = skill(plugins, "review-code")
     assert "no LOW" not in review
-    assert "presentation, polish or taste" in review
-    assert "does not change the underlying promise" in review
-    assert "correctness or safety finding received as Low still blocks" in review
+    assert (
+        "optional polish or a nit of any kind: style, naming, structure, or otherwise"
+        in review
+    )
+    assert "no Medium-or-higher findings to PASS" in review
+    assert (
+        "correctness or safety failure or broken binding promise received as Low still blocks"
+        in review
+    )
+    assert (
+        "batches useful fixes from the first review and leaves new Lows on repair reviews"
+        in review
+    )
     for reference in (plugins / "manifest-dev/skills/review-code/references").glob(
         "*.md"
     ):
@@ -37,6 +47,7 @@ def test_severity_cannot_make_rarity_a_license_to_drop_wrong_behavior(
         assert "**Low**: Rare scenarios" not in text, reference
         assert "**Low**: Type holes with a narrow trigger" not in text, reference
         assert "Documentation issues are capped" not in text, reference
+        assert "presentation-only" not in text.lower(), reference
 
 
 def test_task_files_cannot_recreate_the_retired_low_threshold(plugins: Path) -> None:
@@ -67,15 +78,21 @@ def test_pr_consolidation_filters_consequences_before_severity_labels(
 ) -> None:
     for name in ("review-pr", "review-pr-holistic", "review-pr-judgment"):
         text = (plugins / "manifest-dev-tools/skills" / name / "SKILL.md").read_text()
-        assert "presentation-only Low" in text
-        assert "correctness or safety finding" in text
+        assert "optional polish or nits of any kind" in text
+        assert (
+            "correctness or safety failures and broken binding promises" in text.lower()
+        )
+        assert "regraded" in text or "correcting their grade" in text
+        assert "presentation-only" not in text
         assert "except defect-class" not in text
         assert "including Low" not in text
         assert "drop-Low" not in text
         assert "other than defect-class" not in text
 
 
-def test_presentation_cannot_reenter_as_a_blocking_style_grade(plugins: Path) -> None:
+def test_optional_nits_of_any_kind_stay_below_bar_across_review_owners(
+    plugins: Path,
+) -> None:
     for name, reference in [
         ("define", "references/DOCS-STYLE-REFERENCE.md"),
         ("define", "references/WRITING-REFERENCE.md"),
@@ -83,11 +100,22 @@ def test_presentation_cannot_reenter_as_a_blocking_style_grade(plugins: Path) ->
         ("review-design", "SKILL.md"),
     ]:
         text = skill(plugins, name, reference)
-        assert "underlying promise" in text
+        normalized = " ".join(text.lower().split())
+        assert "optional polish or a nit of any kind" in normalized
+        assert "style, naming, structure, or otherwise" in normalized
+        assert "presentation-only" not in normalized
         assert "without cost to comprehension" not in text
     docs = skill(plugins, "define", "references/DOCS-STYLE-REFERENCE.md")
     low_row = next(line for line in docs.splitlines() if line.startswith("| **LOW**"))
     assert "serial commas" in low_row
+    executor = skill(plugins, "do")
+    assert "no Medium-or-higher findings" in executor
+    assert "broken binding promises received as Low still block" in executor
+    assert "presentation-only" not in executor
+    prompt_review = (
+        plugins / "manifest-dev-tools/skills/review-prompt/SKILL.md"
+    ).read_text()
+    assert "optional polish or a nit of any kind" in prompt_review
 
 
 def test_mechanical_failure_cannot_disappear_as_an_intent_mismatch(

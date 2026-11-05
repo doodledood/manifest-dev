@@ -128,7 +128,7 @@ Before reporting a design issue, it must pass ALL of these. **If a finding fails
 
 ## Severity calibration
 
-Use the shared ladder. Rework, coupling or an incomplete migration earns Medium when the finding names a concrete must-fix cost and a simpler shape. A demonstrated correctness, safety or promise failure is High or Critical. Presentation or design taste that leaves the promise intact is Low.
+Use the shared ladder. Rework, coupling or an incomplete migration earns Medium when the finding names a concrete must-fix cost and a simpler shape. A demonstrated correctness, safety or promise failure is High or Critical. Optional design improvements are Low, including structural nits.
 
 ## Dimension-specific report expectations
 
