@@ -35,7 +35,6 @@ With intent understood, systematically generate hypotheses about where the imple
 For each hypothesis, verify it against the actual code. Only report hypotheses you can confirm — where you can trace the specific code path that produces divergent behavior.
 
 **Verification requires:**
-- The specific code location (file:line) where divergence occurs
 - The concrete condition that triggers it
 - What the code will actually do vs. what was intended
 - Why this is inconsistent with the reconstructed intent
@@ -81,7 +80,7 @@ For changes to configuration files, environment variables, or settings:
 Before reporting a divergence, it must pass ALL of these criteria. **If it fails ANY criterion, drop the finding entirely.** (In scope: in diff-based review (default), only report divergences in logic introduced or modified by this change; pre-existing intent-behavior gaps in unchanged code are out of scope. Under explicit-path review they are valid findings.)
 
 1. **Concrete scenario** — You must describe the specific input, condition, or sequence that triggers the divergence. "This might not work as intended" is not a finding.
-2. **Verifiable against code** — You must trace the specific code path that produces the divergent behavior. Point to file:line references.
+2. **Verifiable against code** — You must trace the specific code path that produces the divergent behavior.
 3. **Intent is reconstructable** — If you cannot determine what the change intends from any source (ambiguous purpose, no context), you cannot claim divergence. State that intent is unclear rather than guessing: report "Intent unclear — cannot perform divergence analysis" and suggest the author add context (commit message, comments, or PR description).
 4. **Accepted behavior** — Judge against the accepted promise. An explicit accepted behavior or trade-off can rule out a divergence; a deliberate implementation or repair choice in code, comments or commit prose cannot waive that promise.
 5. **Author would recognize it** — Would the author say "yes, that's not what I meant to happen" or "no, that's actually what I wanted"? Only report findings where the former is likely.

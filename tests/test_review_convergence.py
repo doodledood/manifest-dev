@@ -65,12 +65,14 @@ def test_repair_history_survives_finding_and_commit_identity_changes(
 def test_pr_consolidation_filters_consequences_before_severity_labels(
     plugins: Path,
 ) -> None:
-    for name in ("review-pr", "review-pr-holistic"):
+    for name in ("review-pr", "review-pr-holistic", "review-pr-judgment"):
         text = (plugins / "manifest-dev-tools/skills" / name / "SKILL.md").read_text()
         assert "presentation-only Low" in text
-        assert "correctness or safety findings" in text
+        assert "correctness or safety finding" in text
         assert "except defect-class" not in text
         assert "including Low" not in text
+        assert "drop-Low" not in text
+        assert "other than defect-class" not in text
 
 
 def test_presentation_cannot_reenter_as_a_blocking_style_grade(plugins: Path) -> None:

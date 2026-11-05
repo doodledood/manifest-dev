@@ -49,7 +49,7 @@ It returns exactly one disposition, a short reason, and a drafted reply where th
 - PR history: all comments and threads on the PR (including our own from any prior review pass), the author's recent commit messages on the branch, the PR description.
 - Bundle context for each linked PR: diff, description, top-level conversation. No inline review comments from linked PRs.
 - The reviewed range for this invocation — the code the fleet's defect findings are bounded to.
-- The judgment pass's findings, from its whole-PR assessment (below). They are consolidated alongside the fleet's but stay exempt from drop-Low and from reviewed-range bounding — the judgment pass reads the whole PR head itself, so its findings are already whole-PR.
+- The judgment pass's findings, from its whole-PR assessment (below). They are consolidated alongside the fleet's but stay exempt from the filter for presentation-only Lows and from reviewed-range bounding — the judgment pass reads the whole PR head itself, so its findings are already whole-PR.
 - Any truncation the caller did, carried forward.
 - The voice profile below.
 

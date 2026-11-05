@@ -213,4 +213,4 @@ interface User {
 
 ## Pre-output checklist
 
-Before delivering: scope was clearly established (asked if unclear); every Critical/High issue has specific file:line references; every issue has an actionable fix suggestion; no duplicate issues reported under different names; summary statistics match the detailed findings.
+Before delivering: scope was clearly established (asked if unclear); every issue has an actionable fix suggestion; no duplicate issues reported under different names; summary statistics match the detailed findings.

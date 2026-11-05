@@ -30,6 +30,8 @@ A correctness or safety finding received as Low still blocks. Reviewers and cons
 
 The shared owner is review-code, with calling task data and PR consolidation kept consistent. Writing and design anchors use the same consequence boundary, so presentation-only style findings cannot re-enter as blocking grades. review-prompt retains confidence as its reporting filter separately from severity, and keeps duplication as a Low example without asking for style or minor-wording findings.
 
+The shared report format owns the `Location: file:line` requirement. Dimension instructions do not restate it; their mechanism tracing, evidence, trigger and fix requirements remain. Concrete `Location` fields in worked findings remain as examples of that shared format, not additional requirements.
+
 ## Alternatives Considered
 - **Keep every defect-finder Low blocking:** leaves cosmetic finding space unbounded and gives frequency-based labels authority over consequence.
 - **Drop every incoming Low label:** could silence substantive correctness, safety or remediation obligations from older or miscalibrated reviewers.
@@ -53,5 +55,5 @@ partly — `tests/test_review_convergence.py` checks the shared ladder, task thr
 
 ## Source
 - The owner's severity and Low-policy ruling in the work request for [Issue 419](https://github.com/doodledood/manifest-dev/issues/419).
-- Amends 20260811-a-review-dimension-may-take-a-defect-as-input and 20260926-defect-remediation-requires-justified-prevention: replaces their no-Low threshold and Low consolidation exception; their remediation obligations remain.
+- Amends 20260728-bound-the-acceptance-contract-from-above, 20260811-a-review-dimension-may-take-a-defect-as-input and 20260926-defect-remediation-requires-justified-prevention: replaces their no-Low threshold and Low consolidation exception; their trigger and substantive remediation obligations remain.
 - Related: 20261028-every-pull-request-fixes-what-its-work-meets-and-verification-converges, whose finite first-review batching and continued-review rule remain.

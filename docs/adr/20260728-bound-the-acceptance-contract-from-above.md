@@ -1,7 +1,7 @@
 # ADR: Bound the acceptance contract from above, not only from below
 
 ## Status
-Accepted; amended by 20261028-every-pull-request-fixes-what-its-work-meets-and-verification-converges: the ceiling also counts as required the fixes every run owes on its pull request, a pre-existing issue the work met that is not gigantic and a below-bar finding a first full look brought that improves the work, so below-bar findings are no longer handed over
+Accepted; amended by 20261028-every-pull-request-fixes-what-its-work-meets-and-verification-converges: the ceiling also counts as required the fixes every run owes on its pull request, a pre-existing issue the work met that is not gigantic and a below-bar finding a first full look brought that improves the work, so below-bar findings are no longer handed over; amended by 20261105-review-severity-follows-consequence: the shared review-code acceptance threshold is no Medium-or-higher findings, with presentation-only Lows below-bar and substantive correctness or safety findings retained and regraded even when received as Low
 
 ## Area
 define / do

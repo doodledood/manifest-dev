@@ -64,8 +64,8 @@ A judgment finding is **not** placed on the defect severity scale (low / medium 
 
 and **no severity**. **Return shape:** the list of such findings, already collapsed to one per root (below), or an empty list. This is load-bearing, not cosmetic:
 
-- The caller's consolidation step drops Low-severity fleet findings other than defect-class before posting — the **only** place a drop-Low filter exists, and only because it posts publicly. A judgment finding tagged Low would be silently deleted there. So judgment findings are **exempt from the drop-Low filter** and carry their own inclusion rule: **surface if the evidence-gate fired and the PR does not already cover the point.** They are still deduped and merged like any other finding.
-- Manifest-mode contract verification and `/do` gate verification keep low findings by their own acceptance thresholds; the judgment class is orthogonal to all of that.
+- The caller filters only presentation-only Lows from fleet findings, as `../review-pr/SKILL.md` defines. A correctness or safety finding received as Low is retained and regraded there. Judgment findings have no severity and are **exempt from that filter**. Their own inclusion rule is: **surface if the evidence-gate fired and the PR does not already cover the point.** They are still deduped and merged like any other finding.
+- Manifest-mode contract verification and `/do` gate verification enforce their binding criteria and applicable acceptance thresholds; the judgment class is orthogonal to both.
 
 ## Synthesis — one question per root
 
