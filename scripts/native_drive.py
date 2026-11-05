@@ -145,7 +145,14 @@ def prepare(args: argparse.Namespace, feature: str, prompt: str) -> Path:
         scaffold_home.mkdir()
         # Preserve the inherited runtime/auth environment; only the scaffold's explicit
         # HOME isolation matches the existing CLI driver. No credentials are copied.
-        env = {**os.environ, "HOME": str(scaffold_home), "DRIVE_CHECKOUT": str(ROOT)}
+        env = {
+            **os.environ,
+            "HOME": str(scaffold_home),
+            "DRIVE_CHECKOUT": str(ROOT),
+            # Apple Python otherwise writes import caches into this isolated HOME,
+            # which is not fixture data and must not trigger the seeding guard.
+            "PYTHONDONTWRITEBYTECODE": "1",
+        }
         with (out / "scaffold.log").open("w") as log:
             result = subprocess.run(
                 ["bash", str(fixture / "scaffold.sh")],
@@ -214,6 +221,8 @@ Available skill snapshots and references: {out / 'skill-catalog.json'}
 Use these copies for any skill the task calls for; scripts inside them are available.
 Keep workflow records under {records}. Use no parent conversation, installed skill
 copies, personal records, source checkout, verification recipes or expected outcomes.
+Do not inspect other agents or their messages, including agent-inventory tools. A fresh
+reviewer receives only this scenario's allowed inputs; spawn it directly when needed.
 Use connected services only if the task supplies a throwaway service it owns.
 For a document-reader task, after reading this brief answer from its included
 documents without further tools. Return your actual response and artifacts to
@@ -295,7 +304,7 @@ def finish(out: Path, args: argparse.Namespace, feature: str, prompt: str) -> No
             "The host starts a fresh general agent with the scenario as its brief; preparation is incomplete evidence."
         )
         print(
-            f"Caller records the actual reply with: python3 {ROOT / 'scripts/native_drive.py'} record {out} --harness HOST --session-id ID --model MODEL --reasoning-effort EFFORT --reply-file FILE"
+            f"Caller records the actual reply with: {sys.executable} {ROOT / 'scripts/native_drive.py'} record {out} --harness HOST --session-id ID --model MODEL --reasoning-effort EFFORT --reply-file FILE"
         )
         print(
             "For multiple user turns, continue the same native session with each request turn, recording --turn N in order."

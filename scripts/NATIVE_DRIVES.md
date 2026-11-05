@@ -20,6 +20,10 @@ not an operating-system sandbox or a claim of equal results across models.
    the scenario, scratch paths and input boundaries; it injects no skill body or specialized
    agent role. An explicit skill invocation stays in the scenario. A discovery scenario lets the
    agent choose. Keep the recipe's expected outcome outside the agent's context.
+   The subject and its reviewers must not inspect sibling agents or the agent inventory: some
+   hosts include other scenarios' terminal replies there. Spawn required fresh reviewers directly.
+   If cross-case content reaches a subject, report the exposure and replace that drive; do not
+   count it as isolated behavior evidence.
 4. Deliver later `turns` entries to the same agent, in order. Save its actual terminal replies
    and artifacts and the session identity the host returned. Use the requested `MODEL` and
    `MODEL_REASONING_EFFORT` when supplied; otherwise inherit the session settings and report
