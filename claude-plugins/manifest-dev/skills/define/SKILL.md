@@ -1,7 +1,7 @@
 ---
 name: define
 description: 'Manifest builder. Turns shared understanding into a verifiable Manifest with Deliverables, Acceptance Criteria, Global Invariants, and an Initial Approach. Use when planning features, scoping refactors, debugging complex issues, or when the user asks to define, scope, plan, spec out, make a manifest, or break down a task.'
-argument-hint: '[task] [<manifest-path> to amend] [--babysit <pr-url>]'
+argument-hint: '[task] [<manifest-path> to amend] [--babysit <pr-url>] [--autonomous]'
 user-invocable: true
 ---
 

@@ -82,7 +82,7 @@ def test_stop_rule_defaults_and_rerun_continue_the_record() -> None:
     )
     assert "The round that would meet the stop rule includes a bold attempt" in climb
     assert "with nothing new to try stops before proposing" in climb
-    assert "Past 50 lines, roll older losing attempts into one line per round" in climb
+    assert "Past 50 lines, append one summary line per older round" in climb
 
 
 # Holds docs/adr/20261106-a-climb-runs-without-a-person-choosing-by-default.md.
@@ -103,8 +103,6 @@ def test_the_judge_decides_between_versions_sees_no_examples_and_keeps_guards_of
     assert "The judge is shown no example version" in judge
     assert "Prove the judge on the model the climb runs" in judge
     assert "They are off by default" in judge
-    assert "Every comparison, in either, judges both orders" in judge
-    assert "Votes run to the minimum the proof set" in judge
-    assert "Protected parts are never left to the judge" in judge
+    assert "votes run to the minimum the proof set" in judge
     assert "never from the judge's own words" in judge
     assert "`references/AI_JUDGE.md`" in _text(DEFINE / "tasks/HILLCLIMB.md")

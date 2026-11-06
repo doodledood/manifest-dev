@@ -35,22 +35,22 @@ Ask for evidence before the verdict, never the verdict first.
 
 ## Proving the judge before round 1
 
-Prove the judge on the model the climb runs, with the brief frozen.
+Prove the judge on the model the climb runs, with the brief frozen. Failure rates published for
+other models and artifacts name what to check for here, not settings to copy.
 
 - **A degraded version loses.** Make a version clearly worse on the goal; the judge must prefer
-  the original.
+  the original. In a thorough climb, a version that breaks a protected part must lose too.
 - **A gain-sized pair is told apart.** Record the gain sought — the requester's, or inferred and
   labeled so — and pair the original with a version carrying one known change of about that
   size; the judge picks the better one. The record names the pair and why its order is known.
-- **Identical versions tie.**
+- **Identical versions tie**, including when one copy is labeled the newer.
 - **Noise is recorded.** Note how often the verdict flips with the order of the two versions and
   between runs of the same comparison.
 
-A quick climb runs only the first check, on one degraded version. A thorough climb runs all four.
-Every comparison, in either, judges both orders and counts a win only when both agree; a split is
-a tie.
+A quick climb runs only the first check, on one degraded version, and decides each comparison by
+one judgment run in both orders, a split counting as a tie. A thorough climb runs all four.
 
-From the recorded noise and the cost of a vote, the proof sets the minimum votes a comparison
+In a thorough climb, from the recorded noise and the cost of a vote, the proof sets the minimum votes a comparison
 takes, the lead that counts as clear, and a cap. A judge that cannot tell the gain-sized pair apart within the cap stops the
 climb before round 1, and the report says what failed and what would fix it.
 
@@ -59,18 +59,18 @@ broken version must lose on that criterion and must not win the overall verdict.
 
 ## Guards the proof turns on
 
-Protected parts are never left to the judge: every candidate passes plain pass-or-fail checks on
-them before it can be kept.
-
-The guards below protect against failures a fixed test may not show. They are off by default;
-turn one on where the proof or the record shows the failure it prevents, or where the requester
-asks:
+These guard against failures a fixed test may not show. They are off by default; turn one on
+where the proof shows the failure it prevents, or where the requester asks:
 
 - **Hide which version is newer, who made it, and the climb's history** — when the judge leans
   toward the newer or its own model's version, as the identical-versions check shows when one
-  copy is labeled newer.
-- **A fresh judge for each vote**, with no memory of earlier votes — when the record shows
-  verdicts on a repeated comparison drifting as a session goes on.
+  copy is labeled the newer.
+- **Check protected parts inside each comparison**, with plain pass-or-fail checks — when the
+  degraded-version check shows the judge forgiving a broken protected part.
+- **A fresh judge for each vote**, with no memory of earlier votes — when verdicts drift between
+  runs of the same comparison during the proof.
+- **Judge both orders in each vote, counting a win only when both agree** — when the proof sees
+  verdicts flip with order.
 - **Show several rendered states of a page**, plus its text and structure — when a single
   screenshot hides what the people meet, such as a hover, an error or a narrow screen.
 
@@ -93,8 +93,8 @@ Keep the judge's brief in the climb's record, so a re-run reuses it.
 
 ## Voting
 
-Votes run to the minimum the proof set, then continue until one side leads by the clear margin or
-the cap is reached. A result short of clear is a tie, and a tie keeps the current best. A new leader is confirmed on fresh votes before it
+In a thorough climb, votes run to the minimum the proof set, then continue until one side holds the clear lead or the
+cap is reached. A result short of clear is a tie, and a tie keeps the current best. A new leader is confirmed on fresh votes before it
 becomes the current best.
 
 ## What the proposer sees

@@ -31,7 +31,8 @@ requester's words on the goal and the measure, and these limits:
   requester taking part — they settle what counts as better, whether the measure reflects the
   goal, how objectives trade off, and what must not change.
 - A **quick** climb: ask the requester only when the goal cannot be inferred from the request and
-  the target, then invoke `define` with `--autonomous`.
+  the target, or, when the goal is their own taste, for a few picks between versions with a reason
+  each; then invoke `define` with `--autonomous`, passing their answers on.
 
 **With `--autonomous`:** invoke `figure-out` with `--autonomous` where shared understanding is
 missing, then `define` with `--autonomous`. Nobody is asked from start to end.
@@ -48,4 +49,5 @@ already said. An autonomous climb with no instruction to push keeps its commits 
 **A re-run** on a target already climbed continues that climb: find its Manifest — among the
 Manifests whose execution logs name this target, or through a record the requester names — and
 pass its path to `define` to amend, with any results from real use the requester supplied as the
-climb's measure.
+climb's measure. Where the record is found but no Manifest, as on another machine, `define` writes a new
+one from the record, reusing its judge's brief, its proof and what it rejected.
