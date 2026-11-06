@@ -1,7 +1,7 @@
 # ADR: Design exposes optional instruments with bounded evidence
 
 ## Status
-Accepted
+Accepted; narrowed by 20261106-hill-climbing-runs-through-figure-out-define-and-do: a design may be improved in a loop when a person asks for a hill-climb, against a measure designed for that task; the design skill still supplies no universal score, required suite, pass threshold or fixed loop of its own
 
 ## Area
 Design skills
