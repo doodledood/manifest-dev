@@ -24,4 +24,11 @@ b = once(b, '<button type="submit">Start free trial</button>', '<button type="su
 Path("versions/b.html").write_text(b)
 c = once(b, "<h2>Features</h2>", "<h2>How it works</h2>\n    <p>Maya pays the $90 grocery run, Sam pays the $60 internet bill. Tallyfold shows Sam owes Maya $15.</p>\n    <h2>Features</h2>")
 Path("versions/c.html").write_text(c)
+notes = Path("NOTES.md").read_text()
+notes = once(
+    notes,
+    "- We have never run an A/B test on it, and have no tool set up to run one.",
+    "- We ran an A/B test on the earlier climb's leading versions; `ab-results.md` has the results.",
+)
+Path("NOTES.md").write_text(notes)
 PY

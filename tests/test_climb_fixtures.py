@@ -76,6 +76,9 @@ def test_signup_results_carries_two_distinct_leading_versions(tmp_path: Path) ->
     c = (project / "versions/c.html").read_text(encoding="utf-8")
     assert b != original and c != b
     assert "14 days free, no card needed" in b and "How it works" in c
+    # The notes the page fixture carries must not deny the test the results come from.
+    notes = (project / "NOTES.md").read_text(encoding="utf-8")
+    assert "never run an A/B test" not in notes and "ab-results.md" in notes
 
 
 def test_slow_sim_quick_check_passes_the_original_and_misses_motion(
