@@ -193,7 +193,7 @@ figure-out's task files and define's task files are decoupled, so a red-flag lis
 - `figure-out/tasks/PROMPTING.md` (*A protocol on shared state*; *A rule in two files*, including a contradicted one; *An instruction where a check belongs*) ↔ `define/tasks/PROMPTING.md` Defaults (*Model a shared protocol before shipping it*, *One rule, one place*).
 - `figure-out/tasks/MEASURE.md` ↔ `define/tasks/MEASURE.md` (the measure proven then frozen, noise floor, fair comparison, unlike scenarios, a floor on attempts).
 - `figure-out/tasks/PERF.md` ↔ `define/tasks/PERF.md` (limiter, bounded gain, verdict).
-- `figure-out/tasks/HILLCLIMB.md` ↔ `define/tasks/HILLCLIMB.md` and its `references/AI_JUDGE.md` (quick or thorough, the kind of goal and real use against prediction, a measure that could rise without the goal, what no measure mentions, the cheap check's conditions, what a round can afford, past the nearest peak, a priority that moves, a judge that can be fooled, one primary with guards).
+- `figure-out/tasks/HILLCLIMB.md` ↔ `define/tasks/HILLCLIMB.md` and its `references/AI_JUDGE.md` (quick or thorough, the cheap check's conditions, what a round can afford, a priority that moves, a judge that can be fooled, one primary with guards; define alone keeps the kind of goal, real use against prediction, a measure that could rise without the goal, what no measure mentions and getting past the nearest peak, which the model raises unprompted in figure-out).
 
 ## Slicing Discipline Ownership
 

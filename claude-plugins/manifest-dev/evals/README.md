@@ -282,7 +282,7 @@ base model already covers; such a case leaves only through its probe's *Coverage
 | `105-taste-yardstick-offered` | press, several turns, repository | After two challenges by one unstated measure, offer a Taste entry stating the measure, not the instances | tuning |
 | `107-steer-without-reason` | press, several turns | After two removals with no reason, name the reason inferred and what else it changes, apply it to a later choice, and offer to keep it as the session's reading | tuning |
 | `108-steer-two-readings` | press | After a removal whose two plausible reasons change the other items in opposite ways, ask one question that tells them apart before changing those items | tuning |
-| `109-climb-a-signup-page` | autonomous | Set up a climb toward sign-ups: size a test on real use to the traffic, check offline what can be checked and call the rest a prediction, prove the measure reflects the goal, name unprompted what the page does well that no sign-up measure protects and guard it against the original, and plan past the nearest peak | tuning |
+| `109-climb-a-signup-page` | autonomous | Set up a climb toward sign-ups: decide from the stakes how careful the climb should be, and prove any AI judge it keeps before it decides or screens | tuning |
 
 Cases `30` to `46` were written on 2026-10-13 and `48` on 2026-10-14. Their first run was the
 2026-10-25 baseline, with the split frozen before it: every case added since 2026-10-13 is tuning
@@ -536,7 +536,7 @@ being declared a guard. `tests/test_eval_cases.py` fails when a case has no row 
 | `105` | first run decides | New on 2026-11-02, Taste capture on a revealed measure; drives only (*Several turns*); failed on main and on a wording that did not ship, see *Taste capture on a revealed measure — 2026-11-02* |
 | `107` | first run decides | New on 2026-11-02, the reason behind a steer given without one; drives only (*Several turns*); drive results in `docs/adr/20261102-figure-out-reads-a-steer-for-the-reason-behind-it.md` |
 | `108` | first run decides | New on 2026-11-02, asking when a steer has two readings; drive results in `docs/adr/20261102-figure-out-reads-a-steer-for-the-reason-behind-it.md` |
-| `109` | first run decides | New on 2026-11-06: the only case for the hill-climb probes. Its first pair passed on both arms, so the prompt no longer names speed and clarity and the guard grader asks the read to find them; driven once on the skill before the change and once after |
+| `109` | first run decides | New on 2026-11-06: the only case for the hill-climb probes. Two pairs passed on both arms for sizing a real test, offline checks, a measure shown good, guards and getting past the nearest peak, so those probes left figure-out and the case grades only the two points that separated the arms; driven once on the skill before the change and once after |
 
 Retired on 2026-10-15: `12` (floored in both arms, not a declared guard), `47` and `49` (each a
 second older-version case beside `53`, which the version rule now forbids; their straight-to-newest
@@ -848,20 +848,14 @@ file. The row is never deleted while the probe stays.
 | `tasks/MEASURE.md` | A fair comparison | `77-perf-speedup-claim/demands-a-fair-comparison` |
 | `tasks/MEASURE.md` | Unlike scenarios | `77-perf-speedup-claim/spots-unlike-scenarios` |
 | `tasks/MEASURE.md` | A floor on attempts | `77-perf-speedup-claim/trusts-the-harness-first` |
-| `tasks/HILLCLIMB.md` | How careful | Reason: choosing quick or thorough needs a pair of climbs differing only in stakes; the `hillclimb` recipe's quick, thorough-by-request and thorough-on-stakes scenarios read each climb's first lines instead |
-| `tasks/HILLCLIMB.md` | The kind of goal | `109-climb-a-signup-page/sizes-a-real-test`, `109-climb-a-signup-page/calls-offline-gains-a-prediction` |
-| `tasks/HILLCLIMB.md` | Real use or a prediction | `109-climb-a-signup-page/sizes-a-real-test`, `109-climb-a-signup-page/checks-what-it-can-offline`, `109-climb-a-signup-page/calls-offline-gains-a-prediction` |
-| `tasks/HILLCLIMB.md` | How the measure could rise while the goal is not served | `109-climb-a-signup-page/proves-the-measure-reflects-the-goal` |
-| `tasks/HILLCLIMB.md` | What no measure mentions | `109-climb-a-signup-page/picks-a-primary-and-guard-margins` |
+| `tasks/HILLCLIMB.md` | How careful | `109-climb-a-signup-page/says-how-careful-and-why` |
 | `tasks/HILLCLIMB.md` | Where the cheap check and real use differ | Reason: a slow measure is define's case `d31-climb-a-slow-simulation` and the `hillclimb` recipe's slow-fixture scenario; a figure-out read on the same artifact would test it twice at twice the runs |
 | `tasks/HILLCLIMB.md` | What a round can afford | Reason: the cost of a round is tested where the climb runs, by define's case `d31-climb-a-slow-simulation` and the `hillclimb` recipe's slow-fixture scenario |
-| `tasks/HILLCLIMB.md` | Past the nearest peak | `109-climb-a-signup-page/plans-past-the-nearest-peak` |
 | `tasks/HILLCLIMB.md` | A priority that moves | Reason: a priority changes partway through a session, which a single-prompt case cannot stage; the `hillclimb` recipe's attended scenario reverses one |
-| `tasks/HILLCLIMB.md` | A judge that can be fooled | Reason: a judge is built and proven only once a climb runs; the `hillclimb` recipe's judged scenarios read the proof in each record |
-| `tasks/HILLCLIMB.md` | Trade-off: One primary with the rest as guards vs the requester choosing among a few whole versions | `109-climb-a-signup-page/picks-a-primary-and-guard-margins` |
-| `tasks/HILLCLIMB.md` | Trade-off: Primary gain vs guard loss | `109-climb-a-signup-page/picks-a-primary-and-guard-margins` |
+| `tasks/HILLCLIMB.md` | A judge that can be fooled | `109-climb-a-signup-page/proves-the-judge-first` |
+| `tasks/HILLCLIMB.md` | Trade-off: One primary with the rest as guards vs the requester choosing among a few whole versions | Reason: whole-version picks need a requester present each round, which an unattended case cannot supply; the `hillclimb` recipe's requester-chooses scenario stages it |
+| `tasks/HILLCLIMB.md` | Trade-off: Primary gain vs guard loss | Reason: the margin a guard may lose is set where the climb's objectives are concrete; the `hillclimb` recipe's sign-up scenario reads it in the record |
 | `tasks/HILLCLIMB.md` | Trade-off: A weighted sum vs floors that veto | Reason: needs a requester who can state exchange rates, which an unattended case cannot supply; the `hillclimb` recipe's two-objective scenario reads the rule the climb chose |
-| `tasks/HILLCLIMB.md` | Trade-off: Many small safe steps vs fewer bold versions | `109-climb-a-signup-page/sizes-a-real-test` |
 | `tasks/PERF.md` | The limiter | `77-perf-speedup-claim/names-the-limiter` |
 | `tasks/PERF.md` | The verdict | `77-perf-speedup-claim/states-a-proper-verdict` |
 | `tasks/PERF.md` | A bounded gain | `58-gain-beyond-its-share/bounds-the-gain-by-the-share` |
