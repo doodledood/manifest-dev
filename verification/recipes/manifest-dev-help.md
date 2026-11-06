@@ -21,6 +21,11 @@ Run: `scripts/drive-skill.sh manifest-dev-help verification/prompts/manifest-dev
 Proves: the answer says what a recipe and the verification harness are and why each exists, that ask-first marks a run with a cost a person accepts, and how an Acceptance Criterion differs from a Global Invariant, from the glossary, in short plain sentences.
 Check: read
 
+### hill-climb
+Run: `scripts/drive-skill.sh manifest-dev-help verification/prompts/manifest-dev-help-hill-climb.md`
+Proves: the answer says what a hill-climb is and why it needs a measure shown good and a stop rule, that it is quick by default and thorough when asked or when the stakes call for it, that `/hillclimb` from the tools plugin starts one over figure-out, define and do, that nothing is pushed unless asked, and when it stops, from the glossary, in short plain sentences.
+Check: read
+
 ### agent
 Run: `scripts/drive-skill.sh manifest-dev-help verification/prompts/manifest-dev-help-agent.md`
 Proves: the answer gives both uses of the word from the glossary — the AI model that does work for a person, such as the "person or agent" a Ticket is written for, and the separate execution context a host can run one in — in short plain sentences.
