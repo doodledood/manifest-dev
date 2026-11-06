@@ -22,7 +22,7 @@ Without explicit input, use a recent Manifest only when the conversation already
 
 One Ticket represents one independently schedulable lifecycle. Bundle work that shares one outcome and would be assigned, prioritized, and closed together. Split only where separate ownership, priority, blocking, or closure has real value. Do not turn every Deliverable, question, or minor finding into a Ticket.
 
-Whether to split is one question; where the cut falls is another, and the second is answered the same way whatever the input was. Every Shaped Ticket a split produces is a slice someone can exercise end-to-end on its own — run, read, or otherwise judged in the situation it is for, not merely inspected as present. A Ticket cut along an implementation layer ("the schema", "the endpoints", "the screen") has nothing to run, so its definition of done falls back to checking that something exists and whoever picks it up cannot tell whether the work helped. Re-cut work that arrives framed in layers instead of passing the layers through; renaming a layer does not re-cut it, and a requested layer cut settles scope, not where the cuts fall, so keeping its layers is never a user's call: its scope is kept and its layers re-cut. A Question Ticket is outside this — an investigation has no slice to run, and its done is the answer recorded.
+Whether to split is one question; where the cut falls is another, and the second is answered the same way whatever the input was. Every Shaped Ticket a split produces is a slice someone can exercise end-to-end on its own — run, read, or otherwise judged in the situation it is for, not merely inspected as present. A Ticket cut along an implementation layer ("the schema", "the endpoints", "the screen") has nothing to run, so its definition of done falls back to checking that something exists and whoever picks it up cannot tell whether the work helped. Re-cut incidental implementation layers while keeping their scope; renaming a layer is not a re-cut. Preserve a deliberately required delivery boundary, making work exercisable within it or surfacing a genuine conflict. A numbered list alone does not establish such a requirement. A Question Ticket is outside this — an investigation has no slice to run, and its done is the answer recorded.
 
 **Manifest input defaults to one Shaped Ticket for the whole Manifest.** Its Deliverables remain an internal execution and verification structure. Split into one Ticket per Deliverable only when the caller explicitly asks for delegation or parallel pickup. Existing Deliverable boundaries are the smallest allowed split: if one is too large, or is a layer rather than something exercisable end to end, amend the Manifest rather than shipping a unit that cannot be judged end to end.
 
@@ -38,9 +38,18 @@ Do not reduce an inquiry's answer or a Manifest to a list of tasks and checks.
 
 A Ticket is a contract with a stranger who may not have manifest-dev. Rewrite the source into the convention's anatomy rather than excerpting it. Could a competent stranger holding only this Ticket understand why the work exists, know its bounds, avoid its traps, and judge it done? Manifest-dev vocabulary in an emitted Ticket fails that test.
 
-For Manifest input, translate the full coherent outcome into one Ticket. Problem and Goal become Why; Appetite and Out of bounds become Scope; all applicable Global Invariants become plain Rules that must hold; risks and assumptions become Watch out for; the Initial Approach remains optional advice; every Deliverable and gate contributes to one plain-prose Definition of done. Gate kinds, codes, and evaluator instructions stay behind.
+For Manifest input, translate the full coherent Outcome into one Ticket. Outcome and Problem
+become Why; Appetite and Out of bounds become Scope. Carry hard obligations with their actual
+sources into Rules that must hold. Carry working acceptance claims and evidence methods into
+the Definition of done with their authority to change on evidence while preserving the requested
+result and hard requirements. Keep deliberately required proof, review policies and retained
+acceptance; evaluator instructions are omitted only where they are incidental machinery.
+Risks and assumptions become Watch out for; the Initial Approach remains optional advice.
+Each Deliverable and gate contributes its substance, without gate kinds or codes. Carry granted
+finding-disposition authority and supported decisions needed to continue; neither translation
+nor overall approval makes a working choice hard.
 
-In explicit split mode, apply the same translation to each Deliverable and copy every applicable Global Invariant into every Ticket. A Deliverable that is a layer rather than something exercisable end-to-end is amended in the Manifest first, per the cut rule above. Do not emit the Manifest's ceiling invariant as a rule; its substance already lives in each Ticket's Scope.
+In explicit split mode, apply the same translation to each Deliverable and carry every applicable Global Invariant with its source authority into every Ticket. A Deliverable that is a layer rather than something exercisable end-to-end is amended in the Manifest first, per the cut rule above. Do not emit the Manifest's ceiling invariant as a rule; its substance already lives in each Ticket's Scope.
 
 ## Auto grant
 

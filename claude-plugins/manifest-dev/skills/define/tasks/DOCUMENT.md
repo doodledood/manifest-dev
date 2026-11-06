@@ -12,15 +12,15 @@ is never a finding here.
 
 | Aspect | Skill | Threshold |
 |--------|-------|-----------|
-| Documentation style | `review-writing`, `register=docs` | no MEDIUM+ |
+| Documentation style | `review-writing`, `register=docs` | Intended readers can find, understand and use the information accurately |
 | Structure completeness | — | All required sections present |
 | External consistency | — | No contradictions with identified reference documentation (conditional: only when comparison docs surfaced during interview) |
 | Scope clarity | — | What's covered and what's not stated explicitly |
 
-The style claim states the chosen acceptance policy. Its Evidence activates `review-writing`
-with `register=docs` and that policy, as `SKILL.md` → *Specialized gates activate a skill* says.
-The table supplies the usual Medium+ policy; reviewer standards and the shared prose floor
-stay with the skill. It is a Judgment Gate, which is what tells `/do` how it re-verifies.
+The style claim names the readers and use it serves. Evidence activates `review-writing`
+with `register=docs`, that claim and any deliberately required policy, as `SKILL.md` →
+*Specialized gates activate a skill* says. Reviewer standards and the shared prose floor stay
+with the skill; findings supply evidence for the claim. It is a Judgment Gate.
 
 Terminology consistency, formatting conventions, headings, lists, numbers, dates, links, and code
 references all fall inside that one gate; they do not need gates of their own.

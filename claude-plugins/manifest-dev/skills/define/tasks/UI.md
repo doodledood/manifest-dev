@@ -6,13 +6,13 @@ User-visible artifact work of any genre — anything a person will see and judge
 
 | Aspect | Skill | Threshold |
 |--------|-------|-----------|
-| Design quality | `review-design` | no MEDIUM+ |
+| Design quality | `review-design` | The intended audience can use and understand the artifact in its actual medium, with composition and craft serving its purpose |
 | Reference fidelity | — | Faithful to any mocks, references, or reaction-pinned criteria the manifest carries |
 
-The design claim states the chosen acceptance policy. Its Evidence activates `review-design`
-with that policy, the artifact surface and the genre where known, as `SKILL.md` → *Specialized
-gates activate a skill* says. The table supplies the usual Medium+ policy; reviewer standards
-stay with the skill. The skill covers task fit (whether the arrangement lets the artifact's repeated loop run, with what that loop needs together visible together), register fit, functional state coverage (empty, loading, error, happy path), composition and hierarchy (where the eye lands first and the path it follows), craft consistency, copy, and viewport behavior inside that one gate; they do not need gates of their own. Where the manifest knows the loop the artifact serves — who is at it and what they repeat — name it in the gate body, since it is what the evaluator judges the arrangement against and deriving it from the artifact alone is weaker than being told. It is a Judgment Gate, which is what tells `/do` how it re-verifies.
+The design claim names the audience, purpose and use it serves. Evidence activates
+`review-design` with that claim, any deliberately required policy, the artifact surface and
+the genre where known, as `SKILL.md` → *Specialized gates activate a skill* says. Reviewer
+standards stay with the skill. It covers task fit (whether the arrangement lets the artifact's repeated loop run, with what that loop needs together visible together), register fit, functional state coverage (empty, loading, error, happy path), composition and hierarchy (where the eye lands first and the path it follows), craft consistency, copy, and viewport behavior inside that one gate; they do not need gates of their own. Where the manifest knows the loop the artifact serves — who is at it and what they repeat — name it in the gate body, since it is what the evaluator judges the arrangement against and deriving it from the artifact alone is weaker than being told. It is a Judgment Gate, which is what tells `/do` how it re-verifies.
 
 **Rendered evidence is the floor**: `review-design` renders and exercises the artifact or returns BLOCKED rather than judging from source, so an unrenderable surface stays visible and routed instead of silently passing on code inspection. A manifest whose artifact needs a build step, fixture data, or a running service to render names it in the gate body so the evaluator can reach a verdict.
 

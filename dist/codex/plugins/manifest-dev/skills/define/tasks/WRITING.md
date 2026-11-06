@@ -11,13 +11,13 @@ variation and deliberate imperfection are defects rather than virtues.
 
 | Aspect | Skill | Threshold |
 |--------|-------|-----------|
-| Human-voice quality | `review-writing`, `register=voice` | no MEDIUM+ |
+| Human-voice quality | `review-writing`, `register=voice` | Voice and craft serve the author's point, intended audience and chosen effect |
 | Readability | — | Accessible to the target audience, scannable structure |
 
-The style claim states the chosen acceptance policy. Its Evidence activates `review-writing`
-with `register=voice` and that policy, as `SKILL.md` → *Specialized gates activate a skill* says.
-The table supplies the usual Medium+ policy; reviewer standards and the shared prose floor
-stay with the skill. It is a Judgment Gate, which is what tells `/do` how it re-verifies.
+The style claim names the audience and effect it serves. Evidence activates `review-writing`
+with `register=voice`, that claim and any deliberately required policy, as `SKILL.md` →
+*Specialized gates activate a skill* says. Reviewer standards and the shared prose floor stay
+with the skill; findings supply evidence for the claim. It is a Judgment Gate.
 
 Structure, tone, rhetoric, craft, negative space, statistical variation, and kill-list vocabulary
 all fall inside that one gate; they do not need gates of their own.

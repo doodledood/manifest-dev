@@ -85,7 +85,7 @@ def test_a_follow_up_commit_does_not_address_a_body_or_comment() -> None:
         "follow-up commit" in body
     ), f"{CHECK_PR.name} gate 3 dropped the follow-up-commit addressing rule; see {RECORD}"
     assert re.search(
-        r"follow-up commit does not address a (?:body|review body|comment)",
+        r"follow-up commit(?: or unrelated later update)? does not address a (?:body|review body|comment)",
         body,
     ), (
         f"{CHECK_PR.name} gate 3 still lets a follow-up commit address a body or comment; "
@@ -144,3 +144,11 @@ def test_lifecycle_subject_names_bodies_and_top_level_comments() -> None:
         f"{TASK_FILE.name} lifecycle Subject lost review bodies or top-level comments; "
         f"see {RECORD}"
     )
+
+
+def test_addressing_signal_is_tied_to_each_actual_item() -> None:
+    # ADR: 20261106-review-evidence-serves-substantive-acceptance.
+    _title, body = gate_three()
+    assert "a response clearly tied to that item" in body
+    assert "Identify the addressing signal for each item" in body
+    assert "without judging the substantive validity" in body

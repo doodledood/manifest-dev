@@ -40,9 +40,12 @@ of any kind: style, naming, structure, or otherwise. The loaded register anchors
 audience costs. An explicit requirement remains binding; a correctness or safety failure or broken
 binding promise received as Low is regraded from evidence before applying the caller's policy.
 
-The caller decides which severities or categories to address. Apply a Medium+ gate only when
-that caller chooses it. Without a requested gate, return classifications without a verdict;
-if a verdict is requested without a policy, ask or report BLOCKED rather than inventing a bar.
+The caller supplies the acceptance claims and any deliberately required severity or category
+policy. For a claim-based gate, connect each alleged failure to the intended reader, meaning or
+effect and show the concrete cost; a grade alone does not defeat the claim. Preserve explicit
+thresholds when supplied. Without a requested gate, return classifications without a verdict;
+if a verdict is requested without recoverable claims or policy, ask or report BLOCKED. Missing
+necessary evidence remains unresolved, and an empty findings list alone does not prove quality.
 
 **Load exactly two references**: the floor, plus the one register's. Never load both register
 files for one text — their rules contradict each other by design, and a finding drawn from the

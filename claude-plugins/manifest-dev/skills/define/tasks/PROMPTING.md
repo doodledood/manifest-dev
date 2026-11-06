@@ -4,19 +4,18 @@ Creating or updating LLM prompts, skills, agents, system instructions.
 
 ## Quality Gates
 
-| Aspect | Verifier | Threshold |
+| Aspect | Verifier | Quality owed |
 |--------|----------|-----------|
-| Intent analysis | `review-code` skill, dimension=`change-intent` | no MEDIUM+ |
-| Prompt quality | `review-prompt` skill | no MEDIUM+ |
+| Intent analysis | `review-code` skill, dimension=`change-intent` | The prompt serves its accepted purpose and obligations |
+| Prompt quality | `review-prompt` skill | The prompt supplies sufficient, consistent and usable direction for its actual inputs, capabilities and output consumer |
 
-Each claim states the chosen acceptance policy. Its Evidence activates the named skill with
-that policy: `review-code` with dimension `change-intent`, or `review-prompt` for prompt quality,
-as `SKILL.md` → *Specialized gates activate a skill* says. The table supplies the usual Medium+
-policy; reviewer standards stay with the skill. Both are Judgment Gates — a reviewer's verdict
-over an open finding space rather than a command outcome — so each declares the judgment kind,
-which is what tells `/do` how it re-verifies.
+Claims state these qualities for the prompt's intended use. Evidence activates `review-code`
+with dimension `change-intent` and `review-prompt` for prompt quality, passing the claims and any
+deliberately required policy, as `SKILL.md` → *Specialized gates activate a skill* says. Reviewer
+grades inform those judgments. Both are Judgment Gates, assessed from findings and evidence
+rather than a command outcome.
 
-When the review-prompt skill is not available, encode these as individual criteria, each with its own body:
+When review-prompt is unavailable, use these concerns to assess the quality claim:
 
 | Gate | Threshold |
 |------|-----------|

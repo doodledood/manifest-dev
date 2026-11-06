@@ -140,3 +140,29 @@ def test_the_marks_check_the_model_rather_than_nothing() -> None:
         "ReadyResolves",
         "NoLandWhileEscalated",
     } <= _checked_properties()
+
+
+def test_java_home_with_an_unusable_launcher_reports_unreachable(
+    tmp_path: Path,
+) -> None:
+    """macOS's launcher can exist without a JDK; presence alone is not capability."""
+    import os
+    import subprocess
+
+    jdk = tmp_path / "jdk"
+    (jdk / "bin").mkdir(parents=True)
+    marker = tmp_path / "version-called"
+    launcher = jdk / "bin/java"
+    launcher.write_text('#!/bin/sh\nprintf "%s" "$1" > "$JAVA_PROBE_MARKER"\nexit 1\n')
+    launcher.chmod(0o755)
+    result = subprocess.run(
+        ["bash", str(MODEL_DIR / "check.sh"), "races"],
+        env={**os.environ, "JAVA_HOME": str(jdk), "JAVA_PROBE_MARKER": str(marker)},
+        capture_output=True,
+        text=True,
+        timeout=10,
+    )
+    assert marker.read_text() == "-version"
+    assert result.returncode == 3
+    assert "missing: a Java runtime" in result.stderr
+    assert "TLC exited" not in result.stderr

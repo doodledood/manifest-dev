@@ -46,7 +46,7 @@ Before reporting a violation, it must pass ALL of:
 2. **Outcome rule, not process** — The rule affects the files being committed, not how the developer works.
 3. **Explicitly specified** — The naming convention, pattern, or documentation requirement is EXPLICITLY stated in a context file. General best practices belong to other dimensions, not here.
 4. **Introduced by this change** — Flag violations in changed code, not pre-existing violations the change didn't introduce.
-5. **Not silenced** — Skip issues explicitly silenced via comments (e.g., lint ignores) or trade-offs the change consciously documents.
+5. **Authorized exception** — A suppression or documented trade-off excuses a violation only when the rule's authority permits that exception. An implementation comment alone cannot waive a project obligation.
 6. **High confidence** — Only certain violations.
 
 ## Out of scope (belongs to a sibling dimension)

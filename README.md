@@ -71,6 +71,12 @@ One status page shows progress, evidence waits, and what needs you. A wait names
 
 ## Decide what to delegate
 
+Review looks broadly for defects and material costs in using or maintaining the result. By
+default, findings and severity labels are evidence about those requirements; the executor can
+reject a finding with supported reasoning. A deliberately required review threshold or approval
+still binds. Real failures and missing necessary evidence prevent completion, and supported
+review decisions survive a restart unless new evidence changes them.
+
 An **assignment** says what to do now: investigate, review, build, or coordinate. **Delegation** says which decisions it may make inside that work. Existing skill defaults remain; you only need to state adjustments. `/setup-project` reads existing instructions and shows the exact shared or personal text before saving new choices. When you accept coordination, it asks which decisions you keep. A run with no person present flags those offers and writes nothing. Shared rules live in the project's context file or a reachable companion; personal rules stay in your private instructions.
 
 You can delegate visual direction and still retain acceptance of the rendered result. Accepting a version does not accept a materially changed version. Technical delegation also preserves a team's required review. A worker keeps the intent, evidence, and current authority through handoffs and stops dependent work at a retained decision.

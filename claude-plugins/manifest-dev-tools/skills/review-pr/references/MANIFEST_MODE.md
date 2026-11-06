@@ -18,13 +18,17 @@ Follow SKILL.md's review organization rule; related claims and Outcome assessmen
 context, but each retains its own verdict and evidence. Read each by ID from the file rather
 than a supplied copy. Inspect the artifact and applicable evidence regardless of how the author
 verified it; an author's verdict is not evidence. Assess the current contract without waiving
-working claims or adding unsupported preferences. A mistaken working claim is an amendment
+working claims or adding unsupported preferences. Read supported finding dispositions and their
+evidence when supplied; test their grounds, rather than treating reviewer agreement as another
+requirement. A contrary verdict names the new evidence or error in those grounds. A deliberately
+required approval remains separate. A mistaken working claim is an amendment
 finding, with its source and observed conflict; an amended claim needs fresh affected evidence.
 The reviewer context chooses the active model, not the Manifest. Return PASS, FAIL or BLOCKED
 with concrete evidence for each gate and the Outcome.
 
 On a continued loop wake, pass each evaluator its applicable checkpoint: assessed criteria and
-subject, reporting scope, outstanding findings, verified repairs, and intervening changes.
+subject, reporting scope, outstanding findings, supported dispositions and accepted-promise
+history, verified repairs, and intervening changes.
 Judgment gates check those repairs and failures introduced or exposed by the changes; deterministic
 checks run in full. Changed criteria or external evidence invalidate affected results even without
 a new commit. A fresh explicit invocation keeps the independent review scope requested by its caller.

@@ -75,8 +75,10 @@ Reconcile the farthest durable state first:
   previous result as evidence and resume *Execute* with the recorded feedback, rather than
   treating that previous draft as current completion.
 - A record marked ready to land, by this run or an earlier one, is finished work, and there is
-  nothing to redo only when the pull request's head is the head the record names and the base has
-  not moved. When the base has moved since the base commit it names, take landing step 3 in
+  nothing to redo only when the pull request's head is the head the record names, the base has
+  not moved, and the recorded evidence still applies to the current criteria and actual subject,
+  including relevant external state. Refresh changed or unavailable evidence before relying on
+  the ready mark. When the base has moved since the base commit it names, take landing step 3 in
   `../ticket-up/references/AUTOMATED_EXECUTION.md` → *Landing*: merge the base in, check cross-cuts
   both ways, refresh the Outcome evidence and re-run the gates that step names, and mark it ready again. When the head holds commits
   after the head the record names, or a required check fails, they are new work: re-assess the Outcome and re-run every gate
@@ -111,9 +113,11 @@ can resume from it without repeating settled research.
 When the attempt record carries a Manifest, write it to a local file where define keeps Manifests
 and invoke `do` with that path, giving it the progress record and any continuation context. Where
 the record names the Manifest by path instead, as a file store's does, use the file at that path
-when it exists on this machine, and otherwise define the work again. A fresh runner resumes the
-recorded work against the same gates instead of defining it again; recorded passes only guide the
-order of work, and the Outcome and every gate still need fresh evidence.
+when it exists on this machine, and otherwise recover its content from durable records before
+defining the work again. Preserve the existing agreement and decision authority when recovery
+requires redefinition. A fresh runner resumes the recorded work against the same gates under
+`../ticket-up/references/AUTOMATED_EXECUTION.md` → *Recovery boundary*; a new session alone does
+not erase valid evidence, completed full looks or supported finding dispositions.
 
 Otherwise invoke `auto` with the Ticket's complete prose anatomy, kind, definition of done,
 source reference, durable progress, and relevant project context as the task. The Ticket bounds

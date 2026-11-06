@@ -6,9 +6,9 @@ Defect resolution, regression fixes, error corrections.
 
 Beyond the CODING.md base gates:
 
-| Aspect | Dimension | Threshold |
+| Aspect | Dimension | Quality owed |
 |--------|-----------|-----------|
-| Defect remediation | defect-class | no MEDIUM+ |
+| Defect remediation | defect-class | The repair provides justified protection against the demonstrated failure and accounts for affected sites |
 
 Encode it exactly as CODING.md's **Encoding** and **Kind** paragraphs prescribe for a dimension gate; BUG always composes onto CODING, so those rules govern this row too and are not restated here.
 

@@ -21,7 +21,11 @@ An operational target may be advisory or a clearly revisable working claim with 
 FAIL if an invented specific becomes an independent hard veto, if authority is unclear, or if
 revision may excuse the intended result. A rough user aim is not an exact requirement; a firm
 user target remains hard even when feasibility is unknown. Ordinary quality assessment is not
-an extra product requirement. Otherwise PASS.
+an extra product requirement. Its claims should concern the artifact's actual use and useful
+life; reviewer grades inform those claims. A default grade cutoff is not a substitute for them.
+Preserve a deliberately required review threshold or approval with its actual authority.
+FAIL if ordinary review becomes an unsupported grade veto or a required policy disappears.
+Otherwise PASS.
 
 The request:
 

@@ -15,7 +15,11 @@ if [ "${1:-}" = "--expect-violation" ]; then expect=1; shift; fi
 cfg="${1:?usage: check.sh [--expect-violation] <config name, e.g. races>}"
 [ -f "$here/$cfg.cfg" ] || { echo "no config $here/$cfg.cfg" >&2; exit 2; }
 
-if ! command -v java >/dev/null 2>&1; then
+# macOS can provide a `java` launcher even when no runtime is registered.
+# Honor the standard JAVA_HOME for keg-only and other unregistered installations.
+java_bin=java
+if [ -n "${JAVA_HOME:-}" ]; then java_bin="$JAVA_HOME/bin/java"; fi
+if ! "$java_bin" -version >/dev/null 2>&1; then
   echo "missing: a Java runtime (11 or newer), which TLC needs. Install a JDK from your package manager (for example openjdk-21-jdk or brew install openjdk), then re-run." >&2
   exit 3
 fi
@@ -35,7 +39,7 @@ trap 'rm -rf "$work"' EXIT
 cp "$here/TicketProtocol.tla" "$here/$cfg.cfg" "$work/"
 cd "$work"
 set +e
-java -XX:+UseParallelGC -cp "$jar" tlc2.TLC -workers auto -metadir "$work/states" -config "$cfg.cfg" TicketProtocol.tla > tlc.out 2>&1
+"$java_bin" -XX:+UseParallelGC -cp "$jar" tlc2.TLC -workers auto -metadir "$work/states" -config "$cfg.cfg" TicketProtocol.tla > tlc.out 2>&1
 code=$?
 set -e
 cat tlc.out

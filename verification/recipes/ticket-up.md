@@ -35,6 +35,11 @@ Run: `scripts/drive-skill.sh ticket-up verification/prompts/ticket-up-deferred.m
 Proves: the Ticket carries a `Revisit when:` line naming the weekly sign-up count passing 50 and the analytics dashboard it is read on, among its opening lines after `Depends on:`, and no `Depends on:` entry for it.
 Check: read
 
+### preserve-acceptance
+Run: `scripts/drive-skill.sh ticket-up verification/prompts/acceptance/ticket-up-contract.md --scaffold verification/fixtures/acceptance-contract`
+Proves: Ordinary Ticket prose preserves the Outcome, hard requirements, working 200 ms interpretation and revision authority, required checks and independent approval, supported finding disposition and unfinished work. It does not silently promote working choices or grant Auto.
+Check: read
+
 ## Gotchas
 
 - It reads `tickets/store-config.md` first; without a store it asks where Tickets live. The prompt asks for a file store so the drive creates `tickets/store-config.md` itself.

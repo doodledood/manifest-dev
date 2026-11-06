@@ -215,7 +215,11 @@ OMerge(o) ==
 \* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "stops without writing when the run ID there is not its own"
 Stops(o) == ~Named(o) \/ closed \/ claim = "person" \/ mark
 
-\* Quote run-ticket/SKILL.md: "there is nothing to redo only when the pull request's head is the head the record names and the base has not moved"
+\* Quote run-ticket/SKILL.md: "there is nothing to redo only when the pull request's head is the head the record names, the base has not moved, and the recorded evidence still applies to the current criteria and actual subject, including relevant external state"
+\* World: these configurations keep acceptance criteria and non-commit subject state fixed.
+\* RWork abstracts successful verification and settlement of mandatory work. Evidence validity
+\* under a changed criterion or receiver is outside this concurrency model; the acceptance-recovery
+\* native scenario exercises that decision, not this check.
 RStart(o) ==
   /\ rpc[o] = "start"
   /\ IF Stops(o) THEN /\ rpc' = [rpc EXCEPT ![o] = "stopped"] /\ UNCHANGED <<rbase, rlocal, rmerged>>

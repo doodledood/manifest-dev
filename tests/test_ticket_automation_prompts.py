@@ -103,7 +103,7 @@ def test_the_one_landing_procedure_refreshes_checks_the_base_and_closes_after_me
         "**Re-reads the Ticket.**",
         "**Checks authority.**",
         "**Checks the base.**",
-        "**Refreshes the pull request.**",
+        "**Refreshes acceptance and the pull request.**",
         "**Merges with the head pinned**",
         "**Records and closes.**",
     ]
@@ -187,15 +187,17 @@ def test_attempt_record_carries_the_manifest_progress_and_run_facts() -> None:
     github = ticket_ref(SOURCE_SKILLS, "GITHUB_STORE.md")
 
     assert "| Manifest | The run's full Manifest" in record
-    assert (
-        "the Outcome and gate verdicts, evidence and assessed commit, what remains, the decisions taken, "
-        "the dead ends" in record
-    )
+    # Recovery uses the assessed subject and criteria, not just a commit or verdict.
+    for part in (
+        "assessed criteria and actual subject",
+        "Outcome and gate verdicts with reachable evidence and known staleness",
+        "which judgment gates took their full look",
+        "supported dispositions and verified repairs",
+        "mandatory build work and its disposition",
+    ):
+        assert part in record
     # The status page shows each run's step, read from this record's progress.
-    assert (
-        "The step the run is at — `understand`, `define`, `build`, `verify` or `ready`"
-        in record
-    )
+    assert "The step — `understand`, `define`, `build`, `verify` or `ready`" in record
     assert (
         "Record in the progress the step the run is at whenever it changes"
         in run_ticket
@@ -212,7 +214,8 @@ def test_attempt_record_carries_the_manifest_progress_and_run_facts() -> None:
     assert "not committed to the repository" in record
     # A fresh runner resumes the recorded Manifest instead of defining the work again.
     assert "resumes the recorded work against the same gates" in run_ticket
-    assert "recorded passes only guide the order of work" in run_ticket
+    assert "a new session alone does not erase valid evidence" in run_ticket
+    assert "completed full looks or supported finding dispositions" in run_ticket
     assert "write the Manifest into the attempt record" in run_ticket
     assert "With each pushed checkpoint, refresh the attempt record's progress" in (
         run_ticket
@@ -945,7 +948,12 @@ def test_run_ticket_by_hand_says_where_it_stopped() -> None:
 
     assert (
         "there is nothing to redo only when the pull request's head is the head the record "
-        "names and the base has not moved" in run_ticket
+        "names, the base has not moved, and the recorded evidence still applies"
+        in run_ticket
+    )
+    assert (
+        "current criteria and actual subject, including relevant external state"
+        in run_ticket
     )
     assert "unless the Ticket was reopened after that merge" in run_ticket
     assert "an orchestrator's next check-in" in run_ticket

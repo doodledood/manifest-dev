@@ -1,7 +1,7 @@
 # ADR: do names the evidence that puts a gate out of reach
 
 ## Status
-Accepted
+Accepted; amended by 20261106-review-evidence-serves-substantive-acceptance: demonstrated limits can rule out alternatives; a plausible route that evades the limit remains actionable
 
 ## Area
 define / do
@@ -32,6 +32,10 @@ Evidence, never a count of tries, says when a gate is out of reach: a measured l
 
 ## Enforced by
 none — whether a run reads its evidence correctly is judgment; the `do` recipe's `out-of-reach` scenario exercises it.
+
+The do recipe's `evidence-based-exhaustion` scenario adds a raw-only byte-limit proof beside
+a permitted compression control. It observes ruling out an impossible family without ignoring
+a viable distinct route; it does not establish general exhaustion judgment.
 
 ## Source
 - Session: figure-out read and define run on 2026-10-18

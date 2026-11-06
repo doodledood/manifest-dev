@@ -13,6 +13,10 @@ In Claude Code:
 
 In Cursor, install **Manifest Dev** from the [Cursor Marketplace](https://cursor.com/marketplace) once it is listed, or copy this folder into `~/.cursor/plugins/local/manifest-dev` and run **Developer: Reload Window**. The [Cursor install guide](https://github.com/doodledood/manifest-dev/blob/main/dist/cursor/README.md) has the steps and the listing status.
 
+Review defaults assess the promised result and its supported use and maintenance. Findings are
+evidence, while deliberately required review policies remain binding. Execution keeps supported
+dispositions through recovery and finishes only with valid evidence and required build work settled.
+
 ## Choose an entry point
 
 Choose what you need; there is no required sequence:

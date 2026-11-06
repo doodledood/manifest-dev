@@ -20,7 +20,7 @@ Drive the pull request at <pr-url> until it is mergeable or a blocker requires a
 ```
 
 ```pr-goal-block
-Work until the Outcome and every current Acceptance Criterion and Global Invariant in the Manifest hold, each with fresh evidence, and completion has been reported.
+Work until the Outcome and every current Acceptance Criterion and Global Invariant in the Manifest hold, each with fresh evidence, the workflow's bounded mandatory build work is settled, and completion has been reported.
 
 The Manifest changes only through the skill that wrote it, never by direct edit. Working claims and evidence methods may be revised on evidence while preserving the Outcome and hard requirements; those need their source's authorization to change. Overall plan approval does not harden agent choices. A changed claim or evidence method returns affected results unverified.
 
@@ -30,7 +30,7 @@ Assume the user is AFK; make authorized decisions without asking questions. Surf
 ```
 
 ```gate-clause
-Track the Outcome and every Acceptance Criterion and Global Invariant in the Manifest: its id, its latest verdict, the evidence behind that verdict, and whether that evidence is still fresh relative to the last relevant change to the gate's subject. Completion requires the Outcome and every current gate to hold on fresh evidence. Unverified, failing, stale, actionably blocked, or escalation-pending gates do not satisfy successful completion. A terminal wait is reported as pending, never as success. A substantive change to a gate's subject after it passed marks it stale until re-judged, while re-reading, re-examining, and cosmetic or no-op edits do not. Never accept unevidenced self-attestation, "looks done", or a summary claim in place of the evidence the gate names.
+Track the Outcome and every Acceptance Criterion and Global Invariant in the Manifest: its id, its latest verdict, the evidence behind that verdict, and whether that evidence is still fresh relative to the last relevant change to the gate's subject. Completion requires the Outcome and every current gate to hold on fresh evidence, with bounded mandatory build work settled and no unresolved amendment or necessary missing evidence. Unverified, failing, stale, actionably blocked, or escalation-pending gates do not satisfy successful completion. A terminal wait is reported as pending, never as success. A substantive change to a gate's subject after it passed marks it stale until re-judged, while re-reading, re-examining, and cosmetic or no-op edits do not. Never accept unevidenced self-attestation, "looks done", or a summary claim in place of the evidence the gate names.
 ```
 
 **Execution.** After resolving the manifest path, invoke `do` on it. For `--ci`, pass CI one-shot / no-wait context to `/do`. Unless `--no-log` is present, pass the resolved journal path to `/do` so it reads prior context before acting and appends after — `/do` is the sole journal consumer; the stateless `check-pr` skill neither reads nor needs it. When `--no-log` is present, forward it to `/do` so the opt-out holds there too — otherwise `/do`'s own default execution log would recreate the record the user declined. Do not print a follow-up command as the primary outcome; this skill owns the define→do chain. `/do` owns the execution contract: it reads the manifest, judges the lifecycle gate by activating `check-pr`, handles wait/retrigger/reply/sync findings, fixes in-scope code blockers when it can, and stops via `/done`, `/escalate`, or CI pending-summary when no-wait mode leaves only wait-shaped blockers.

@@ -1,6 +1,6 @@
 ---
 kind: skill
-covers: claude-plugins/manifest-dev/skills/run-ticket
+covers: claude-plugins/manifest-dev/skills/run-ticket, claude-plugins/manifest-dev/skills/ticket-up/references/AUTOMATED_EXECUTION.md
 ask-first: starts an agent session per scenario, which uses model quota
 dry-run: honored
 ---
@@ -27,6 +27,11 @@ Check: read
 ### cross-cut
 Run: `scripts/drive-skill.sh run-ticket verification/prompts/run-ticket-cross-cut.md --scaffold verification/scaffolds/cross-cut-at-landing --max-turns 120`
 Proves: landing a Ticket marked ready while `main` moved, the run merges `main` in and finds that the two maintainer diagnostics `main` added (`check-data`, `dump`) print without `emit()`, the convention the Ticket set, though members never see them. It routes both through `emit()` in its own work, updating their tests, re-runs the gates, lands on `main`, and writes no follow-up Ticket for a person about them.
+Check: read
+
+### acceptance-recovery
+Run: `scripts/drive-skill.sh run-ticket verification/prompts/acceptance/ticket-recovery.md`
+Proves: The ready mark is not trusted despite unchanged head/base: the changed header criterion, receiver state and queued mandatory cleanup remain unresolved. Valid ID evidence, full-look status and supported factory rejection survive. Recovery uses the recorded contract rather than a fresh definition. This bounded replay observes next-action selection, not live tracker durability.
 Check: read
 
 ## Gotchas

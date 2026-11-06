@@ -57,7 +57,7 @@ Before reporting an operational risk, it must pass ALL criteria:
 3. **Evidence-backed** — Cite code, config, docs, deployment files, tests, or established neighboring patterns. Do not report generic "may be slow" or "could be risky" concerns.
 4. **Operationally meaningful** — The risk affects deployment, production safety, data durability, security exposure, operability, CI reliability, or runtime cost enough to change behavior.
 5. **Fixable in context** — Provide a specific mitigation: config addition, idempotency guard, generated/runtime primitive, migration sequence, targeted check, observability field, or rollout note.
-6. **Not intentionally accepted** — If the change documents the trade-off and the operational risk is consciously accepted, do not report it unless the evidence shows the mitigation is incomplete.
+6. **Authorized trade-off** — Honor an applicable requirement or risk acceptance from its authorized source. An author's documented preference alone is not acceptance; check its claimed conditions and mitigation against the evidence. A failure beyond the accepted bounds remains reportable.
 
 ## Out of scope (belongs to a sibling dimension)
 

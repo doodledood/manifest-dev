@@ -1,7 +1,7 @@
 # ADR: Severity classifies consequence; callers own acceptance and handling
 
 ## Status
-Accepted
+Accepted; amended by 20261106-review-evidence-serves-substantive-acceptance: severity still classifies consequence; default acceptance uses substantive claims while deliberate thresholds remain binding
 
 ## Area
 Code review
@@ -56,6 +56,10 @@ The shared report format owns Location: file:line. Dimension instructions retain
 partly — tests/test_review_convergence.py checks the ladder, caller-owned policy, explicit gate encoding, regrading and repair handoffs in source and Codex mirrors. The caller-policy scenario in verification/recipes/review-code.md exercises one Low under different caller gates and a classification-only request. The rare-correctness, promise-convergence and PR consolidation scenarios cover substantive failures and finite repair scope. Prior native runs regraded paging loss and retained the real fee defect while leaving nits under the chosen gates. Both promise-convergence arms passed, so they establish conformance rather than measured uplift. An earlier paging run exposed a scope exclusion and incorrectly passed; correcting that rule restored High/FAIL, with the failed run retained as evidence. Runtime judgments remain separate from source locks, and single-session do judgments are disclosed as self-reviewed.
 
 The caller-policy case ran through actual GPT-6.1 Sol/xhigh general agents before (plugins at ff488c24) and after this correction. Both arms kept one Low while returning PASS under the caller's Medium+ gate, FAIL under its Low-inclusive gate, and no verdict for the classification-only turn. The old arm still described the grade through handling language; the corrected arm described consequence only. Both arms already honored the explicit policy overrides, so this is conformance evidence rather than measured uplift. The expanded PR consolidation control retained a Low under an explicit Low-inclusive policy, retained/regraded the real contract defect under the usual caller policy, and preserved the missing-evidence blocker. The do control retained its contract/check/label bytes and repaired only the fee expression under its explicitly chosen Medium+ gates.
+
+The 20261106-review-evidence-serves-substantive-acceptance amendment retargets the same tests
+to substantive default claims and deliberately required thresholds. The old default-grade
+behavior above is historical evidence, not the current default.
 
 ## Source
 - The owner's severity/caller-policy correction for [PR 420](https://github.com/doodledood/manifest-dev/pull/420), covering [Issue 419](https://github.com/doodledood/manifest-dev/issues/419).
