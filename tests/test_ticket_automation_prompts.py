@@ -103,7 +103,7 @@ def test_the_one_landing_procedure_refreshes_checks_the_base_and_closes_after_me
         "**Re-reads the Ticket.**",
         "**Checks authority.**",
         "**Checks the base.**",
-        "**Refreshes the pull request.**",
+        "**Refreshes acceptance and the pull request.**",
         "**Merges with the head pinned**",
         "**Records and closes.**",
     ]

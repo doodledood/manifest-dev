@@ -134,7 +134,14 @@ follows it only when its prompt says to land. The lander:
    the Outcome and every gate. It records the new base and marks the record ready again. `orchestrate` relaunches
    the run for this, and the Ticket keeps its landing turn meanwhile; a landing `run-ticket` does it
    in place. Then the lander starts again at step 1.
-4. **Refreshes the pull request.** Its head must be the head commit the record names, its checks
+4. **Refreshes acceptance and the pull request.** Apply *Recovery boundary* to the recorded
+   evidence and mandatory work before relying on the ready mark, even when head and base are
+   unchanged. Changed criteria or relevant external state, unavailable necessary proof, or
+   unsettled mandatory work prevents landing. When any of these holds, `orchestrate` relaunches
+   the existing Ticket's run to settle it; a landing `run-ticket` resumes that work in place.
+   That continuation retains valid evidence and supported dispositions and establishes readiness
+   before the lander starts again at step 1. Otherwise continue to the pull request's state.
+   Its head must be the head commit the record names, its checks
    must pass, and the repository's protections must permit the merge; it never merges older state.
    When the head is not the one the record names, or a required check fails, `orchestrate`
    relaunches the run to repair it, and a landing `run-ticket` repairs it in place; the run treats

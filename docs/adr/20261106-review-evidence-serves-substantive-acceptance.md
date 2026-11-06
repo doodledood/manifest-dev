@@ -50,6 +50,8 @@ does not invalidate them. Changed criteria, the actual subject including externa
 unavailable proof require affected evidence to be refreshed. Completion requires the Outcome,
 current gates and bounded mandatory build work to be settled. Preserve the existing limits on
 first-look intake and follow-up repair; no new ledger, adjudicator or retry cap is added.
+The shared landing procedure applies the same validity check before merge, including when
+head, base and CI are unchanged; an old ready marker alone is not current acceptance evidence.
 
 An amendment repairs the faulty claim, evidence method or evaluation. It adds a criterion only
 for an uncovered result, not for every missed instance or changed design choice. Deliberate
@@ -99,7 +101,7 @@ uncertainty, amendment, completion and recovery boundaries in source and Codex m
 `tests/test_check_pr_feedback_gate.py` protects item-specific addressing.
 `tests/test_acceptance_fixtures.py` establishes seeded failures and controls independently of
 agent output. Native scenarios in the define, do, review-code, run-ticket, ticket-up, write-goal,
-handoff and check-pr recipes exercise the decision boundaries. The
+handoff, check-pr and orchestrate recipes exercise the decision boundaries. The
 [behavior report](../research/review-acceptance-20261106.md) records their results and limits;
 no full paid eval or general convergence measurement is claimed.
 

@@ -1,6 +1,6 @@
 ---
 kind: skill
-covers: claude-plugins/manifest-dev/skills/run-ticket
+covers: claude-plugins/manifest-dev/skills/run-ticket, claude-plugins/manifest-dev/skills/ticket-up/references/AUTOMATED_EXECUTION.md
 ask-first: starts an agent session per scenario, which uses model quota
 dry-run: honored
 ---

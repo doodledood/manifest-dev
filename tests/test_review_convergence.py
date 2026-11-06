@@ -192,6 +192,13 @@ def test_recovery_and_exports_keep_acceptance_meaning(plugins: Path) -> None:
     assert "new session alone does not stale evidence" in recovery
     assert "current claims and the actual subject" in recovery
     assert "bounded mandatory work must all be settled before done" in recovery
+    landing = recovery.split("## Landing", 1)[1].split("## Waiting and acceptance", 1)[
+        0
+    ]
+    assert "Apply *Recovery boundary*" in landing
+    assert "even when head and base are unchanged" in landing
+    assert "unsettled mandatory work prevents landing" in landing
+    assert "relaunches the existing Ticket's run" in landing
     tools = plugins / "manifest-dev-tools/skills"
     handoff = " ".join((tools / "handoff/SKILL.md").read_text().split())
     assert "when the receiving session can access them" in handoff

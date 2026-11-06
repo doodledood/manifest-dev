@@ -30,6 +30,7 @@ The run-ticket and PR scenarios replayed supplied local state, not live stores o
 | `review-code source-authority-and-evidence` | An intentional implementation comment did not excuse record loss; mocked tests did not prove the production exporter. The deliberately limited preview and adequate real unit tests passed. | Pass |
 | `do evidence-based-exhaustion` | A 300-byte exact raw payload could not meet the hard 100-byte cap. The compressed control produced a 13-byte stream decoding to the unchanged source. | Pass |
 | `run-ticket acceptance-recovery` | Recovery retained unaffected evidence, completed full reviews and the supported rejection. Changed criteria and receiver state invalidated affected passes despite unchanged commits; queued cleanup independently prevented readiness. | Pass |
+| `orchestrate acceptance-before-landing` | The direct landing path blocked stale receiver evidence and queued cleanup despite unchanged head/base and green CI, retaining unaffected proof and dispositions. The separate valid control proceeded to a protected head-pinned merge decision without restarting review. No merge was executed. | Pass |
 | `ticket-up preserve-acceptance` | The local Shaped Ticket carried hard proof and approval, delegated revision and disposition authority, the still-current target, prior rejection and unfinished cleanup. It granted no unattended execution. | Pass |
 | `write-goal review-acceptance` | The 2,969-character goal retained exact records, hard proof and approval, revisable working claims, the current unmet target, queued cleanup and supported finding dispositions. Cold review found an omitted action-record evidence method; the final goal restored it. | Pass |
 | `handoff cross-host-contract` | The payload carried the essential contract and continuation state for a receiver without the source files, retained the accessible versioned reference, and distinguished recorded assertions from unavailable raw proof. | Pass |
@@ -53,8 +54,16 @@ The define suite's old baseline remains marked stale. Normal use can still expos
 dismissed failures, overbroad working claims or repeated amendments; those are reasons to reopen
 the [acceptance decision](../adr/20261106-review-evidence-serves-substantive-acceptance.md).
 
-The copied skill files matched the candidate sources byte-for-byte across all eleven drives:
-169 files in main-plugin catalogs and 188 in catalogs containing both plugins. The package
+Final source review found one connected consumer gap: the direct queue-to-landing path could
+trust a ready marker without passing through recovery's acceptance check. The shared Landing
+step now applies that check before merge and returns affected work to the existing Ticket's run.
+The additional landing scenario exercises that path and a valid control.
+
+The first eleven drives' copied skill files matched their candidate sources byte-for-byte:
+169 files in main-plugin catalogs and 188 in catalogs containing both plugins. They differ from
+the final source only in the later shared Landing paragraph; their exercised definition,
+execution, recovery and transfer paths did not change. The landing drive uses the final skill
+snapshot. The package
 versions are manifest-dev 15.1.0, manifest-dev-tools 8.1.0 and Pi 13.1.0. Property-suite evidence
 passed lint, type checking and 1,093 tests, with 12 existing skips. All Ticket model scenarios,
 including expected-violation controls, passed. These checks complement the behavior observations;

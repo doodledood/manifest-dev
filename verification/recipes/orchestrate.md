@@ -1,6 +1,6 @@
 ---
 kind: skill
-covers: claude-plugins/manifest-dev/skills/orchestrate
+covers: claude-plugins/manifest-dev/skills/orchestrate, claude-plugins/manifest-dev/skills/ticket-up/references/AUTOMATED_EXECUTION.md
 ask-first: starts an agent session per scenario, which uses model quota
 dry-run: honored
 ---
@@ -33,6 +33,11 @@ Check: read
 ### red-base
 Run: `scripts/drive-skill.sh orchestrate verification/prompts/orchestrate-red-base.md --scaffold verification/scaffolds/red-base-ticket-store --max-turns 200`
 Proves: run with `--autonomous`, the orchestrator pauses the `club` effort once with a `Paused:` line naming the required check that fails on `main` (a renamed helper, `due_on`, whose caller still imports `due_date`), and writes exactly one Ticket in `tickets/club/` scoped to making that check pass, which the line names. Ticket `01` is neither escalated nor used to repair that caller in its own change. The repair Ticket's run leaves `python3 -m unittest discover -s tests` passing on `main`, and Ticket `01` lands only after that; it may run first, since a run recording the base failure is what starts the pause.
+Check: read
+
+### acceptance-before-landing
+Run: `scripts/drive-skill.sh orchestrate verification/prompts/acceptance/landing-readiness.md`
+Proves: the direct To-land path does not merge snapshot A merely because its ready marker, head, base and CI agree. It retains unaffected identifier evidence and the supported factory rejection, refreshes protocol evidence for v2 and routes queued mandatory work to the existing Ticket's run. Snapshot B is eligible for the normal head-pinned merge without restarting valid reviews. This assignment selects actions only; no remote mutation occurs.
 Check: read
 
 ## Gotchas
