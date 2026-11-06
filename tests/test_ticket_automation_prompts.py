@@ -115,8 +115,8 @@ def test_the_one_landing_procedure_refreshes_checks_the_base_and_closes_after_me
     # After a base move, only what the base change can reach re-runs.
     assert "the same patch ID" in landing
     assert "only the deterministic gates re-run" in landing
-    assert "the judgment gates' earlier verdicts stand" in landing
-    assert "otherwise it re-runs every gate" in landing
+    assert "unaffected Outcome and judgment-gate evidence stands" in landing
+    assert "otherwise it re-runs the Outcome and every gate" in landing
     # Every way a landing cannot merge leads somewhere; none ends in "reports and stops".
     assert "reports the current state and stops" not in landing
     assert (
@@ -188,7 +188,7 @@ def test_attempt_record_carries_the_manifest_progress_and_run_facts() -> None:
 
     assert "| Manifest | The run's full Manifest" in record
     assert (
-        "the gates passed and at which commit, what remains, the decisions taken, "
+        "the Outcome and gate verdicts, evidence and assessed commit, what remains, the decisions taken, "
         "the dead ends" in record
     )
     # The status page shows each run's step, read from this record's progress.
@@ -203,7 +203,7 @@ def test_attempt_record_carries_the_manifest_progress_and_run_facts() -> None:
     for fact in (
         "The run ID",
         "the launch count",
-        "The base commit the run's gates last passed against",
+        "The base commit the Outcome and gates last passed against",
         "whether it is ready to land",
     ):
         assert fact in record, fact

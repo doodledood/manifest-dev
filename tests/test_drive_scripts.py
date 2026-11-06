@@ -1377,6 +1377,25 @@ def test_a_scaffold_that_seeds_a_home_is_not_driven(
     assert not (tmp_path / "home" / ".manifest-dev").exists() and calls(tmp_path) == []
 
 
+def test_scaffold_python_imports_do_not_look_like_home_seeding(
+    tmp_path: Path, toolbox: Path
+) -> None:
+    # Apple Python caches imports under HOME. Force that behavior on every platform;
+    # real fixture data still hits the separate home-seeding guard above.
+    result = drive_scaffold(
+        tmp_path,
+        toolbox,
+        'PYTHONPYCACHEPREFIX="$HOME/cache" python3 -c "import pathlib; '
+        "pathlib.Path('ready').write_text('ready')" + '"\n',
+        lines(GOOD),
+    )
+    assert result.returncode == 0, result.stderr
+    assert len(calls(tmp_path)) == 1
+    assert (
+        tmp_path / "store" / "figure-out" / STAMP / "project" / "ready"
+    ).read_text() == "ready"
+
+
 def test_a_failed_scaffold_is_unreachable_and_shows_its_log(
     tmp_path: Path, toolbox: Path
 ) -> None:

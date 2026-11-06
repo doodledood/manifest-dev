@@ -20,6 +20,15 @@ decisions and completion terms through each handoff. Use the project's context f
 reachable companion for shared adjustments, and the existing private instruction mechanism
 for personal restrictions. Preserve higher-priority instructions and team approval controls.
 
+Preserve each statement's force as well as its words. A deliberately stated user requirement
+or applicable project, safety or permission obligation is hard, with or without a reason.
+An agent's operational target, hypothesis or method is working understanding: revise it on
+evidence while preserving the requested result and hard requirements, and report material
+changes. Overall approval of a plan does not make every agent choice hard. Carry the actual
+source obligation so the next worker can tell them apart; resolve uncertainty from that source.
+A suggestion stays a suggestion. An investigation's excluded branch limits that investigation,
+not later delivery, unless the source also excluded the work itself.
+
 **A retained decision** is one the applicable instructions leave to a named person or role.
 Work up to it, with a recommendation, evidence, risk and a clear continuation; hold dependent
 work and continue independent authorized work. Delegated visual direction can coexist with

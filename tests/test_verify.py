@@ -855,21 +855,33 @@ def _when_ready(ready: Path) -> None:
 
 def test_a_job_left_holding_the_output_does_not_hold_the_run(tmp_path: Path) -> None:
     marker = tmp_path / "outlived"
+    ready = tmp_path / "ready"
+    stopped = tmp_path / "stopped"
     env = _covering(
-        tmp_path, f"(sleep 3; touch {marker}) & echo started", "verification/recipes"
+        tmp_path,
+        f"(trap 'touch {stopped}; exit 0' TERM; touch {ready}; sleep 3; touch {marker}) & "
+        f"while [ ! -e {ready} ]; do sleep 0.01; done; echo started",
+        "verification/recipes",
     )
-    began = time.monotonic()
-    result = subprocess.run(
+    # The foreground shell ends only after its background job can handle TERM.
+    # Without that handshake, a newly forked shell can legitimately need the grace.
+    drive = subprocess.Popen(
         [str(VERIFY), "drive", "thing"],
         env=env,
-        capture_output=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
         text=True,
-        timeout=10,
     )
+    assert drive.stdout is not None
+    assert drive.stdout.readline().startswith("running [once]")
+    assert drive.stdout.readline().strip() == "started"
+    began = time.monotonic()
+    stdout, stderr = drive.communicate(timeout=10)
     assert (
         time.monotonic() - began < 1.9
     )  # the job heeds the stop's SIGTERM: no grace waited
-    assert result.returncode == 0, result.stdout + result.stderr
+    assert drive.returncode == 0, stdout + stderr
+    assert stopped.exists(), "the background job did not receive graceful termination"
     assert not _appears(marker, 4)
 
 

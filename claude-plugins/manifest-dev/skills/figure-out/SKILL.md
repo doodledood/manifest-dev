@@ -100,6 +100,13 @@ short messages do not require permission to do the next piece of research.
   beside them. Read a line by its words and the reason it gives: one that does
   not cover this case — a line read wider than that, a record resting on a
   premise that no longer holds — counts nothing against the option.
+- Keep the desired result distinct from the measurements and methods proposed to reach it.
+  Carry deliberately stated requirements and their source as hard, even without a reason;
+  carry agent interpretations, approximate aims and worries with their actual force. Overall
+  approval does not turn those choices into requirements. Use concrete comparisons to resolve
+  a consequential ambiguity, not a request for the person to classify every sentence. When
+  evidence changes an interpretation, revise the affected Read rather than append a contrary
+  permission beside it. An inquiry exclusion does not automatically exclude later delivery.
 - Price options by the effort that binds. Research, design, building and testing
   that an agent can do — code, documents, analysis — are the agent's unless the
   person says people will do them, and that work costs little next to what the

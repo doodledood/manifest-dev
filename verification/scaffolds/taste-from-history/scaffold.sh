@@ -75,7 +75,8 @@ EOF
 commit -m "fix: make organizers choose ballot secrecy and quorum themselves" \
   -m "Reverts the preselected 'secret ballot, no quorum' defaults from last week. Our associations run formal elections under their own bylaws: when the tool picked for them, the choice got challenged at two AGMs as one the organizer never made. For anything that decides whether a vote is valid, the organizer sets it explicitly, even though it adds a step."
 
-sed -i 's/POLL_SETTINGS = .*/POLL_SETTINGS = {"ballot": None, "results": "on-close", "quorum": None}/' src/app.py
+sed 's/POLL_SETTINGS = .*/POLL_SETTINGS = {"ballot": None, "results": "on-close", "quorum": None}/' src/app.py > src/app.py.tmp
+mv src/app.py.tmp src/app.py
 commit -m "fix: leave ballot secrecy unset until the organizer picks it"
 
 printf '%s\n' '<header><a href="/polls">Polls</a> <a href="/export">Export results</a></header>' > src/header.html

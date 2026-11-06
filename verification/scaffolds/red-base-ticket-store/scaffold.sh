@@ -106,6 +106,7 @@ EOF
 git add -A
 as_sam commit -qm "Shelfnote: loans, list command and the club effort"
 # The commit that broke main: the helper was renamed, and its one caller was missed.
-sed -i 's/^def due_date(/def due_on(/' src/loans.py
+sed 's/^def due_date(/def due_on(/' src/loans.py > src/loans.py.tmp
+mv src/loans.py.tmp src/loans.py
 git add -A
 as_sam commit -qm "Rename due_date to due_on"

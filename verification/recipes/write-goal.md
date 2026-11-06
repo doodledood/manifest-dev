@@ -23,7 +23,7 @@ Check: read
 
 ### fresh-review
 Run: `scripts/drive-skill.sh write-goal verification/prompts/write-goal-fresh-review.md --tools`
-Proves: on a 28-gate Manifest with one amendment that removes a gate, whose pass conditions come close to 4,000 characters, the goal block is at most 4,000 characters and keeps every pass condition. That includes the 64 MB peak-memory bound stated only in a gate's why, the 366-day range, the ten-per-hour rate limit, the exact JSON keys and their order, the 100,000-row page with its `Link` header, the p95 under 800 ms over 200 requests, the 404 without the `usage_export` flag, the `review-code` and `review-writing` checks by name, and the stop at a ready pull request with nothing merged or deployed. Nothing asks for the removed CSV export: no CSV gate, and no Initial Approach "then add CSV". A line excluding CSV, as the amendment says, is fine. The profiling, test-first and 40-line steps are not stated as requirements, and the Initial Approach's route and `usage_daily` table, where the goal mentions them, read as a plan rather than a requirement. The goal names no gate ID or Manifest. The goal came back from a fresh review, or the note under the fence says the review was self-graded. The run wrote the goal without starting figure-out or asking a question.
+Proves: on a 28-gate Manifest with one amendment that removes a gate, whose pass conditions come close to 4,000 characters, the goal block is at most 4,000 characters and keeps every pass condition. That includes the 64 MB peak-memory bound stated in its hard claim, the 366-day range, the ten-per-hour rate limit, the exact JSON keys and their order, the 100,000-row page with its `Link` header, the p95 under 800 ms over 200 requests, the 404 without the `usage_export` flag, the `review-code` and `review-writing` checks by name, and the stop at a ready pull request with nothing merged or deployed. Nothing asks for the removed CSV export: no CSV gate, and no Initial Approach "then add CSV". A line excluding CSV, as the amendment says, is fine. The profiling, test-first and 40-line steps are not stated as requirements, and the Initial Approach's route and `usage_daily` table, where the goal mentions them, read as a plan rather than a requirement. The goal names no gate ID or Manifest. The goal came back from a fresh review, or the note under the fence says the review was self-graded. The run wrote the goal without starting figure-out or asking a question.
 Check: read
 
 ### from-read
@@ -44,6 +44,11 @@ Check: read
 ### weak-check
 Run: `scripts/drive-skill.sh write-goal verification/prompts/write-goal-weak-check.md --tools`
 Proves: the read's only done check, `make test` passing, already passes on the code that loads the whole table, so it cannot tell streaming from not streaming. The reply holds no goal block and asks how streaming will be checked, directly or through figure-out. A check put to the user as a question or a recommended option counts as asked; a goal block, or a memory bound or test stated as settled that the read does not give, fails.
+Check: read
+
+### preserve-authority
+Run: `scripts/drive-skill.sh write-goal verification/prompts/write-goal-authority.md --tools`
+Proves: The standalone goal is at most 4,000 characters, keeps the intended result and hard access, keyboard and delivery requirements, and carries both the current 200 ms working target and evidence-based permission to revise it while preserving the result. It adds neither the withdrawn pixel identity nor a database exclusion nor a 180 ms bound from rationale. Material revisions are reported and affected evidence refreshed; passing proxies alone cannot complete the work.
 Check: read
 
 ## Gotchas

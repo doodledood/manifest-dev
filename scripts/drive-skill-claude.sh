@@ -188,7 +188,7 @@ if [[ -n $scaffold ]]; then
   # seeds a home directory is an eval case's, and a drive's session links to the rest of yours.
   scaffolded=0 scaffold_home="$out/scaffold-home"
   mkdir "$scaffold_home"
-  (cd "$project" && HOME=$scaffold_home DRIVE_CHECKOUT=$root bash "$scaffold/scaffold.sh") \
+  (cd "$project" && HOME=$scaffold_home PYTHONDONTWRITEBYTECODE=1 DRIVE_CHECKOUT=$root bash "$scaffold/scaffold.sh") \
     >"$out/scaffold.log" 2>&1 || scaffolded=$?
   if ((scaffolded != 0)); then
     { echo "scaffold.log (last lines):"; tail -n 20 "$out/scaffold.log"; } >&2
@@ -220,7 +220,7 @@ while :; do
   # Where this turn's events begin, so the summary reads each turn's reply from its own events.
   wc -l <"$out/transcript.jsonl" >>"$out/turn-starts.txt"
   run_claude_session "$project" "${CLAUDE_SESSION_ENV[@]}" HOME="$session_home" claude -p --model "$model" "${CLAUDE_ISOLATION[@]}" \
-    "${plugins[@]}" "${resume[@]}" --output-format stream-json --verbose --permission-mode bypassPermissions \
+    "${plugins[@]}" ${resume[@]+"${resume[@]}"} --output-format stream-json --verbose --permission-mode bypassPermissions \
     --max-turns "$max_turns" "$(cat "$out/turn-$turn.md")" >>"$out/transcript.jsonl" 2>>"$out/stderr.log" || session=$?
   turn=$((turn+1))
   ((session == 0)) && [[ -f $out/turn-$turn.md ]] || break

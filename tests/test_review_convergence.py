@@ -140,14 +140,17 @@ def test_caller_owns_gate_and_handling_without_changing_severity(plugins: Path) 
     )
     assert "If a verdict is requested without an acceptance policy" in reviewer
     assert "Every dimension uses the same threshold" not in reviewer
-    builder = skill(plugins, "define")
-    assert (
-        "The skill owns classification; the Manifest owns what fails the gate"
-        in builder
-    )
+    builder = " ".join(skill(plugins, "define").split())
+    assert "The skill owns classification; the Manifest owns what fails" in builder
     coding = skill(plugins, "define", "tasks/CODING.md")
-    assert "the gate states the chosen threshold explicitly" in coding
+    assert "the claim states the chosen threshold explicitly" in coding
     assert "thresholds in the table above orient the author, not the gate" not in coding
+    for task in ("PROMPTING", "DOCUMENT", "WRITING", "UI"):
+        guidance = skill(plugins, "define", f"tasks/{task}.md")
+        assert "claim states the chosen acceptance policy" in guidance
+        assert "rather than being copied into the gate" not in " ".join(
+            guidance.split()
+        )
     holistic = (
         plugins / "manifest-dev-tools/skills/review-pr-holistic/SKILL.md"
     ).read_text()

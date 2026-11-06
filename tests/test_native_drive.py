@@ -6,6 +6,8 @@ import hashlib
 import json
 import os
 import subprocess
+import sys
+import tempfile
 from pathlib import Path
 from typing import Any
 
@@ -77,6 +79,40 @@ def receipt(out: Path, request: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+@pytest.mark.parametrize("launcher", ["drive-skill.sh", "walk.sh"])
+def test_native_launcher_uses_the_project_runtime(
+    tmp_path: Path, launcher: str
+) -> None:
+    """A successful setup must not resume a drive under an older system Python."""
+    project = tmp_path / "project"
+    scripts = project / "scripts"
+    scripts.mkdir(parents=True)
+    subprocess.run(["git", "init", "-q", str(project)], check=True)
+    subprocess.run(
+        ["cp", str(ROOT / "scripts" / launcher), str(scripts / launcher)], check=True
+    )
+    subprocess.run(
+        ["cp", str(ROOT / "scripts/native_drive.py"), str(scripts)], check=True
+    )
+    runtime = project / ".venv/bin"
+    runtime.mkdir(parents=True)
+    (runtime / "python").symlink_to(sys.executable)
+    system_bin = tmp_path / "bin"
+    system_bin.mkdir()
+    wrong_python = system_bin / "python3"
+    wrong_python.write_text("#!/bin/sh\nexit 97\n")
+    wrong_python.chmod(0o755)
+    result = subprocess.run(
+        [str(scripts / launcher), "--help"],
+        env={**os.environ, "PATH": f"{system_bin}:{os.environ['PATH']}"},
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert result.returncode == 0, result.stderr
+    assert "native_drive.py" in result.stdout
+
+
 def test_native_prepare_has_copied_skill_and_no_success(tmp_path: Path) -> None:
     _, out, request = prepare(tmp_path)
     assert not (out / "summary.json").exists()
@@ -87,9 +123,33 @@ def test_native_prepare_has_copied_skill_and_no_success(tmp_path: Path) -> None:
     assert request["turns"][0] in worker
     assert str(out / "skill-catalog.json") in worker
     assert "Proves:" not in worker
+    # Agent inventories can contain terminal answers from other scenarios.
+    assert "Do not inspect other agents or their messages" in worker
+    assert "reviewer receives only this scenario's allowed inputs" in worker
     assert not (out / "plugins/manifest-dev/evals").exists()
     assert Path(request["project"]).is_relative_to(out)
     assert Path(request["records"]).is_relative_to(out)
+
+
+@pytest.mark.parametrize("seeds_records", [False, True])
+def test_scaffold_cache_is_distinct_from_private_records(
+    tmp_path: Path, seeds_records: bool
+) -> None:
+    with tempfile.TemporaryDirectory(dir=ROOT / "verification/fixtures") as directory:
+        fixture = Path(directory)
+        script = 'PYTHONPYCACHEPREFIX="$HOME/cache" python3 -c "import pathlib"\n'
+        if seeds_records:
+            script += 'mkdir -p "$HOME/.manifest-dev"\n'
+        (fixture / "scaffold.sh").write_text(script)
+        result = call(native_env(tmp_path), "--scaffold", str(fixture))
+    assert (
+        result.returncode == 3
+    )  # Prepared requests and rejected fixtures are incomplete.
+    if seeds_records:
+        assert "seeds a home directory" in result.stderr
+        assert "HOST_AGENT_REQUEST:" not in result.stdout
+    else:
+        assert "HOST_AGENT_REQUEST:" in result.stdout, result.stderr
 
 
 def test_completed_native_result_is_finalized_as_readable_evidence(

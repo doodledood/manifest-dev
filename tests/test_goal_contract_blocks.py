@@ -85,7 +85,7 @@ Label = Literal["goal-block", "gate-clause", "pr-goal-block", "pr-tend-prefix"]
 SIGNATURES: dict[Label, str] = {
     "goal-block": "Work under the Manifest at <manifest-path>",
     "gate-clause": ("its latest verdict, the evidence behind that verdict"),
-    "pr-goal-block": "Work until every Acceptance Criterion and Global Invariant in the Manifest holds",
+    "pr-goal-block": "Work until the Outcome and every current Acceptance Criterion and Global Invariant in the Manifest hold",
     "pr-tend-prefix": "Discover or synthesize the Manifest for this pull request.",
 }
 GOAL_BLOCK: Label = "goal-block"
@@ -381,7 +381,7 @@ def test_executor_contract_identifies_manifest_without_prior_context(
             assert "Read this file before resuming execution." in emitted
             recovered = Path(
                 emitted.split("Work under the Manifest at ", 1)[1].split(
-                    " until every Acceptance Criterion", 1
+                    " until its Outcome and every current Acceptance Criterion", 1
                 )[0]
             )
             assert recovered.read_text(encoding="utf-8") == "# Distinct test Manifest\n"

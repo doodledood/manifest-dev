@@ -78,8 +78,8 @@ Reconcile the farthest durable state first:
   nothing to redo only when the pull request's head is the head the record names and the base has
   not moved. When the base has moved since the base commit it names, take landing step 3 in
   `../ticket-up/references/AUTOMATED_EXECUTION.md` → *Landing*: merge the base in, check cross-cuts
-  both ways, re-run the gates that step names, and mark it ready again. When the head holds commits
-  after the head the record names, or a required check fails, they are new work: re-run every gate
+  both ways, refresh the Outcome evidence and re-run the gates that step names, and mark it ready again. When the head holds commits
+  after the head the record names, or a required check fails, they are new work: re-assess the Outcome and re-run every gate
   on them before marking it ready. Either way, the ready mark names this run. Otherwise go to
   *Finish at a ready pull request*.
 - A record holding a drafted answer with no pending revision waits for a person to accept it: tell whoever started the run
@@ -113,7 +113,7 @@ and invoke `do` with that path, giving it the progress record and any continuati
 the record names the Manifest by path instead, as a file store's does, use the file at that path
 when it exists on this machine, and otherwise define the work again. A fresh runner resumes the
 recorded work against the same gates instead of defining it again; recorded passes only guide the
-order of work, and every gate still needs fresh evidence.
+order of work, and the Outcome and every gate still need fresh evidence.
 
 Otherwise invoke `auto` with the Ticket's complete prose anatomy, kind, definition of done,
 source reference, durable progress, and relevant project context as the task. The Ticket bounds

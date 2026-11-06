@@ -4,4 +4,7 @@
 # See scripts/NATIVE_DRIVES.md for dispatch, parent grading and approved fallback rules.
 set -euo pipefail
 root=$(git -C "$(dirname "$0")" rev-parse --show-toplevel)
-exec python3 "$root/scripts/native_drive.py" skill "$@"
+# Use the project runtime after setup; a system Python may be older than the helper.
+native_python="$root/.venv/bin/python"
+[[ -x "$native_python" ]] || native_python=python3
+exec "$native_python" "$root/scripts/native_drive.py" skill "$@"

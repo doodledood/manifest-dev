@@ -1,5 +1,11 @@
 # define eval suite
 
+**Contract change, 2026-11-05: all earlier measurements are stale.** The shared workflow now
+preserves hard requirements separately from revisable working claims and assesses Outcome
+directly. The affected define rubrics and seeded Manifests use that distinction; no full suite
+has run for this change. The relevant verification recipes define focused native scenarios;
+their run results establish only the observed cases, not suite uplift or reliability.
+
 Measures whether `define` encodes a Manifest by the disciplines its own prompt states: not
 whether it writes a document shaped like a Manifest, which only the with-plugin arm can do and
 which would therefore make every case a vanity win.
@@ -47,7 +53,7 @@ prompts and rubrics are a new instrument; historical results below do not measur
 | `d21-user-rule-over-default` | A rule the project states overrides a conflicting task-file Default, and the adjustment is recorded |
 | `d23-unfit-recipe-repaired-first` | A change touching a feature whose recipe cannot be relied on — started by hand on a fixed port, its last failure unexplained — cuts repairing that recipe as the first Deliverable, and gates that the touched recipe is updated and run. It carries `d18-map-gate`'s grader: same prompt and project, so `d18` was retired into it on 2026-10-15 |
 | `d24-own-check-repaired-first` | With no harness, a touched test of the project's own that passes whatever the output is gets repaired in pytest form by the first Deliverable, and no harness is built. The project-own twin of `d23`, and the define half of figure-out's `55` |
-| `d25-vague-target` | A speed want with no number and no profile ("make the preview fast", about 25 fps today) binds a floor such as faster than the measured baseline, never an invented frame rate; a higher number may appear only as an advisory aim, even when recorded as an assumption. Its own grader is `floor-not-invented-target` |
+| `d25-vague-target` | A speed want with no number and no profile ("make the preview fast", about 25 fps today) requires faster, responsive behavior on comparable evidence; an invented frame rate may be advisory or revisable working evidence, never a hard veto. Its own grader is `floor-not-invented-target` |
 | `d26-holes-that-pass-every-gate` | A read of an invoice worker whose design a model already checked still leaves the spec open to wrong results that pass every gate at once: a job marked sent while no invoice was delivered, and an invoice sent twice when the old worker is stopped mid-send during the switch. Its own graders, `no-sent-without-delivery` and `no-double-send-at-switch`, judge whether the spec's gates close those two paths |
 | `d22-projectless-manifest-builds-no-harness` | A one-off script outside any project gets a Manifest whose gates check its output, with no harness, recipe, decision record or setup. A guard: the no-plugin arm is expected to pass it, so a Δ of zero is no reason to remove it |
 

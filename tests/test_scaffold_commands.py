@@ -60,3 +60,35 @@ def test_each_readme_command_runs_in_the_scaffolded_project(script: Path) -> Non
                 check=False,
             )
             assert ran.returncode == 0, f"{command}\n{ran.stderr}"
+
+
+def test_red_base_scaffold_reaches_its_intended_failure(tmp_path: Path) -> None:
+    """Portable setup must reach the missed caller, not fail before the task begins."""
+    work, home = tmp_path / "work", tmp_path / "home"
+    work.mkdir()
+    home.mkdir()
+    env = {**os.environ, "HOME": str(home)}
+    built = subprocess.run(
+        [
+            "bash",
+            str(ROOT / "verification/scaffolds/red-base-ticket-store/scaffold.sh"),
+        ],
+        cwd=work,
+        env=env,
+        capture_output=True,
+        text=True,
+        timeout=LIMIT_SECONDS,
+        check=False,
+    )
+    assert built.returncode == 0, built.stderr
+    tested = subprocess.run(
+        ["python3", "-m", "unittest", "discover", "-s", "tests"],
+        cwd=work,
+        env=env,
+        capture_output=True,
+        text=True,
+        timeout=LIMIT_SECONDS,
+        check=False,
+    )
+    assert tested.returncode != 0
+    assert "cannot import name 'due_date'" in tested.stderr

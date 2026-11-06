@@ -1,6 +1,6 @@
 # manifest-dev
 
-Hand your agent a task. Get back work you can trust. This plugin is the workflow: your agent works out what you mean, writes down what done means, and calls nothing finished until every check passes. Use an individual skill, finish defined work, or coordinate an assigned project outcome within the decisions you delegate.
+Hand your agent a task. Get back work you can trust. This plugin is the workflow: your agent works out what you mean, writes down what done means, and requires evidence that the intended result and current checks hold. Use an individual skill, finish defined work, or coordinate an assigned project outcome within the decisions you delegate.
 
 [See it explained →](https://doodledood.github.io/manifest-dev/) Each part works on its own, and nobody else on your team has to use it.
 
@@ -30,11 +30,11 @@ Four skills cover one piece of work, and each is useful on its own:
 | Skill | What it does |
 |-------|--------------|
 | `/figure-out` | Works out what you mean. It reads your code, finds the question that decides the work, and asks you only what the code can't answer, with its recommended answer first. It holds a position under pushback and changes it on evidence. Useful on its own, whether or not anything gets built after. |
-| `/define` | Writes down what done means, as a Manifest: the pieces of work (Deliverables), a check each one must pass (Acceptance Criteria), and rules that hold across all of them (Global Invariants). Calls `/figure-out` first if the work isn't understood yet. Before you see it, a fresh context checks it against the session and the rules it was written under, and the summary lists every number the work will be held to. |
-| `/do` | Builds until every check passes. A failed check sends that piece back to be fixed; done means every check passed on fresh evidence. |
+| `/define` | Writes the intended Outcome, Deliverables, hard requirements and revisable working claims, with evidence methods for judging them. Calls `/figure-out` first if the work isn't understood yet. Before you see it, a fresh context checks it against the session and the rules it was written under, and the summary lists every number the work will be held to. |
+| `/do` | Achieves the Outcome and current gates on fresh evidence. It can revise its working claims through evidenced amendment while preserving hard requirements. |
 | `/auto` | Runs all three in one go, without stopping for approval between them. |
 
-`/do` assumes you are away for the whole run, even after you send it a steering message. It decides without asking and reports the decisions it made for you and why. It raises a blocker as soon as it finds one — including a target its measurements show is out of reach, whose bar only you can change — and carries on with work that doesn't depend on the answer. Before broader work starts, it may grow the planned change when that serves your outcome; your exclusions and binding requirements stay fixed.
+`/do` assumes you are away for the whole run, even after you send it a steering message. It decides without asking and reports the decisions it made for you and why. It raises a blocker as soon as it finds one — including a hard requirement its measurements show is out of reach, which needs your decision — and carries on with work that doesn't depend on the answer. Before broader work starts, it may grow the planned change when that serves your outcome; your intended result and hard requirements stay protected. Agent-selected claims and checks may change on evidence, with the revision reported and affected evidence refreshed.
 
 It consults the standards its checks refer to before making the choices they constrain, and
 carries applicable evidence and finding dispositions into continued reviews. External comments
@@ -144,7 +144,7 @@ One skill answers questions about manifest-dev itself:
 
 ## How it fits together
 
-A Manifest separates *what to build* — deliverables, each with criteria — from *what must hold throughout*. `/do` can't call it finished while any criterion lacks evidence, which is what makes "done" a finding rather than a claim.
+A Manifest states the intended **Outcome**, deliverables and acceptance claims. Hard claims preserve explicit requirements; working claims describe the agent's current interpretation. The checking method is separate. `/do` owes the Outcome and fresh evidence for every current gate. Overall plan approval does not freeze the agent's chosen metrics or methods.
 
 The Manifest is the source of truth for a run. Feedback during `/do`, or after it finishes, amends the Manifest rather than being applied straight to the code.
 
@@ -154,14 +154,14 @@ A Manifest has six sections, each with its own ID scheme:
 
 | Section | Purpose | IDs |
 |---------|---------|-----|
-| Intent | Problem, appetite, out of bounds | — |
+| Intent | Outcome, its assessment, problem, appetite and bounds | `OUTCOME` |
 | Initial Approach | Starting direction, departable | — |
 | Global Invariants | Rules that hold across the whole run | `INV-G{N}` |
 | Process Guidance | Advice on how to work; weighed, not enforced | `PG-{N}` |
 | Known Assumptions | Items resolved with a recorded default | `ASM-{N}` |
 | Deliverables | Work items with their criteria, least-proven first | `AC-{D}.{N}` |
 
-Each criterion is one text: a title, a body saying what done means, an optional why, and a declared kind. The kind is what tells `/do` how to re-verify it.
+Each gate states its authority, claim, evidence method and kind. A hard claim names its actual source; a working claim names the outcome it serves. Evidence methods remain revisable unless explicitly required. The kind tells `/do` how to re-verify it.
 
 ## Example manifest
 
@@ -171,6 +171,8 @@ An abbreviated Manifest for adding authentication:
 # Definition: User Authentication
 
 ## 1. Intent
+- **Outcome:** People sign in to access their own data; unauthenticated callers cannot read it.
+- **Outcome evidence:** Exercise sign-in and protected data access in a browser, including rejected access.
 - **Problem:** Anyone with the app URL reads every user's data — there is
   no login at all.
 - **Appetite:** Session auth over the existing endpoints, not an identity
@@ -184,12 +186,17 @@ An abbreviated Manifest for adding authentication:
 
 ### INV-G1 — Passwords are never stored in plaintext
 
-Done when `grep -r 'password.*=' src/ | grep -v hash | grep -v test` returns no matches.
+Authority: hard — the application's security rules prohibit storing plaintext passwords.
+
+Stored credentials contain password hashes, never plaintext passwords.
+
+Evidence: Inspect credential writes and storage; exercise registration and verify the stored
+value is a supported password hash and cannot be used as the original password.
 
 Why: a plaintext password in the store is unrecoverable once shipped — every other auth
 control is downstream of this one.
 
-Deterministic gate.
+Judgment gate.
 
 ## 4. Process Guidance
 - [PG-1] Follow existing error handling patterns in the codebase
@@ -203,16 +210,22 @@ protected page — the credential check, the cookie, and the redirect exercised 
 
 #### AC-1.1 — POST /login returns a session for valid credentials
 
-Done when POST /login with valid credentials returns 200 and sets a JWT in an httpOnly cookie
-the protected routes accept.
+Authority: hard — the request requires a working login for valid credentials.
+
+Valid credentials establish a session the protected routes accept.
+
+Evidence: Run the login integration test and follow its session into a protected route.
 
 Deterministic gate.
 
 #### AC-1.2 — Invalid credentials fail cleanly
 
-Done when the manifest-dev:review-code skill, activated with dimension=code-bugs over the auth
-routes, reports no Medium-or-higher findings under this Manifest's chosen acceptance policy —
-an invalid-credential path returning 500 instead of 401 is the shape this catches.
+Authority: working — reject invalid credentials without an internal error or data exposure.
+
+Invalid credentials are rejected cleanly and never grant access.
+
+Evidence: Activate review-code with dimension=code-bugs over the auth routes, under a
+Medium-or-higher findings policy, and exercise the invalid-credential path.
 
 Judgment gate.
 ````

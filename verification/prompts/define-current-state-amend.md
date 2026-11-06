@@ -7,6 +7,8 @@ place):
 # Definition: Weekly activity digest email
 
 ## 1. Intent
+- **Outcome:** Members can catch up on their workspace activity in a weekly digest.
+- **Outcome evidence:** Inspect the finished artifacts and exercise the uses stated below.
 - **Problem:** Members miss what happened in their workspace during the week, because the only
   record is the in-app activity feed, which they open rarely. (The user ruled on 2026-10-01 that
   the digest is weekly, not daily.)
@@ -23,14 +25,17 @@ place):
 
 ### INV-G1 — The change stops at what this Manifest authorized
 
+Authority: hard — the assignment authorizes only work serving the requested Outcome within
+its stated scope and applicable instructions.
+
 Read this Manifest. This is a conformance check: take its intent as given, and do not judge
 whether the work was necessary, motivated, or worthwhile.
 
-Done when the work this run added carries nothing beyond what the Deliverables, Acceptance Criteria, and
+Done when the work this run added carries nothing beyond what the Outcome, Deliverables, Acceptance Criteria, and
 Global Invariants — this one excluded — required, and nothing that nominally serves one of
 them while far exceeding the surface the Appetite allows.
 
-Read Problem, Appetite, and Out of bounds as the intent. Read the Deliverables and the other
+Read Outcome, Problem, Appetite, and Out of bounds as the intent. Read the Outcome, Deliverables and the other
 gates as what the work owes. Read the Initial Approach and Process Guidance as mechanisms that
 were *authorized rather than owed* — the ones expected, never the only ones permitted, so work
 reaching a Deliverable by a route this Manifest does not name is required by that Deliverable.
@@ -38,12 +43,15 @@ reaching a Deliverable by a route this Manifest does not name is required by tha
 Required although no criterion names it: work inherited rather than added — the artifact this
 Manifest was synthesized over, and anything arriving from outside the run such as a base branch
 merged into the head — the fixes every run owes on its pull request — a pre-existing issue the
-work met whose fix is not a project of its own and that the project's own rules do not keep out, and a below-bar finding from a first full look
-applied because it improves the work — and work discharging what a criterion required, including
+work met whose fix is not a project of its own and that the project's own rules do not keep out,
+and a below-bar finding from a first full look applied because it improves the work — and work
+discharging what a criterion required, including
 sweeping a changed rule into every copy and surface that holds it.
 
 FAIL only on work none of the above accounts for. Treat an unclear case as required work, and
 leave small, incidental, or imperfect changes inside an artifact already in scope alone.
+
+Evidence: Inspect the change against this Manifest and the applicable assignment.
 
 Why: every other gate states a floor, so a contract bounded on one side only gives an executor
 disposed to thoroughness nothing to read as a limit.
@@ -52,10 +60,14 @@ Judgment gate.
 
 ### INV-G2 — No new mail provider
 
+Authority: hard — the fixture requester deliberately requires the behavior and limits below.
+
 Done when the diff sends mail only through the existing relay client and adds no mail provider
 dependency.
 
 Why: the user ruled on 2026-10-03 to stay on the existing relay.
+
+Evidence: Inspect the named artifacts and execute the checks stated in the claim.
 
 Deterministic gate.
 
@@ -74,24 +86,36 @@ digest on Monday morning and reads what happened.
 
 #### AC-1.1 — The digest lists the week's activity
 
+Authority: hard — the fixture requester deliberately requires the behavior and limits below.
+
 Done when, for a member whose feed holds comments and mentions from the past seven days, the
 digest lists every comment and every mention, each with its author and a link, checked by a test
 that seeds both kinds.
+
+Evidence: Inspect the named artifacts and execute the checks stated in the claim.
 
 Deterministic gate.
 
 #### AC-1.2 — The digest is plain text
 
+Authority: hard — the fixture requester deliberately requires the behavior and limits below.
+
 Done when the sent message has exactly one part, of type text/plain, as AC-1.1's test observes.
 
 Why: the user ruled on 2026-10-02 that the digest is plain text.
+
+Evidence: Inspect the named artifacts and execute the checks stated in the claim.
 
 Deterministic gate.
 
 #### AC-1.3 — Unsubscribe works
 
+Authority: hard — the fixture requester deliberately requires the behavior and limits below.
+
 Done when the digest carries an unsubscribe link and following it stops the next digest for that
 member, checked by a test.
+
+Evidence: Inspect the named artifacts and execute the checks stated in the claim.
 
 Deterministic gate.
 ````

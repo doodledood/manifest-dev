@@ -193,6 +193,11 @@ Run: `DRIVE_PLUGINS_AT=296d596 scripts/drive-skill.sh figure-out verification/pr
 Proves: the Taste test's case arm (the principle plus one case line from a different gate) on the checkout moment: passes when its design asks for the delivery address before the order is paid. The test and its result are in `docs/adr/20261102-taste-entry-form-is-chosen-by-a-test.md`.
 Check: read
 
+### intended-result-over-suggested-method
+Run: `scripts/drive-skill.sh figure-out verification/prompts/figure-out-intended-result.md`
+Proves: The Read and handoff preserve the desired search-to-passage experience, hard permission and keyboard requirements, and revisable speed assessment. They retire pixel identity and a fixed 200 ms target, do not turn an unexplored database branch into a delivery exclusion, and start no implementation. No new latency floor or routine owner sign-off appears.
+Check: read
+
 ## Gotchas
 
 - The eval cases' `prompt.md` files open with the case's front matter; `scripts/drive-skill.sh` sends only the body below it.

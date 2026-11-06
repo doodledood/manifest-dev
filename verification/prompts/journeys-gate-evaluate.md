@@ -22,6 +22,10 @@ what the person met.
 
 ### INV-G24 — Journeys driven as a friend in the group chat
 
+Authority: working — this assessment checks the stated shared-trip experience.
+
+Evidence: Use the browser assessment specified below.
+
 The person is a member of a trip's group chat, mostly on a phone, who taps a shared `/trips/<id>` link. Derive their journeys yourself from that person and this page, covering at least: arriving signed out from a chat app's in-app browser; coming back later on another device or after a reload; switching between List and Day plan and using back; changing the day start and seeing the plan move; adding a place while a friend adds one; a trip with no places and a trip with many; what goes wrong (bad connection, rejected name, unknown trip id). Drive the running app through each journey in a browser at phone size, as that person, with evidence (screenshots or recorded steps) of what they met. PASS when no journey leaves the person stuck, confused about what happened, or looking at wrong data. FAIL otherwise. Booting needs the server running with a seeded trip and at least two signed-in test accounts; return BLOCKED, not a code-reading verdict, when it cannot be booted. A run drives many browser journeys by hand and is the slowest gate here; evaluate it on a settled state rather than mid-repair.
 
 Judgment gate.

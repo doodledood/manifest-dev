@@ -1,7 +1,7 @@
 # ADR: Only gates bind; Process Guidance is advisory
 
 ## Status
-Accepted
+Accepted; amended by 20261106-source-authority-governs-acceptance-and-revision: the Outcome is assessed as well as current gates; Process Guidance remains advisory
 
 ## Area
 do

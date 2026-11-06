@@ -1,6 +1,6 @@
 ---
 name: do
-description: 'Manifest executor. Reads a Manifest and pursues it with full autonomy: reach a state where every Acceptance Criterion and Global Invariant holds, deciding for itself how to get there. Use when executing a manifest, running a plan, implementing a defined task, or when the user asks to run, execute, implement, or ship a manifest-backed plan. Not when the user has only approved a plan.'
+description: 'Manifest executor. Reads a Manifest and pursues it with full autonomy: achieve the intended Outcome and every current Acceptance Criterion and Global Invariant, preserving hard requirements while revising working choices on evidence. Use when executing a manifest, running a plan, implementing a defined task, or when the user asks to run, execute, implement, or ship a manifest-backed plan. Not when the user has only approved a plan.'
 argument-hint: '<manifest-path> [--no-log]'
 user-invocable: true
 ---
@@ -12,10 +12,13 @@ explicitly, with the useful intent and evidence.
 No path → halt with usage. Run only when execution was asked for: the user
 invoked /do or asked to build, or a calling workflow invoked you. A user
 approving a plan has not asked for it; say the Manifest is ready, give the /do
-command, and stop. Otherwise read the Manifest in full, then make every Acceptance
-Criterion and Global Invariant hold as written; how is yours. Those bind; Initial
-Approach and Process Guidance advise. When done, report what changed and your basis
-per gate.
+command, and stop. Otherwise read the Manifest in full, then achieve its Outcome and make every
+current Acceptance Criterion and Global Invariant hold. The Outcome is the requested result;
+a hard claim preserves a deliberate user requirement or applicable project, safety or permission
+obligation; a working claim is the agent's operational interpretation. Each gate states that
+Authority and a separate Evidence method. Missing Outcome or authority requires fresh definition,
+not a guess at which old requirements may change. Initial Approach and Process Guidance advise.
+Report what changed and the evidence for the Outcome and each gate.
 
 ## Autonomous execution
 
@@ -36,24 +39,31 @@ followed, or that no entry applied.
 
 **Taste on reversal.** When a steering message reverses a call the run made and states why, and the reason is a preference another user could want the opposite of — not a behavior every session owes — draft a Taste entry in three parts: the preference, stated as a principle that carries to calls never discussed and naming the kind of call it covers; the rationale, built on the reason the user stated, never one you inferred; and when it should yield. Carry it verbatim in the terminal report, with the memory file it would go in and the question whether it is standing or for this case only; "this case only" is a no. Write nothing: only the user's explicit yes to that text writes it, inside that file's `## Taste` section. When an existing entry decided the reversed call, report the clash instead, with any proposed revision or removal shown verbatim for the user's yes. Make no other offer. A reaction to a disposable draft (defined below) drafts an entry exactly when `references/HARVEST.md` → *A reaction to a draft* says, whether or not it reverses a call this run made.
 
-Choose solutions that make the outcome durable and the next change easier to get right; the initial plan is yours to change. A disposable draft is the exception: a throwaway rendering, such as one page with fake data, made only so a person can react to what they cannot yet put into words, which a Deliverable may ask for. Keep it outside the project's files, as finished as that person expects, shown in minutes rather than late, and never perfected or verified beyond reaching that person with the question it poses. The choice it poses waits for that person's reaction, and work that depends on the choice is blocked on that reaction until it arrives. What the run makes durable is the decision and the criteria their reaction draws out, never the draft. Appetite — the size of change the problem is worth — may be revised by amendment (*Amendments*), never to excuse excess already produced or to lower a gate's bar. Out of bounds exclusions, binding requirements and permissions stay fixed unless the user changes them, and absence from an exclusion list authorizes nothing unrelated beyond the fixes *What holds for every gate* asks of every run.
+Choose solutions that make the outcome durable and the next change easier to get right; the initial plan is yours to change. A disposable draft is the exception: a throwaway rendering, such as one page with fake data, made only so a person can react to what they cannot yet put into words, which a Deliverable may ask for. Keep it outside the project's files, as finished as that person expects, shown in minutes rather than late, and never perfected or verified beyond reaching that person with the question it poses. The choice it poses waits for that person's reaction, and work that depends on the choice is blocked on that reaction until it arrives. What the run makes durable is the decision and the criteria their reaction draws out, never the draft. Appetite — the size of change the problem is worth — may be revised by amendment (*Amendments*), never to excuse excess already produced. The Outcome, hard exclusions, hard requirements and permissions stay fixed without authorization from their source, and absence from an exclusion list authorizes nothing unrelated beyond the fixes *What holds for every gate* asks of every run.
 
-An obligation is blocked only when no authorized path remains after trying credible alternatives: it needs knowledge, access or authority the run lacks, or a change to a binding requirement. A failed approach is yours to redesign rather than repeat; track related repairs by the underlying promise they try to satisfy, across finding IDs and commits. Keep that promise, its source in the accepted contract, attempted repairs and their outcomes in the execution log or checkpoint notes. When two repairs on that promise have failed, test the premise against the contract, Appetite and scope before a third: determine whether the promise is actually owed and whether a simpler repair meets it. A repair's commit wording does not strengthen acceptance. Keep a binding promise intact; a false binding premise follows the blocker rule. Where there is always one more thing to try, evidence, never a count of tries, says when a gate is out of reach: a measured limiter that every remaining authorized option leaves in place, recent attempts that no longer move the result beyond its run-to-run noise, or two gates where repairing one fails the other. The burden of proof is the run's: the limiter measured rather than guessed, the attempts distinct approaches aimed at it rather than variations of one idea, and every authorized option that could move it tried; until then the gate is not out of reach, and the work goes on. Any of these, so earned, makes it blocked as needing a change to a binding requirement; its blocker names the best result reached, the limiter, the attempts made and the requirement change that would unblock it, and the bar stays as written. Surface a blocker promptly with its evidence and the intervention it needs, then continue useful independent work that does not guess the blocked decision; invoke `/escalate` with the unresolved blockers only when no useful independent work remains. An external process still running is a wait, never completion.
+An obligation is blocked only when no authorized path remains after trying credible alternatives: it needs knowledge, access or authority the run lacks, or a change to the Outcome or a hard requirement. A failed approach is yours to redesign rather than repeat; track related repairs by the underlying promise they try to satisfy, across finding IDs and commits. Keep that promise, its source in the accepted contract, attempted repairs and their outcomes in the execution log or checkpoint notes. When two repairs on that promise have failed, test the premise against the contract, Appetite and scope before a third: determine whether the promise is actually owed and whether a simpler repair meets it. A repair's commit wording does not strengthen acceptance. Preserve the Outcome and hard promises; correct a mistaken working claim through amendment. Overall plan approval does not make an agent's choice hard. A false hard premise follows the blocker rule. Where there is always one more thing to try, evidence, never a count of tries, says when a gate is out of reach: a measured limiter that every remaining authorized option leaves in place, recent attempts that no longer move the result beyond its run-to-run noise, or two gates where repairing one fails the other. The burden of proof is the run's: the limiter measured rather than guessed, the attempts distinct approaches aimed at it rather than variations of one idea, and every authorized option that could move it tried; until then the gate is not out of reach, and the work goes on. Any of these, so earned, makes it blocked when it needs a change to the Outcome or a hard requirement; its blocker names the best result reached, the limiter, the attempts made and the requirement change that would unblock it, and the bar stays as written. Surface a blocker promptly with its evidence and the intervention it needs, then continue useful independent work that does not guess the blocked decision; invoke `/escalate` with the unresolved blockers only when no useful independent work remains. An external process still running is a wait, never completion.
 
 ## Amendments
 
-Invoke `define` with the Manifest path and the decision to amend the plan,
-settled assumptions, or Appetite within your delegated authority, or to encode
-user steering. Pass the rationale and keep the amendment unattended. Revise
+Invoke `define` with the Manifest path to amend working claims, evidence methods, the plan,
+settled assumptions or Appetite within your authority, or to encode authorized steering.
+Pass the evidence: what the old interpretation got wrong, why the replacement better serves
+the unchanged Outcome and hard requirements, and which prior results no longer apply.
+A failed check or difficulty alone does not justify revision. A hard claim's missing or
+outdated rationale is grounds to ask its owner, not permission to weaken it. Evidence methods
+are working choices unless a hard claim explicitly requires that method. Keep the amendment
+unattended and report material changes; this is correction of the agreement's implementation,
+not permission to waive its result. Revise
 Appetite only when the benefit to the requested outcome justifies the added
 complexity and maintenance; the revision names both and applies before broader
-work starts. Never amend directly or rewrite a binding requirement on your own
-judgment. A false binding premise is a blocker.
+work starts. Never amend directly or change the Outcome or a hard requirement without its
+source's authorization. Unclear authority must be resolved from the source before revision;
+if the needed decision is unavailable, report the boundary and continue independent work.
 
 Wait for active gate evaluations to finish before amending. If an amendment races
 an evaluation, discard that evaluation's verdicts and evaluate the amended file.
 Re-read the amended Manifest. Re-verify every gate whose text, subject, or
-interpretation changed, including the ceiling when Appetite changes; keep other
+interpretation changed, including the Outcome assessment where affected and the ceiling when Appetite changes; keep other
 evidence only while it remains valid. Report material amendments on every terminal
 path and record them in the execution log when kept.
 
@@ -67,13 +77,13 @@ harness's goal-setting, continuation, or durable-completion-condition capability
 copy-pasteable. Emit the goal block as one completion contract: one unlabeled block introduced
 by a sentence of your own, since the fences and their labels are this file's markers rather than
 part of what you emit. Where a broader parent workflow backstop is already visible
-and already requires evidence for every gate — a PR-tend contract, say — operate under it:
+and already requires evidence for the Outcome and every current gate — a PR-tend contract, say — operate under it:
 do not set or print a second narrower goal.
 
 ```goal-block
-Work under the Manifest at <manifest-path> until every Acceptance Criterion and Global Invariant in it holds, each with evidence from the artifacts that gate names, and completion has been reported. Read this file before resuming execution.
+Work under the Manifest at <manifest-path> until its Outcome and every current Acceptance Criterion and Global Invariant hold, each with fresh evidence, and completion has been reported. Read this file before resuming execution.
 
-The Manifest is the contract, not the run's to rewrite: it changes only through the skill that wrote it, never by direct edit, and a changed gate returns unverified.
+The Manifest changes only through the skill that wrote it, never by direct edit. Working claims and evidence methods may be revised on evidence while preserving the Outcome and hard requirements; those need their source's authorization to change. Overall plan approval does not harden agent choices. A changed claim or evidence method returns affected results unverified.
 
 Record compact checkpoint notes as work proceeds: what changed, what was verified, what remains, blockers.
 
@@ -100,7 +110,7 @@ a repository or working folder
 holding, or about to hold, work later sessions will change — a new one the user is starting
 counts — which this work concerns. A chat with no workspace, a home or scratch folder, a folder
 holding one finished artifact, or a question that does not concern the folder the session runs in
-is none. With none, the Manifest's gates are the whole
+is none. With none, the Manifest's Outcome and gates are the whole
 verification: build no harness and add no project surface. One-off work inside a project is still
 project work: it keeps the recipes whose paths it touches and runs them as
 `references/VERIFICATION.md` says.
@@ -112,8 +122,16 @@ choices it constrains, including the applicable standards it delegates to a skil
 Use those standards during construction and evaluation, with their thresholds, exceptions, and
 trade-offs. This requires neither a preliminary review nor a fixed evaluation order.
 
-A gate declares `judgment` or `deterministic`; an undeclared kind is invalid, never inferred.
-Read a gate from the Manifest by ID, never from a copy. Keep track of the criteria and subject
+Assess the Outcome directly against the finished result as judgment ID `OUTCOME`, alongside
+the gates. Reuse evidence and an existing judgment context; this does not require a new review
+layer. Green working checks cannot excuse a missing outcome, and review cannot add preferences
+the requested result does not support. Respect any retained acceptance and report what actual
+use has and has not established.
+
+A gate declares `hard` or `working` Authority and `judgment` or `deterministic` kind; missing
+fields are invalid, never inferred. Read each claim and its Evidence from the Manifest by ID,
+never from a copy. Evaluate the current text; a working claim that misstates success is an
+amendment finding, not a waived failure. Keep track of the criteria and subject
 each piece of evidence assessed. Changes to either, or new external evidence, invalidate the
 affected evidence; retain what still applies. The subject includes relevant local work and
 external state, not just a commit identifier.
@@ -123,8 +141,8 @@ introduced or exposed by the changes since that evaluation; a deterministic gate
 Give an invoked evaluator that reporting scope, the assessed state, prior findings, their underlying promises and accepted sources, verified
 repairs, failed attempts on those promises, and the intervening changes. Recover missing context rather than silently requesting
 another full look. Contextual reading may be wide; touching an old line alone does not make an
-old issue new. A fresh standalone review keeps the scope its caller requested. A bar never moves
-down on the executor's judgment, and a summary claim is not evidence. Read severity by consequence using the
+old issue new. A fresh standalone review keeps the scope its caller requested. An evaluator cannot lower a bar; a justified working-claim change follows *Amendments*.
+A summary claim is not evidence. Read severity by consequence using the
 activated review skill's standards: Low is polish or a nit of any kind — style, naming,
 structure, or otherwise. Apply the Manifest's chosen severities, categories and acceptance
 thresholds; Medium+ is a usual gate only when the caller or Manifest chooses it. Regrade
@@ -173,13 +191,18 @@ stays the run's to fix or to escalate as a blocker (below).
 Before reporting completion, every check the project keeps across the whole tree passes — lint,
 types, tests, build — whether or not the change touched what fails. A check that cannot run is a
 failure of the product or its harness: fix it. Never reach green by removing, skipping or loosening
-a test, unless the test is useless or tautological; then the pull request description names it and
-why. A failing check whose fix is gigantic blocks completion: escalate it as a blocker, never report
+a test to excuse an unmet claim. Update a test when a justified amendment changes a working
+claim, preserving independent coverage of the unchanged Outcome and hard requirements and
+reporting the change. Remove a useless or tautological test with its reason in the pull request
+description. A failing check whose fix is gigantic blocks completion: escalate it as a blocker, never report
 the run as done. A run that changes no project file, such as one that only makes a disposable draft,
 owes none of this.
 
 When external review feedback arrives, directly or through `check-pr`, load
 `references/EXTERNAL_REVIEW.md` before acting on it.
+
+When the Outcome and every current gate have fresh PASS evidence, invoke `done` with the
+Manifest path and that evidence. A wait or unresolved amendment is not completion.
 
 ## The execution log
 
