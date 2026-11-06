@@ -854,8 +854,8 @@ file. The row is never deleted while the probe stays.
 | `tasks/HILLCLIMB.md` | A priority that moves | Reason: a priority changes partway through a session, which a single-prompt case cannot stage; the `hillclimb` recipe's `attended-copy` scenario reverses one |
 | `tasks/HILLCLIMB.md` | A judge that can be fooled | `109-climb-a-signup-page/proves-the-judge-first` |
 | `tasks/HILLCLIMB.md` | Trade-off: One primary with the rest as guards vs the requester choosing among a few whole versions | Reason: whole-version picks need a requester present each round, which an unattended case cannot supply; the `hillclimb` recipe's requester-chooses scenario stages it |
-| `tasks/HILLCLIMB.md` | Trade-off: Primary gain vs guard loss | Reason: the margin a guard may lose is set where the climb's objectives are concrete; the `hillclimb` recipe's `signup-page` scenario reads it in the record |
-| `tasks/HILLCLIMB.md` | Trade-off: A weighted sum vs floors that veto | Reason: needs a requester who can state exchange rates, which an unattended case cannot supply; the `hillclimb` recipe's `signup-page` scenario reads the rule the climb chose |
+| `tasks/HILLCLIMB.md` | Trade-off: Primary gain vs guard loss | Reason: the margin a guard may lose is set where the climb's objectives are concrete; the `hillclimb` recipe's `thorough-number` scenario reads memory held within its margin of the original |
+| `tasks/HILLCLIMB.md` | Trade-off: A weighted sum vs floors that veto | Reason: needs a requester who can state exchange rates, which an unattended case cannot supply; the `hillclimb` recipe's `attended-copy` scenario, where the requester ranks two objectives, reads the rule the climb chose |
 | `tasks/PERF.md` | The limiter | `77-perf-speedup-claim/names-the-limiter` |
 | `tasks/PERF.md` | The verdict | `77-perf-speedup-claim/states-a-proper-verdict` |
 | `tasks/PERF.md` | A bounded gain | `58-gain-beyond-its-share/bounds-the-gain-by-the-share` |
