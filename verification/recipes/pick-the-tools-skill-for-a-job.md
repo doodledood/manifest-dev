@@ -10,7 +10,7 @@ A reader comes to these documents to pick the tools skill for a job, and should 
 
 ## How a user reaches it
 
-`claude-plugins/manifest-dev-tools/README.md` → *Pull requests*, *Improving what exists*, *Prompts* and *People and sessions*
+`claude-plugins/manifest-dev-tools/README.md` → *Pull requests* and *Improving what exists* and *Prompts* and *People and sessions*
 
 ## Scenarios
 
