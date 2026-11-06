@@ -12,7 +12,7 @@ Two plugins ship from this repository. Install the first if you want the workflo
 
 ## The plugins
 
-Each one installs on its own:
+Each one installs on its own, except that `/babysit-pr` and `/hillclimb` in the tools plugin hand off to `manifest-dev`'s `/define` and `/do`, so they need both installed:
 
 | Plugin | What it covers |
 |--------|----------------|

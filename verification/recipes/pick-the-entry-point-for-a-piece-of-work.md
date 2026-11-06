@@ -16,7 +16,7 @@ A reader comes to these documents to pick the entry point for a piece of work, a
 
 ### fresh-reader
 Run: `scripts/walk.sh 'Pick the entry point for a piece of work. End able to choose between /figure-out, /define, /do, and /auto for a given task, and to say where a request to make an existing artifact as good as it can be for its goal goes. The sections to rely on: README.md → One piece of work; claude-plugins/manifest-dev/README.md → One piece of work.' README.md claude-plugins/manifest-dev/README.md`
-Proves: the reader ends able to choose between `/figure-out`, `/define`, `/do`, and `/auto` for a given task, says a hill-climb loads through any of them and that `/hillclimb` in the tools plugin starts one directly, and names nothing it had to guess that blocks the task.
+Proves: the reader ends able to choose between `/figure-out`, `/define`, `/do`, and `/auto` for a given task, says a hill-climb loads through `/figure-out`, `/define` or `/auto` and that `/hillclimb` in the tools plugin starts one directly, and names nothing it had to guess that blocks the task.
 Check: read
 
 ## Gotchas
