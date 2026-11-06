@@ -129,7 +129,8 @@ version from a better one. The climb stops when rounds give no more confirmed ga
 that you set.
 
 By default a climb is quick: it checks its measure one time and stops at the first round with no
-gain. It is thorough when you ask, or when a wrong result costs much. Start one with `/hillclimb`.
+gain. It is thorough when you ask, or when a wrong result costs much. Start one with `/hillclimb`, from the
+manifest-dev-tools plugin.
 It is a Manifest like all others, so `/do` runs it. Its record stays in the Execution Log, or in a
 file in your project that you name.
 Why: without a measure and a stop rule, a run makes one pass and grades its own work.

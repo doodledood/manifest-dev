@@ -1,4 +1,4 @@
-"""Benchmark to_metres: median nanoseconds per call over 7 runs of 200,000 calls."""
+"""Benchmark to_metres: median nanoseconds per call over 7 runs of 200,004 calls."""
 
 import statistics
 import time

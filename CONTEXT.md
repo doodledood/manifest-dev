@@ -347,7 +347,7 @@ _Avoid_: Ticket sweep, batch runner, scheduler.
 - The **Outcome** and hard claims change only with their source's authorization. Working claims and evidence methods may be amended through `define` on evidence that the replacement better serves the unchanged Outcome and hard requirements; affected verdicts become unverified.
 - A **Skill** may invoke other **Skills** and may run through host **Agent** contexts.
 - A **Host Continuation Backstop** is an outer guard for unattended runs; it does not replace the **Do/Verify Loop**.
-- A **Hill-climb** is a **Manifest** like any other: `/hillclimb` hands it to figure-out, define and do, its rounds run inside the **Do/Verify Loop**, and its record lives in the **Execution Log**, or in a project file the requester names, which the Manifest points to.
+- A **Hill-climb** runs on a **Manifest** like any other: `/hillclimb` hands its request to figure-out, define and do, its rounds run inside the **Do/Verify Loop**, and its record lives in the **Execution Log**, or in a project file the requester names, which the Manifest points to.
 - A **Phase Checkpoint** can protect a handoff between workflow phases, while terminal completion stays tied to the final deliverable's acceptance evidence.
 - **Babysit PR** and **Review PR** can run asynchronously on the same pull request: **Review PR** applies quality pressure, while **Babysit PR** drives the author-side lifecycle toward green and mergeable.
 - **Review PR** in manifest mode re-verifies a **Manifest** against the pull request head.
