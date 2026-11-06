@@ -1,0 +1,14 @@
+{
+  "number": 103,
+  "title": "Add sponsored books to recommendation shelf",
+  "description": "Requested by partnerships. Put up to three sponsored books first, then relevance-ranked books, within five visible slots. This implementation meets the request. No release decision has been recorded.",
+  "author": "contributor",
+  "mode": "no-manifest",
+  "comments": [],
+  "reviews": [],
+  "threads": [],
+  "checks": {
+    "unit": "pass"
+  },
+  "linked_prs": []
+}

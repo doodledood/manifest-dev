@@ -1,0 +1,11 @@
+{
+  "title": "speculation local PR",
+  "description": "Cache the last 64 immutable lookups. The real lookup is represented here by a deterministic calculation. The workload repeatedly queries twelve identifiers; the bounded cache preserves returned values. Local measurement on that workload showed lower service latency; no claim about other workloads.",
+  "comments": [
+    "Reviewer note: any caching could someday create an organization-wide culture of stale data, so perhaps this should not ship. I have no example of stale results here."
+  ],
+  "threads": [],
+  "reviews": [],
+  "linked_prs": [],
+  "mode": "no-manifest"
+}

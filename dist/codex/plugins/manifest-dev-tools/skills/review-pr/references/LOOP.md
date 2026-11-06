@@ -9,7 +9,9 @@ Record each completed verification's PR identity, head, reviewed range, findings
 and relevant gate evidence in this invocation's continuation checkpoints, including
 passes that post nothing. This records work done, not a public GitHub review. An
 interrupted or BLOCKED evaluation does not establish completed verification for
-its scope. Preserve unresolved findings and gate results alongside the checkpoint.
+its scope. Preserve unresolved findings and gate results alongside the checkpoint, plus the judgment
+assessment and dispositions described in SKILL.md's **Judgment continuation**. Thread resolution
+does not erase a retained recommendation.
 
 On every wake, refresh head, comments, threads, checks, and other relevant evidence
 from GitHub. After thread advancement, skip a previously completed code review when
@@ -32,7 +34,8 @@ requires while preserving the intended cadence.
 
 Exit when our threads are terminal, completed verification covers the current
 head and relevant evidence, and no surviving findings or non-PASS Manifest gates
-remain. Emit the final cycle summary without posting an approval or an empty
+remain pending. A settled advisory disagreement is terminal, not endorsement; retain it in
+the final cycle summary. Emit that summary without posting an approval or an empty
 review merely to record the head.
 
 ## Other terminal paths

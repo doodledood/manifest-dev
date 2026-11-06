@@ -1,0 +1,83 @@
+{
+  "interests": [
+    "history",
+    "biography"
+  ],
+  "books": [
+    {
+      "id": "h0",
+      "tags": [
+        "history",
+        "biography"
+      ],
+      "sponsored": false
+    },
+    {
+      "id": "h1",
+      "tags": [
+        "history",
+        "biography"
+      ],
+      "sponsored": false
+    },
+    {
+      "id": "h2",
+      "tags": [
+        "history",
+        "biography"
+      ],
+      "sponsored": false
+    },
+    {
+      "id": "h3",
+      "tags": [
+        "history",
+        "biography"
+      ],
+      "sponsored": false
+    },
+    {
+      "id": "h4",
+      "tags": [
+        "history",
+        "biography"
+      ],
+      "sponsored": false
+    },
+    {
+      "id": "s0",
+      "tags": [
+        "sports"
+      ],
+      "sponsored": true
+    },
+    {
+      "id": "s1",
+      "tags": [
+        "sports"
+      ],
+      "sponsored": true
+    },
+    {
+      "id": "s2",
+      "tags": [
+        "sports"
+      ],
+      "sponsored": true
+    },
+    {
+      "id": "s3",
+      "tags": [
+        "sports"
+      ],
+      "sponsored": true
+    },
+    {
+      "id": "s4",
+      "tags": [
+        "sports"
+      ],
+      "sponsored": true
+    }
+  ]
+}

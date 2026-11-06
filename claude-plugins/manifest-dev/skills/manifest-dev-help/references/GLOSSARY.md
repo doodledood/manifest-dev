@@ -516,10 +516,14 @@ Review PR is a workflow for a reviewer of a pull request. It examines the change
 review threads. It does not take the role of the author. It is in the manifest-dev-tools plugin.
 
 ### Judgment Layer
-<!-- context: 534115120511 -->
-The Judgment Layer is a set of questions that Review PR asks about a change. Is the change
-necessary? Is the problem real? Is the size of the change correct for the problem? These questions
-do not bind. They help the author decide if the change is worth its cost.
+<!-- context: 3b244bca8f93 -->
+The Judgment Layer asks whether a change will help the project after its effects are considered.
+It can advise against a requested change whose code is correct. Its advice uses project goals
+and evidence, with uncertainty stated. It does not change contract results or decide if the
+pull request may merge.
+
+An authorized person can accept a trade-off while the reviewer still advises against it.
+New evidence can reopen that discussion; the same argument is not repeated.
 
 ### PR Grounding
 <!-- context: 5e11c71434fc -->
