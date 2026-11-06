@@ -40,7 +40,7 @@ A climb tries and compares many versions. If a person picks among them, the clim
 - A default climb is only as good as its measure, and no person checks the measure's blind spots until the report.
 
 ## Enforced by
-`tests/test_hillclimb.py` (`test_a_climb_pushes_only_when_asked_and_its_numbers_are_defaults` and `test_a_climb_is_quick_by_default_and_autonomy_does_not_make_it_thorough`) fails when the define task file or the command drops the push default, the defaults rule, the relaxable guard against misleading, or the attended defining of a climb. Whether a climb asked nothing it should not have stays judgment, read in the `hillclimb` recipe's autonomous and requester-chooses scenarios.
+`tests/test_hillclimb.py` (`test_a_climb_pushes_only_when_asked_and_its_numbers_are_defaults` and `test_a_climb_is_quick_by_default_and_autonomy_does_not_make_it_thorough`) fails when the define task file or the command drops the push default, the defaults rule, the relaxable guard against misleading, or the attended defining of a climb. Whether a climb asked nothing it should not have stays judgment, read in the `hillclimb` recipe's `quick-text`, `attended-copy` and `requester-chooses` scenarios.
 
 ## Revisit when
 Requesters reverse the choices of finished climbs more often than they keep them, or most requesters ask to take part in the rounds; read in the climbs' reports and execution logs.

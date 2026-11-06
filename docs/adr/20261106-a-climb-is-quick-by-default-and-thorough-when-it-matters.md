@@ -7,7 +7,7 @@ Accepted
 Task guidance
 
 ## Decided by
-The user. The user asked for climbs that "just take this and make it better for my cause and don't do overkill stuff like judging the judge endlessly", and, asked whether a climb should be quick by default and thorough when asked or when the stakes are visible, keeping one check on its judge, answered yes. The agent drafted which stakes make a climb thorough.
+The user ruled that a climb is quick by default, without heavy checks on its own measure, and thorough when asked or when the stakes are visible, keeping one check on its judge either way. The agent drafted which stakes make a climb thorough.
 
 ## Context
 A climb can spend most of its effort before the first round: proving its measure against every way it could mislead, calibrating a judge on the requester's picks, recording noise, and setting margins for each objective. That effort pays when a climb runs long, when a wrong result is costly or hard to undo, or when objectives pull against each other. It is overkill when someone wants a page, a prompt or a paragraph made better now, and it makes the common request slow enough that people stop asking for it.
@@ -36,7 +36,7 @@ Doing none of it is not an option either. A climb on a measure nobody checked ca
 - Inferring the stakes from the request can misjudge them; the first lines are where the requester catches that.
 
 ## Enforced by
-`tests/test_hillclimb.py` (`test_a_climb_is_quick_by_default_and_autonomy_does_not_make_it_thorough`) fails when the define task file or the command drops the quick default, the rule that `--autonomous` alone does not make a climb thorough, or the quick climb's narrow asking. Whether a climb read its stakes well stays judgment, read in the first lines of the `hillclimb` recipe's quick and thorough scenarios.
+`tests/test_hillclimb.py` (`test_a_climb_is_quick_by_default_and_autonomy_does_not_make_it_thorough`) fails when the define task file or the command drops the quick default, the rule that `--autonomous` alone does not make a climb thorough, or the quick climb's narrow asking. Whether a climb read its stakes well stays judgment, read in the first lines of the `hillclimb` recipe's `quick-text`, `thorough-number` and `signup-page` scenarios.
 
 ## Revisit when
 Requesters switch most quick climbs to thorough, or most thorough climbs to quick, after reading their first lines; read in the climbs' reports and execution logs.

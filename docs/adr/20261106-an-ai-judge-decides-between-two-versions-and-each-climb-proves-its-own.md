@@ -48,7 +48,7 @@ Context and structure help: assessing each version against the goal before decid
 - A judge without results from real use cannot know what people will actually do, so a climb toward a behavior ends with a prediction until a test on real use runs.
 
 ## Enforced by
-`tests/test_hillclimb.py` (`test_the_judge_decides_between_versions_sees_no_examples_and_keeps_guards_off`) fails when the judge reference drops the verdict between versions, the ban on examples, the per-climb proof or the guards' off default. Whether a judge fits its task stays judgment, read in the `hillclimb` recipe's judged scenarios.
+`tests/test_hillclimb.py` (`test_the_judge_decides_between_versions_sees_no_examples_and_keeps_guards_off`) fails when the judge reference drops the verdict between versions, the ban on examples, the per-climb proof or the guards' off default. Whether a judge fits its task stays judgment, read in the `hillclimb` recipe's `quick-text`, `attended-copy` and `signup-page` scenarios.
 
 ## Revisit when
 Climbs' final checks or later results from real use overturn their judges' winners more often than they confirm them; read in the climbs' reports and execution logs.

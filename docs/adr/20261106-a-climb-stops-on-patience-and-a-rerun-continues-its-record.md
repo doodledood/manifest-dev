@@ -49,7 +49,7 @@ A climb also ends without proof that its result works in use; only use can show 
 - Rolling older rounds into one line each can lose detail on why an early candidate lost.
 
 ## Enforced by
-`tests/test_hillclimb.py` (`test_stop_rule_defaults_and_rerun_continue_the_record`) fails when the define task file drops the stop defaults, the bold attempt before stopping, the re-run's stop with nothing new, or the record's bound. Whether a climb kept its record faithfully stays judgment, read in the `hillclimb` recipe's re-run and already-at-its-best scenarios.
+`tests/test_hillclimb.py` (`test_stop_rule_defaults_and_rerun_continue_the_record`) fails when the define task file drops the stop defaults, the bold attempt before stopping, the re-run's stop with nothing new, or the record's bound. Whether a climb kept its record faithfully stays judgment, read in the `hillclimb` recipe's `rerun` and `already-at-best` scenarios.
 
 ## Revisit when
 Re-runs of finished climbs keep finding confirmed gains that the first run stopped short of, or climbs run many rounds past their last gain; read in the climbs' reports and execution logs.

@@ -46,7 +46,7 @@ The shared rules every measured comparison needs (prove the measure, then freeze
 - Designing the measure is itself a judgment a climb can get wrong. The final comparison (`20261106-a-climb-stops-on-patience-and-a-rerun-continues-its-record`) is the guard.
 
 ## Enforced by
-`tests/test_hillclimb.py` (`test_how_a_round_tries_changes_follows_the_cost_of_measuring` and `test_each_climb_and_measure_file_has_its_mirror_and_composes_onto_measure`) fails when the define task file drops the cost-driven search, the staged measure or the measure's proof, or when either set loses `MEASURE.md` or its composition. Whether a measure fits its task stays judgment, read in the `hillclimb` recipe's records.
+`tests/test_hillclimb.py` (`test_how_a_round_tries_changes_follows_the_cost_of_measuring` and `test_each_climb_and_measure_file_has_its_mirror_and_composes_onto_measure`) fails when the define task file drops the cost-driven search, the staged measure, the measure's proof or the rule that a clearly worse version cannot win, or when either set loses `MEASURE.md` or its composition. Whether a measure fits its task stays judgment, read in the `hillclimb` recipe's `slow-sim`, `thorough-number` and `unprovable-measure` scenarios.
 
 ## Revisit when
 Climbs that reached their stop are overturned by their final comparison, or by later results from real use, more often than they are confirmed; read in the climbs' reports and execution logs.

@@ -71,6 +71,7 @@ def test_how_a_round_tries_changes_follows_the_cost_of_measuring() -> None:
     assert "| Staged measure |" in climb
     assert "under each condition the record names" in climb
     assert "| Measure shown good |" in climb
+    assert "a clearly worse version cannot win" in climb
 
 
 # Holds docs/adr/20261106-a-climb-stops-on-patience-and-a-rerun-continues-its-record.md.
@@ -92,6 +93,9 @@ def test_a_climb_pushes_only_when_asked_and_its_numbers_are_defaults() -> None:
     assert "carries no pull-request gate otherwise" in climb
     assert "**Every number here is a default**" in climb
     assert "No win by misleading" in climb and "can relax it" in climb
+    assert (
+        "While defining, a thorough climb settles with an attended requester" in climb
+    )
 
 
 # Holds docs/adr/20261106-an-ai-judge-decides-between-two-versions-and-each-climb-proves-its-own.md.
