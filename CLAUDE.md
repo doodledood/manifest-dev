@@ -191,7 +191,9 @@ figure-out's task files and define's task files are decoupled, so a red-flag lis
 - `figure-out/tasks/DOCUMENT.md` and `WRITING.md` (*Sources in hand*) ↔ `define/tasks/PROSE_FLOOR.md` *Accuracy* gate; `figure-out/tasks/WRITING.md` (*The author's own point*) ↔ `define/tasks/WRITING.md` gates.
 - `figure-out/tasks/UI.md` (*Every state*, *Who and where*, *Honest figures*, *First look*) ↔ `define/tasks/UI.md`'s design gate, whose `review-design` standards cover functional states, access, medium, figure fidelity, and where the eye lands first and the path it follows.
 - `figure-out/tasks/PROMPTING.md` (*A protocol on shared state*; *A rule in two files*, including a contradicted one; *An instruction where a check belongs*) ↔ `define/tasks/PROMPTING.md` Defaults (*Model a shared protocol before shipping it*, *One rule, one place*).
-- `figure-out/tasks/PERF.md` ↔ `define/tasks/PERF.md` (limiter, noise floor, fair comparison, harness first, unlike scenarios, bounded gain).
+- `figure-out/tasks/MEASURE.md` ↔ `define/tasks/MEASURE.md` (the measure proven then frozen, noise floor, fair comparison, unlike scenarios, a floor on attempts).
+- `figure-out/tasks/PERF.md` ↔ `define/tasks/PERF.md` (limiter, bounded gain, verdict).
+- `figure-out/tasks/HILLCLIMB.md` ↔ `define/tasks/HILLCLIMB.md` and its `references/AI_JUDGE.md` (quick or thorough, the kind of goal and real use against prediction, a measure that could rise without the goal, what no measure mentions, the cheap check's conditions, what a round can afford, past the nearest peak, a priority that moves, a judge that can be fooled, one primary with guards).
 
 ## Slicing Discipline Ownership
 
@@ -240,7 +242,7 @@ Task files provide domain-specific hints, kept as **two parallel sets** with dif
 
 Each skill carries its own task-type detection index inline in its `SKILL.md` (not a separate `tasks/README.md`) and loads its own set. The two are deliberately decoupled so figure-out runs standalone — figure-out never reads define's task files, and vice versa.
 
-**Composition** (within each set): base files provide domain-common content (e.g., `CODING.md` for code); overlay files add content-type specificity (`FEATURE` / `BUG` / `REFACTOR` compose onto `CODING`; in /define's set, `BLOG` / `DOCUMENT` compose onto `WRITING`, and Research composes `research/RESEARCH.md` with `research/sources/`).
+**Composition** (within each set): base files provide domain-common content (e.g., `CODING.md` for code); overlay files add content-type specificity (`FEATURE` / `BUG` / `REFACTOR` compose onto `CODING`; `PERF` and `HILLCLIMB` compose onto `MEASURE`, and `HILLCLIMB` onto the artifact's own file too; in /define's set, `BLOG` / `DOCUMENT` compose onto `WRITING`, and Research composes `research/RESEARCH.md` with `research/sources/`).
 
 **/define content types**:
 - *Quality gates* (tables naming the aspect and threshold, plus a skill or reference only when the evaluation needs one) — auto-included as INV-G*/AC-* by `/define`. Omitted with logged reasoning if clearly inapplicable, or — advisory-tier gates only — on `/define`'s bearer test (the dimension's findings would have no bearer on the manifest's surface; the reasoning names the missing bearer as a fact). User reviews manifest.

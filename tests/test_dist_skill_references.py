@@ -53,7 +53,7 @@ def source_skills(plugin: str) -> tuple[str, ...]:
 CORE_SKILLS = source_skills("manifest-dev")
 TOOLS_SKILLS = source_skills("manifest-dev-tools")
 ALL_SKILLS = CORE_SKILLS + TOOLS_SKILLS
-PI_PROMPTS = ("do", "auto", "babysit-pr")
+PI_PROMPTS = ("do", "auto", "babysit-pr", "hillclimb")
 
 CODE_REVIEW_DIMENSIONS = {
     "change-intent",
@@ -1145,6 +1145,7 @@ def test_pi_prompt_aliases_expand_to_matching_skills() -> None:
         "do.md": "Use the do skill with: $ARGUMENTS",
         "auto.md": "Use the auto skill with: $ARGUMENTS",
         "babysit-pr.md": "Use the babysit-pr skill with: $ARGUMENTS",
+        "hillclimb.md": "Use the hillclimb skill with: $ARGUMENTS",
     }
     for filename, body in expected.items():
         text = (DIST / "pi" / "prompts" / filename).read_text(encoding="utf-8")

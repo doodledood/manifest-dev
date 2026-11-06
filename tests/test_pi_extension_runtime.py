@@ -33,6 +33,7 @@ def test_pi_prompt_aliases_expand_to_skills() -> None:
         "do.md": "Use the do skill with: $ARGUMENTS",
         "auto.md": "Use the auto skill with: $ARGUMENTS",
         "babysit-pr.md": "Use the babysit-pr skill with: $ARGUMENTS",
+        "hillclimb.md": "Use the hillclimb skill with: $ARGUMENTS",
     }
     assert {p.name for p in prompts.glob("*.md")} == set(expected)
     for filename, body in expected.items():

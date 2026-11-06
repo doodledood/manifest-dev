@@ -272,13 +272,17 @@ gates.
 | Writing | Human-voice register: prose, articles, copy, social, creative | `WRITING.md` |
 | Document | Documentation register: specs, proposals, reports, formal docs | `DOCUMENT.md` |
 | Tech design | Design docs consolidating finished understanding | `TECH_DESIGN.md` |
+| Measurement | A result kept or claimed because it measured better — a number, a suite's pass rate, a verdict between two versions (base) | `MEASURE.md` |
 | Performance | A number is the point — latency, throughput, memory, cost — or a change claims to move one | `PERF.md` |
+| Hill-climb | Improving an existing artifact round after round toward a goal, keeping a change only when it measures better | `HILLCLIMB.md` |
 | Research | Investigations, analyses, comparisons | `research/RESEARCH.md` |
 | Blog | Blog posts, articles, tutorials | `BLOG.md` |
 | Marketing | Landing pages, launch posts, ads, pricing and positioning copy | `MARKETING.md` |
 
 FEATURE/BUG/REFACTOR/PERF compose onto `CODING.md` when code changes, adding `UI.md` where the change
 touches something seen; `UI.md` stands alone for a non-code visual artifact.
+PERF and HILLCLIMB compose onto `MEASURE.md`; HILLCLIMB also composes onto the artifact's own
+file, whose gates become floors every kept version holds.
 Text-authoring composes `PROSE_FLOOR.md` with exactly one register — `WRITING.md`
 (BLOG, MARKETING compose onto it) or `DOCUMENT.md` (TECH_DESIGN composes onto
 it). **The two registers never compose together:** their rules contradict each

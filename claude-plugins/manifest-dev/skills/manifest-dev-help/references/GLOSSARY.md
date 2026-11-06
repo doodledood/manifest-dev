@@ -119,6 +119,20 @@ The Execution Log is a file that `/do` keeps outside the repository for each Man
 departures from the plan, dead ends and other events of the run. Its name comes from the Manifest,
 so a new run of the same Manifest finds it and continues from it. The option `--no-log` disables it.
 
+### Hill-climb
+<!-- context: 710d3897f141 -->
+A Hill-climb makes an artifact that already exists better, round by round, for the people it
+serves. The artifact can be a page, a prompt, a document, slow code or a simulation. Each round
+tries changes and measures them. The climb keeps a change only when the gain is larger than the
+noise of the measure. Before the first round, the climb shows that its measure can tell a worse
+version from a better one. The climb stops when rounds give no more confirmed gains, or at a limit
+that you set.
+
+By default a climb is quick: it checks its measure one time and stops at the first round with no
+gain. It is thorough when you ask, or when a wrong result costs much. Start one with `/hillclimb`.
+It is a Manifest like all others, so `/do` runs it, and its record stays in the Execution Log.
+Why: without a measure and a stop rule, a run makes one pass and grades its own work.
+
 ### Steering Message
 <!-- context: b9812c57bb2e -->
 A Steering Message is a message that you send to `/do` while it works. `/do` changes the Manifest to

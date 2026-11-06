@@ -39,6 +39,9 @@ USER_INVOCABLE = {
         "babysit-pr",
         "eli5",
         "handoff",
+        # An optional entry over figure-out, define and do; the discipline loads through any entry.
+        # See docs/adr/20261106-hill-climbing-runs-through-figure-out-define-and-do.md.
+        "hillclimb",
         "prompt-engineering",
         "review-pr",
         "review-prompt",

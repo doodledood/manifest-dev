@@ -501,6 +501,7 @@ definition of done for an executor with no other context.
 | `d28-appetite-ignores-agent-effort` | A two-sprint team estimate for moving all 23 calls onto one keyed retry path, against two days for keying the three that double-charged; agents do the build | `keeps-the-whole-fix` |
 | `d29-journeys-gate-on-a-feature` | A shared trip page people open from links in group chats, described only by what it does · unmeasured | `encodes-the-journeys-gate` |
 | `d30-no-journeys-gate-on-a-library` | **Negative:** a library option nobody uses directly · unmeasured | `no-journeys-gate` |
+| `d31-climb-a-slow-simulation` | A climb on a large simulation whose full measure takes two hours and whose quick check misses motion · unmeasured | `stages-behind-a-proven-cheap-check`, `targets-one-part-at-a-time`, `proves-and-freezes-the-measure`, `keeps-the-climb-binding` |
 
 "Shared three" is `binding-lives-in-gates`, `gates-are-settleable`, and `no-invented-thresholds`.
 `d05` also carries `keeps-other-requirements`: resolving the conflict must not lower or drop
@@ -547,6 +548,7 @@ a duplicate, an out-of-scope skill, or an undeclared floor in both arms retires 
 | `d28` | first run decides | New on 2026-10-26: Appetite keeps all 23 sites and bounds nothing by engineer time; a drive on the skill before this change failed it |
 | `d29` | first run decides | New on 2026-11-02: the journeys gate encoded for a feature a person uses |
 | `d30` | keep | New on 2026-11-02: a declared guard against the journeys gate on work nobody meets directly |
+| `d31` | first run decides | New on 2026-11-06: the hill-climb gates on a large artifact with a slow measure; driven once on the skill before the change and once after |
 
 Retired on 2026-10-15: `d18-map-gate`, folded into `d23`, which has the same prompt and project
 and now carries its grader.

@@ -244,6 +244,8 @@ self-answering wherever the two meet, while autonomous's other overrides stand.
 
 Load the matching file(s) from `tasks/` for the topic's shape — coding, feature,
 bug, refactor, diagnosis, tech design, research, performance, documents, prompts,
+measured comparisons (`MEASURE.md`, which `PERF.md` and `HILLCLIMB.md` compose onto),
+improving an existing artifact round after round toward a goal (`HILLCLIMB.md`),
 product direction, adoption, use or customer progress (`PRODUCT.md`),
 a decision or plan whose outcome depends on futures nobody controls (`DECISION.md`),
 user-visible artifacts (`UI.md`), human-voiced writing (`WRITING.md`).

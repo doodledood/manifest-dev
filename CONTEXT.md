@@ -159,6 +159,10 @@ _Avoid_: Priority, importance.
 **Do/Verify Loop**:
 The execution cycle where `/do` pursues the Outcome and current gates, revises working claims through evidenced amendment, routes failures or blockers, and finishes only with fresh PASS evidence for the Outcome and every gate.
 
+**Hill-climb**:
+A run that improves an existing artifact round after round toward a goal for the people it serves: each round tries changes, measures them with a measure shown good before the first round, and keeps a change only on a confirmed gain, until rounds stop bringing confirmed gains or the requester's limit is reached. It is quick by default and thorough when asked or when the stakes call for it, and it runs through figure-out, define and do as an ordinary Manifest whose gates say what counts as better and when to stop.
+_Avoid_: Optimization loop, auto-improve, iteration.
+
 **Host Continuation Backstop**:
 A host-provided goal-setting, continuation, or completion-check capability that keeps or reopens a run until a durable completion contract is satisfied.
 
@@ -343,6 +347,7 @@ _Avoid_: Ticket sweep, batch runner, scheduler.
 - The **Outcome** and hard claims change only with their source's authorization. Working claims and evidence methods may be amended through `define` on evidence that the replacement better serves the unchanged Outcome and hard requirements; affected verdicts become unverified.
 - A **Skill** may invoke other **Skills** and may run through host **Agent** contexts.
 - A **Host Continuation Backstop** is an outer guard for unattended runs; it does not replace the **Do/Verify Loop**.
+- A **Hill-climb** is a **Manifest** like any other: `/hillclimb` hands it to figure-out, define and do, its rounds run inside the **Do/Verify Loop**, and its record lives in the Manifest and the **Execution Log**.
 - A **Phase Checkpoint** can protect a handoff between workflow phases, while terminal completion stays tied to the final deliverable's acceptance evidence.
 - **Babysit PR** and **Review PR** can run asynchronously on the same pull request: **Review PR** applies quality pressure, while **Babysit PR** drives the author-side lifecycle toward green and mergeable.
 - **Review PR** in manifest mode re-verifies a **Manifest** against the pull request head.

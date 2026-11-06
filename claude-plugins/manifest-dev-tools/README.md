@@ -28,6 +28,12 @@ Three more ship for `/review-pr` to call rather than for you to invoke — the r
 | `review-pr-holistic` | Prune, deduplicate, and bound a cycle's findings into the comments that get posted. |
 | `review-pr-judgment` | Give non-binding advice on whether landing the change serves the project, preserving its recommendation through follow-up. |
 
+## Improving what exists
+
+| Skill | What it does |
+|-------|--------------|
+| `/hillclimb <target> [measure]` | Improves an existing artifact round after round toward a goal — a page, a prompt, a document, slow code, a simulation — keeping a change only on a confirmed gain, until rounds stop paying. Quick by default; thorough when you ask or the stakes call for it. It runs figure-out, define and do, so the climb is an ordinary Manifest; `--autonomous` asks nothing, and nothing is pushed unless you want it. |
+
 ## Prompts
 
 Write and review prompts, or write a standalone goal from a Manifest, a figure-out read or another source:
