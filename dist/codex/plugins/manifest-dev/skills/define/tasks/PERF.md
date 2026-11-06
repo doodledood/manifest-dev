@@ -1,7 +1,7 @@
 # PERF Task Guidance
 
 Work whose point is a number — latency, throughput, memory, cost — or that claims to move one.
-Composes onto `CODING.md` when code changes.
+Composes onto `MEASURE.md`, and onto `CODING.md` when code changes.
 
 ## Quality Gates
 
@@ -17,8 +17,4 @@ and the evidence the verdict cites.
 *Domain best practices for this task type.*
 
 - **Name the limiter** — Ask "why not double?": name the resource or code path that bounds the number, from a profile or counters taken during a run, not from reading code
-- **Respect the noise floor** — A gap smaller than the run-to-run variation is no measurable difference; measure the variation before claiming one
-- **Compare fairly** — Tune both sides, run them alternately on the same inputs, and count errors and work done alongside time
-- **Prove the harness, then freeze it** — Show the measuring harness can tell a known-slow case from a known-fast one before trusting it, freeze it before the attempts start, and set a floor on attempts so an early lucky win cannot end the run
-- **No ratio across unlike scenarios** — Compare a number only with the same scenario measured the same way
 - **Bound the gain by the changed piece's share** — A change can save at most the share of the whole that the changed piece took before it; treat a claimed gain beyond that share as a measurement fault until something else that changed explains it
