@@ -86,17 +86,27 @@ def test_slow_sim_quick_check_passes_the_original_and_misses_motion(
     project = _scaffold("climb-slow-sim", tmp_path, tmp_path)
     result = _python(project, "-m", "measure.quick_check")
     assert "quick_check=PASS" in result.stdout, result.stdout + result.stderr
+    probe = (
+        "import measure.full as f\n"
+        "f.SECONDS = 120\n"
+        "print(f.score_run('grid', 1)[0])\n"
+    )
+    original = float(_python(project, "-c", probe).stdout.strip())
     world = project / "sim/world.py"
+    text = world.read_text(encoding="utf-8")
+    anchor = "            follow(car, gap, lead_speed, DT)\n"
+    assert text.count(anchor) == 1
     world.write_text(
-        world.read_text(encoding="utf-8").replace(
-            "            follow(car, gap, lead_speed, DT)\n",
-            "            follow(car, gap, lead_speed, DT)\n"
-            "            car.v = 0.0 if int(self.time * 30) % 2 else car.v\n",
+        text.replace(
+            anchor,
+            anchor + "            car.v = 0.0 if int(self.time * 30) % 2 else car.v\n",
         ),
         encoding="utf-8",
     )
     jittery = _python(project, "-m", "measure.quick_check")
     assert "quick_check=PASS" in jittery.stdout, jittery.stdout + jittery.stderr
+    full = _python(project, "-c", probe)
+    assert float(full.stdout.strip()) < original / 2, full.stdout + full.stderr
 
 
 def test_slow_sim_scores_a_car_that_never_merges_as_zero(tmp_path: Path) -> None:
