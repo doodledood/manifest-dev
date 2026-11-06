@@ -96,7 +96,7 @@ else
         info "Installed the pinned TLA+ tools at $TLA_JAR"
     fi
 fi
-if ! command -v java &> /dev/null; then
+if ! "${JAVA_HOME:+$JAVA_HOME/bin/}java" -version &> /dev/null; then
     warn "No Java runtime found. Only the ticket protocol model needs it: install Java 11 or newer to run that recipe."
 fi
 

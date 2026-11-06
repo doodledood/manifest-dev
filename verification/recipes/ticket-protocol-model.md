@@ -59,10 +59,12 @@ is not reported.
 
 ## Gotchas
 
+- Uses `JAVA_HOME/bin/java` when set, otherwise `java` on PATH; it checks the runtime, not merely the presence of a launcher. For a Homebrew keg-only JDK, set `JAVA_HOME` to its JDK home before running.
 - Needs Java 11 or newer and the pinned TLA+ tools at `.tools/tla2tools.jar`, which
   `scripts/setup.sh` downloads and checks against `verification/models/tla2tools.pin`. A missing
   runtime or jar, or a jar with another checksum, exits 3, which `verify` records as unreachable,
   never passed.
+- Acceptance criteria and non-commit subject state stay fixed in this model; successful work abstracts adequate evidence and settled mandatory work. The `run-ticket` recipe's `acceptance-recovery` scenario checks changed criteria, external state and pending work. This model does not establish those judgments.
 - The model's bound is in its header: one Ticket, each world event at most once, at most one crash.
   A stall that needs more than that is not checked here, nor is the launch count's escalation after
   three failed launches or landing repairs.
