@@ -15,8 +15,8 @@ A reader comes to these documents to pick the tools skill for a job, and should 
 ## Scenarios
 
 ### fresh-reader
-Run: `scripts/walk.sh 'Pick the tools skill for a job. End able to name the tools skill that reviews another author’s pull request, tends the reader’s own, reviews a prompt, or hands a session to a fresh agent. The sections to rely on: claude-plugins/manifest-dev-tools/README.md → Pull requests and Prompts and People and sessions.' claude-plugins/manifest-dev-tools/README.md`
-Proves: the reader ends able to name the tools skill that reviews another author's pull request, tends the reader's own, reviews a prompt, or hands a session to a fresh agent, and names nothing it had to guess that blocks the task.
+Run: `scripts/walk.sh 'Pick the tools skill for a job. End able to name the tools skill that reviews another author’s pull request, tends the reader’s own, reviews a prompt, or hands a session to a fresh agent. Also identify which review helper advises whether landing a change serves the project, whether the reader invokes it directly, and whether its advice binds. The sections to rely on: claude-plugins/manifest-dev-tools/README.md → Pull requests and Prompts and People and sessions.' claude-plugins/manifest-dev-tools/README.md`
+Proves: the reader ends able to name the tools skill that reviews another author's pull request, tends the reader's own, reviews a prompt, or hands a session to a fresh agent, identifies review-pr-judgment as a helper called by review-pr rather than directly by the reader, describes its project-consequence advice as non-binding, and names nothing it had to guess that blocks the task.
 Check: read
 
 ## Gotchas

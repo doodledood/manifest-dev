@@ -26,7 +26,7 @@ Three more ship for `/review-pr` to call rather than for you to invoke — the r
 |-------|--------------------------|
 | `review-pr-thread-verify` | Judge one existing review thread against the current head and return a disposition. |
 | `review-pr-holistic` | Prune, deduplicate, and bound a cycle's findings into the comments that get posted. |
-| `review-pr-judgment` | Ask the non-binding premise questions — necessity, pain, proportionality — once per pull request. |
+| `review-pr-judgment` | Give non-binding advice on whether landing the change serves the project, preserving its recommendation through follow-up. |
 
 ## Prompts
 

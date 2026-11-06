@@ -1,0 +1,9 @@
+{
+  "title": "missing local PR",
+  "description": "Switch this list from ascending to descending order as requested in the UI task. Returned strings and duplicates must remain unchanged. This supplied snapshot contains no project purpose, intended-user research, decision record or accessible issue beyond that task; no further project context is available.",
+  "comments": [],
+  "threads": [],
+  "reviews": [],
+  "linked_prs": [],
+  "mode": "no-manifest"
+}

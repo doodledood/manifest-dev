@@ -11,14 +11,14 @@ High-signal autonomous PR review posted under your account. A review you'd put y
 
 **Review organization.** Run the required inspections in this session or delegate them to separate contexts when useful; related work may share a context. Another context can help with independent judgment, separable work, or substantial reading. Without that capability, work inline. Placement does not change the required coverage, skill standards, or result for each thread, dimension, and gate. Honor an explicit request for independent review, and report the context actually used rather than claiming independence from the author when none was present.
 
-**Self-marking.** Posting under your own account means a human reviewer uses the same account, so authorship alone can't tell our automated comments from theirs. Stamp every body this skill posts — new finding comments, thread replies, the summary header, the approval body, and manifest-mode PASS/FAIL — with a trailing hidden marker `<!-- manifest-dev:review-pr -->` — a fixed literal string, byte-identical wherever review-pr runs (don't namespace-rewrite it per distribution, or comments posted by one host stop matching another's); GitHub strips it from the rendered comment but returns it through the API. This marker, not account authorship, is what makes a comment an automated review-pr comment: everywhere this skill says *threads/comments we authored or replied to* (or *our prior* reviews/comments) it means the ones carrying this marker, so an unmarked comment on our account reads as human and is left untouched. Manifest mode extends the marker with the criterion id (`references/MANIFEST_MODE.md`). Judgment-pass findings extend it with a `judgment` token — `<!-- manifest-dev:review-pr judgment -->` — so a prior judgment finding is distinguishable from an ordinary review-pr comment in both modes (the once-per-PR gate keys on this token).
+**Self-marking.** Posting under your own account means a human reviewer uses the same account, so authorship alone can't tell our automated comments from theirs. Stamp every body this skill posts — new finding comments, thread replies, the summary header, the approval body, and manifest-mode PASS/FAIL — with a trailing hidden marker `<!-- manifest-dev:review-pr -->` — a fixed literal string, byte-identical wherever review-pr runs (don't namespace-rewrite it per distribution, or comments posted by one host stop matching another's); GitHub strips it from the rendered comment but returns it through the API. This marker, not account authorship, is what makes a comment an automated review-pr comment: everywhere this skill says *threads/comments we authored or replied to* (or *our prior* reviews/comments) it means the ones carrying this marker, so an unmarked comment on our account reads as human and is left untouched. Manifest mode extends the marker with the criterion id (`references/MANIFEST_MODE.md`). Judgment-pass findings extend it with a `judgment` token — `<!-- manifest-dev:review-pr judgment -->` — so a prior judgment finding is distinguishable from an ordinary review-pr comment in both modes (continuation uses this token to recover prior judgment and avoid repeating it).
 
 ## One-Shot Pass
 
 Every invocation, including non-`--loop`, performs one complete PR-state advance:
 
 1. **Advance our existing threads.** For every unresolved thread we authored or replied to, run the per-thread verification below. Post needed thread replies, resolve terminal threads, and leave genuinely pending threads open.
-2. **Verify the change.** **Manifest mode** (`--manifest`): load `references/MANIFEST_MODE.md` and follow it to verify the manifest contract against the PR head — the generic reviewer fleet is skipped entirely. **No-manifest mode:** run the generic reviewer fleet over the review range — determine that range from durable GitHub state: if we have a prior review on this PR and the head has moved since, use that review's commit/head SHA as the lower bound and review `last-reviewed-by-us..current-head`; otherwise review the full PR diff. Later `--loop` wakes use that invocation's checkpoint instead, per `references/LOOP.md`. In **both** modes, include the judgment pass (below) when its once-per-PR generation rule permits it.
+2. **Verify the change.** **Manifest mode** (`--manifest`): load `references/MANIFEST_MODE.md` and follow it to verify the manifest contract against the PR head — the generic reviewer fleet is skipped entirely. **No-manifest mode:** run the generic reviewer fleet over the review range — determine that range from durable GitHub state: if we have a prior review on this PR and the head has moved since, use that review's commit/head SHA as the lower bound and review `last-reviewed-by-us..current-head`; otherwise review the full PR diff. Later `--loop` wakes use that invocation's checkpoint instead, per `references/LOOP.md`. In **both** modes, include the judgment pass (below) under its continuation rule.
 3. **Post outcomes.** Submit new surviving findings as a single GitHub review with decision `comment`. Thread replies are posted on their existing threads, not as new review comments. End with the cycle summary below.
 
 Each invocation starts from GitHub state and the current checkout.
@@ -36,9 +36,10 @@ For every unresolved thread we authored or replied to, invoke the `review-pr-thr
 - Current code at the anchor, with nearby context, and any commits since the original review that touched the relevant range.
 - Full PR history: all comments, review threads, commit messages, current PR description, and our prior review/comment bodies.
 - Bundle context for each linked PR (≤5): diff, description, top-level conversation.
+- For a judgment thread, the relevant project direction and decisions, the prior recommendation and the evidence or accepted trade-off it rested on.
 - The voice profile below, for any reply it drafts.
 
-It returns exactly one disposition, a short reason, and a drafted reply where the disposition calls for one. Act on it: `addressed-by-fix` → resolve the thread, posting the reply only if it drafted one; `addressed-by-valid-reply` → post its concession, then resolve; `false-positive-or-stale` → post its correction, then resolve; `needs-our-pushback` → post its reply on the existing thread and keep it pending; `still-pending` → leave the thread open and post nothing.
+It returns exactly one disposition, a short reason, and a drafted reply where the disposition calls for one; for judgment, also the current recommendation and whether the discussion is settled. Preserve that assessment in the cycle summary even after resolving the thread. Act on it: `addressed-by-fix` → resolve the thread, posting the reply only if it drafted one; `addressed-by-valid-reply` → post its concession, then resolve; `false-positive-or-stale` → post its correction, then resolve; `needs-our-pushback` → post its reply on the existing thread and keep it pending; `still-pending` → leave the thread open and post nothing.
 
 **Caller policy.** In no-manifest mode, assess whether the change fulfills its stated purpose
 and applicable obligations without demonstrated defects or material quality costs in its
@@ -51,22 +52,41 @@ does not thereby become resolved or cease to count against acceptance.
 
 **Reviewer fleet.** No-manifest mode only — skipped entirely in manifest mode (`references/MANIFEST_MODE.md`). Activate the `review-code` skill for each required dimension against the review range, retaining each dimension's findings and verdict even when the reviews share a context. Always-on dimensions: `change-intent`, `code-bugs`, `code-design`, `code-maintainability`, `code-simplicity`, `context-file-adherence`. Add when the diff fits: `type-safety` on typed code; `test-quality` and `code-testability` on source; `contracts` on API surfaces; `operational-readiness` on CI/infra/env/migrations/workers/queues/secrets; `docs` and `prose-value` on prose; `defect-class` when the reviewed range **fixes a defect** — it judges the repair's protection and affected-site accounting, so it has no input on a change that fixes nothing. Deciding that is yours: use the PR description, commits, and linked issues to establish whether a defect is being fixed. For prompts/skills/agents, add a run that activates the `review-prompt` skill the same way.
 
-**Evidence and scope.** Keep each dimension focused on its own standard. Use binding requirements, explicit exclusions, and permission limits to judge scope, and give them to defect-class so it can judge authorized remedies. An author's implementation preference is not such a limit. Inspect the code and relevant evidence; the author's explanation or success report does not establish correct behavior. The judgment pass also needs the stated pain and whole-PR context to assess the premise.
+**Evidence and scope.** Keep each dimension focused on its own standard. Use binding requirements, explicit exclusions, and permission limits to judge scope, and give them to defect-class so it can judge authorized remedies. An author's implementation preference is not such a limit. Inspect the code and relevant evidence; the author's explanation or success report does not establish correct behavior. The judgment pass separately assesses the consequences against the project's purpose, using the inputs below.
 
 **Holistic coherence pass.** After every required inspection has returned, collect their findings. Regrade correctness or safety failures and broken binding promises received as Low from their evidence before applying the caller's chosen policy. Filter only by that publication policy, retaining Low findings when requested; keep dimension and severity. Invoke the `review-pr-holistic` skill. Keep BLOCKED verdicts with their missing evidence or authority in the cycle summary; consolidation cannot turn an incomplete evaluation into a clean result. Supply the retained findings and the chosen caller policy plus:
 
 - PR history: all comments and threads on the PR (including our own from any prior review pass), the author's recent commit messages on the branch, the PR description.
 - Bundle context for each linked PR: diff, description, top-level conversation. No inline review comments from linked PRs.
 - The reviewed range for this invocation — the code the fleet's defect findings are bounded to.
-- The judgment pass's findings, from its whole-PR assessment (below). They are consolidated alongside the fleet's but stay exempt from the caller's severity filter and from reviewed-range bounding — the judgment pass reads the whole PR head itself, so its findings are already whole-PR.
+- The judgment pass's assessment and findings, including settled disagreements, from its whole-PR assessment (below). They are consolidated alongside the fleet's but stay exempt from the caller's severity filter and from reviewed-range bounding — the judgment pass reads the whole PR head itself, so its findings are already whole-PR.
 - Any truncation the caller did, carried forward.
 - The voice profile below.
 
-It prunes what the PR already covers, dedupes across reviewers, subordinates defect findings beneath a judgment question on the same surface (premise-subsumption), bounds defect findings to the reviewed range, anchors each survivor, and rewrites every body in the voice profile. It returns the comments to post (anchor + voice-compliant body), summary header text if any, truncation notes, and a brief dropped-findings tally with dominant reasons.
+It prunes what the PR already covers, dedupes across reviewers, subordinates defect findings beneath a judgment question on the same surface (premise-subsumption), bounds defect findings to the reviewed range, anchors each survivor, and rewrites every body in the voice profile. It returns the comments to post (anchor + voice-compliant body), summary header text if any, truncation notes, a brief dropped-findings tally with dominant reasons, and the judgment assessment for the operator. Pruning a comment does not erase its retained recommendation.
 
-**Judgment pass (premise check).** Runs in **both** modes; in manifest mode it wires via `references/MANIFEST_MODE.md`. Activate the `review-pr-judgment` skill as its own assessment before consolidation. It is **wide-context**: fed the PR description, conversation, codebase direction, linked-PR context (diff, description, top-level conversation), and the **full PR-head diff** (`base..head`, the whole PR), so its whole-PR altitude holds even on an incremental/loop pass where the reviewed range is only the latest delta. It asks the whole-PR question of whether the change earns its keep against the pain it solves, only when concrete evidence fires one of its triggers. Its findings are a **distinct non-severity class** (`{trigger, evidence, author-facing question}`). The judgment pass itself **synthesizes one question per root** before returning (so this holds in both modes, independent of the holistic pass). In no-manifest mode those findings then flow into the holistic coherence pass above. They post as author-answerable questions through the same voice, self-marker, and single batched `comment` review; the judgment pass never blocks, never submits `request_changes`, and never auto-approves.
+**Judgment pass (project consequences).** Runs in **both** modes; manifest mode wires via
+`references/MANIFEST_MODE.md`. Activate the `review-pr-judgment` skill as its own assessment
+before consolidation. Retrieve the project's purpose, intended users, goals and applicable
+decisions from its available context, documentation and linked discussion, following relevant
+pointers. Pass the sources and their reasons, not just a summary of the author's request; name
+material gaps. This needs neither a Manifest nor a particular filename or setup workflow.
+Supply those inputs with the PR description, conversation, linked-PR context (diff,
+description, top-level conversation), the **full PR-head diff** (`base..head`), and recovered
+prior judgment and dispositions. The skill owns the assessment and finding shape. In
+no-manifest mode its findings and assessment flow through the holistic pass; questions post
+through the existing voice, judgment marker and single batched `comment` review.
 
-**Once per PR.** Fresh judgment generation runs only when no prior **judgment-marked** finding (`<!-- manifest-dev:review-pr judgment -->`) exists on the PR — read from durable GitHub state, never session memory. So once the pass has posted a question, later passes skip regeneration and never re-nag; the discriminator token is what makes "a prior judgment finding exists" detectable (the base marker alone can't — every review-pr comment carries it). This matches its kind: defect-finding re-runs each round on new commits, but a premise question is answered once by the human, so re-posting it every round would be the nag this pass exists to avoid. Advancing an existing judgment thread (reply/resolve via per-thread verification) is **not** gated by this — only fresh generation is. Two honest bounds: (1) a pass that stays **silent** posts no judgment marker, so on a PR the pass keeps finding sound it may re-run on later rounds — bounded and harmless, since it stays silent (no nag), and the whole-PR read is the same cost the fleet already pays each round; (2) a premise concern introduced by a *late* commit after a question was already posted is not re-caught — most premise issues are visible from the initial PR, and re-scanning every round is the noise.
+**Judgment continuation.** Recover prior judgment findings, replies and settled decisions
+from durable GitHub state, including resolved judgment-marked threads. A prior marker prevents
+repetition, not assessment of new consequences. Compare the current proposal and relevant
+evidence with what the prior assessment considered; reassess material changes and previously
+unassessed concerns against the whole PR. Continue an existing root on its thread when new
+signal warrants it; only a distinct root needs a new comment. Carry unchanged supported
+assessments forward, including settled disagreement, without posting them again. A fresh
+explicit review may find a new concern at the same head; an unchanged loop wake does not
+repeat a completed assessment. Keep the recommendation, grounds, limits and thread disposition
+in the invocation checkpoint so silence or resolution cannot become inferred endorsement.
 
 **Voice.** Each comment is one thought: state the problem, point to evidence inline (file:line, short code excerpt when load-bearing), suggest the fix. Direct, concrete, no softeners.
 
@@ -78,14 +98,19 @@ Target voice: *"Empty input skips the null check — `if (input?.value)` at `par
 
 **Posting.** When the holistic pass returns comments to post, submit a single GitHub PR review with decision `comment` — all comments batched atomically. In CI or non-interactive contexts, do not wait for approval.
 
-**Zero comments to post.** Report clean only when the required assessments support acceptance,
-no supported failure or material uncertainty remains, every required dimension completed without
-BLOCKED, and all our existing threads reached terminal disposition. A holistic prune needs an
+**Zero comments to post.** Report implementation clean only when its required assessments support acceptance,
+no supported implementation failure or material verification uncertainty remains, every required
+dimension completed without BLOCKED, and all our defect threads reached terminal disposition.
+Report any pending judgment discussion separately; it does not change implementation acceptance. A holistic prune needs an
 evidenced disposition; a publication filter alone cannot clear a failure. Otherwise report the
 unresolved findings or evidence blockers, continue independent review work and do not offer
-approval. Only after a clean result, in interactive sessions, ask: `"Looks good to me. Post as
-approval on the PR?"`. Approve → submit decision `approve` with body `Looks good to me.`; decline
-→ take no PR action. In CI or non-interactive contexts, take no approval action.
+approval. Report that implementation acceptance separately from the judgment recommendation: a settled
+advisory disagreement does not fail acceptance, but is not an unqualified endorsement. Only
+after acceptance, in interactive sessions, offer approval with any retained adverse judgment
+or material judgment limit visible in the question. With none, ask: `"Looks good to me. Post as
+approval on the PR?"`. Explicit confirmation → submit decision `approve`, preserving any stated
+reservation in its body; decline → take no PR action. In CI or non-interactive contexts, take no
+approval action.
 
 **Cycle summary.** Every one-shot pass ends with an operator-facing summary, whether it posted comments, resolved threads, asked for approval, or found nothing to do. Keep it compact but complete:
 
@@ -94,10 +119,10 @@ approval on the PR?"`. Approve → submit decision `approve` with body `Looks go
 - Per-thread verifications: one line per thread naming the anchor, disposition, and the verifier's short reason.
 - Reviewer fleet (no-manifest mode): one line per dimension run naming its verdict, actionable findings count and substance, or `none`; for BLOCKED, name the missing evidence or authority. In manifest mode, report per-criterion verifier results instead, per `references/MANIFEST_MODE.md`.
 - Holistic coherence pass (no-manifest mode): surviving comments, dedupes/merges, pruned findings with dominant reasons, range-bounding decisions, summary header if any, and truncation notes.
-- Judgment pass (no-manifest mode): premise questions posted — count and their roots — or `none`. In manifest mode, report it per `references/MANIFEST_MODE.md`.
+- Judgment pass: recommendation, grounds and material limits; questions posted or continued, or `none`; and any settled disagreement. Distinguish the decision to proceed from reviewer endorsement. Say whether assessed afresh or carried forward and why. This also applies in manifest mode.
 
 The cycle summary is for the operator transcript or run log only. Do not paste it into PR review bodies, thread replies, or approval text; the only posted summary-like text is the voice-compliant summary header returned by the holistic pass.
 
-**Posting boundaries.** Approval requires the explicit user-confirmed path above. Never submit `request_changes`, revive a pruned finding, or relax deduplication to produce output. Advance existing threads even when the code review range is empty.
+**Posting boundaries.** Approval requires the explicit user-confirmed path above. Never submit `request_changes`, repost an unchanged pruned finding, or relax deduplication to produce output. Advance existing threads even when the code review range is empty.
 
 **`--loop`.** Load `references/LOOP.md`.

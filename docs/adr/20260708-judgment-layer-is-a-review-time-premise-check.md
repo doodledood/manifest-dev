@@ -1,7 +1,7 @@
 # ADR: The judgment layer is a review-time premise check, distinct from define's gates
 
 ## Status
-Accepted
+Accepted; amended by 20261106-pr-judgment-assesses-project-consequences: judgment weighs project consequences and preserves settled disagreement without changing its advisory authority
 
 ## Area
 PR review

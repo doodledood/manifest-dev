@@ -204,7 +204,7 @@ _Avoid_: Tend PR.
 A reviewer-side workflow that inspects a pull request and advances review threads without becoming the author-side lifecycle owner.
 
 **Judgment Layer**:
-A non-binding, review-time premise check that surfaces whether a change earns its keep against the pain it solves — necessity, the pain itself, and surface proportionality — as author-facing questions rather than gates.
+An advisory, whole-change assessment of whether landing a pull request serves the project's purpose after its material consequences are considered. It uses project direction and evidence, distinguishes observations from predictions, and can recommend not shipping a correct requested change. An informed authorized trade-off may settle discussion without reviewer endorsement; materially new evidence can reopen it. Its questions and recommendation remain separate from implementation acceptance, contract verdicts and merge authority.
 _Avoid_: Premise gate, necessity gate.
 
 **PR Grounding**:

@@ -82,7 +82,7 @@ def test_repair_history_survives_finding_and_commit_identity_changes(
 def test_pr_consolidation_filters_consequences_before_severity_labels(
     plugins: Path,
 ) -> None:
-    for name in ("review-pr", "review-pr-holistic", "review-pr-judgment"):
+    for name in ("review-pr", "review-pr-holistic"):
         text = (plugins / "manifest-dev-tools/skills" / name / "SKILL.md").read_text()
         assert "caller" in text.lower() and "policy" in text.lower()
         assert "optional polish" not in text.lower()
@@ -94,6 +94,16 @@ def test_pr_consolidation_filters_consequences_before_severity_labels(
         assert "except defect-class" not in text
         assert "drop-Low" not in text
         assert "other than defect-class" not in text
+
+    # Judgment has no grades to reinterpret; its callers own defect regrading.
+    # See docs/adr/20261106-pr-judgment-assesses-project-consequences.md.
+    judgment = (
+        plugins / "manifest-dev-tools/skills/review-pr-judgment/SKILL.md"
+    ).read_text()
+    assert "no severity" in judgment
+    assert "exempt from the caller's defect-publication" in judgment
+    assert "contract verdicts" in judgment
+    assert "independent defect" in judgment
 
 
 def test_nit_classification_does_not_encode_caller_optionality(

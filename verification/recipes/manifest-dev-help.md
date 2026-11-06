@@ -26,6 +26,11 @@ Run: `scripts/drive-skill.sh manifest-dev-help verification/prompts/manifest-dev
 Proves: the answer gives both uses of the word from the glossary — the AI model that does work for a person, such as the "person or agent" a Ticket is written for, and the separate execution context a host can run one in — in short plain sentences.
 Check: read
 
+### judgment
+Run: `scripts/drive-skill.sh manifest-dev-help verification/prompts/manifest-dev-help-judgment.md --tools`
+Proves: the answer explains project-consequence judgment, including advice against a correct requested change, and keeps advisory judgment separate from contract results and merge authority. It explains that an informed trade-off can settle discussion without reviewer endorsement, from the glossary or owning review skill, in plain short sentences.
+Check: read
+
 ### ladder
 Run: `scripts/drive-skill.sh manifest-dev-help verification/prompts/manifest-dev-help-ladder.md`
 Proves: the answer names the five levels, says each works without the ones above it and without the team, and gives what each adds and costs and where to start.

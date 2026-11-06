@@ -45,7 +45,7 @@ Surface each FAIL or BLOCKED as one voice-compliant comment naming the failing c
 
 ## Judgment pass (additive premise check)
 
-Activate the `review-pr-judgment` skill under the same review organization rule. Give it the inputs SKILL.md's **Judgment pass** names, adding the Manifest's Intent as the stated pain; SKILL.md's **Once per PR** gate applies unchanged.
+Activate the `review-pr-judgment` skill under the same review organization rule. Give it the inputs SKILL.md's **Judgment pass** names, adding the Manifest's Intent as the stated pain; SKILL.md's **Judgment continuation** rule applies unchanged.
 
 **Premise-subsumption does not apply here** — there are no fleet findings to subordinate, since the fleet is skipped in manifest mode.
 
@@ -53,7 +53,7 @@ It is **strictly additive** and never touches the contract:
 
 - The contract verdict — the Outcome and every Acceptance Criterion and Global Invariant — is computed exactly as it would be without the pass. A judgment finding never changes a criterion's PASS/FAIL, never blocks, and never gates approval.
 - Judgment findings are the distinct non-severity class the `review-pr-judgment` skill defines — author-answerable questions, synthesized to one per root **by the judgment pass itself** (manifest mode skips the holistic pass, so the pass does its own collapsing), posted through the same batched `comment` review and voice. They are **not** criteria, so instead of the `ac=` extension they carry the `judgment` discriminator token (`<!-- manifest-dev:review-pr judgment -->`) and are fingerprinted by finding substance like any other comment.
-- The all-green approval signal stays keyed to the contract: when the Outcome and every criterion PASS, manifest mode is green **even if** the judgment pass posted questions — those are non-blocking and do not withhold the signal. They are still posted; the human decides.
+- The all-green approval signal stays keyed to the contract: when the Outcome and every criterion PASS, manifest mode is green **even if** the judgment pass posted questions — those are non-blocking and do not withhold the signal. Show the judgment recommendation and any reservation in the approval question and confirmed approval body as SKILL.md requires; contract green alone is not reviewer endorsement.
 
 ## Fingerprint, don't re-post
 
@@ -61,4 +61,4 @@ PASS/FAIL comments recur every push, so track each by a content fingerprint (cri
 
 ## Cycle summary
 
-The SKILL.md reviewer-fleet and holistic-pass cycle-summary lines do not apply in manifest mode. Instead report, one line for the Outcome and per Acceptance Criterion and Global Invariant: its manifest id, PASS/FAIL/BLOCKED, supporting evidence, and the assessment's short finding. State the actual review context and model; shared context can be reported once for the gates it assessed. Then add one line for the judgment pass: premise questions posted — count and their roots — or `none`, so an all-green contract summary still records that questions were raised.
+The SKILL.md reviewer-fleet and holistic-pass cycle-summary lines do not apply in manifest mode. Instead report, one line for the Outcome and per Acceptance Criterion and Global Invariant: its manifest id, PASS/FAIL/BLOCKED, supporting evidence, and the assessment's short finding. State the actual review context and model; shared context can be reported once for the gates it assessed. Then include the judgment assessment as SKILL.md's **Cycle summary** requires. Contract acceptance and the recommendation about shipping stay distinct, including after an informed trade-off settles a thread.
