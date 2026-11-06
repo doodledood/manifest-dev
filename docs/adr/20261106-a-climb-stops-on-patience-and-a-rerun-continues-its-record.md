@@ -7,7 +7,7 @@ Accepted
 Task guidance
 
 ## Decided by
-The user. The user ruled four things: a climb stops after rounds bring no confirmed gain; each round learns from the earlier ones; a re-run continues the climb rather than restarting it; and the record lives in the logs figure-out, define and do already keep. The agent drafted the final checks below from the cited sources.
+The user. The user ruled five things: a climb stops after rounds bring no confirmed gain, by default two in a row; a quick climb stops at the first; each round learns from the earlier ones; a re-run continues the climb rather than restarting it; and the record lives in the logs figure-out, define and do already keep. The agent drafted the final checks below from the cited sources.
 
 ## Context
 An improvement loop needs an end it can justify:
@@ -22,19 +22,17 @@ OPRO (Yang et al., arXiv 2309.03409) ends when the model can no longer propose s
 A climb also ends without proof that its result works in use; only use can show that. `orchestrate` already continues, waits or finishes on outcome evidence across runs (`claude-plugins/manifest-dev/skills/orchestrate/references/OUTCOME.md`).
 
 ## Decision
-- **The stop.** A climb stops after a set number of consecutive rounds with no confirmed gain. define sets that number for each climb. Every round's proposals draw on the full record, so reaching the stop means proposals that knew everything already tried still lost.
+- **The stop.** A climb stops after consecutive rounds with no confirmed gain: by default two in a thorough climb and one in a quick climb. define may set another number for a climb. Every round's proposals draw on the full record, so reaching the stop means proposals that knew everything already tried still lost. The round that would meet the stop includes a bold attempt; in a climb that makes one change a round, that change is the bold one. With a staged measure, the stop counts full-measure confirmations, not cheap-check rounds.
 - **A requester's limit comes first.** A limit the requester sets, such as a number of rounds, ends a climb early. The report then says the climb stopped at that limit, not at a plateau.
-- **Keeping the original counts as success.** A climb that finds nothing better reports that the original held against everything it tried.
-- **The final checks.** Before a climb reports a better version, two checks must pass:
-  - that version beats the original head to head, on fresh measurement;
-  - it passes a final check the climb did not optimize against. That is held-out cases for a suite and guard measures for a number. For an AI judge, it is a judge from another model family where the host offers one.
-- **The record continues across runs.** The record holds each candidate, its result and why it won or lost. It is kept in `/do`'s execution log and carried in the pull request description, where a re-run on any machine can read it. A re-run of the same climb continues from that record. If a re-run has nothing new to try (no new evidence, no direction the record lacks), it stops at once and says so.
-- **What comes after.** A finished climb names the evidence from real use that would test its result. Pursuing that evidence across runs stays with `orchestrate`.
+- **Keeping the original counts as success.** A climb that finds nothing better reports that the original held against everything it tried, and names the smallest difference its measure could detect.
+- **The final comparison.** Before a climb reports a better version, that version beats the original head to head, on fresh measurement, before a judge independent of the loop. For a number or a suite, that is a fresh measurement plus checks the climb did not optimize against, such as held-out cases. For an AI judge, it is a judge that took no part in the rounds: from another model family where the host offers one in a thorough climb, and a fresh judge comparing in both orders in a quick one. A staged climb compares on the full measure, and several objectives are shown one by one against the original.
+- **The record continues across runs.** The record keeps one line per attempt (what changed, the result on each objective, kept or why not), with older rounds rolled into one line each once it passes 50 lines. It lives in the climb's Manifest and `/do`'s execution log, and in the pull request description only where the requester had the work pushed. A re-run reads it there, plus any results from real use the requester supplies, and proposes nothing it rejected. With nothing new to try, it stops before proposing.
+- **What comes after.** A finished climb names the evidence from real use that would test its result. A climb toward a behavior hands its leading versions over for such a test, and a later run reads the results as its measure. Pursuing that evidence across runs stays with `orchestrate`.
 - **The stop gate looks backward.** Evaluating the stop gate checks the record and the final comparison. It does not propose new challengers of its own.
 
 ## Alternatives Considered
 - **A fixed budget of rounds as the default stop.** Not chosen: it ends on the count rather than on the evidence. A requester can still set one as a limit.
-- **Stop at the first round without a winner.** Not chosen: it quits before the proposals have learned from what lost.
+- **Stop at the first round without a winner, in every climb.** Not chosen for a thorough climb: it quits before the proposals have learned from what lost. It is the quick climb's default, where the requester wants a fast improvement and the report says a thorough climb would go further.
 - **Work through a fixed list of directions named at the start.** Not chosen: the list cannot grow from what the rounds teach.
 - **Restart a re-run from the original.** Not chosen: it repeats candidates the record already rejected and spends the same rounds again.
 
@@ -47,15 +45,15 @@ A climb also ends without proof that its result works in use; only use can show 
 
 ### Negative
 - The stop rule spends several rounds after the last gain before a climb can stop.
-- A re-run depends on the pull request carrying the record. A climb without one restarts.
-- The record grows with every round, and a long one has to be summarized without losing why candidates lost.
+- A re-run on another machine finds the record only where the work was pushed; otherwise it starts a new record.
+- Rolling older rounds into one line each can lose detail on why an early candidate lost.
 
 ## Enforced by
-not yet — `hillclimb` recipe scenarios for two cases: a re-run with nothing new stops at once, and a climb whose measure finds nothing better keeps the original.
+`tests/test_hillclimb.py` (`test_stop_rule_defaults_and_rerun_continue_the_record`) fails when the define task file drops the stop defaults, the bold attempt before stopping, the re-run's stop with nothing new, or the record's bound. Whether a climb kept its record faithfully stays judgment, read in the `hillclimb` recipe's re-run and already-at-its-best scenarios.
 
 ## Revisit when
-Re-runs of finished climbs keep finding confirmed gains that the first run stopped short of, or climbs run many rounds past their last gain; read in the climbs' pull request descriptions.
+Re-runs of finished climbs keep finding confirmed gains that the first run stopped short of, or climbs run many rounds past their last gain; read in the climbs' reports and execution logs.
 
 ## Source
 - Session: a figure-out session, 2026-11-06 (log kept locally).
-- Related: 20261106-hill-climbing-runs-through-figure-out-define-and-do, 20261106-an-ai-judge-compares-two-versions-and-never-scores, 20260805-ratchet-judgment-gate-reverification
+- Related: 20261106-hill-climbing-runs-through-figure-out-define-and-do, 20261106-an-ai-judge-decides-between-two-versions-and-each-climb-proves-its-own, 20260805-ratchet-judgment-gate-reverification
