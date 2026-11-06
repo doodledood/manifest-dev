@@ -282,7 +282,7 @@ base model already covers; such a case leaves only through its probe's *Coverage
 | `105-taste-yardstick-offered` | press, several turns, repository | After two challenges by one unstated measure, offer a Taste entry stating the measure, not the instances | tuning |
 | `107-steer-without-reason` | press, several turns | After two removals with no reason, name the reason inferred and what else it changes, apply it to a later choice, and offer to keep it as the session's reading | tuning |
 | `108-steer-two-readings` | press | After a removal whose two plausible reasons change the other items in opposite ways, ask one question that tells them apart before changing those items | tuning |
-| `109-climb-a-signup-page` | autonomous | Set up a climb toward sign-ups: size a test on real use to the traffic, check offline what can be checked and call the rest a prediction, prove the measure reflects the goal, keep speed and clarity as guards against the original, and plan past the nearest peak | tuning |
+| `109-climb-a-signup-page` | autonomous | Set up a climb toward sign-ups: size a test on real use to the traffic, check offline what can be checked and call the rest a prediction, prove the measure reflects the goal, name unprompted what the page does well that no sign-up measure protects and guard it against the original, and plan past the nearest peak | tuning |
 
 Cases `30` to `46` were written on 2026-10-13 and `48` on 2026-10-14. Their first run was the
 2026-10-25 baseline, with the split frozen before it: every case added since 2026-10-13 is tuning
@@ -536,7 +536,7 @@ being declared a guard. `tests/test_eval_cases.py` fails when a case has no row 
 | `105` | first run decides | New on 2026-11-02, Taste capture on a revealed measure; drives only (*Several turns*); failed on main and on a wording that did not ship, see *Taste capture on a revealed measure — 2026-11-02* |
 | `107` | first run decides | New on 2026-11-02, the reason behind a steer given without one; drives only (*Several turns*); drive results in `docs/adr/20261102-figure-out-reads-a-steer-for-the-reason-behind-it.md` |
 | `108` | first run decides | New on 2026-11-02, asking when a steer has two readings; drive results in `docs/adr/20261102-figure-out-reads-a-steer-for-the-reason-behind-it.md` |
-| `109` | first run decides | New on 2026-11-06: the only case for the hill-climb probes; driven once on the skill before the change and once after |
+| `109` | first run decides | New on 2026-11-06: the only case for the hill-climb probes. Its first pair passed on both arms, so the prompt no longer names speed and clarity and the guard grader asks the read to find them; driven once on the skill before the change and once after |
 
 Retired on 2026-10-15: `12` (floored in both arms, not a declared guard), `47` and `49` (each a
 second older-version case beside `53`, which the version rule now forbids; their straight-to-newest
