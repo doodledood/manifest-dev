@@ -35,22 +35,23 @@ Ask for evidence before the verdict, never the verdict first.
 
 ## Proving the judge before round 1
 
-Prove the judge on the model the climb runs, with the brief frozen. Published rates of judge
-failure are failure modes to check for, not settings to copy.
+Prove the judge on the model the climb runs, with the brief frozen.
 
 - **A degraded version loses.** Make a version clearly worse on the goal; the judge must prefer
-  the original. In a thorough climb, a version that breaks a protected part must lose too.
-- **A gain-sized pair is told apart.** The judge picks the better of two versions whose gap is
-  about the size of the gains the climb seeks.
+  the original.
+- **A gain-sized pair is told apart.** Record the gain sought — the requester's, or inferred and
+  labeled so — and pair the original with a version carrying one known change of about that
+  size; the judge picks the better one. The record names the pair and why its order is known.
 - **Identical versions tie.**
 - **Noise is recorded.** Note how often the verdict flips with the order of the two versions and
   between runs of the same comparison.
 
-A quick climb runs only the first check, on one degraded version, and decides each comparison by
-one judgment run in both orders, a split counting as a tie. A thorough climb runs all four.
+A quick climb runs only the first check, on one degraded version. A thorough climb runs all four.
+Every comparison, in either, judges both orders and counts a win only when both agree; a split is
+a tie.
 
-The proof sets how many votes a comparison needs, up to a cap set from the recorded noise and
-the cost of a vote. A judge that cannot tell the gain-sized pair apart within the cap stops the
+From the recorded noise and the cost of a vote, the proof sets the minimum votes a comparison
+takes, the lead that counts as clear, and a cap. A judge that cannot tell the gain-sized pair apart within the cap stops the
 climb before round 1, and the report says what failed and what would fix it.
 
 When the judge weighs several objectives, break each criterion on purpose before round 1: the
@@ -58,17 +59,18 @@ broken version must lose on that criterion and must not win the overall verdict.
 
 ## Guards the proof turns on
 
-These guard against failures a fixed test may not show. They are off by default; turn one on
-where the proof shows the failure it prevents, or where the requester asks:
+Protected parts are never left to the judge: every candidate passes plain pass-or-fail checks on
+them before it can be kept.
+
+The guards below protect against failures a fixed test may not show. They are off by default;
+turn one on where the proof or the record shows the failure it prevents, or where the requester
+asks:
 
 - **Hide which version is newer, who made it, and the climb's history** — when the judge leans
-  toward the newer or its own model's version.
-- **Check protected parts inside each comparison**, with plain pass-or-fail checks — when the
-  degraded-version check shows the judge forgiving a broken protected part.
-- **A fresh judge for each vote**, with no memory of earlier votes — when verdicts drift as a
-  session goes on.
-- **Judge both orders, counting a win only when both agree** — when the proof sees verdicts flip
-  with order.
+  toward the newer or its own model's version, as the identical-versions check shows when one
+  copy is labeled newer.
+- **A fresh judge for each vote**, with no memory of earlier votes — when the record shows
+  verdicts on a repeated comparison drifting as a session goes on.
 - **Show several rendered states of a page**, plus its text and structure — when a single
   screenshot hides what the people meet, such as a hover, an error or a narrow screen.
 
@@ -91,14 +93,16 @@ Keep the judge's brief in the climb's record, so a re-run reuses it.
 
 ## Voting
 
-Votes continue until one side is clearly ahead or the cap is reached. A result short of clear is
-a tie, and a tie keeps the current best. A new leader is confirmed on fresh votes before it
+Votes run to the minimum the proof set, then continue until one side leads by the clear margin or
+the cap is reached. A result short of clear is a tie, and a tie keeps the current best. A new leader is confirmed on fresh votes before it
 becomes the current best.
 
 ## What the proposer sees
 
-The version that proposes changes learns from outcomes and from which of the judge's criteria
-each version met or missed — never from the judge's own words, which it would learn to please.
+The work that proposes changes learns from outcomes and from which of the judge's criteria each
+version met or missed — never from the judge's own words, which it would learn to please. Where
+the host can run the judge in a separate context, it does, and returns only the verdict and each
+criterion met or missed; where it cannot, the report says the proposer saw the judge's words.
 
 ## Independent of the loop
 

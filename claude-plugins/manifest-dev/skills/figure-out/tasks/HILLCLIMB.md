@@ -1,6 +1,6 @@
 # HILLCLIMB — probing fuel
 
-Angles that are easy to under-weight when the point is to improve an existing artifact round after round toward a goal — a climb that tries changes, measures them, and keeps one only on a confirmed gain. Composes onto `MEASURE.md` and onto the artifact's own file. Considerations, not an agenda. Press the load-bearing ones; priority stays yours.
+Angles that are easy to under-weight when the point is to improve an existing artifact round after round toward a goal — a climb that tries changes, measures them, and keeps one only on a confirmed gain. With several objectives, the **primary** is the one a gain is claimed on and the others are **guards**, which may not get worse beyond a margin. Composes onto `MEASURE.md` and onto the artifact's own file. Considerations, not an agenda. Press the load-bearing ones; priority stays yours.
 
 ## Blind-spot probes
 - **How careful** — Is this a quick climb — infer the goal, check the measure once, stop at the first flat round — or does something make it thorough: the person asked, a long or unattended run, a wrong result that is costly or hard to undo, objectives that pull against each other?

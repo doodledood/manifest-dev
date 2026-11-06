@@ -7,7 +7,7 @@ Composes onto `MEASURE.md`, and onto `CODING.md` when code changes.
 
 | Aspect | Threshold |
 |--------|-----------|
-| Verdict | The result is stated as faster, slower, no measurable difference, or inconclusive, with the run count, the range, and what limits the number; inconclusive when the limiter cannot be named or a side ran untuned |
+| Verdict | The result is stated as faster, slower, no measurable difference, or inconclusive, with the run count, the range, and what limits the number; inconclusive when the limiter cannot be named or one side ran without the setup, warm-up or configuration the other had |
 
 Encode the verdict as a judgment gate whose body names the measurement the change is judged by
 and the evidence the verdict cites.

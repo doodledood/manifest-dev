@@ -1,7 +1,7 @@
 ---
 name: hillclimb
 description: 'Improve an existing artifact round after round toward a goal — a page, a prompt, a document, code whose speed matters, a simulation — keeping a change only when it measures better, until rounds stop paying. Runs figure-out, define and do; quick by default, thorough when asked or when the stakes call for it. Use when the user asks to hill-climb, optimize, keep improving or make something as good as it can be for its goal, or to continue an earlier climb.'
-argument-hint: '<target> [measure] [--autonomous]'
+argument-hint: '<target> [goal and measure] [--autonomous]'
 user-invocable: true
 ---
 
@@ -12,7 +12,8 @@ real use, such as an earlier A/B test, may come with them.
 
 This command holds no loop of its own. figure-out, define and do run the climb, and their task
 files for climbs and measured comparisons say how: what counts as better, how rounds try changes,
-when a gain is confirmed, and when to stop. Pass every handoff the request as given, the
+when a gain is confirmed, and when to stop. Tell every handoff this is a hill-climb on the target, so each loads its task file for
+climbs, and pass the request as given, the
 requester's words on the goal and the measure, and these limits:
 
 - **The assignment** is to improve the target toward the goal, inside what the climb protects.
@@ -37,12 +38,14 @@ missing, then `define` with `--autonomous`. Nobody is asked from start to end.
 
 The request to climb is the request to run it: when `define` reports the Manifest path, invoke
 `do` with that exact path in the same turn, unless the requester asked to stop at the plan. No
-path → stop and report. Before the first round, tell the requester the Manifest's opening line:
+path → stop and report. Before the first round, tell the requester the line opening the Manifest's Initial Approach:
 quick or thorough and why, how rounds try changes, and how the climb measures. They change any
 of it in plain words; a change goes to `define` as an amendment.
 
 When `do` finishes, an attended climb asks whether to push the result, unless the requester
 already said. An autonomous climb with no instruction to push keeps its commits local and says so.
 
-**A re-run** on a target already climbed continues that climb: `define` finds its Manifest and
-execution log, and any results from real use the requester supplied become the climb's measure.
+**A re-run** on a target already climbed continues that climb: find its Manifest — among the
+Manifests whose execution logs name this target, or through a record the requester names — and
+pass its path to `define` to amend, with any results from real use the requester supplied as the
+climb's measure.
