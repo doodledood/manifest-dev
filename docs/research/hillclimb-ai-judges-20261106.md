@@ -13,6 +13,9 @@ Every claim carries a tag:
 - **[sum]** I saw it only in a search-engine summary or a secondary write-up. It is not verified.
 - **[calc]** My own arithmetic.
 - **[inf]** My inference from the evidence, not a reported finding.
+- **(established)** Taken from the brief as already known and not re-read for this review. Treat these like [sum]: the citation names where to look, not a verified result.
+
+Most results here were measured on judge models from 2023 to 2025. Failure rates such as order flips and self-preference change with each model generation, so a rate below says what to check for on the model a climb uses, not what to expect from it. This is why the shipped judge guidance has each climb prove its own judge instead of copying settings from these papers.
 
 ---
 
