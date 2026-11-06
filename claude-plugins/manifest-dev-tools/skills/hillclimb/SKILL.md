@@ -1,6 +1,6 @@
 ---
 name: hillclimb
-description: 'Improve an existing artifact round after round toward a goal — a page, a prompt, a document, code whose speed matters, a simulation — keeping a change only when it measures better, until rounds stop paying. Runs figure-out, define and do; quick by default, thorough when asked or when the stakes call for it. Use when the user asks to hill-climb, optimize, keep improving or make something as good as it can be for its goal, or to continue an earlier climb.'
+description: 'Improve an existing artifact round after round toward a goal — a page, a prompt, a document, code whose speed matters, a simulation — keeping a change only when it measures better, until rounds bring no confirmed gain. Runs figure-out, define and do; quick by default, thorough when asked or when the stakes call for it. Use when the user asks to hill-climb, optimize, keep improving or make something as good as it can be for its goal, or to continue an earlier climb.'
 argument-hint: '<target> [goal and measure] [--autonomous]'
 user-invocable: true
 ---
@@ -21,7 +21,8 @@ requester's words on the goal and the measure, and these limits:
   real people, unless the requester asks for it in the request, their rules or their context file.
 - **Quick or thorough.** A climb is quick unless the requester asks for a thorough one or the
   request shows what is at stake: a long run, such as many rounds or one that keeps running
-  unattended under a scheduler or coordinator; a wrong result that is costly or hard to undo; or
+  unattended under a scheduler or coordinator; a wrong result that is costly or hard to undo once the artifact
+  is in use, judged by what it is for rather than by how easily a commit reverts; or
   objectives that pull against each other. `--autonomous` alone does not make a climb thorough.
   Pass your reading on; defining may revise it as it learns the artifact.
 

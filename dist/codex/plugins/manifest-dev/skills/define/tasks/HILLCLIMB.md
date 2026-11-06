@@ -1,7 +1,7 @@
 # HILLCLIMB Task Guidance
 
 Work that improves an existing artifact round after round toward a goal: each round tries
-changes, measures them, and keeps one only on a confirmed gain, until rounds stop paying. The
+changes, measures them, and keeps one only on a confirmed gain, until rounds bring no confirmed gain. The
 artifact can be anything — a page, a prompt, a document, code whose speed matters, a simulation.
 Composes onto `MEASURE.md` and onto the artifact's own task file (`UI.md`, `PROMPTING.md`,
 `WRITING.md`, `PERF.md`, `CODING.md` …), whose gates become floors every kept version holds.
@@ -19,7 +19,8 @@ A climb is **quick** by default: it infers the goal and the people served, check
 once, and stops at the first round with no confirmed gain. It is **thorough** when the requester
 asks, or when the session sees what is at stake: a long run (many rounds, or one that keeps
 running unattended under a scheduler or coordinator), a wrong result that is costly or hard to
-undo, or objectives that pull against each other. Running unattended does not by itself make a
+undo once the artifact is in use — judged by what the artifact is for, such as a main sign-up page
+or a job others rely on, not by whether the climb's own commits are easy to revert — or objectives that pull against each other. Running unattended does not by itself make a
 climb thorough. The Manifest's Initial Approach opens with one line stating which it is and why,
 how rounds try changes, and how the climb measures; the requester changes any of it in plain
 words. The Outcome owes the best version the stop rule and the final comparison accept, or the
