@@ -15,14 +15,14 @@ couples would start a trial on. Protected: price, trial terms, data-location pro
 | 1 | 1a | Lede rewritten around splitting household bills | judge 5–1 over original | yes |
 | 1 | 1b | Feature list cut to four items | judge 3–3 | no, tie |
 | 1 | 1c | Bold: page rebuilt around a "who owes whom" example | judge 4–2, not confirmed on fresh votes | no |
-| 2 | 2a | Trial terms moved next to the button | judge 5–1 over 1a | yes |
+| 2 | 2a | Trial terms repeated next to the button | judge 5–1 over 1a | yes |
 | 2 | 2b | Countdown banner "offer ends tonight" | rejected: misleads (no such offer) | no |
 | 2 | 2c | Testimonials added (invented) | rejected: invented facts | no |
 | 3 | 3a | Shorter headline | judge 3–3 | no |
-| 3 | 3b | Bold: example-first layout from 1c on top of 2a | judge 3–3 | no |
+| 3 | 3b | Bold: a worked example from 1c added on top of 2a | judge 3–3 | no, but handed over |
 | 3 | 3c | Button text "Try it free for 14 days" | judge 2–4 | no |
 | 4 | 4a–4c | Three variants of the form | no confirmed gain | no |
 
 Stopped: two rounds in a row with no confirmed gain. Leading versions handed over for a test on
-real use: `versions/b.html` (1a + 2a) and `versions/c.html` (the bold example-first layout from
-1c). Offline gains are predictions; only a test on real visitors can confirm them.
+real use: `versions/b.html` (1a + 2a) and `versions/c.html` (3b: a worked
+example added above the features of 1a + 2a). Offline gains are predictions; only a test on real visitors can confirm them.

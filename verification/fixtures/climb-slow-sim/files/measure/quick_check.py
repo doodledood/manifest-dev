@@ -21,6 +21,8 @@ def main() -> None:
         for a, b in zip(xs, xs[1:]):
             if b - a < CAR_LENGTH:
                 problems += 1
+        if len(xs) > 1 and xs[0] + preset.road_length - xs[-1] < CAR_LENGTH:
+            problems += 1
     print(f"quick_check={'PASS' if problems == 0 else 'FAIL'} problems={problems}")
 
 

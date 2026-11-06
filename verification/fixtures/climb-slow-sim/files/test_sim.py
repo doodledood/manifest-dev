@@ -17,8 +17,8 @@ def test_cars_move() -> None:
     assert [x for _, x in world.frame()] != start
 
 
-def test_merge_empties_the_ending_lane() -> None:
+def test_every_car_merges_out_of_the_ending_lane() -> None:
     world = World(PRESETS["highway_merge"], seed=1)
-    for _ in range(30 * 120):
+    for _ in range(30 * 180):
         world.step()
-    assert all(lane == 0 for lane, x in world.frame() if abs(x - 1500.0) < 5)
+    assert all(lane == 0 for lane, _ in world.frame())

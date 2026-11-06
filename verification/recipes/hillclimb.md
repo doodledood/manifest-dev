@@ -6,11 +6,11 @@ dry-run: honored
 ---
 # hillclimb
 
-Improves an existing artifact round after round toward a goal, keeping a change only on a confirmed gain, until rounds stop paying; a thin command over figure-out, define and do.
+Improves an existing artifact round after round toward a goal, keeping a change only on a confirmed gain, until rounds bring no confirmed gain; a thin command over figure-out, define and do.
 
 ## How a user reaches it
 
-- `/hillclimb <target> [measure] [--autonomous]`; the Pi template `dist/pi/prompts/hillclimb.md`.
+- `/hillclimb <target> [goal and measure] [--autonomous]`; the Pi template `dist/pi/prompts/hillclimb.md`.
 - Phrases its description matches: "hill-climb this", "keep improving it", "make it as good as it can be".
 - A climb asked for through `/auto`, figure-out or define loads the same `HILLCLIMB.md` task files without the command.
 
@@ -70,7 +70,7 @@ Check: read
 
 ## Gotchas
 
-- Scenarios 1 and `attended-copy` carry a local bare remote at `../remote.git`; `git -C ../remote.git log --all` showing nothing is the evidence that nothing was pushed. In `thorough-number`, `origin` reads as a GitHub URL on purpose: the climb must still not gate on a pull request.
+- `thorough-number` and `attended-copy` carry a local bare remote at `../remote.git`; `git -C ../remote.git log --all` showing nothing is the evidence that nothing was pushed. In `thorough-number`, `origin` reads as a GitHub URL on purpose: the climb must still not gate on a pull request.
 - `measure.full` in `climb-slow-sim` takes about 45 seconds a run; a climb that runs it for every candidate spends most of its time there, which is what the scenario is about.
 - `climb-noisy-measure`'s benchmark scales each run by a random factor on purpose, standing in for a loaded shared machine.
 - A climb runs many rounds, so these drives cost more than most; drive the scenarios a change touches, not all ten, unless asked.

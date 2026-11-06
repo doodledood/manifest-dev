@@ -4,7 +4,7 @@ import random
 
 from sim.lights import is_red
 from sim.presets import Preset
-from sim.vehicle import CAR_LENGTH, Car, follow
+from sim.vehicle import CAR_LENGTH, LANE_WIDTH, Car, follow
 
 DT = 1 / 30
 
@@ -19,7 +19,8 @@ class World:
             spacing = preset.road_length / preset.cars_per_lane
             for i in range(preset.cars_per_lane):
                 jitter = rng.uniform(-0.2, 0.2) * spacing
-                self.cars.append(Car(x=(i * spacing + jitter) % preset.road_length, lane=lane))
+                x = (i * spacing + jitter) % preset.road_length
+                self.cars.append(Car(x=x, lane=lane, y=lane * LANE_WIDTH))
 
     def _ahead(self, car: Car, lane_cars: list[Car]) -> tuple[float, float]:
         length = self.preset.road_length
@@ -50,6 +51,7 @@ class World:
             for car in self.cars:
                 if car.lane == 1 and abs(car.x - merge) < 5:
                     car.lane = 0  # moves across in one frame
+                    car.y = 0.0
         self.time += DT
 
     def frame(self) -> list[tuple[int, float]]:

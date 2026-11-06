@@ -1,6 +1,6 @@
 """City presets: ring roads with lights, and a merge."""
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 
 @dataclass(frozen=True)
@@ -9,7 +9,7 @@ class Preset:
     road_length: float  # metres, a ring
     lanes: int
     cars_per_lane: int
-    lights: tuple[float, ...] = field(default_factory=tuple)  # stop-line positions
+    lights: tuple[float, ...] = ()  # stop-line positions
     light_cycle: float = 30.0  # seconds green, then the same red
     merge_at: float | None = None  # position where lane 1 ends and merges into lane 0
 
