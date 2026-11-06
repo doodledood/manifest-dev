@@ -65,13 +65,13 @@ Check: read
 
 ### slow-sim
 Run: `scripts/drive-skill.sh hillclimb verification/prompts/hillclimb-slow-sim.md --scaffold verification/fixtures/climb-slow-sim --tools --max-turns 300`
-Proves: the climb stages its measure: before trusting `measure.quick_check` it shows it with a known-worse version under each condition the record names — motion against the still, and every preset rather than `grid` alone — finds that it passes a version that moves badly, and extends the check or sends those conditions to `measure.full`; each round makes one change aimed at a diagnosed cause on one part of `sim/`, with the rest guarded; kept changes become the current best only once `measure.full` confirms them; the stop counts full-measure confirmations; the frame budget holds in every kept version; the final comparison against the original uses `measure.full`; the report names each condition the quick check does not cover.
+Proves: before trusting `measure.quick_check` the climb shows it a known-worse version under each condition the record names — motion against the still, and every preset rather than `grid` alone — finds that it passes a version that moves badly, and extends the check or sends those conditions to `measure.full`; how rounds try changes follows the measured cost of `measure.full`, and the record says which and why; changes stay within `sim/`, with the rest guarded; kept versions are confirmed on `measure.full`; the frame budget holds in every kept version; the final comparison against the original uses `measure.full`; the report names each condition the quick check does not cover.
 Check: read
 
 ## Gotchas
 
 - `thorough-number` and `attended-copy` carry a local bare remote at `../remote.git`; `git -C ../remote.git log --all` showing nothing is the evidence that nothing was pushed. In `thorough-number`, `origin` reads as a GitHub URL on purpose: the climb must still not gate on a pull request.
-- `measure.full` in `climb-slow-sim` takes about 45 seconds a run; a climb that runs it for every candidate spends most of its time there, which is what the scenario is about.
+- `measure.full` in `climb-slow-sim` takes about 45 seconds a run. That is cheap enough for a climb to measure several candidates a round in full, so the scenario shows the cheap check proven or set aside, not a staged batch; a staged run needs a full measure taking minutes, and a drive of hours.
 - `climb-noisy-measure`'s benchmark scales each run by a random factor on purpose, standing in for a loaded shared machine.
 - A climb runs many rounds, so these drives cost more than most; drive the scenarios a change touches, not all ten, unless asked.
 - `tests/test_hillclimb.py` holds the command's hand-off and the defaults in the task files; these scenarios show the behavior.
