@@ -57,6 +57,8 @@ fastest or the cheapest result.
 `/auto` does the three steps without a stop between them. Each skill also works alone, and no
 project needs this sequence. You can take a Read straight to `/ticket-up`, or assign direct work.
 `/define` starts `/figure-out` first when you and the agent do not yet agree on the problem.
+To make an existing artifact better round by round toward a goal, use `/hillclimb` from the
+tools plugin. It runs the same three steps.
 
 When your tool can show a question as a list of options, `/figure-out` and `/define` ask you that
 way. The first option is the answer that they recommend. You can also answer in your own words.

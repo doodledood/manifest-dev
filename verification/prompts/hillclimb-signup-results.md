@@ -1,0 +1,1 @@
+/manifest-dev-tools:hillclimb index.html keep climbing the sign-up page. the earlier climb's pull request description is in climb-record.md, its leading versions are in versions/, and we ran the A/B test on them: ab-results.md. --autonomous

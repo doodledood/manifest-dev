@@ -1,7 +1,7 @@
 # ADR: An experience choice goes to the user as concrete options or variants, and a reason given in reply resets the recommendation
 
 ## Status
-Accepted; amended by 20261102-figure-out-reads-a-steer-for-the-reason-behind-it: the sentence on an answer with an aim or a reason now covers every steer, with or without a reason; an unexplained one is read for the reason the session infers
+Accepted; amended by 20261102-figure-out-reads-a-steer-for-the-reason-behind-it: the sentence on an answer with an aim or a reason now covers every steer, with or without a reason; an unexplained one is read for the reason the session infers; narrowed by 20261106-a-climb-runs-without-a-person-choosing-by-default: inside a hill-climb's rounds, by default, the measure makes these choices, and the report shows each beside the version it beat
 
 ## Area
 figure-out

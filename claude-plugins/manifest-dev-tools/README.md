@@ -1,6 +1,6 @@
 # manifest-dev-tools
 
-Tools that sit alongside the workflow: pull requests, prompts, teaching, and handoff.
+Tools that sit alongside the workflow: pull requests, hill-climbing an existing artifact, prompts, teaching, and handoff.
 
 In Claude Code:
 
@@ -27,6 +27,12 @@ Three more ship for `/review-pr` to call rather than for you to invoke — the r
 | `review-pr-thread-verify` | Judge one existing review thread against the current head and return a disposition. |
 | `review-pr-holistic` | Prune, deduplicate, and bound a cycle's findings into the comments that get posted. |
 | `review-pr-judgment` | Give non-binding advice on whether landing the change serves the project, preserving its recommendation through follow-up. |
+
+## Improving what exists
+
+| Skill | What it does |
+|-------|--------------|
+| `/hillclimb <target> [goal and measure]` | Improves an existing artifact round after round toward a goal — a page, a prompt, a document, slow code, a simulation — keeping a change only on a confirmed gain, until rounds bring no confirmed gain. Quick by default; thorough when you ask or the stakes call for it. It runs figure-out, define and do from `manifest-dev`, which must be installed too, so the climb is an ordinary Manifest; `--autonomous` asks nothing, and nothing is pushed unless you want it. |
 
 ## Prompts
 

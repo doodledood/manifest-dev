@@ -1,0 +1,1 @@
+/manifest-dev-tools:hillclimb stats.py make top_words as fast as it can get on bench.py's corpus without its memory use growing; the behavior tests must keep passing. be thorough about it, this runs in our nightly report job. --autonomous

@@ -1,0 +1,1 @@
+/manifest-dev-tools:hillclimb index.html this is our main sign-up page — get more households to start a trial, especially couples who just moved in together and split bills in a spreadsheet. --autonomous

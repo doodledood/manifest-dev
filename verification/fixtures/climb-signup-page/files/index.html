@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tallyfold — shared expenses for households</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 0; color: #1d2433; background: #fbfaf7; }
+    header, section, footer { max-width: 720px; margin: 0 auto; padding: 24px 16px; }
+    h1 { font-size: 2rem; margin-bottom: 8px; }
+    .lede { font-size: 1.1rem; color: #4a5160; }
+    ul { padding-left: 20px; line-height: 1.6; }
+    form { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
+    input { flex: 1 1 220px; padding: 10px; border: 1px solid #c9ccd3; border-radius: 6px; }
+    button { padding: 10px 18px; border: 0; border-radius: 6px; background: #2f5d50; color: #fff; }
+    .price { font-weight: 600; }
+    footer { font-size: 0.85rem; color: #6b7180; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Tallyfold</h1>
+    <p class="lede">An expense tracker with categories, recurring entries, CSV export, multi-currency
+      support, receipts, reminders and reports, for individuals, families and groups.</p>
+  </header>
+  <section>
+    <h2>Features</h2>
+    <ul>
+      <li>Unlimited categories and tags</li>
+      <li>Recurring expenses and reminders</li>
+      <li>Split any expense between people, evenly or by share</li>
+      <li>See who owes whom at any time, and settle up in one tap</li>
+      <li>Receipt photos, CSV export and monthly reports</li>
+      <li>Works on phone and desktop; data synced between devices</li>
+    </ul>
+  </section>
+  <section>
+    <h2>Pricing</h2>
+    <p><span class="price">$4 a month per household</span>, billed monthly. Cancel any time.
+      14-day free trial; no card needed to start.</p>
+    <form action="/signup" method="post">
+      <input type="email" name="email" placeholder="Email address" required>
+      <button type="submit">Start free trial</button>
+    </form>
+  </section>
+  <footer>
+    <p>Tallyfold stores your data in the EU. We never sell it. <a href="/privacy">Privacy</a> ·
+      <a href="/terms">Terms</a></p>
+  </footer>
+</body>
+</html>
