@@ -28,8 +28,11 @@ its own `--help`.
   check rests on it; otherwise it is a blocker.
 - **Unfit harness:** when the harness is not fit to trust for what the work touches
   (`../../setup-project/references/VERIFICATION_HARNESS.md` → *Fit to trust*), repair it. A
-  gigantic repair is debt while the check still runs and passes, and a blocker once a check a gate
-  or the whole tree rests on fails or cannot run (`../SKILL.md` → *What holds for every gate*).
+  passing exit code cannot establish a claim the check does not actually test. If unfitness
+  invalidates necessary evidence, establish adequate evidence through an authorized alternative
+  or keep the obligation unresolved; a gigantic repair does not turn missing proof into debt.
+  A gigantic maintenance improvement may be debt only when required checks still run and pass
+  and the acceptance evidence remains valid (`../SKILL.md` → *What holds for every gate*).
 - **Run time:** follow `../../setup-project/references/VERIFICATION_HARNESS.md` → *Run time*.
   When a check the work meets has grown slow, find where the time went from the runner's own
   timings and speed it up — a slow new test, a sleep, waste in shared code alike; where that is

@@ -51,6 +51,11 @@ Run: `scripts/drive-skill.sh write-goal verification/prompts/write-goal-authorit
 Proves: The standalone goal is at most 4,000 characters, keeps the intended result and hard access, keyboard and delivery requirements, and carries both the current 200 ms working target and evidence-based permission to revise it while preserving the result. It adds neither the withdrawn pixel identity nor a database exclusion nor a 180 ms bound from rationale. Material revisions are reported and affected evidence refreshed; passing proxies alone cannot complete the work.
 Check: read
 
+### review-acceptance
+Run: `scripts/drive-skill.sh write-goal verification/prompts/acceptance/write-goal-contract.md --tools --scaffold verification/fixtures/acceptance-contract`
+Proves: The standalone goal stays within 4,000 characters and preserves hard requirements, working targets and revision authority, real evidence needs and independent approval. It retains evidenced disposition freedom without reintroducing a blanket grade veto or treating the pending 200 ms amendment as complete.
+Check: read
+
 ## Gotchas
 
 - A goal that refers back to a source file, a read or a log is the defect it exists to avoid.

@@ -1,7 +1,7 @@
 # ADR: Ticket recovery uses coherent pushed checkpoints
 
 ## Status
-Accepted — amended by 20261018-the-tickets-attempt-record-carries-its-manifest-progress-and-run-facts: the attempt record also carries the run's Manifest, its progress and the run facts orchestrate reads, so a fresh attempt resumes the recorded Manifest
+Accepted — amended by 20261018-the-tickets-attempt-record-carries-its-manifest-progress-and-run-facts: the attempt record also carries the run's Manifest, its progress and the run facts orchestrate reads, so a fresh attempt resumes the recorded Manifest; amended by 20261106-review-evidence-serves-substantive-acceptance: retain applicable evidence and supported dispositions; revalidate against current criteria and actual subject
 
 ## Area
 Ticketing
@@ -49,6 +49,10 @@ run-ticket drops the one stable branch, reuse of the existing pull request, or p
 checkpoints; `test_attempt_record_carries_the_manifest_progress_and_run_facts` fails if the marked
 attempt record loses the Manifest or progress the amendment added, or a fresh runner stops resuming
 it.
+
+The 20261106-review-evidence-serves-substantive-acceptance amendment is held partly by
+`tests/test_ticket_automation_prompts.py` and the run-ticket recipe's `acceptance-recovery`
+scenario; evidence validity and disposition support remain judgments.
 
 ## Source
 

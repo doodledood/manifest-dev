@@ -27,6 +27,11 @@ Run: `scripts/drive-skill.sh check-pr verification/prompts/check-pr-feedback-sna
 Proves: the inspector reports the current unresolved thread IDs and outstanding required approval, even where a thread repeats an older claim. It reports action targets without judging the claims' validity or composing replies. No outbound action is recorded while the inspector is active. Its verdict remains FAIL; prior dispositions cannot clear current remote state.
 Check: read
 
+### item-specific-addressing
+Run: `scripts/drive-skill.sh check-pr verification/prompts/acceptance/pr-feedback.md --tools --scaffold verification/fixtures/acceptance-feedback`
+Proves: the unrelated logo reply does not address review-9; the item-specific response supplies an addressing signal without proving its substantive correctness. Review-pr's empty publication batch cannot turn the supported export failure into a clean assessment or approval offer. No remote action occurs. This local replay does not establish live hosting transport.
+Check: read
+
 ## Gotchas
 
 - The prompt file carries the placeholder `THROWAWAY_PR_URL`; replace it with a throwaway pull request the run may read before driving.

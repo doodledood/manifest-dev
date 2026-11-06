@@ -29,6 +29,11 @@ Run: `scripts/drive-skill.sh run-ticket verification/prompts/run-ticket-cross-cu
 Proves: landing a Ticket marked ready while `main` moved, the run merges `main` in and finds that the two maintainer diagnostics `main` added (`check-data`, `dump`) print without `emit()`, the convention the Ticket set, though members never see them. It routes both through `emit()` in its own work, updating their tests, re-runs the gates, lands on `main`, and writes no follow-up Ticket for a person about them.
 Check: read
 
+### acceptance-recovery
+Run: `scripts/drive-skill.sh run-ticket verification/prompts/acceptance/ticket-recovery.md`
+Proves: The ready mark is not trusted despite unchanged head/base: the changed header criterion, receiver state and queued mandatory cleanup remain unresolved. Valid ID evidence, full-look status and supported factory rejection survive. Recovery uses the recorded contract rather than a fresh definition. This bounded replay observes next-action selection, not live tracker durability.
+Check: read
+
 ## Gotchas
 
 - The prompt first has ticket-up file one small Ticket with a checkable end, then runs `/manifest-dev:run-ticket` on it in the same session.

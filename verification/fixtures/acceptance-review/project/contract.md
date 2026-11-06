@@ -1,0 +1,1 @@
+The full export returns every source row in order. The preview export deliberately returns only the first row; the owner accepted this preview-only limit. Both functions are pure Python list transformations. No transport or database exists. Existing tests use unittest. All records have string id and label.

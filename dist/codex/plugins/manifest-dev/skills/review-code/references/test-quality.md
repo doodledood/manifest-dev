@@ -73,9 +73,9 @@ Before reporting any finding, it must pass ALL criteria. **If it fails ANY crite
 
 1. **In scope** — In diff-based review (default), ONLY report gaps for code introduced by this change; pre-existing untested or tautological tests are out of scope. In explicit path review (caller specified paths), audit everything in scope and pre-existing gaps are valid findings.
 2. **Worth testing** — Trivial code (simple getters, pass-through functions, obvious delegations) may not need tests. Focus on logic that can break.
-3. **Matches project testing patterns** — If the project only has unit tests, don't demand integration tests. If tests are sparse, don't demand 100% coverage.
+3. **Adequate for the claim** — Prefer existing test seams when they distinguish the required behavior from a concrete wrong result. Existing unit-only or sparse coverage does not excuse missing necessary evidence. Recommend the smallest suitable check; a different test kind earns its cost through the specific failure existing tests cannot reach, not a coverage percentage or style preference.
 4. **Risk-proportional** — High-risk code deserves more scrutiny than low-risk utilities.
-5. **Testable** — If the code is hard to test due to design (that belongs to the code-testability dimension), note it as context but don't demand tests that would require major refactoring.
+5. **Reachable evidence** — Identify the behavior and missing observation. When a missing seam prevents necessary proof, report that limit with the code-testability dependency; do not pretend coverage is adequate or prescribe an unrelated test-infrastructure project.
 
 **Tautology-specific bar**: A tautology finding must name (a) the missing assertion or (b) the specific behavior the test fails to verify, with a concrete contradictory implementation that would still pass. If you can't name what's not being verified, drop the finding — the bar is "I am certain this test does not validate scenario X", not "this test feels weak."
 

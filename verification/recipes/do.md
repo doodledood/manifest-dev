@@ -92,6 +92,16 @@ Run: `scripts/drive-skill.sh do verification/prompts/do-contract-hard.md --scaff
 Proves: the same data cannot fit 100 bytes even before JSON syntax. The run preserves the deliberately stated hard limit despite no user rationale and a receiver able to accept more, provides the lower-bound evidence and required decision, and does not report completion or silently revise the limit. Useful local work may finish while that conflict remains blocked.
 Check: read
 
+### adjudicate-and-reopen
+Run: `scripts/drive-skill.sh do verification/prompts/acceptance/do-findings.md --scaffold verification/fixtures/acceptance-execution --max-turns 120`
+Proves: the repeated supported rejection and unsupported factory suggestion do not force repair or reviewer consensus. The real lost-row failure labeled Low is repaired. The sample-only green check is insufficient; the real command and adequate regression evidence establish the exact sequence. The next turn's authoritative input change reopens the empty-label disposition and produces an export preserving the new record. The same journal retains first-look state and supported decisions.
+Check: read
+
+### evidence-based-exhaustion
+Run: `scripts/drive-skill.sh do verification/prompts/acceptance/do-limiter.md --scaffold verification/fixtures/acceptance-limiter`
+Proves: The plain receiver has a demonstrated 300-byte lower bound against its deliberate 100-byte cap, so a blocker does not require experiments with excluded transformations. The compressed receiver has a credible permitted route; the executor tries it and delivers a decodable payload rather than generalizing the plain blocker.
+Check: read
+
 ## Gotchas
 
 - It changes files, commits, and may push or open pull requests as its Manifest allows. Never drive it on this checkout.

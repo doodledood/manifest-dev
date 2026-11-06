@@ -52,7 +52,12 @@ A finding about visual ambition must point to what the render leaves unresolved 
 - **MEDIUM** — a clear product or quality gap a careful reviewer would insist on fixing before shipping, supported by the rendered evidence: an unresolved creative direction, or grouping that makes the audience's task materially harder. Misleading controls, wrong behavior and broken explicit promises are High or Critical.
 - **LOW** — polish or a nit of any kind: style, naming, structure, or otherwise. An explicit requirement remains binding; a correctness or safety failure or broken binding promise received as Low is regraded from evidence before applying caller policy.
 
-The caller chooses which severities or categories to address and the acceptance threshold. Use a Medium+ gate only when the caller chooses it. Without a requested gate, report classifications without a verdict; if a verdict is requested without a policy, ask or report BLOCKED rather than inventing one.
+The caller supplies the acceptance claims and any deliberately required severity or category
+policy. For a claim-based gate, show how the rendered result defeats the audience's use, chosen
+direction or an applicable requirement; a grade or alternative aesthetic alone does not defeat
+the claim. Preserve explicit thresholds when supplied. Without a requested gate, report
+classifications without a verdict; if a verdict is requested without recoverable claims or
+policy, ask or report BLOCKED. Missing necessary rendered or interaction evidence stays BLOCKED.
 
 ## Reporting
 

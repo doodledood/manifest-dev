@@ -1,7 +1,7 @@
 # ADR: check-pr's third gate is the review-feedback inbox
 
 ## Status
-Accepted
+Accepted; amended by 20261106-review-evidence-serves-substantive-acceptance: a reply must clearly address its actual review item; unrelated later updates do not count
 
 ## Area
 PR lifecycle
@@ -73,6 +73,10 @@ requirement, if an `APPROVED` body or unthreaded GitHub-App IssueComment is requ
 outstanding, or if `define/tasks/PR_LIFECYCLE.md`'s lifecycle Subject no longer names review
 bodies and top-level comments; that Suggested is prose naming every outstanding unthreaded
 item, and that `/do` acts on that prose, stay judgment.
+
+`tests/test_check_pr_feedback_gate.py::test_addressing_signal_is_tied_to_each_actual_item`
+and the check-pr recipe's `item-specific-addressing` scenario hold the item association added
+by 20261106-review-evidence-serves-substantive-acceptance.
 
 ## Source
 - Session: unattended `/auto` on https://github.com/doodledood/manifest-dev/issues/360

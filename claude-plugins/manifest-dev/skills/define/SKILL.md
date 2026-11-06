@@ -115,11 +115,11 @@ That gives a floor that isn't ceremony:
   present — which is what lets its criteria judge whether it works rather than
   whether it exists. A slice cut along a layer ("the data model", "the sources")
   can only be gated on existence, and *it compiles* or *the file exists* are
-  inspections rather than uses. A request framed as layers is the requester's
-  convenience: re-cut it, don't encode it. A requested cut, even a numbered list of
-  Deliverables, settles scope, not where the cuts fall, so keeping its layers is never a
-  user's call: keep its scope and re-cut its layers, recording the re-cut as an `(auto)`
-  choice the requester can veto. Order least-proven first within real
+  inspections rather than uses. Re-cut incidental implementation layers while keeping
+  their scope, recording the re-cut as an `(auto)` choice. A deliberately required delivery
+  boundary keeps its source authority: make the work exercisable within it, and surface a
+  genuine conflict rather than silently changing that boundary. A numbered list alone
+  does not establish such a requirement. Order least-proven first within real
   dependencies, so an unworkable direction surfaces while there is room to turn.
 - **Make the change easy first.** When the shape of a change that crosses a function
   boundary — figure-out's sketch, or one drawn here for a direct request — shows that the area
@@ -234,7 +234,7 @@ belongs. Come back here — this skill owns the interview.
 ## Task files
 
 Identify the task type and load the matching file(s) from `tasks/`. Their
-**Quality Gates** auto-encode as `INV-G*`/`AC-*` and their **Defaults** as `PG-*`
+**Quality Gates** supply the qualities to encode as `INV-G*`/`AC-*` and their **Defaults** as `PG-*`
 before the interview, so the dialogue carries the encoding forward; a Default
 whose violation would be unsafe or irreversible routes to a Global Invariant
 instead. A rule the user has stated — in the session or in a context file — or a
@@ -245,7 +245,10 @@ with why: the rule that overrides it, or what makes it clearly inapplicable. A r
 tell a Default set aside on purpose from one lost. The context file's outcome rules —
 naming, structure, architecture — also constrain the shape the Manifest specifies,
 not only which Defaults it drops. Taste entries stay weighed per call, as above. Per-repo for
-multi-repo manifests. These carry encoder data only —
+multi-repo manifests. State what must be true for the artifact's actual users, operators,
+readers and maintainers over its useful life. Keep the task files' applicable review coverage;
+several concerns may share a claim and its Evidence when they judge the same result. A review
+dimension is not a reason for a separate gate. These carry encoder data only —
 figure-out's own probe files are a separate set this skill never reads, and any
 `tasks/**/references/*.md` is gate-evaluation lookup data, not loaded here.
 A disposable draft made only to get a person's reaction loads no task file — no
@@ -285,11 +288,11 @@ sources. `PR_LIFECYCLE.md` composes where the output ships through a GitHub pull
 request. `PROMPTING.md` does not compose with `CODING.md` unless executable code
 also changes.
 
-**The omission valve.** A task-file Quality Gate is omitted only with stated
+**The omission valve.** A task-file quality concern is omitted only with stated
 reasoning, on one of two grounds: it is clearly inapplicable, or — advisory-tier
-gates only — it fails the **bearer test**. Each advisory dimension protects some
+concerns only — it fails the **bearer test**. Each advisory dimension protects some
 future activity (modification, regression-catching, reading, operating, the next
-contributor); omit the gate only where that activity will not occur on this
+contributor); omit its assessment only where that activity will not occur on this
 manifest's surface within the artifact's life, and record the omission as an
 `ASM-*` whose assumption is the missing bearer, stated as a fact — "no future
 reader exists", never "unlikely to find much" — and whose impact if wrong names
@@ -299,12 +302,14 @@ the full sweep. The full set is the default and doubt includes. Never eligible:
 defect-finding dimensions, deterministic project gates, safety-critical Global
 Invariants, and the ceiling.
 
-**Specialized gates activate a skill.** Put the quality claim and chosen acceptance policy in
-its body. Put the assessment in Evidence: activate the named skill with its dimension and
-severity/category threshold, never prescribe a further context. The skill owns classification;
-the Manifest owns what fails. Use the task file's usual Medium+ policy unless the user's or
-project's policy differs. A source-backed requirement for a particular assessment also belongs
-in the hard claim; an agent-selected reviewer does not acquire hard authority by insertion.
+**Specialized gates activate a skill.** Put the substantive quality claim in the body and
+the assessment in Evidence: activate the named skill with the claim, relevant source obligations
+and its dimension or register, never prescribe a further context. The skill owns classification;
+the Manifest owns what fails. Reviewer grades and recommendations are evidence about the claim,
+not independent acceptance conditions. A finding must show a concrete failure or material cost
+in the artifact's supported use or maintenance; a preferred shape alone does not establish one.
+Keep a deliberately required severity policy, assessment or approval in the claim with its
+source authority. An agent-selected reviewer or threshold does not become hard by insertion.
 
 ## Amendment
 
@@ -333,16 +338,14 @@ reading as current state (*Write the current state*, above).
   as unaffected precisely because nothing is editing them. Re-read them against
   what the manifest now covers, and re-read existing gates for under-coverage
   over the widened area.
-- **An instance report names the gate that missed it.** Steering arrives as
-  instances, and the reflex is a criterion per instance. Ask first which gate
-  should already have caught it: where one claims the class and missed it, its
-  region was drawn narrower than the class — rewrite that gate so its body states
-  the whole class, rather than adding a sibling beside it or a clause for the
-  instance.
-- **An amendment that changes a decision produces a gate.** Adding work and
-  reversing a rule the system already states are different amendments; the second
-  needs its own Acceptance Criterion. Edited prose notes a decision but checks
-  nothing.
+- **An instance report locates the missed obligation.** Ask which claim should cover it,
+  then distinguish a claim drawn too narrowly from an inadequate evidence method or an
+  evaluation that missed evidence. Repair that part in place. Broaden the claim only when
+  its region was too narrow; do not add a sibling criterion for each reported instance.
+- **A changed decision needs adequate coverage.** Check the behavior and obligations the
+  change affects. Update an existing claim or its Evidence where it already covers them;
+  add a criterion only for an uncovered result. A revisable design choice stays in the
+  Approach or Evidence rather than becoming an acceptance end merely because it changed.
 
 An amendment from an unattended executor is unattended: self-answer within the
 caller's delegation, ask no questions, and wait for no approval. A working claim or evidence

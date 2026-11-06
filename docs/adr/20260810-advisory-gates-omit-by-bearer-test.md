@@ -1,7 +1,7 @@
 # ADR: Advisory gates omit by a bearer test at define time
 
 ## Status
-Accepted
+Accepted; amended by 20261106-review-evidence-serves-substantive-acceptance: broad dimension coverage and the omission rule remain; substantive quality claims replace default grade vetoes
 
 ## Area
 define
@@ -128,6 +128,11 @@ permitted is per-manifest omission of the gates whose findings would land on nob
   high-stakes manifests would mean the test is misfiring and needs hardening — that is the
   overturn signal to watch.
 - On autonomous runs the audit is post-hoc only.
+
+## Enforced by
+partly — `tests/test_review_convergence.py` holds broad quality claims without default grade
+vetoes; the define recipe's `substantive-quality` scenario observes the retained review coverage.
+The bearer and concrete lifetime cost remain judgments.
 
 ## Source
 

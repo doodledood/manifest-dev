@@ -20,10 +20,10 @@ When no source file exists for a relevant source type, the general quality gates
 
 **Source Rigor**
 - **Source credibility** — Key findings backed by credible, identifiable sources, with authority assessed against the source type's own credibility hierarchy. Higher-stakes claims demand higher-authority sources within that type; when relying below the level the claim demands, flag it
-- **Cross-referencing** — Key claims corroborated across independent sources, depth proportional to claim importance. Independence means different organizations, methodologies, and data sources — not multiple citations of the same upstream source
+- **Evidential sufficiency** — Key claims have evidence adequate to their scope and stakes. A source-specific fact may rest on one authoritative source; contested or broader conclusions need the corroboration their uncertainty warrants. When corroboration is claimed, its sources are independent in the relevant organizations, methods or data, not repeated citations of one upstream source
 - **Evidence traceability** — Key claims traceable to specific sources; the chain from raw evidence to conclusion is walkable
 - **Source coverage** — Coverage verified across the source's retrieval mechanisms — single-pass queries risk missing relevant content
-- **External reputation assessment** — Source reputation assessed externally — what do independent parties say about this source? — not just by the source's own self-presentation
+- **External reputation assessment** — When a conclusion relies on a source's credibility beyond its authority to state its own contents, that credibility has external support rather than only the source's self-presentation
 - **Citation verification** — Cited sources verified to exist and actually support the claims attributed to them. AI agents fabricate citations; verification intensity should scale with topic obscurity and claim stakes
 - **Anti-cherry-picking** — Sources meeting inclusion criteria (relevant topic, adequate authority) never excluded solely because findings contradict the emerging narrative. Contradictory sources engaged — either by incorporating contrary evidence or documenting why the source's methodology is flawed
 
@@ -87,7 +87,7 @@ When no source file exists for a relevant source type, the general quality gates
 | Protocol deviation tracking | Departures from original research plan documented with rationale — pre-registration's value comes from making deviations visible, not preventing them |
 | Linchpin analysis | Claims whose failure would collapse most conclusions identified and targeted for strongest verification effort |
 | Outside view | Reference class identified — "how often do claims of this sort hold?" applied after initial conclusions to counter anchoring and base rate neglect |
-| Adversarial convergence | Adversarial findings descended in severity across waves — not merely absent. Final wave attacked from new angles. Conclusions became more accurate, not more hedged (bipolar check) |
+| Adversarial scrutiny | Material challenges are resolved or reflected honestly in the conclusions and their uncertainty. An initially sound result need not produce findings or a descending sequence of grades; confidence matches the evidence |
 
 ## Defaults
 

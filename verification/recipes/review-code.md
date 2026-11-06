@@ -76,6 +76,11 @@ Run: `scripts/drive-skill.sh review-code verification/prompts/review-code-diagno
 Proves: the same valid replacement does not discharge the explicitly commissioned diagnosis. The verdict is BLOCKED on missing historical evidence, with no invented cause or weakened user requirement.
 Check: read
 
+### source-authority-and-evidence
+Run: `scripts/drive-skill.sh review-code verification/prompts/acceptance/review-authority.md --scaffold verification/fixtures/acceptance-review`
+Proves: The intentional one-row full export violates its source contract despite its comment. Its mocked test does not establish production behavior despite the unit-only pattern. The deliberately limited preview and its adequate real unit tests are acceptable without an integration-test mandate.
+Check: read
+
 ## Gotchas
 
 - Each prompt builds its own scratch repository state: a commit on a branch ahead of its default branch.

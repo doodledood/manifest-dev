@@ -115,6 +115,21 @@ Run: `scripts/drive-skill.sh define verification/prompts/journeys-todays-gates-e
 Proves: which of the five seeded defects the gates `/define` wrote for `d29`'s feature before the journeys gate existed — its end-to-end drive and its review-design gate, quoted as written except that the place Person A adds is one the trip does not already hold, so that step can fail — name, beside `journeys-gate-on-the-seeded-app` on the same app. It is the comparison arm, so either verdict is a result; the first comparison is in `docs/adr/20261102-features-a-person-uses-are-driven-through-their-journeys.md`.
 Check: read
 
+### substantive-quality
+Run: `scripts/drive-skill.sh define verification/prompts/acceptance/define-quality.md`
+Proves: both Manifests keep broad applicable quality review and concrete correctness, maintenance and evidence claims. The ordinary one does not turn grades into default acceptance ends. The strict one preserves the deliberately required no-Medium test-quality assessment as hard. Neither changes the ready-PR delivery boundary.
+Check: read
+
+### source-specific-research
+Run: `scripts/drive-skill.sh define verification/prompts/acceptance/define-research.md`
+Proves: evidence suffices for the source-specific claim without a compulsory second independent source or external reputation check of the specification's authority to state its own content. Broad research quality remains; an initially sound answer need not manufacture findings or descending grades across review rounds.
+Check: read
+
+### coverage-without-new-ends
+Run: `scripts/drive-skill.sh define verification/prompts/acceptance/amend-coverage.md --scaffold verification/fixtures/acceptance-contract`
+Proves: The universal exact-field claim keeps its scope and identity; the missed empty-label case repairs the inadequate Evidence. The design reversal adds no redundant acceptance end. The 200 ms working claim, explicit delivery boundary and independent approval remain intact.
+Check: read
+
 ## Gotchas
 
 - Eval prompts ask for `./manifest.md` in the working directory, so a drive of an eval case finds the Manifest in the scratch project, not the home directory.

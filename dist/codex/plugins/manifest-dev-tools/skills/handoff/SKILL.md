@@ -14,7 +14,14 @@ choices, retained decisions, and any accepted artifact/version. Preserve current
 and wait conditions with the route to resume. The handoff grants no more authority than its
 caller holds; a proposal for later work remains a proposal.
 
-Reference other artifacts (PRDs, manifests, ADRs, issues, PRs, commits, diffs) by path or URL — don't restate their content.
+Carry the current acceptance claims, hard requirements and working revision freedom, plus
+material review dispositions with their evidence and what would reopen them. Include unfinished
+mandatory work and evidence that needs refreshing, not just a prior verdict.
+
+Prefer references to the correct artifact/version when the receiving session can access them.
+When it cannot, carry the essential contract and continuation state in the payload, naming the
+unavailable source and any evidence limit. A local path alone is not a cross-host handoff; avoid
+copying unrelated history or duplicating content the receiver can already read.
 
 Name the skills the next agent should invoke when the work ahead maps to them — the receiver may not know the toolbox it's inheriting.
 

@@ -1,7 +1,7 @@
 # ADR: The Ticket's attempt record carries its Manifest, its progress and its run facts
 
 ## Status
-Accepted — amended by 20261019-the-comment-the-venue-created-first-decides-each-ticket-fact: where two comments carry one marker the first created decides, a record counts only when the automation identity created and last edited it, and each run fact has one writer
+Accepted — amended by 20261019-the-comment-the-venue-created-first-decides-each-ticket-fact: where two comments carry one marker the first created decides, a record counts only when the automation identity created and last edited it, and each run fact has one writer; amended by 20261106-review-evidence-serves-substantive-acceptance: progress also preserves first-look status, supported dispositions, evidence validity and mandatory work
 
 ## Area
 Ticketing
@@ -62,6 +62,10 @@ fresh runner stops resuming the recorded Manifest; `test_a_run_fact_counts_only_
 fails if a record counts without the automation identity as its writer, or a fact gains a second
 writer; `test_landing_and_the_attempt_record_each_have_one_owner` fails if the record's format gains
 a second home.
+
+The 20261106-review-evidence-serves-substantive-acceptance amendment retargets
+`test_attempt_record_carries_the_manifest_progress_and_run_facts` to preserve assessed
+criteria, actual subject, full-look state, supported dispositions and unfinished mandatory work.
 
 ## Source
 - Session: figure-out on running unattended Ticket work with many agents at once (2026-10-18).

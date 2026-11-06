@@ -1,5 +1,13 @@
 # define eval suite
 
+**Review-acceptance change, 2026-11-06: all earlier measurements remain stale.** Default review
+claims now concern the supported result and useful life; reviewer grades are evidence unless
+an authorized source deliberately requires a threshold. The shared `no-invented-thresholds`
+rubric preserves both directions. The `d09` current-state rubric distinguishes required source
+authority from historical narration. Amendment and research defaults also changed. Focused
+native scenarios live in the define, do, review-code, run-ticket, ticket-up, write-goal, handoff
+and check-pr recipes; no full paid suite was run and these cases do not measure general uplift.
+
 **Contract change, 2026-11-05: all earlier measurements are stale.** The shared workflow now
 preserves hard requirements separately from revisable working claims and assesses Outcome
 directly. The affected define rubrics and seeded Manifests use that distinction; no full suite
@@ -466,9 +474,10 @@ definition of done for an executor with no other context.
   test covers it.
 - `no-invented-thresholds.md`: looks for a number, budget, format, report, or sign-off in the
   gates that neither came from the request nor has an explicit, cited assumption with a value, rationale and impact. An invented target of
-  unknown reachability stays advisory even when recorded; a number the user requires still binds. A
+  unknown reachability stays advisory or explicitly revisable working; a number the user requires still binds. A
   convention the stated stack already fixes, such as a standard HTTP status code, is fine. This is the too-tight half that `gates-are-settleable` cannot see: an invented bar is
-  still settleable. It skips checks that review the change itself, which `define` adds by design.
+  still settleable. Ordinary quality assessment remains appropriate, but a generic reviewer-grade
+  cutoff cannot silently replace substantive acceptance claims. Deliberate review policies remain required.
   Each copy embeds its case's request, since a grader reading the file cannot see the prompt, so
   the copies differ by case. Regenerate them if a prompt changes.
 

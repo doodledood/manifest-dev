@@ -13,8 +13,10 @@ mistake fails for every later contributor, with or without this workflow.
   original mistake (revert the fix and watch it fail); it checks structure rather than a count.
 - **Two routes:** an invariant the owner states may be locked on its first occurrence. An
   observed mistake needs a class behind it; "one-off: <why>" is a valid outcome.
-- **Intent first:** before locking a stated intent, check it against the project's decision
-  records and its current practice. A conflict is raised, not locked.
+- **Intent first:** before locking a stated intent, establish its source authority and check
+  it against the project's decision records and current requirements. Implementation comments
+  and repeated practice do not make an assumption binding. Correct an unsupported premise
+  rather than locking it; an unresolved source conflict is raised, not locked.
 - **Scope:** every lock declares its scope — production code only, a date cutoff, generated code
   excluded. Where hits inside that scope stay unfixed because fixing them is gigantic, the lock
   fails only when a change adds more. Noisy hits across the repository mean the scope or the rule is wrong, not that the hits
@@ -92,12 +94,15 @@ joins only as `../SKILL.md` → *What holds for every gate* says.
 
 Debt is what the run found and could not fix on its pull request: each gigantic item, as
 `../SKILL.md` → *What holds for every gate* defines it — lock hits, a reshape, a constraint to
-encode, harness friction other than run time, a drifting recipe or a check that runs and passes but
-is not fit to trust, whose fix is a project of its own — with why; new suppressions; and ask-first
+encode, harness friction other than run time, or a drifting recipe whose fix is a project of its
+own — with why; new suppressions; and ask-first
 recipes the change touched and did not run, and anything else that needs access, authority or a
 decision a person retains, naming what it needs; and an unrelated issue the project's own rules
 keep out of the pull request. A failing check across the whole tree, or one a gate rests on, whose
-fix is gigantic is a blocker, never debt. The other pre-existing issues the work met, and below-bar
+fix is gigantic is a blocker, never debt. A green but unfit check leaves any necessary proof it
+cannot supply unresolved; follow `VERIFICATION.md` → *do: building and keeping the verification harness*
+for an authorized alternative or blocker. A maintenance defect that leaves required evidence
+valid may still be debt under the rule above. The other pre-existing issues the work met, and below-bar
 findings, are fixed, applied or dismissed with a reason, never debt.
 
 - Record each item in the execution log as it is found.

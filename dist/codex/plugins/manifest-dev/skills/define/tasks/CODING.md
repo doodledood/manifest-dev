@@ -8,35 +8,35 @@ The project context file (the always-loaded instruction file the harness reads f
 
 ### Base Gates (always applicable)
 
-Each gate is a **dimension** of the `review-code` skill (one ref per dimension, loaded on demand), which owns the shared severity ladder. These task defaults choose the usual Medium+ acceptance bar; encode the chosen policy in the Manifest gate. Roles still control applicability and omission: only advisory dimensions are eligible for `/define`'s bearer-test omission valve (`define/SKILL.md` → *The omission valve*); defect-finding dimensions always encode.
+Each row names a quality to assess through a **dimension** of `review-code` (one reference per dimension, loaded on demand). Express the claim for the work's supported use and useful life. Roles control applicability and omission: only advisory dimensions are eligible for `/define`'s bearer-test omission valve (`define/SKILL.md` → *The omission valve*); defect-finding coverage always remains.
 
-| Aspect | Dimension | Threshold |
+| Aspect | Dimension | Quality owed |
 |--------|-----------|-----------|
-| Intent analysis | change-intent | no MEDIUM+ |
-| Mechanical bug detection | code-bugs | no MEDIUM+ |
-| Operational readiness | operational-readiness | no MEDIUM+ |
-| Maintainability | code-maintainability | no MEDIUM+ |
-| Simplicity | code-simplicity | no MEDIUM+ |
-| Test quality | test-quality | no MEDIUM+ |
-| Testability | code-testability | no MEDIUM+ |
-| Documentation | docs | no MEDIUM+ |
-| Design fitness | code-design | no MEDIUM+ |
-| Prose value | prose-value | no MEDIUM+ |
-| Context-file adherence | context-file-adherence | no MEDIUM+ |
+| Intent analysis | change-intent | The change fulfills the accepted purpose and obligations |
+| Mechanical bug detection | code-bugs | Supported inputs and reachable states produce correct behavior |
+| Operational readiness | operational-readiness | The change can be run, observed and recovered under its operating conditions |
+| Maintainability | code-maintainability | Expected maintenance does not incur unjustified coordination, hidden assumptions or change risk |
+| Simplicity | code-simplicity | Complexity has a present purpose proportionate to the burden it removes |
+| Test quality | test-quality | Checks distinguish required behavior from plausible wrong results using independent expectations |
+| Testability | code-testability | The real behavior can be exercised and observed at suitable boundaries |
+| Documentation | docs | Affected users and maintainers have accurate instructions they need |
+| Design fitness | code-design | Responsibilities and interfaces support current use and evidenced changes without disproportionate coupling |
+| Prose value | prose-value | Written material gives its intended reader useful information without obscuring it |
+| Context-file adherence | context-file-adherence | Applicable documented project obligations hold |
 
 ### Conditional Gates (when applicable)
 
-| Aspect | Dimension | Threshold | Condition |
+| Aspect | Dimension | Quality owed | Condition |
 |--------|-----------|-----------|-----------|
-| Contract correctness | contracts | no MEDIUM+ | When code calls external/internal APIs, changes public interfaces, crosses service boundaries, or changes durable data contracts (API/event payloads, database schema/table-field semantics, exports, analytics feeds) |
-| Type safety | type-safety | no MEDIUM+ | When using typed languages (TypeScript, Python with type hints, Java/Kotlin, Go, Rust, C#) |
+| Contract correctness | contracts | Producers and consumers satisfy their actual interface and data obligations | When code calls external/internal APIs, changes public interfaces, crosses service boundaries, or changes durable data contracts (API/event payloads, database schema/table-field semantics, exports, analytics feeds) |
+| Type safety | type-safety | Types and boundary checks preserve required guarantees without unchecked escape paths | When using typed languages (TypeScript, Python with type hints, Java/Kotlin, Go, Rust, C#) |
 
-**Encoding:** each dimension gate states the quality and chosen caller policy in its claim.
-Its Evidence activates `review-code` with the dimension and acceptance policy, as
-`define/SKILL.md` → *Specialized gates activate a skill* says. The table supplies the usual
-Medium+ policy; the claim states the chosen threshold explicitly.
+**Encoding:** claims state the relevant qualities, grounded in this work. Evidence activates
+`review-code` for each applicable dimension with the claims it assesses, as
+`define/SKILL.md` → *Specialized gates activate a skill* says. Coverage stays broad even when
+several dimensions share one claim. Preserve a deliberately required review policy with its source.
 
-**Kind:** every dimension gate is a **Judgment Gate** — a reviewer's verdict over an open finding space, not a command outcome — so each declares the judgment kind, which is what tells `/do` how the gate re-verifies. The defect-finding dimensions above run alongside the project's mechanical gates below (typecheck, lint, test, format), which are Deterministic Gates — and an overlay task file may add a defect-finding dimension, as `BUG.md` adds `defect-class`.
+**Kind:** these quality claims are **Judgment Gates**, assessed from concrete findings and evidence rather than a command outcome. The defect-finding dimensions run alongside the project's mechanical gates below (typecheck, lint, test, format), which are Deterministic Gates. An overlay may add a dimension, as `BUG.md` adds `defect-class`.
 
 ## Project Gates
 

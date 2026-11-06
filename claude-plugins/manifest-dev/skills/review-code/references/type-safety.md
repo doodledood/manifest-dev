@@ -40,9 +40,9 @@ Before reporting a type safety issue, it must pass ALL of these. If a finding fa
    - *Diff-based review* (default): Report type issues introduced or exposed by a consumer path this change adds or extends. Name that path; unrelated pre-existing type holes are out of scope.
    - *Explicit path review* (caller specified paths): Audit everything in scope. Pre-existing type issues are valid findings.
 2. **Worth the complexity** — Type-level gymnastics that hurt readability may not be worth it. Balance type safety gains against added complexity.
-3. **Matches codebase strictness** — If `strict` mode is off, don't demand strict-mode patterns. If `any` is used liberally elsewhere, flagging one more is low value.
+3. **Proportionate boundary** — Existing strictness and patterns inform the remedy, not whether a demonstrated type hole matters. Prefer a local type or boundary check that closes the concrete failure; demand no project-wide strictness migration merely for uniformity. Honor an explicit applicable project policy.
 4. **Provably enables bugs** — Identify the specific code path where the type hole causes a real problem. "This could theoretically be wrong" isn't a finding.
-5. **Author would adopt** — Would a reasonable author say "good catch, let me fix that type" or "that's over-engineering for our use case"? Report only where the former is likely.
+5. **Concrete benefit** — Name the required guarantee the change loses and how the proposed remedy restores it; an imagined author's willingness to accept the change is not evidence.
 
 ### Practical balance
 

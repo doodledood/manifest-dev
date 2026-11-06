@@ -8,13 +8,16 @@ The categories below are guidance, not exhaustive. If you spot a design fitness 
 
 ### 1. Use Existing / Don't Reinvent
 
-Code that manually implements what the framework, library, or existing codebase already provides. The concern is **awareness** — did the author know this capability exists?
+Code that manually implements what the framework, library, or existing codebase already provides. The concern is whether the design gains enough from doing so to justify its extra responsibility and failure surface.
 
 - **Framework provides it**: Rolling your own when a framework API, built-in, or standard library function handles the use case. The existing solution must fully address the need — if the author needs different behavior, it's not reinventing.
 - **Codebase already has it**: Reimplementing logic that existing shared utilities, helpers, or modules already provide. Point to the existing code.
 - **Established pattern exists**: Building a one-off approach when the codebase has a proven pattern for this exact situation. Point to where the pattern is used.
 
-Note: This is about **awareness** of what exists, not **consistency** with how others do it. If the author knows the pattern but chose a different approach, that's the code-maintainability dimension's consistency concern. If the author didn't know the capability existed, that's a design fitness issue.
+Assess the author's reason against the capability and actual need. Awareness alone neither
+justifies nor condemns the choice. A deliberate source requirement governs; an implementation
+preference supplies evidence. Report the concrete design cost here; mere consistency belongs
+to code-maintainability.
 
 ### 2. Code vs Configuration Boundary
 

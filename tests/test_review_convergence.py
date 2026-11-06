@@ -2,7 +2,8 @@
 
 Behavior drives exercise decisions; these locks prevent contradictory prompt owners.
 ADR: 20261105-review-severity-follows-consequence
-Also holds 20261105-repairs-track-the-accepted-promise.
+Also holds 20261105-repairs-track-the-accepted-promise and
+20261106-review-evidence-serves-substantive-acceptance.
 """
 
 from pathlib import Path
@@ -48,11 +49,18 @@ def test_severity_cannot_make_rarity_a_license_to_drop_wrong_behavior(
         assert "presentation-only" not in text.lower(), reference
 
 
-def test_task_files_cannot_recreate_the_retired_low_threshold(plugins: Path) -> None:
-    for name in ("CODING", "BUG", "PROMPTING"):
+def test_task_files_preserve_quality_without_default_grade_vetoes(
+    plugins: Path,
+) -> None:
+    for name in ("CODING", "BUG", "PROMPTING", "DOCUMENT", "WRITING", "UI"):
         text = skill(plugins, "define", f"tasks/{name}.md")
         assert "no LOW+" not in text
-        assert "no MEDIUM+" in text
+        assert "no MEDIUM+" not in text
+        assert "## Quality Gates" in text
+        if name == "BUG":
+            assert "CODING.md's **Encoding** and **Kind**" in text
+        else:
+            assert "Evidence" in text
 
 
 def test_repair_history_survives_finding_and_commit_identity_changes(
@@ -107,7 +115,7 @@ def test_nit_classification_does_not_encode_caller_optionality(
     docs = skill(plugins, "define", "references/DOCS-STYLE-REFERENCE.md")
     low_row = next(line for line in docs.splitlines() if line.startswith("| **LOW**"))
     assert "serial commas" in low_row
-    executor = skill(plugins, "do")
+    executor = " ".join(skill(plugins, "do").split())
     assert "Manifest's chosen severities, categories and acceptance" in executor
     assert "before applying that policy" in executor
     assert "Shared review gates pass" not in executor
@@ -143,11 +151,12 @@ def test_caller_owns_gate_and_handling_without_changing_severity(plugins: Path) 
     builder = " ".join(skill(plugins, "define").split())
     assert "The skill owns classification; the Manifest owns what fails" in builder
     coding = skill(plugins, "define", "tasks/CODING.md")
-    assert "the claim states the chosen threshold explicitly" in coding
+    assert "Preserve a deliberately required review policy with its source" in coding
+    assert "Coverage stays broad even when" in coding
     assert "thresholds in the table above orient the author, not the gate" not in coding
     for task in ("PROMPTING", "DOCUMENT", "WRITING", "UI"):
         guidance = skill(plugins, "define", f"tasks/{task}.md")
-        assert "claim states the chosen acceptance policy" in guidance
+        assert "deliberately required policy" in guidance
         assert "rather than being copied into the gate" not in " ".join(
             guidance.split()
         )
@@ -156,3 +165,48 @@ def test_caller_owns_gate_and_handling_without_changing_severity(plugins: Path) 
     ).read_text()
     assert "Preserve Low findings retained by the caller's chosen policy" in holistic
     assert "consolidation does not impose its own severity cutoff" in holistic
+
+
+def test_findings_are_adjudicated_without_losing_real_obligations(
+    plugins: Path,
+) -> None:
+    executor = " ".join(skill(plugins, "do").split())
+    for boundary in (
+        "material uncertainty and necessary missing evidence remain unresolved",
+        "absence of a criterion is not a dismissal",
+        "amend it before treating it as settled",
+        "your disposition cannot clear it",
+        "new code, argument or evidence can reopen them",
+        "the bounded mandatory build work above is settled",
+    ):
+        assert boundary in executor, boundary
+    proof = " ".join(skill(plugins, "do", "references/VERIFICATION.md").split())
+    assert "passing exit code cannot establish a claim" in proof
+    assert "a gigantic repair does not turn missing proof into debt" in proof
+
+
+def test_recovery_and_exports_keep_acceptance_meaning(plugins: Path) -> None:
+    recovery = " ".join(
+        skill(plugins, "ticket-up", "references/AUTOMATED_EXECUTION.md").split()
+    )
+    assert "new session alone does not stale evidence" in recovery
+    assert "current claims and the actual subject" in recovery
+    assert "bounded mandatory work must all be settled before done" in recovery
+    tools = plugins / "manifest-dev-tools/skills"
+    handoff = " ".join((tools / "handoff/SKILL.md").read_text().split())
+    assert "when the receiving session can access them" in handoff
+    assert "essential contract and continuation state" in handoff
+    review = " ".join((tools / "review-pr/SKILL.md").read_text().split())
+    assert "a publication filter alone cannot clear a failure" in review
+    assert "A finding omitted from publication" in review
+
+
+def test_amendment_repairs_the_fault_in_claim_or_evidence(plugins: Path) -> None:
+    builder = " ".join(skill(plugins, "define").split())
+    assert "inadequate evidence method or an evaluation that missed evidence" in builder
+    assert "add a criterion only for an uncovered result" in builder
+    assert "An amendment that changes a decision produces a gate" not in builder
+    research = skill(plugins, "define", "tasks/research/RESEARCH.md")
+    assert "source-specific fact may rest on one authoritative source" in research
+    assert "initially sound result need not produce findings" in research
+    assert "findings descended in severity across waves" not in research

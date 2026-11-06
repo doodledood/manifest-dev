@@ -10,7 +10,7 @@ Audit a change along **one** review dimension and report findings. Load only tha
 
 ## Input
 
-`$ARGUMENTS` carries the **dimension** plus optional scope, e.g. `dimension=code-bugs` or `code-bugs src/foo.ts`. A caller requesting a gate verdict also supplies its acceptance policy: which severities or categories count as failure. A Manifest gate names that policy and the dimension under `/do`'s selected evaluator. If no dimension is given, list the available dimensions and ask which one — one invocation, one dimension.
+`$ARGUMENTS` carries the **dimension** plus optional scope, e.g. `dimension=code-bugs` or `code-bugs src/foo.ts`. A caller requesting a gate verdict also supplies the claims to assess and any deliberately required severity, category or approval policy. A Manifest gate carries its claim and source authority; its Evidence names the dimension. If no dimension is given, list the available dimensions and ask which one — one invocation, one dimension.
 
 ## Dimensions and thresholds
 
@@ -40,11 +40,13 @@ Roles define what to look for. **Defect-finders** report divergences, defects, c
 ## Determining scope (shared across dimensions)
 
 For a requested follow-up, the caller supplies the prior assessed state and criteria, findings,
-verified repairs, and changes since that evaluation; use what applies. Report outstanding findings
+supported dispositions, verified repairs, and changes since that evaluation; use what applies. Report outstanding findings
 and failures introduced or exposed by the intervening changes, with evidence for which prior
 findings are repaired. Read context as widely as needed; an old issue on a touched line is not
 new merely because the line changed. If the needed prior state is missing, recover it or report
-BLOCKED with what is missing, rather than silently reviewing the complete change again.
+BLOCKED with what is missing, rather than silently reviewing the complete change again. A new ID
+or repeated assertion does not reopen an evidenced disposition; changed code, argument or evidence
+can. Assess its support independently rather than requiring agreement with a previous reviewer.
 
 For a fresh review — including a new standalone review when an earlier report exists — resolve its scope as follows:
 
@@ -52,7 +54,7 @@ For a fresh review — including a new standalone review when an earlier report 
 2. **Otherwise** → review the complete change. Resolve the comparison base from the PR target or the repository's remote default branch; ask only if neither can be established. Inspect committed changes with `git diff <base>...HEAD`, staged changes with `git diff --cached`, unstaged changes with `git diff`, and relevant new files from `git ls-files --others --exclude-standard`. Read each new file's contents; a path listing alone is not its diff.
 3. **Empty / non-reviewable diff** → ask the caller to clarify scope.
 
-Stay within scope — never audit the whole project unless explicitly asked. Skip generated files (`*.generated.*`, `generated/`, `dist/`, `build/`), lock files, vendored deps (`vendor/`, `node_modules/`, `third_party/`), and binaries.
+Stay within scope — never audit the whole project unless explicitly asked. Skip generated copies, lock files, vendored dependencies and binaries. Establish which files are generated from the repository's ownership or build rules; a directory named `dist/` or `build/` may also contain source-owned files that need review.
 
 **Reading scope ≠ reporting scope.** The diff bounds what you *report* (defaults: only issues introduced or exposed by the change). It does not bound what you *read* — trace mechanisms wherever they lead (existing callers, shared state, upstream writers) so boundary issues between changed and unchanged code stay visible. Read widely; report narrowly. Within the resolved scope, examine every file against every category the loaded reference lists — do not cut corners or skip areas — and report only the findings that clear its bar for reporting (its actionability filter, or for defect-class its acceptance rules).
 
@@ -71,13 +73,21 @@ Grade by consequence, not confidence or frequency. Dimension examples apply this
 
 ## Caller policy
 
-The Manifest or another caller chooses which severities and categories to address and which
-findings fail a gate. No Medium-or-higher findings is a usual gate only when that caller chooses
-it. The same Low may fail a caller's Low-inclusive gate and pass a different caller's Medium+
-gate without changing severity. Choosing to address a Low does not raise its severity. Report classifications without a verdict when no gate is
-requested. If a verdict is requested without an acceptance policy, ask for it or report BLOCKED;
-do not invent a threshold. Batching, repair scope and decisions to leave findings belong to
-the caller.
+The Manifest or another caller owns acceptance. For a claim-based gate, a finding fails it when
+the evidence establishes a concrete violation of that claim or an applicable source obligation,
+including a material quality cost in the artifact's supported use or expected maintenance.
+Severity describes consequence; it does not substitute for that argument. A missing criterion
+does not erase the requested result or its source obligations: report the coverage gap as well.
+Do not turn an unsupported improvement preference into a new obligation.
+
+A deliberately supplied severity or category policy still applies. The same Low may fail a
+caller's Low-inclusive gate and pass a different caller's Medium+ gate without changing severity.
+Choosing to address a Low does not raise its severity. Report classifications without a verdict
+when no gate is requested. If a verdict is requested without an acceptance policy recoverable
+from claims or explicit handling instructions, ask for it or report BLOCKED; do not invent a
+threshold. Batching, repair scope and final finding dispositions belong to the caller. Its
+reasoned rejection is not a claim amendment; evidence that the current claim is wrong calls for
+amendment, while a real failure or necessary missing evidence remains unresolved.
 
 ## Report format (shared)
 
@@ -90,13 +100,14 @@ the caller.
 **Files analyzed**: [...]
 
 ## Prior findings (follow-ups only)
-- [prior finding]: repaired | unresolved — [evidence]
+- [prior finding]: repaired | rejected with support | unresolved — [evidence; new evidence that reopens it, if any]
 
 ## Findings
 ### Finding #1: [title]
 - **Location**: `file:line`
 - **Severity**: Critical | High | Medium | Low
 - **Description**: [what's wrong]
+- **Acceptance basis**: [the claim or source obligation contradicted, or the concrete quality cost; identify a proposed improvement as such]
 - **Trigger**: [the condition under which the defect manifests — the concrete input, state, or sequence that produces the failure, or for a static mismatch such as a contract or signature divergence, the call or consumer path that reaches it — required on defect-finder dimensions]
 - **Impact**: [what it breaks / why it matters — a Medium finding must name the concrete cost that earns that grade: the future change it makes harder, the reader or operator task it defeats, or the condition under which behavior degrades]
 - **Recommended fix**: [specific change]
@@ -115,9 +126,9 @@ An empty report is a valid, expected outcome. Do not invent findings to fill it.
 
 When invoked as a gate with the caller's acceptance policy, end with one verdict:
 
-- **PASS** — no classified finding fails the caller's acceptance policy.
-- **FAIL** — at least one classified finding fails that policy; the findings list is the fix hint.
-- **BLOCKED** — the dimension can't be evaluated yet (e.g., the change can't be located, a needed external doc is unreachable). Say what blocks it and what would unblock it.
+- **PASS** — the evidence supports the assessed claims under the caller's policy, with no unresolved contradictory finding or material uncertainty.
+- **FAIL** — evidence establishes a failure under that policy; name the defeated claim or explicitly required threshold. The findings are evidence for the caller to assess, not authority to add requirements.
+- **BLOCKED** — necessary evidence or authority is missing (e.g., the change can't be located, a needed external doc is unreachable). Say what remains unverified and what would settle it. An empty findings list alone does not prove the claim.
 
 ## Gotchas
 

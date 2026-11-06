@@ -40,11 +40,14 @@ For every unresolved thread we authored or replied to, invoke the `review-pr-thr
 
 It returns exactly one disposition, a short reason, and a drafted reply where the disposition calls for one. Act on it: `addressed-by-fix` → resolve the thread, posting the reply only if it drafted one; `addressed-by-valid-reply` → post its concession, then resolve; `false-positive-or-stale` → post its correction, then resolve; `needs-our-pushback` → post its reply on the existing thread and keep it pending; `still-pending` → leave the thread open and post nothing.
 
-**Caller policy.** In no-manifest mode, this caller chooses no Medium+ findings as its usual
-fleet acceptance gate and publishes Medium+ findings. An explicit invocation may choose other
-severities or categories, including Low. Pass the chosen acceptance and publication policies to
-each inspection and consolidation. Manifest mode uses the Manifest's chosen criteria instead.
-These handling decisions belong to this caller; severity classifies consequence.
+**Caller policy.** In no-manifest mode, assess whether the change fulfills its stated purpose
+and applicable obligations without demonstrated defects or material quality costs in its
+supported use and expected maintenance. Pass those claims to each inspection. Grades describe
+the evidence; they are not the default acceptance condition. Publication still selects Medium+
+findings by default. An explicit invocation may choose other acceptance or publication policies,
+including Low; pass both separately to inspection and consolidation. Manifest mode uses the
+Manifest's current claims and required policies instead. A finding omitted from publication
+does not thereby become resolved or cease to count against acceptance.
 
 **Reviewer fleet.** No-manifest mode only — skipped entirely in manifest mode (`references/MANIFEST_MODE.md`). Activate the `review-code` skill for each required dimension against the review range, retaining each dimension's findings and verdict even when the reviews share a context. Always-on dimensions: `change-intent`, `code-bugs`, `code-design`, `code-maintainability`, `code-simplicity`, `context-file-adherence`. Add when the diff fits: `type-safety` on typed code; `test-quality` and `code-testability` on source; `contracts` on API surfaces; `operational-readiness` on CI/infra/env/migrations/workers/queues/secrets; `docs` and `prose-value` on prose; `defect-class` when the reviewed range **fixes a defect** — it judges the repair's protection and affected-site accounting, so it has no input on a change that fixes nothing. Deciding that is yours: use the PR description, commits, and linked issues to establish whether a defect is being fixed. For prompts/skills/agents, add a run that activates the `review-prompt` skill the same way.
 
@@ -75,7 +78,14 @@ Target voice: *"Empty input skips the null check — `if (input?.value)` at `par
 
 **Posting.** When the holistic pass returns comments to post, submit a single GitHub PR review with decision `comment` — all comments batched atomically. In CI or non-interactive contexts, do not wait for approval.
 
-**Zero comments to post.** When the holistic pass returns nothing, every required dimension completed without BLOCKED, and all our existing threads reached terminal disposition, report clean. Otherwise report incomplete with the unresolved evaluation blockers; continue independent review work and do not offer approval. Only after a clean result, in interactive sessions, ask: `"Looks good to me. Post as approval on the PR?"`. Approve → submit decision `approve` with body `Looks good to me.`; decline → take no PR action. In CI or non-interactive contexts, take no approval action.
+**Zero comments to post.** Report clean only when the required assessments support acceptance,
+no supported failure or material uncertainty remains, every required dimension completed without
+BLOCKED, and all our existing threads reached terminal disposition. A holistic prune needs an
+evidenced disposition; a publication filter alone cannot clear a failure. Otherwise report the
+unresolved findings or evidence blockers, continue independent review work and do not offer
+approval. Only after a clean result, in interactive sessions, ask: `"Looks good to me. Post as
+approval on the PR?"`. Approve → submit decision `approve` with body `Looks good to me.`; decline
+→ take no PR action. In CI or non-interactive contexts, take no approval action.
 
 **Cycle summary.** Every one-shot pass ends with an operator-facing summary, whether it posted comments, resolved threads, asked for approval, or found nothing to do. Keep it compact but complete:
 

@@ -1,7 +1,7 @@
 # ADR: define writes every Manifest as current state, and reviews every amendment in a fresh context
 
 ## Status
-Accepted
+Accepted; amended by 20261106-review-evidence-serves-substantive-acceptance: amend the faulty claim or evidence method; a changed decision adds a criterion only for an uncovered result
 
 ## Area
 define
@@ -44,6 +44,10 @@ Every amendment gets the one fresh-context review that new Manifests get. Beside
 
 ## Enforced by
 partly — the define eval case `d09-amend-widen`'s `current-state` grader fails an amended Manifest that keeps a dated or "ruled" note or text about the replaced rule; whether the amendment review runs and settles its findings is judgment, checked by the `define` recipe's `current-state-amend` and `amend` scenarios.
+
+The 20261106-review-evidence-serves-substantive-acceptance amendment is also held by
+`tests/test_review_convergence.py` and the define recipe's `coverage-without-new-ends` scenario,
+which separates an insufficient claim from an insufficient evidence method.
 
 ## Source
 - Session: figure-out read and define run on 2026-10-25, from the user's reports of bloated Manifests
