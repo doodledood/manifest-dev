@@ -134,6 +134,10 @@ def test_babysit_ci_runs_one_tend_per_pr_and_stops_on_a_moved_head() -> None:
         text = _text(path)
         assert "Run one tend per PR at a time" in text, path
         assert "a concurrency group keyed to the PR" in text, path
+        # The advice is given at setup; a report repeats it only when runs overlap.
+        assert (
+            "in a report only when the run sees another tend overlap it" in text
+        ), path
         assert "When a push is rejected as not a fast-forward" in text, path
         assert "push nothing from the stale checkout" in text, path
         # The moved head ends a CI run on one of /do's terminal paths, pending, not an
