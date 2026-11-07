@@ -17,7 +17,7 @@ High-signal autonomous PR review posted under your account. A review you'd put y
 
 Every invocation, including non-`--loop`, performs one complete PR-state advance:
 
-1. **Advance our existing threads.** For every unresolved thread we authored or replied to, run the per-thread verification below. Post needed thread replies, resolve terminal threads, and leave genuinely pending threads open.
+1. **Advance our existing threads.** For every thread *Per-Thread Verification* covers, run that verification and act on its disposition. Post needed thread replies, resolve terminal threads, reopen a resolved one whose concern still stands, and leave genuinely pending threads open.
 2. **Verify the change.** **Manifest mode** (`--manifest`): load `references/MANIFEST_MODE.md` and follow it to verify the manifest contract against the PR head — the generic reviewer fleet is skipped entirely. **No-manifest mode:** run the generic reviewer fleet over the review range (*Review range*, below). In **both** modes, include the judgment pass (below) under its continuation rule.
 3. **Post outcomes.** Submit new surviving findings as a single GitHub review with decision `comment`. Thread replies are posted on their existing threads, not as new review comments. End with the cycle summary below.
 
@@ -31,9 +31,10 @@ The one unchanged-head skip is a `--loop` wake after that invocation's first pas
 
 ## Per-Thread Verification
 
-For every unresolved thread we authored or replied to, invoke the `review-pr-thread-verify` skill. Supply the evidence for that thread:
+This verification covers every unresolved thread we authored or replied to, and every thread opened by our finding that someone other than this account resolved — a resolution says nothing about whether the concern is gone, so it is verified like a reply. A resolved judgment-marked thread is recovered by *Judgment continuation* instead. For each, invoke the `review-pr-thread-verify` skill. Supply the evidence for that thread:
 
 - The original finding: anchor, body, review commit/head SHA, and concrete concern.
+- Whether the thread is resolved, and by whom.
 - Every author reply on this thread since our last message, plus every prior reply we posted on this thread.
 - Current code at the anchor, with nearby context, and any commits since the original review that touched the relevant range.
 - Full PR history: all comments, review threads, commit messages, current PR description, and our prior review/comment bodies.
@@ -41,7 +42,15 @@ For every unresolved thread we authored or replied to, invoke the `review-pr-thr
 - For a judgment thread, the relevant project direction and decisions, the prior recommendation and the evidence or accepted trade-off it rested on.
 - The voice profile below, for any reply it drafts.
 
-It returns exactly one disposition, a short reason, and a drafted reply where the disposition calls for one; for judgment, also the current recommendation and whether the discussion is settled. Preserve that assessment in the cycle summary even after resolving the thread. Act on it: `addressed-by-fix` → resolve the thread, posting the reply only if it drafted one; `addressed-by-valid-reply` → post its concession, then resolve; `false-positive-or-stale` → post its correction, then resolve; `needs-our-pushback` → post its reply on the existing thread and keep it pending; `still-pending` → leave the thread open and post nothing.
+It returns exactly one disposition, a short reason, and a drafted reply where the disposition calls for one; for judgment, also the current recommendation and whether the discussion is settled. Preserve that assessment in the cycle summary even after resolving the thread. Act on it:
+
+| Disposition | Unresolved thread | Thread someone else resolved |
+|---|---|---|
+| `addressed-by-fix` | Resolve it, posting the reply only if one was drafted. | Leave it resolved, posting the reply only if one was drafted. |
+| `addressed-by-valid-reply` | Post the concession, then resolve. | Post the concession; leave it resolved. |
+| `false-positive-or-stale` | Post the correction, then resolve. | Post the correction; leave it resolved. |
+| `needs-our-pushback` | Post the reply; keep it pending. | Reopen it, post the reply; keep it pending. |
+| `still-pending` | Leave it open; post nothing. | Not returned: a resolution with no fix and no conceding reply leaves the concern standing. |
 
 **Caller policy.** In no-manifest mode, assess whether the change fulfills its stated purpose
 and applicable obligations without demonstrated defects or material quality costs in its

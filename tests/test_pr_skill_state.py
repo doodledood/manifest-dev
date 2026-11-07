@@ -63,3 +63,27 @@ def test_review_range_has_one_owner_with_the_descent_check() -> None:
         text = _text(path)
         assert "`SKILL.md` → *Review range*" in text, path
         assert "no longer descends" not in text, path
+
+
+def test_a_thread_resolved_without_a_fix_is_verified_and_reopened() -> None:
+    """The author resolves our defect thread with no fix; the next pass must not read it addressed.
+
+    Only unresolved threads were verified, and consolidation pruned findings an existing thread
+    covered, so a resolved-but-unfixed thread dropped out of tracking and the PR read as
+    addressed.
+    """
+    for path in _copies("review-pr/SKILL.md"):
+        text = _text(path)
+        assert (
+            "every thread opened by our finding that someone other than this account resolved"
+            in text
+        ), path
+        assert (
+            "| Disposition | Unresolved thread | Thread someone else resolved |" in text
+        )
+        assert "Reopen it, post the reply; keep it pending." in text, path
+    for path in _copies("review-pr-thread-verify/SKILL.md"):
+        text = _text(path)
+        assert "whether the thread is resolved, and by whom" in text, path
+        assert "A resolution is not a fix" in text, path
+        assert "`still-pending` — The thread is unresolved" in text, path
