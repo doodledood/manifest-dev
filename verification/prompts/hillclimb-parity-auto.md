@@ -1,0 +1,1 @@
+/manifest-dev:auto Keep improving index.html, our main sign-up page, until nothing beats it — get more households to start a trial, especially couples who just moved in together and split bills in a spreadsheet.
