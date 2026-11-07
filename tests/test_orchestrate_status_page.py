@@ -115,11 +115,11 @@ def test_template_reads_every_field_the_reference_documents() -> None:
 
 def test_reference_documents_every_status_and_phase_the_template_knows() -> None:
     code = script()
-    statuses = set(re.findall(r"(\w+):", declared("TONE", code)))
+    statuses = set(re.findall(r'"?([\w-]+)"?:', declared("TONE", code)))
     phases = set(re.findall(r'\["(\w+)", "', declared("PHASES", code)))
     text = reference()
     status_table = text.split("### Statuses", 1)[1].split("###", 1)[0]
-    documented_statuses = set(re.findall(r"^\| `(\w+)` \|", status_table, re.M))
+    documented_statuses = set(re.findall(r"^\| `([\w-]+)` \|", status_table, re.M))
     assert statuses == documented_statuses
     assert all(f"`{p}`" in text for p in phases), phases
 
@@ -160,6 +160,15 @@ def validate(snapshot: dict[str, Any]) -> bool:
 
 def test_the_sample_snapshot_is_valid() -> None:
     assert validate(sample())
+
+
+def test_an_auto_ticket_waiting_for_its_landing_turn_has_a_status() -> None:
+    # A run marks an Auto Ticket ready and no run is live while it waits for its landing turn;
+    # with no status for that, the orchestrator had none to write and the page refused the snapshot.
+    snapshot = sample()
+    snapshot["tickets"][0]["status"] = "to-land"
+    snapshot["tickets"][0].pop("phase", None)
+    assert validate(snapshot)
 
 
 @pytest.mark.parametrize(

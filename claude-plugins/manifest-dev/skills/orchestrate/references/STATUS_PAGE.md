@@ -170,11 +170,12 @@ use their own types gives `type` only for these five.
 | `grant` | Grant Auto? | An agent wrote it, and in default mode it waits for the person to grant Auto. |
 | `proposal` | Your call | A structural refactor the orchestrator proposes, because one area keeps producing debt. |
 | `queued` | Up next | In the plan and ready, waiting for a free run slot. |
+| `to-land` | Waiting to land | It has Auto and its run marked it ready to land, and it waits for its landing turn (`../SKILL.md` → *Check in*), with no run live. |
 | `waiting` | After its open dependencies, or Up next | In the plan, waiting on the Tickets in its `dependsOn` or `after`. |
 | `skipped` | Left alone | In scope, but automation may not take it: for example, its author lacks write access, or a person is assigned. Say why in `note`. |
 | `proposed` | Proposed | In the next plan the orchestrator proposes, not yet approved. |
 
-While the state is `paused`, `queued` and `waiting` Tickets show as Paused, except the repair Ticket the `Paused:` line names.
+While the state is `paused`, `queued`, `to-land` and `waiting` Tickets show as Paused, except the repair Ticket the `Paused:` line names.
 
 ### What needs the person
 
