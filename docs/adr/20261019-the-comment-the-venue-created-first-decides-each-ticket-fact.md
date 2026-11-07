@@ -1,7 +1,7 @@
 # ADR: The comment the venue created first decides each Ticket fact
 
 ## Status
-Accepted
+Accepted; amended by 20261107-a-ready-mark-whose-orchestrator-stopped-is-adopted-not-relaunched: an orchestrator adopting a ready mark another orchestrator's timed-out run left is the mark's one other writer
 
 ## Area
 Ticketing
@@ -63,8 +63,9 @@ launcher and the run.
 ## Enforced by
 partly — `tests/test_ticket_automation_prompts.py` — `test_where_two_comments_carry_one_marker_the_comment_created_first_decides`
 fails if the rule loses its one home or a skill restates it, and
-`test_each_ticket_fact_keeps_one_writer` fails if the session, the ready mark or the start time
-gains a second writer; `verification/recipes/ticket-protocol-model.md` model-checks one attempt
+`test_each_ticket_fact_keeps_one_writer` fails if the session or the start time gains a second
+writer, or the ready mark a writer beyond the adopting orchestrator
+20261107-a-ready-mark-whose-orchestrator-stopped-is-adopted-not-relaunched names; `verification/recipes/ticket-protocol-model.md` model-checks one attempt
 record, pushes that build on the head and merges only at the recorded head, and
 `tests/test_ticket_protocol_model.py` fails when a sentence the model quotes leaves its file. Which
 marker kinds exist stays judgment.

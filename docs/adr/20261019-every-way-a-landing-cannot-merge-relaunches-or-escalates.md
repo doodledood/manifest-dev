@@ -1,7 +1,7 @@
 # ADR: Every way a landing cannot merge relaunches the run or escalates
 
 ## Status
-Accepted
+Accepted; amended by 20261107-a-ready-mark-whose-orchestrator-stopped-is-adopted-not-relaunched: a ready mark an orchestrator that stopped left is adopted for landing, not taken over and relaunched
 
 ## Area
 Ticketing

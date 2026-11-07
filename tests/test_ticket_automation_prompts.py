@@ -794,6 +794,11 @@ def test_each_ticket_fact_keeps_one_writer() -> None:
     )
     # A takeover restarts the timeout, so two orchestrators do not trade a Ticket.
     assert "A takeover writes a fresh start time" in orchestrate
+    # Holds docs/adr/20261107-a-ready-mark-whose-orchestrator-stopped-is-adopted-not-relaunched.md:
+    # the ready mark's only other writer is an orchestrator adopting it, which starts no run.
+    assert "The ready mark has one other writer: an orchestrator adopting it" in record
+    assert "and starts no run" in record
+    assert record.count("other writer") == 1
 
 
 # Holds the decision in docs/adr/20261019-every-way-a-landing-cannot-merge-relaunches-or-escalates.md.

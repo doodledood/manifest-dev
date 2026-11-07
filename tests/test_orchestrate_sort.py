@@ -10,6 +10,8 @@ stranded that way.
 check fails when one of them leaves the skill, so the transcription changes with the prose. The
 totality check then enumerates every consistent abstract state of an open Ticket and fails on any
 that fits no category, printing the states.
+
+Holds docs/adr/20261107-a-ready-mark-whose-orchestrator-stopped-is-adopted-not-relaunched.md.
 """
 
 import itertools
