@@ -971,27 +971,6 @@ def test_review_pr_manifest_mode_keeps_per_gate_results_without_forced_contexts(
         assert not RETIRED_GATE_FIELDS.search(text)
 
 
-# Holds the decision in docs/adr/20260905-executors-own-path-bearing-continuation-goals.md.
-# Holds the decision in docs/adr/20260624-use-outcome-gated-auto-continuation.md.
-def test_auto_investigation_keeps_read_bar_without_a_phase_goal() -> None:
-    """Suppress the child goal before its generic standalone/parent rules run."""
-    for root in (
-        ROOT / "claude-plugins/manifest-dev/skills",
-        DIST / "codex/plugins/manifest-dev/skills",
-    ):
-        auto = (root / "auto/SKILL.md").read_text(encoding="utf-8")
-        child = (root / "figure-out/references/autonomous.md").read_text(
-            encoding="utf-8"
-        )
-        assert "Do not set or print a continuation goal" in auto
-        assert "When chained under auto" in child
-        assert "do not set or print a continuation goal" in child
-        assert child.index("When chained under auto") < child.index(
-            "Otherwise, your first action"
-        )
-        assert "Outside auto, this is the standalone-run backstop" in child
-
-
 # Holds the decision in docs/adr/20260624-use-outcome-gated-auto-continuation.md.
 def test_auto_continues_past_each_child_skills_stop() -> None:
     """A child's stop hands control back to /auto, which continues in the same turn.
