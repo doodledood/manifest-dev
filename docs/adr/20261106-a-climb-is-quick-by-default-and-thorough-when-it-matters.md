@@ -1,7 +1,7 @@
 # ADR: A hill-climb is quick by default and thorough when the stakes call for it
 
 ## Status
-Accepted
+Accepted; narrowed by 20261107-climb-guidance-states-outcomes-and-rulings-not-steps: the quick and thorough rules live in define's `HILLCLIMB.md` alone, never in the command
 
 ## Area
 Task guidance
@@ -36,7 +36,7 @@ Doing none of it is not an option either. A climb on a measure nobody checked ca
 - Inferring the stakes from the request can misjudge them; the first lines are where the requester catches that.
 
 ## Enforced by
-`tests/test_hillclimb.py` (`test_a_climb_is_quick_by_default_and_autonomy_does_not_make_it_thorough`) fails when the define task file or the command drops the quick default, the rule that `--autonomous` alone does not make a climb thorough, or the quick climb's narrow asking. Whether a climb read its stakes well stays judgment, read in the first lines of the `hillclimb` recipe's `quick-text`, `thorough-number` and `signup-page` scenarios.
+`tests/test_hillclimb.py` (`test_a_climb_is_quick_by_default_and_autonomy_does_not_make_it_thorough`) fails when the define task file drops the quick default, the rule that running unattended alone does not make a climb thorough, stakes judged by use rather than revert-ease, or the quick climb's narrow asking. Whether a climb read its stakes well stays judgment, read in the first lines of the `hillclimb` recipe's `quick-text`, `thorough-number` and `signup-page` scenarios.
 
 ## Revisit when
 Requesters switch most quick climbs to thorough, or most thorough climbs to quick, after reading their first lines; read in the climbs' reports and execution logs.
