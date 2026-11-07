@@ -25,8 +25,8 @@ events within its bound. It is a maintainer check: nothing here ships.
 ### races
 Run: `verification/models/ticket-protocol/check.sh races`
 Proves: two orchestrators sharing the automation identity, a run that dies and a takeover after a
-timeout keep one attempt record, merge only the recorded head, and land or hand over every Ticket
-marked ready.
+timeout keep one attempt record, merge only the recorded head, land or hand over every Ticket
+marked ready, and adopt a ready mark only from a holder that stopped checking in.
 
 ### race-landing
 Run: `verification/models/ticket-protocol/check.sh race-landing`
@@ -52,8 +52,8 @@ at its source, and never claim one whose source cannot be read; the other proper
 
 ### stopped
 Run: `verification/models/ticket-protocol/check.sh stopped`
-Proves: when an orchestrator stops for good after its launch and its run's timeout passes, the
-other orchestrator adopts the ready mark that run left and lands the Ticket, or holds it for a
+Proves: when an orchestrator stops for good after its launch and the timeout passes with no check-in
+from it, the other orchestrator adopts the ready mark that run left and lands the Ticket, or holds it for a
 review only a person gives, and never launches a held pull request again.
 
 ### prefix
