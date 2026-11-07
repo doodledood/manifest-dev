@@ -36,7 +36,7 @@ inside the North Star's Purpose: the person keeps control of the choices they re
   is a marked comment on the tracking issue (`<!-- manifest-dev-orchestrate-pause: <cause> -->`,
   `<!-- manifest-dev-orchestrate-status-page -->`), under the first-created rule, which for the
   pause applies per cause, and automation never edits the tracking issue's body. In a file
-  store, an orchestrator adds, edits or removes only its own lines, one at a time.
+  store, an orchestrator adds, edits or removes only lines an orchestrator wrote, one at a time.
 - A repair Ticket's name is re-read after it is written into the pause. An orchestrator whose
   Ticket the pause does not name closes the one it created as a duplicate.
 - A person's answer recorded from the orchestrator's conversation is an answer record. That is

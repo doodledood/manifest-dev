@@ -919,7 +919,13 @@ def test_no_automation_write_replaces_a_persons_pause(root: Path) -> None:
     assert "<!-- manifest-dev-orchestrate-pause: <cause> -->" in github
     assert "<!-- manifest-dev-orchestrate-status-page -->" in github
     assert "Remove ended assignments from the active context pointers" not in github
-    assert "An orchestrator adds, edits or removes only its own lines" in files
+    # Any orchestrator lifts a pause whose cause is fixed, so the file store lets an orchestrator
+    # edit any orchestrator's line, never only its own, and never a person's.
+    assert (
+        "An orchestrator adds, edits or removes only lines an orchestrator wrote"
+        in files
+    )
+    assert "only its own lines" not in files
     assert "so its writes never replace a person's line" in convention
     for stale in (
         "Re-read the front item just before",
