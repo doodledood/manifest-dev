@@ -1453,3 +1453,17 @@ def test_run_ticket_reads_an_answer_record_as_the_persons_instruction(
         "it as the named person's instruction, as *The attempt record* there says."
         in run
     )
+
+
+# A custom tracker's reference was reused unchanged, though the mapping it was written from has
+# since gained rows: who set a grant, the orchestrator's pause and page link, the answer record.
+# Unattended runs on such a store then either treated every grant as unverifiable or skipped the
+# check, and pauses went back into the front item a person edits.
+@pytest.mark.parametrize("root", [SOURCE_SKILLS, DIST_SKILLS], ids=["source", "codex"])
+def test_a_reused_custom_reference_gains_the_rows_it_lacks(root: Path) -> None:
+    config = flat(ticket_ref(root, "STORE_CONFIG.md"))
+    assert "Where it lacks a row `GITHUB_STORE.md` maps" in config
+    assert (
+        "ask what supplies it and add that row before any unattended work on the store"
+        in (config)
+    )
