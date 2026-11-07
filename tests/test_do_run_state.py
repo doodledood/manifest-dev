@@ -210,7 +210,10 @@ def test_a_merged_pull_request_ends_the_run_without_escalation() -> None:
         assert "the merge is an event of the run, not its end" in text, path
     for path, text in flat("check-pr/SKILL.md"):
         assert (
-            "A merged PR is a terminal state of its own, not one to hand off" in text
+            "A merged PR is a terminal state of its own: report who merged it" in text
         ), path
+        # The state carries its own output example, as the closed-PR state does.
+        assert "Example merged-PR FAIL" in text, path
+        assert "not one to hand off" not in text, path
     for path, text in flat("define/references/BABYSIT_MODE.md"):
         assert "A PR a person merged mid-/do is no blocker either" in text, path
