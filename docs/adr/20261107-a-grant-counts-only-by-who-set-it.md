@@ -46,7 +46,11 @@ who counts did not match that.
   the automation identity set with no grant decided, such as a run's stray write, grants nothing.
   On GitHub who set the `auto` label is read from the issue's label events.
 - In a file store an `Auto: yes` line counts once it is on the target branch, which takes changes
-  only through someone with write access. A line in a change that has not landed grants nothing.
+  only through someone with write access. A line `ticket-up` wrote in this working copy during the
+  session, for the grantor it names, counts there too, as a Ticket that session authored passes
+  the author check there: `orchestrate --autonomous`'s grants to its debt Tickets and a person's
+  grant given in its conversation are written there and never land on their own. A line arriving
+  from another branch or an unmerged contribution grants nothing.
 
 ## Alternatives Considered
 - **Keep the label as the grant whoever applied it**: lets a triage collaborator or another app

@@ -1257,7 +1257,27 @@ def test_a_grant_counts_only_by_who_set_it(root: Path) -> None:
     assert "gh api --paginate repos/<owner>/<repo>/issues/<n>/events" in github
     assert "the `actor` of the last `labeled` event whose label is `auto`" in github
     assert "either an `auto` label that counts or an author with write access" in github
-    assert "a line in a change that has not landed grants nothing" in files
+    assert (
+        "A line arriving from another branch or an unmerged contribution grants nothing"
+        in files
+    )
+
+
+# A file store counted an `Auto: yes` line only on the target branch, with no same-working-copy
+# exception like the one its author-access row has. orchestrate --autonomous granting its debt
+# Tickets, and a person's grant relayed through ticket-up, are written in the working copy and never
+# land on their own, so they read as ungranted and autonomous file-store work stopped at ready pull
+# requests instead of landing.
+# Holds docs/adr/20261107-a-grant-counts-only-by-who-set-it.md.
+@pytest.mark.parametrize("root", [SOURCE_SKILLS, DIST_SKILLS], ids=["source", "codex"])
+def test_a_file_store_grant_ticket_up_wrote_here_counts_here(root: Path) -> None:
+    files = flat(ticket_ref(root, "FILE_STORE.md"))
+    assert (
+        "So does a line `ticket-up` wrote in this working copy during this session for the "
+        "grantor it names — `orchestrate --autonomous`, or a person granting in this "
+        "conversation — and it counts there only." in files
+    )
+    assert "a line in a change that has not landed grants nothing" not in files
 
 
 # orchestrate wrote a person's directive into each Ticket's body after a re-read. An edit replaces
