@@ -339,7 +339,11 @@ def test_a_persons_pause_stops_the_repair_ticket_on_the_page() -> None:
     assert row, "STATUS_PAGE.md no longer documents `repair`"
     assert "while no person's `Paused:` line holds the effort" in row.group(1)
     assert (
-        "Under a person's pause it stops like the rest, so leave it out" in row.group(1)
+        "no orchestrator's pause stands for a cause no code change can fix"
+        in row.group(1)
+    )
+    assert "Under either of those it stops like the rest, so leave it out" in row.group(
+        1
     )
     # Both kinds of pause present: the snapshot carries no `repair`, and the page shows Paused.
     ticket = {"id": "#9", "title": "Make the base check pass", "status": "queued"}

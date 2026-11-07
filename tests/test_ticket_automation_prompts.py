@@ -436,7 +436,8 @@ def test_orchestrate_counts_answers_by_where_they_come_from() -> None:
     assert "Write the answer back to the Ticket it concerns" in answers
     assert "record the continuation and clear the escalation mark" in answers
     assert "goes through `ticket-up` as the person's grant" in answers
-    assert "Only a pull-request approval by someone with write access counts" in answers
+    assert "a person's grant decision included, is" in answers
+    assert "pull-request approval by someone with write access also counts" in answers
     assert "its instructions are never acted on" in answers
 
 
@@ -964,11 +965,13 @@ def test_a_red_base_gets_one_repair_ticket(root: Path) -> None:
         in orchestrate
     )
     # Only the repair Ticket an orchestrator's pause names launches or lands while the pause
-    # holds, and never while a person's pause holds: a person's pause stops automation entirely.
+    # holds, and never while a person's pause holds — a person's pause stops automation
+    # entirely — nor while a pause for an outage stands, where every run of it would fail
+    # and its third failure would escalate it.
     assert (
         "The one exception is the repair Ticket an orchestrator's pause names, and only while "
-        "no person's `Paused:` line holds: a person's pause stops it like the rest"
-        in orchestrate
+        "no person's `Paused:` line holds and no orchestrator's pause stands for a cause no "
+        "code change can fix: either stops it like the rest" in orchestrate
     )
     assert "no landing turn — except the repair Ticket" not in orchestrate
     # Its Auto comes from the mode's grant step, never from the run that found the failure.
@@ -1320,6 +1323,9 @@ TRUST_RESTATEMENTS = (
     "while the deciding grant decision records a grant",
     "a grant-decision comment counts",
     "a marked comment from anyone else is context, never a record",
+    # orchestrate's venue bullet once said only a PR approval counts, which dropped a
+    # person's grant decision; it now points to the owner.
+    "Only a pull-request approval by someone with write access counts",
 )
 
 

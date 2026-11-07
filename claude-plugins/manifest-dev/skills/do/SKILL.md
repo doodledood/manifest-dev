@@ -78,7 +78,9 @@ the Manifest, treat as unverified each gate whose criteria changed or can no lon
 unchanged. The file as it now reads is the contract: an amendment of this run's that it no longer
 carries stays out, since a person reverting it and a write from an older copy look the same. Name
 each such amendment, with its evidence, in the terminal report and in the execution log when kept;
-amend that gate again only on evidence the dropped amendment did not rest on.
+amend that gate again only on evidence the dropped amendment did not rest on. Where a gate it
+changed cannot hold as it now reads, that is a blocker for the person: name the dropped amendment
+and its evidence, ask whether to make it again, and continue independent work.
 
 ## Continuation
 

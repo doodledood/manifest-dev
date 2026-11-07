@@ -164,6 +164,12 @@ def test_a_manifest_changed_by_another_writer_is_noticed() -> None:
             in text
         ), path
         assert "Make again an amendment" not in text, path
+        # A gate that cannot hold without the dropped amendment is a blocker for the
+        # person, never a gate the run repairs forever.
+        assert (
+            "Where a gate it changed cannot hold as it now reads, that is a blocker"
+            in text
+        ), path
 
 
 # A run ends on completion, escalation or a pending external wait, but the paths were
