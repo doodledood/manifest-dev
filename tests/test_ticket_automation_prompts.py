@@ -1376,3 +1376,40 @@ def test_an_orchestrators_pause_is_one_record_per_cause(root: Path) -> None:
         "An effort carries one orchestrator's pause per cause, and stays paused while any "
         "stands." in pauses
     )
+
+
+# Adoption was keyed to the run's timeout, four hours from its start, while a ready pull request held
+# for review routinely waits longer. A live orchestrator still checking in then had its held Ticket
+# adopted by another, its own landing turn stopped at Landing step 1, and ownership changed hands
+# every timeout. The timeout now stands for the holder's absence: the holder refreshes the start
+# time while it checks in. verification/models/ticket-protocol checks it as
+# AdoptsOnlyFromAStoppedHolder.
+# Holds docs/adr/20261107-a-ready-mark-whose-orchestrator-stopped-is-adopted-not-relaunched.md.
+@pytest.mark.parametrize("root", [SOURCE_SKILLS, DIST_SKILLS], ids=["source", "codex"])
+def test_a_held_ticket_is_adopted_only_once_its_holder_stops_checking_in(
+    root: Path,
+) -> None:
+    record = flat(section(automation_text(root), "The attempt record"))
+    checkin = flat(section(orchestrate_text(root), "Check in"))
+    sort = flat(section(orchestrate_text(root), "Start"))
+    autonomous = flat(orchestrate_text(root, "AUTONOMOUS.md"))
+    assert "That timeout stands for the holder's absence, not the run's age" in record
+    assert (
+        "rewrites the start time in its run facts at a check-in once half the timeout has "
+        "passed since it" in record
+    )
+    assert (
+        "On each Ticket you hold ready to land, Auto or not, refresh the start time"
+        in checkin
+    )
+    assert (
+        "one still checking in refreshes the start time on a Ticket it holds ready to land"
+        in sort
+    )
+    assert (
+        "lands at a later orchestrator's landing turn once the person approves"
+        not in (autonomous)
+    )
+    assert "a new one adopts it no sooner than a run timeout after this check-in" in (
+        autonomous
+    )

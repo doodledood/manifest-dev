@@ -70,8 +70,9 @@ deferred Ticket, or after a title in the North Star's list of strategy choices i
    host reports its session alive and its timeout has not passed
    (`../ticket-up/references/AUTOMATED_EXECUTION.md` → *The attempt record*). A run that is not
    yours belongs to another orchestrator until its timeout has passed, live or not; leave its
-   Ticket alone until then. Once it has passed, that orchestrator has stopped, and its Ticket sorts
-   as below like one of yours (*Taking over*). Each Ticket takes the first category below whose
+   Ticket alone until then. Once it has passed, that orchestrator has stopped — one still checking
+   in refreshes the start time on a Ticket it holds ready to land (*Check in*) — and its Ticket
+   sorts as below like one of yours (*Taking over*). Each Ticket takes the first category below whose
    conditions hold, so it is in exactly one.
    - *Left alone*, each with its reason: a person is assigned; its author lacks write access and it
      has no Auto; it is escalated; another orchestrator's run holds it; a dependency is open and
@@ -166,7 +167,7 @@ Check in whenever a run or a landing turn ends, and otherwise every ten minutes 
 a Ticket in scope waits for a landing turn, or an effort in scope carries an orchestrator's pause,
 waiting in whatever way the host allows. At each check-in:
 
-1. **Re-read every Ticket in scope.** For an outcome assignment, also recover its compact coordination record and changed designated evidence as `references/OUTCOME.md` says.
+1. **Re-read every Ticket in scope.** For an outcome assignment, also recover its compact coordination record and changed designated evidence as `references/OUTCOME.md` says. On each Ticket you hold ready to land, Auto or not, refresh the start time as `../ticket-up/references/AUTOMATED_EXECUTION.md` → *The attempt record* says, so no other orchestrator adopts it while you check in.
 2. **Honor the pauses.** A person pauses an effort with a `Paused:` line on its front item. An
    orchestrator pauses it with an **orchestrator's pause**: a record naming the cause, the
    orchestrator that wrote it and any repair Ticket, kept where the venue reference puts it, apart

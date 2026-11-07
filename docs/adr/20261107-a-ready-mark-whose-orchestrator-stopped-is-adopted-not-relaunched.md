@@ -42,10 +42,18 @@ proceeds without the person supervising every step.
   mark exactly as it checks one of its own run's: the head is pinned, a moved base relaunches the
   run, and a held review keeps the Ticket held.
 - A *To recover* Ticket another orchestrator left is still taken over by its launch.
+- The timeout stands for the holder's absence, not the run's age. An orchestrator holding a
+  Ticket ready to land, Auto or not, rewrites the start time in its run facts at a check-in once
+  half the timeout has passed since it, so another orchestrator adopts the mark only once the
+  holder has stopped checking in.
 
 ## Alternatives Considered
 - **Take it over and relaunch, as before**: a relaunch of finished work, and of a held pull
   request a redispatch the waiting rule forbids; every later orchestrator would launch it again.
+- **Measure the timeout from the run's start alone**: a ready pull request held for review
+  routinely waits longer than a run timeout, so a live orchestrator's held Ticket was adopted by
+  another, its own landing turn then stopped at Landing step 1, and ownership changed hands every
+  timeout.
 - **Leave it to a person**: the work is finished and the landing procedure already checks it;
   sending it to a person adds a step nothing needs.
 - **Let any orchestrator land a mark it did not write without rewriting the run facts**: the
@@ -62,14 +70,17 @@ proceeds without the person supervising every step.
 
 ### Negative
 - The ready mark has two writers, so the one-writer rule now names an exception.
-- A held pull request waits a run timeout after its last takeover before a new orchestrator can
-  adopt it.
+- A held pull request waits a run timeout after its holder's last check-in before a new
+  orchestrator can adopt it.
+- The holder writes its run facts again about once every half timeout for each Ticket it holds.
 
 ## Enforced by
 `tests/test_orchestrate_sort.py` enumerates every abstract state of an open Ticket against
 orchestrate's sort, quoting each category, and fails on any state that fits none;
 `verification/recipes/ticket-protocol-model.md` → `stopped` model-checks that the adopted mark
-lands or stays held and that a held pull request is never relaunched (`HeldNotRedispatched`), and
+lands or stays held and that a held pull request is never relaunched (`HeldNotRedispatched`),
+`races`, `race-landing` and `stopped` check that a mark is adopted only from a holder that stopped
+(`AdoptsOnlyFromAStoppedHolder`), and
 `prefix` → `prefix-stranded` shows the old sort stranding it; `tests/test_ticket_protocol_model.py`
 fails when a sentence the model quotes for adoption leaves its file.
 

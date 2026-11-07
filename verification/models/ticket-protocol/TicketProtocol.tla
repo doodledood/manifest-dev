@@ -115,7 +115,7 @@ ToRecover == claim = "auto" /\ (~HasRec \/ ~ReadyValid \/ Reopened)
 Ready == claim = "none"
 
 \* Quote orchestrate/SKILL.md: "Read every Ticket in scope whole"
-\* Quote orchestrate/SKILL.md: "Once it has passed, that orchestrator has stopped, and its Ticket sorts as below like one of yours (*Taking over*)."
+\* Quote orchestrate/SKILL.md: "Once it has passed, that orchestrator has stopped — one still checking in refreshes the start time on a Ticket it holds ready to land (*Check in*) — and its Ticket sorts as below like one of yours (*Taking over*)."
 ORead(o) ==
   /\ opc[o] = "read" /\ ~LeftAlone(o) /\ ~Running
   /\ \/ ToLand(o) /\ Owner(o) /\ opc' = [opc EXCEPT ![o] = "land"] /\ UNCHANGED saw
@@ -363,8 +363,13 @@ WCrash == /\ Event("crash") /\ \E o \in Orchs : LiveRun(o) /\ rpc' = [rpc EXCEPT
           /\ UNCHANGED <<recs, claim, closed, autoClosed, landedNow, mark, prOpen, merged, red, review,
                          branch, base, nextC, opc, saw, lview, n, rbase, rlocal, rmerged, bad>>
 \* World: the recorded run's timeout passes; its orchestrator stops a run still going. Where the
-\* configuration lets an orchestrator stop, the timeout passes after it has stopped.
+\* configuration lets an orchestrator stop, the timeout passes after it has stopped. A Ticket held
+\* ready to land times out only once its holder has stopped, since the holder refreshes its start
+\* time at each check-in.
+\* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "That timeout stands for the holder's absence, not the run's age"
+\* Quote orchestrate/SKILL.md: "On each Ticket you hold ready to land, Auto or not, refresh the start time"
 WTimeout == /\ Event("timeout") /\ HasRec /\ ("ostop" \in Env => "ostop" \in used)
+            /\ ~(ReadyValid /\ opc[TheRec.run[1]] # "gone")
             /\ recs' = [recs EXCEPT ![1].timedOut = TRUE]
             /\ rpc' = [o \in Orchs |-> IF Named(o) /\ LiveRun(o) THEN "dead" ELSE rpc[o]]
             /\ UNCHANGED <<claim, closed, autoClosed, landedNow, mark, prOpen, merged, red, review,
@@ -439,6 +444,11 @@ LaunchedOnlyWhenMet == [][\A o \in Orchs : (opc[o] = "read" /\ opc'[o] = "claim"
 \* gives, within the model's bound.
 \* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "No Ticket keeps a landing turn while nothing works toward its landing."
 ReadyResolves == [](ReadyValid /\ ~closed => <>(closed \/ mark \/ claim = "person" \/ review))
+
+\* Property: an orchestrator adopts a ready mark only from a holder that has stopped, so a Ticket
+\* held ready to land never changes hands while its holder still checks in.
+\* Quote orchestrate/SKILL.md: "so no other orchestrator adopts it while you check in"
+AdoptsOnlyFromAStoppedHolder == [][\A o \in Orchs : (opc[o] = "adopt" /\ opc'[o] = "read") => opc[TheRec.run[1]] = "gone"]_vars
 
 \* Property: a ready pull request held only for a review a person gives is never launched again.
 \* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "A ready pull request or drafted answer uses its existing held state instead; it is never redispatched merely because acceptance has not arrived."

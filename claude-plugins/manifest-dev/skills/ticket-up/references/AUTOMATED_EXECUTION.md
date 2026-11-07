@@ -83,7 +83,11 @@ run reads an earlier run's mark as where the work stands. The ready mark has one
 orchestrator adopting it once the timeout of the run that wrote it has passed and no run is live.
 It writes a run ID of its own into the run facts and the mark, keeps the head and base commits the
 mark names and the launch count, and starts no run, so a ready pull request whose orchestrator
-stopped still lands under *Landing* and is never relaunched merely to change hands. A launcher writes only while no live run
+stopped still lands under *Landing* and is never relaunched merely to change hands. That timeout
+stands for the holder's absence, not the run's age: an orchestrator holding a Ticket ready to land,
+one it launched or adopted, rewrites the start time in its run facts at a check-in once half the
+timeout has passed since it, so another orchestrator adopts the mark only once the holder has
+stopped checking in. A launcher writes only while no live run
 holds the Ticket, and re-reads the Ticket after writing. A run re-reads the record before each write
 and each push, and stops without writing when the run ID there is not its own. A comment edit
 replaces the whole comment, so the last writer wins: a re-read narrows a race to the one write after
