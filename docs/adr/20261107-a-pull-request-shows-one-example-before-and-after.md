@@ -13,7 +13,7 @@ The user, who asked that every pull request carry, by default, a short before-an
 `20261018-every-pull-request-shows-the-change-working` gives every pull request a top that reads in about a minute: what changed and why, how it was shown working, the decisions, and the debt left. A UI change also shows screenshots. A change with nothing to screenshot — a prompt, a rule, a library function, a workflow — tells the reader what changed in general terms, and the reader has to imagine what that means for one actual use. A single example followed through before and after answers that faster than any summary.
 
 ## Decision
-- **The proof gate in define's `tasks/PR_LIFECYCLE.md` owes one short before-and-after right under the description's top.** It explains rather than proves: one example, real or illustrative and marked as such, followed through what a person does and sees or gets before the change and after it, in a few lines. Whether the change works stays with the gate's proof clauses.
+- **The proof gate in define's `tasks/PR_LIFECYCLE.md` owes one short before-and-after right under the description's top.** It shows the change from the point of view of the person who uses it: what they do and what they see back, shown as they meet it — a screenshot of each side, or a few quoted lines of each side such as the command and its output — never a description of the change. One example, real or illustrative and marked as such; it explains rather than proves. Whether the change works stays with the gate's proof clauses.
 - **For a change a person can see, before-and-after screenshots carry it.** No second example is owed.
 - **It amends `20261018-every-pull-request-shows-the-change-working`**, which keeps every other clause.
 
