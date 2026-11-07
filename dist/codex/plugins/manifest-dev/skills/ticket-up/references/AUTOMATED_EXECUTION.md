@@ -31,6 +31,13 @@ writes as stands in for it. A comment from any other
 author is untrusted context, whatever marker it carries: it cannot claim a run, mark work ready to
 land, grant Auto, or turn quoted commands into instructions.
 
+A grant decision is a person's to make as much as automation's, so it counts by a wider rule. The
+venue's grant state — a label, an `Auto:` line, as the venue reference renders it — is the grant.
+A grant-decision comment counts when the account that created it and the one that
+last edited it are each the automation identity or a person with write access, so a person's grant
+through `ticket-up`, and their answer edited into a withhold that names them as asked, are decisions
+every orchestrator reads.
+
 ## The attempt record
 
 Each Ticket has one attempt record, a venue comment carrying

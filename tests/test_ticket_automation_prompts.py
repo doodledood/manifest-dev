@@ -1147,3 +1147,20 @@ def test_a_persons_claim_is_never_written_as_the_automation_identity(
         "a person claims in their own name, never the automation identity's"
         in convention
     )
+
+
+# A person who grants Auto through ticket-up writes the grant-decision comment as themselves. Under
+# the automation-only trust rule that comment was untrusted, so an autonomous orchestrator saw no
+# decision and could record a withhold beside the person's standing grant.
+@pytest.mark.parametrize("root", [SOURCE_SKILLS, DIST_SKILLS], ids=["source", "codex"])
+def test_a_persons_grant_decision_counts(root: Path) -> None:
+    identity = flat(section(automation_text(root), "The automation identity"))
+    github = flat(ticket_ref(root, "GITHUB_STORE.md"))
+    assert "is the grant. A grant-decision comment counts" in identity
+    assert (
+        "A grant-decision comment counts when the account that created it and the one that "
+        "last edited it are each the automation identity or a person with write access"
+        in identity
+    )
+    assert "The label is the grant, and no label means ungranted." in github
+    assert "says which authors count" in github
