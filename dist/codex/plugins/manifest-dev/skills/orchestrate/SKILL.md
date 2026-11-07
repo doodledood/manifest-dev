@@ -64,8 +64,9 @@ deferred Ticket, or after a title in the North Star's list of strategy choices i
    as the venue reference says.
 4. **Take an orchestrator ID**, such as the start time and a short random suffix. Every run ID it
    writes starts with it, which is how it tells its own runs from another orchestrator's.
-5. **Read every Ticket in scope whole**, its records included, and sort it. Count a record only
-   when the automation identity wrote it. A run is **live** until it writes an outcome, while the
+5. **Read every Ticket in scope whole**, its records included, and sort it. Count its records and
+   grant decisions only by who wrote them (`../ticket-up/references/AUTOMATED_EXECUTION.md` → *The
+   automation identity*). A run is **live** until it writes an outcome, while the
    host reports its session alive and its timeout has not passed
    (`../ticket-up/references/AUTOMATED_EXECUTION.md` → *The attempt record*). A run that is not
    yours belongs to another orchestrator until its timeout has passed, live or not; leave its
