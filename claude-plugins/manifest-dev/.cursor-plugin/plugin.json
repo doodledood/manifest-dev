@@ -1,7 +1,7 @@
 {
   "name": "manifest-dev",
   "displayName": "Manifest Dev",
-  "version": "15.2.0",
+  "version": "15.2.1",
   "description": "Helps AI coding assistants turn a vague request into finished work you can trust. It makes sure the assistant understands the problem, writes down what done means as a list of checks, and only calls the work finished once every check passes. It also helps break big projects into tickets and review code, designs and writing.",
   "author": {
     "name": "doodledood",
