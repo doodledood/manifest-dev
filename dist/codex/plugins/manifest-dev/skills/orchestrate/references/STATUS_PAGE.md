@@ -148,6 +148,7 @@ item.
 | `from` | list of ids, optional | Tickets whose debt this one was written from. | The Ticket's source link. |
 | `kind` | `"debt"` or `"refactor"`, optional | A Ticket the orchestrator wrote from debt, or a structural refactor it proposes. | The Ticket's source link and how it was written. |
 | `grant` | string, `null` or `"never"`, optional | For a Ticket an agent wrote: who granted it Auto, the grant that lets automation take it end to end; `null` while no one has; `"never"` where the person explicitly retains direction, including a refactor proposal without delegated direction. | The grant line on the Ticket. |
+| `repair` | `true`, optional | Set on the repair Ticket an orchestrator's pause names: it runs and lands while the effort is paused, so it never shows as Paused. | The orchestrator's pause on the effort (`../SKILL.md` → *Check in*). |
 | `auto` | `false`, optional | Set on a Ticket in the plan that does not carry Auto: it runs to its retained decision or acceptance, which can concern a Read, another artifact or landing a pull request. | The Ticket's Auto grant. |
 
 An id in `dependsOn`, `after` or `from` that is not on the page draws no edge.
@@ -175,7 +176,7 @@ use their own types gives `type` only for these five.
 | `skipped` | Left alone | In scope, but automation may not take it: for example, its author lacks write access, or a person is assigned. Say why in `note`. |
 | `proposed` | Proposed | In the next plan the orchestrator proposes, not yet approved. |
 
-While the state is `paused`, `queued`, `to-land` and `waiting` Tickets show as Paused, except the repair Ticket an orchestrator's pause names.
+While the state is `paused`, `queued`, `to-land` and `waiting` Tickets show as Paused, except a Ticket carrying `repair`: the repair Ticket an orchestrator's pause names.
 
 ### What needs the person
 

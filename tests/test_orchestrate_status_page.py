@@ -285,3 +285,54 @@ def test_incomplete_or_unknown_outcome_state_is_refused(coordination: object) ->
     snapshot = sample()
     snapshot["coordination"] = coordination
     assert not validate(snapshot)
+
+
+def status_text(ticket: dict[str, Any], paused: bool) -> str:
+    """The template's own `statusText()`, run in Node on one Ticket of a paused or running effort."""
+    code = script()
+    tables = "\n".join(
+        re.search(rf"var {name} = .*?;\n", code, re.S).group(0)  # type: ignore[union-attr]
+        for name in ("PHASES", "LABEL")
+    )
+    start = code.index("  function statusText(")
+    end = code.index("  function aria(")
+    model = "true" if paused else "false"
+    program = (
+        tables
+        + "function time() { return 'T'; }\n"
+        + "function phaseIndex(p) { for (var i = 0; i < PHASES.length; i++) "
+        + "if (PHASES[i][0] === p) return i; return 0; }\n"
+        + code[start:end]
+        + "var t = JSON.parse(require('fs').readFileSync(0, 'utf8'));"
+        + f"var m = {{ paused: {model}, byId: {{}}, edgesOf: function () {{ return []; }} }};"
+        + "process.stdout.write(statusText(m, t));"
+    )
+    done = subprocess.run(
+        ["node", "-e", program],
+        input=json.dumps(ticket),
+        capture_output=True,
+        text=True,
+        timeout=30,
+        check=True,
+    )
+    return done.stdout
+
+
+# STATUS_PAGE.md exempted the repair Ticket from showing as Paused, but no snapshot field named it,
+# so the page showed the one Ticket that runs during a pause as Paused.
+@pytest.mark.parametrize("status", ["queued", "waiting", "to-land"])
+def test_the_repair_ticket_never_shows_as_paused(status: str) -> None:
+    ticket = {"id": "#9", "title": "Make the base check pass", "status": status}
+    assert status_text(ticket, paused=True) == "Paused"
+    assert status_text({**ticket, "repair": True}, paused=True) != "Paused"
+    assert status_text({**ticket, "repair": True}, paused=False) == status_text(
+        ticket, paused=False
+    )
+
+
+def test_a_repair_flag_is_valid_only_as_true() -> None:
+    snapshot = sample()
+    snapshot["tickets"][0]["repair"] = True
+    assert validate(snapshot)
+    snapshot["tickets"][0]["repair"] = "yes"
+    assert not validate(snapshot)

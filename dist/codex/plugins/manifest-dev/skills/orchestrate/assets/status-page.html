@@ -736,11 +736,11 @@ code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, mo
     if (t.status === "running") return PHASES[phaseIndex(t.phase)][1];
     if (t.status === "landed") return "Landed " + time(t.at);
     if (t.status === "waiting") {
-      if (m.paused) return "Paused";
+      if (m.paused && !t.repair) return "Paused";
       var open = m.edgesOf(t).map(function (e) { return e[0]; }).filter(function (id) { return m.byId[id].status !== "landed"; });
       return open.length ? "After " + open.join(", ") : "Up next";
     }
-    if ((t.status === "queued" || t.status === "to-land") && m.paused) return "Paused";
+    if ((t.status === "queued" || t.status === "to-land") && m.paused && !t.repair) return "Paused";
     return LABEL[t.status] || t.status;
   }
   function aria(m, t) { return t.id + ", " + t.title + ": " + statusText(m, t) + (m.ask[t.id] ? ", needs you (" + m.ask[t.id].n + ")" : ""); }
@@ -1680,6 +1680,7 @@ code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, mo
       });
       if (t.grant === "never") facts.push(el("li", { text: "A person decides this one: its direction is your call." }));
       else if ("grant" in t) facts.push(el("li", { text: t.grant ? "Automation may finish it, granted by " + t.grant + "." : "Automation may not finish it yet: no one has said it can." }));
+      if (t.repair) facts.push(el("li", { text: "It repairs what the effort is paused on, so it runs and lands during the pause." }));
       if (t.auto === false) facts.push(el("li", { text: "Completion waits for the retained decision or acceptance. See the recommendation and evidence above." }));
       if (facts.length) sec.appendChild(el("ul", { "class": "facts" }, facts));
       body.appendChild(sec);
@@ -1839,7 +1840,7 @@ code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, mo
       if (!optStr(t.summary) || !optStr(t.why) || !optStr(t.foundWhile) || !strings(t.done)) return false;
       if (t.change != null && (typeof t.change !== "object" || typeof t.change.before !== "string" || typeof t.change.after !== "string")) return false;
       if (t.type != null && !Object.prototype.hasOwnProperty.call(TYPE_NAME, t.type)) return false;
-      if ((t.phase != null && !oneOf(t.phase, PHASE_IDS)) || (t.kind != null && !oneOf(t.kind, KINDS)) || (t.auto != null && t.auto !== false)) return false;
+      if ((t.phase != null && !oneOf(t.phase, PHASE_IDS)) || (t.kind != null && !oneOf(t.kind, KINDS)) || (t.auto != null && t.auto !== false) || (t.repair != null && t.repair !== true)) return false;
       if (t.pr != null && (typeof t.pr !== "object" || typeof t.pr.id !== "string" || !optStr(t.pr.url))) return false;
       return strings(t.dependsOn) && strings(t.after) && strings(t.from);
     });
