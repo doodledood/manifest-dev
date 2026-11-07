@@ -18,7 +18,7 @@ ASD-STE100: short sentences, one topic in each sentence, and simple words with o
 5. When the question is about the project of the user, also read its Project Surfaces.
 6. When this skill does not give the answer or its reason, read the skill that owns that behavior.
 7. Find that skill in the folder next to this one: its `SKILL.md` and its `references/` folder.
-   A skill of the tools plugin is in the `skills/` folder of that plugin.
+   A skill of the `manifest-dev-tools` plugin is in the `skills/` folder of that plugin.
 8. Answer only the question.
 9. Give the reason for each part, not only what it is.
 10. When the answer comes from a file other than this skill, name that file.
