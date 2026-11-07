@@ -1049,7 +1049,35 @@ def test_trusted_feedback_resumes_the_same_ticket_without_counting_as_failure() 
     assert "the next run resumes ownership" in protocol
     assert "A trusted revision request continues the same Ticket" in run
     assert "or a trusted revision request is pending" in coordinator
-    assert "one for a trusted revision request" in coordinator
+    assert "for a launch a trusted revision request starts" in flat(
+        section(automation_text(SOURCE_SKILLS), "The attempt record")
+    )
+
+
+# The launch count had a formula in orchestrate and a definition in the attempt record that
+# disagreed: crash, crash, a run that delivered, then a landing repair counted 4 and escalated,
+# though the delivering run had ended the row. One rule now lives in the record, and the
+# launcher points to it.
+@pytest.mark.parametrize("root", [SOURCE_SKILLS, DIST_SKILLS], ids=["source", "codex"])
+def test_the_launch_count_has_one_rule(root: Path) -> None:
+    record = flat(section(automation_text(root), "The attempt record"))
+    launch = flat(section(orchestrate_text(root), "Launch"))
+    assert (
+        "when the last launch's run wrote an outcome without repairing a landing. Otherwise — "
+        "the last run ended without an outcome, or the last launch repaired a landing — it is "
+        "one more than the record shows." in record
+    )
+    assert "whether the launch repairs a landing" in record
+    assert "*The attempt record* defines both" in launch
+    for restated in ("one more than the record shows", "counting launches in a row"):
+        for name, text in (
+            ("orchestrate", flat(orchestrate_text(root))),
+            ("run-ticket", flat(skill_text(root, "run-ticket"))),
+            ("STATUS_PAGE.md", flat(orchestrate_text(root, "STATUS_PAGE.md"))),
+        ):
+            assert (
+                restated not in text
+            ), f"{name} restates the launch count: {restated!r}"
 
 
 # A Ticket automation closed and a person reopened must be takeable again: a claim kept across the

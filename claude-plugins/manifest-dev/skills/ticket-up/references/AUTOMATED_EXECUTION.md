@@ -40,7 +40,7 @@ adds a second one. It holds:
 | Part | Contents | Written by, and when |
 |---|---|---|
 | Branch | The canonical Ticket, its one stable branch, and the recovery purpose | The run, before substantial work |
-| Run facts | The run ID; the session that runs it, where the host names one; when it started; the launch count, counting launches in a row whose run ended without an outcome or that repaired a landing | The launcher — `orchestrate`, or `run-ticket` itself on a hand run — just before the run starts. Where the host names the session only once the run has started, the run records its own session on its first write instead |
+| Run facts | The run ID; the session that runs it, where the host names one; when it started; whether the launch repairs a landing; the launch count, defined below | The launcher — `orchestrate`, or `run-ticket` itself on a hand run — just before the run starts. Where the host names the session only once the run has started, the run records its own session on its first write instead |
 | | The base commit the Outcome and gates last passed against; whether it is ready to land, naming the head commit and the run ID that marked it, or the drafted answer for a Question Ticket, naming the same | The run, at each pushed checkpoint and when it finishes |
 | Assignment and authority | The assigned activity, current authority source and limits, retained decisions, and any accepted artifact/version; a wait carries its resolving condition and continuation | The run, from trusted applicable instructions at start, on steering and on resumption |
 | Progress | The step — `understand`, `define`, `build`, `verify` or `ready` — and the compact continuation state named below | The run, when its step changes and at each pushed checkpoint |
@@ -52,6 +52,13 @@ took their full look; findings, supported dispositions and verified repairs; the
 of each repair promise, attempts and outcomes across finding IDs; mandatory build work and its
 disposition; decisions, amendments and what remains. Keep this in the attempt record, not a
 second log the next runner cannot reach. A verdict or commit identifier alone is insufficient.
+
+The **launch count** is one for a Ticket's first launch, for a launch a trusted revision request
+starts (*Waiting and acceptance*), when an escalation mark was cleared since the last launch, and
+when the last launch's run wrote an outcome without repairing a landing. Otherwise — the last run
+ended without an outcome, or the last launch repaired a landing — it is one more than the record
+shows. A launch that delivers without a repair thus ends the row of failed launches and landing
+repairs; `orchestrate` → *Launch* says when that row sends the Ticket to a person.
 
 Each fact has one writer. The ready mark and the drafted answer name the run that wrote them, and
 count only while the run facts name that run; a mark that names no run counts as naming the run
