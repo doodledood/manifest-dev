@@ -56,7 +56,11 @@ second log the next runner cannot reach. A verdict or commit identifier alone is
 Each fact has one writer. The ready mark and the drafted answer name the run that wrote them, and
 count only while the run facts name that run; a mark that names no run counts as naming the run
 the run facts name. That binding decides sorting and landing: a relaunched
-run reads an earlier run's mark as where the work stands. A launcher writes only while no live run
+run reads an earlier run's mark as where the work stands. The ready mark has one other writer: an
+orchestrator adopting it once the timeout of the run that wrote it has passed and no run is live.
+It writes a run ID of its own into the run facts and the mark, keeps the head and base commits the
+mark names and the launch count, and starts no run, so a ready pull request whose orchestrator
+stopped still lands under *Landing* and is never relaunched merely to change hands. A launcher writes only while no live run
 holds the Ticket, and re-reads the Ticket after writing. A run re-reads the record before each write
 and each push, and stops without writing when the run ID there is not its own. A comment edit
 replaces the whole comment, so the last writer wins: a re-read narrows a race to the one write after
@@ -181,7 +185,7 @@ continues the same Ticket. When a trusted response asks for revision, re-read th
 While its run is live, keep the response as trusted Ticket context for that run to consume;
 the launcher does not replace the live run's fields. For a held result with no live run, the
 launcher may record the response with the version it concerns as pending continuation in the
-attempt's progress and invalidate the held marks and acceptance. This is the sole exception
+attempt's progress and invalidate the held marks and acceptance. This and an adoption (*The attempt record*) are the only exceptions
 to run ownership of those fields; the next run resumes ownership. Preserve the earlier
 draft and evidence, but withdraw its current drafted/ready mark and acceptance; it is now a
 prior version, not the current result. A revision request is new authorized work, not a failed

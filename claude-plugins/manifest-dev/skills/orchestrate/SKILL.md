@@ -69,8 +69,9 @@ deferred Ticket, or after a title in the North Star's list of strategy choices i
    host reports its session alive and its timeout has not passed
    (`../ticket-up/references/AUTOMATED_EXECUTION.md` → *The attempt record*). A run that is not
    yours belongs to another orchestrator until its timeout has passed, live or not; leave its
-   Ticket alone until then. Each Ticket takes the first category below whose conditions hold, so
-   it is in exactly one.
+   Ticket alone until then. Once it has passed, that orchestrator has stopped, and its Ticket sorts
+   as below like one of yours (*Taking over*). Each Ticket takes the first category below whose
+   conditions hold, so it is in exactly one.
    - *Left alone*, each with its reason: a person is assigned; its author lacks write access and it
      has no Auto; it is escalated; another orchestrator's run holds it; a dependency is open and
      not itself planned; it is deferred and its signpost reads as unmet; it is deferred and its
@@ -79,8 +80,9 @@ deferred Ticket, or after a title in the North Star's list of strategy choices i
      sort; sorting never edits its line. A Ticket whose open dependencies are all
      planned joins the plan behind them.
    - *Running*: its run facts name a live run.
-   - *To land*: its record is marked ready to land by a run of yours and no run is live, and the
-     Ticket was not reopened after its pull request merged. With Auto it waits for a
+   - *To land*: its record is marked ready to land by a run of yours, or by another orchestrator's
+     run whose timeout has passed, which you adopt before its landing turn (*Taking over*); no run
+     is live; and the Ticket was not reopened after its pull request merged. With Auto it waits for a
      landing turn; without Auto it waits on the person.
    - *Answered*: its record holds a drafted answer, no trusted revision is pending and no run is live. It waits on the person to
      accept it, and is never launched again meanwhile.
@@ -146,11 +148,15 @@ row fails, or a landing repair would take the launch count past three, the Ticke
 person instead: write the escalation record with the run IDs and sessions and what kept each from
 an outcome or a landing, apply the escalation mark, and release the claim.
 
+### Taking over
+
 A Ticket whose run facts name another orchestrator's run, once that run's timeout has passed,
 belongs to an orchestrator that has stopped. Take it over by writing a run ID of your own into its
-run facts, keeping the launch count, and treat it as yours from then on. A takeover writes a fresh
-start time, so its timeout runs from the takeover and another orchestrator does not take the Ticket
-straight back.
+run facts, and treat it as yours from then on: a Ticket to recover through its launch, and a Ticket
+to land by adopting its ready mark (`../ticket-up/references/AUTOMATED_EXECUTION.md` → *The attempt
+record*), which starts no run. Re-read the Ticket after an adoption, as *Launch* step 3 says. A
+takeover writes a fresh start time, so its timeout runs from the takeover and another orchestrator
+does not take the Ticket straight back.
 
 ## Check in
 
