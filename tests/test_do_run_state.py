@@ -128,3 +128,21 @@ def test_a_manifest_changed_by_another_writer_is_noticed() -> None:
             "make again any amendment of this run's that the file no longer carries"
             in (text)
         ), path
+
+
+# A run ends on completion, escalation or a pending external wait, but the paths were
+# named in three places and only `/done` and `/escalate` were handed the debt, so a run
+# that ended pending under a no-wait policy reported no debt. The paths now live in one
+# paragraph, every one of them carries the debt, and HARVEST.md hands the list to
+# whichever path the run ends on.
+def test_every_terminal_path_carries_the_debt() -> None:
+    for path, text in flat("do/SKILL.md"):
+        assert "**How a run ends.** A run ends on one of three paths" in text, path
+        assert "the debt `references/HARVEST.md` lists" in text, path
+        for lead in ("**Completion**", "**Escalation**", "**Pending**"):
+            assert lead in text, (path, lead)
+    for path, text in flat("do/references/HARVEST.md"):
+        assert (
+            "Carry the list into the run's report on whichever path it ends" in text
+        ), path
+        assert "a pending report names it the same way" in text, path
