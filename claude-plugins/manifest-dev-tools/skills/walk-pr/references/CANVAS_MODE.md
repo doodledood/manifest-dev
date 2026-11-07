@@ -47,7 +47,7 @@ Diffs live in a **dismissable side drawer** (backdrop click + Esc + visible ✕ 
 
 **One-shot, opened immediately.** Generate the full canvas once — every step, pin, blurb, and diff embedded — open it, and hand it to the reviewer. No preflight browser verification, screenshot pass, agent-side click-through, polish loop, or approval loop: the artifact optimizes time-to-first-review, and the reviewer is its first viewer. No mid-walk regeneration — local JS owns all pacing, and state (current step, answers, notes, open/closed panels) persists in localStorage across reloads under the artifact's own namespace.
 
-Chat stays empty during the walk. The agent re-engages only when the user pastes the **Copy my review** bundle — the consolidated pin answers and free notes with their anchors — which feeds the end-of-walk triage that SKILL.md owns. After posting, the artifact is disposable.
+Chat stays empty during the walk. The agent re-engages only when the user pastes the **Copy my review** bundle — the consolidated pin answers and free notes with their anchors, each pin the reviewer opened and left unanswered or never opened marked as such — which feeds the end-of-walk triage that SKILL.md owns. A pin so marked is a call the reviewer has not made yet, never an agreement: surface it in chat as a topic. After posting, the artifact is disposable.
 
 ## Failure handling
 

@@ -26,6 +26,8 @@
   - Keyboard: arrows/space/Enter advance, Esc closes layers — guarded against
     textarea/input focus, and space/Enter left to a focused button, summary or link so they
     press it.
+  - The bundle tells a pin answered apart from one opened but unanswered and one never opened
+    (the dots allow jumping past it), so an unseen call never reads as a captured answer.
   - Map scales to the viewport (vmin-based type, width capped by height×aspect).
   - Diff code is syntax-highlighted per line AFTER diff2html renders (language from the
     file extension); lines carrying word-level ins/del markers are left unhighlighted so
@@ -431,6 +433,7 @@ const getA=k=>localStorage.getItem(LS(k))||'';
 const hasA=k=>getA(k).trim().length>0;
 
 let sheetKey=null, sheetKind=null, autoOpenedFor=-1;
+const seen=pid=>localStorage.getItem(LS('seen.'+pid))==='1';
 
 function render(){
   const s=STEPS[cur];
@@ -482,7 +485,7 @@ document.addEventListener('keydown',e=>{
 // ---- sheet (shared by pins + elements + step captions) ----
 function openPin(pid){
   const p=pinById[pid];
-  sheetKey='pin.'+pid; sheetKind='pin';
+  sheetKey='pin.'+pid; sheetKind='pin'; localStorage.setItem(LS('seen.'+pid),'1');
   $('sh-emoji').textContent=p.emoji; $('sh-q').innerHTML=p.q;
   $('sh-take').style.display=''; $('sh-take').innerHTML='💡 <b>My take:</b> '+p.take;
   $('sh-whyd').style.display=''; $('sh-whysum').textContent='why? (tap)';
@@ -593,7 +596,7 @@ $('drawer-close').onclick=closeDrawer;
 // ---- end panel ----
 const strip=s=>s.replace(/<[^>]+>/g,'');
 function renderSummary(){
-  const pinRows=PINS.map(p=>`<div class="sumrow"><b>${p.emoji} ${p.id}</b> — ${getA('pin.'+p.id).trim()||'<i>(no answer)</i>'}</div>`);
+  const pinRows=PINS.map(p=>`<div class="sumrow"><b>${p.emoji} ${p.id}</b> — ${getA('pin.'+p.id).trim()||(seen(p.id)?'<i>(not answered)</i>':'<i>(not reached)</i>')}</div>`);
   const elRows=Object.entries(ELEMENTS).filter(([id])=>hasA('el.'+id)).map(([id,el])=>`<div class="sumrow"><b>💬 ${strip(el.name)}</b> — ${getA('el.'+id).trim()}</div>`)
     .concat(STEPS.map((s,i)=>hasA('step.'+i)?`<div class="sumrow"><b>💬 step ${i+1} (${s.badge||''})</b> — ${getA('step.'+i).trim()}</div>`:'').filter(Boolean));
   $('summary').innerHTML=pinRows.join('')+(elRows.length?'<div style="margin-top:10px;font-size:12px;color:#64748b">FREE NOTES</div>'+elRows.join(''):'');
@@ -601,9 +604,12 @@ function renderSummary(){
 $('endclose').onclick=()=>go(cur-1);
 $('copybundle').onclick=()=>{
   const lines=['# walk-pr review bundle — Acme Shop demo',''];
-  PINS.forEach(p=>lines.push(`- pin ${p.id} | ${p.anchor}\n  topic: ${strip(p.q)}\n  user: ${getA('pin.'+p.id).trim()||'(captured, no comment)'}`));
+  const pinLine=p=>`- pin ${p.id} | ${p.anchor}\n  topic: ${strip(p.q)}`;
+  PINS.filter(p=>hasA('pin.'+p.id)||seen(p.id)).forEach(p=>lines.push(`${pinLine(p)}\n  user: ${getA('pin.'+p.id).trim()||'(not answered)'}`));
   Object.entries(ELEMENTS).forEach(([id,el])=>{if(hasA('el.'+id))lines.push(`- note on ${strip(el.name)} | ${el.anchor}\n  user: ${getA('el.'+id).trim()}`)});
   STEPS.forEach((s,i)=>{if(hasA('step.'+i))lines.push(`- note on step ${i+1} (${s.badge||''}) | stage: ${strip(s.cap||s.badge||'')}\n  user: ${getA('step.'+i).trim()}`)});
+  const unreached=PINS.filter(p=>!hasA('pin.'+p.id)&&!seen(p.id));
+  if(unreached.length){lines.push('','## pins not reached (never opened)');unreached.forEach(p=>lines.push(pinLine(p)))}
   const text=lines.join('\n');
   const done=ok=>{$('copystatus').textContent=ok?' ✓ copied — paste in chat':' blocked — copy below';
    if(!ok){$('bundleout').textContent=text;$('bundleout').classList.remove('hidden')}};

@@ -100,6 +100,40 @@ await scenario("keys press a focused control", async (page) => {
   await atStep(page, "Agree then moves one step on", "5 / 13");
 });
 
+// Finding: the bundle marked pins the reviewer never saw as captured.
+await scenario("bundle marks unseen pins", async (page) => {
+  await jump(page, 3);
+  await settle(page);
+  await jump(page, 12);
+  await settle(page);
+  const summary = await page.textContent("#summary");
+  check("summary marks the opened pin unanswered", summary.includes("p3 — (not answered)"), summary);
+  check("summary marks an unopened pin not reached", summary.includes("p1 — (not reached)"), summary);
+  await page.click("#copybundle");
+  await page.waitForFunction(() => window.__copied !== null);
+  const bundle = await page.evaluate(() => window.__copied);
+  check("no pin reads as captured", !bundle.includes("captured"), bundle);
+  check(
+    "the opened pin is listed as not answered",
+    /pin p3 [^\n]*\n[^\n]*\n {2}user: \(not answered\)/.test(bundle),
+    bundle,
+  );
+  const [answered, unreached] = bundle.split("## pins not reached (never opened)");
+  check(
+    "unopened pins are listed apart, with no answer line",
+    unreached !== undefined &&
+      unreached.includes("pin p1") &&
+      unreached.includes("pin p2") &&
+      !unreached.includes("user:"),
+    bundle,
+  );
+  check(
+    "unopened pins are not among the answered",
+    !answered.includes("pin p1") && !answered.includes("pin p2"),
+    bundle,
+  );
+});
+
 await browser.close();
 if (failures.length) {
   console.error(failures.map((f) => `FAIL ${f}`).join("\n"));
