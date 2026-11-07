@@ -44,3 +44,22 @@ def test_babysit_resumes_the_manifest_its_journal_recorded() -> None:
         ), path
         assert "pass `--manifest` to keep a tended Manifest" in text, path
         assert "`/do` is the sole journal consumer" not in text, path
+
+
+def test_review_range_has_one_owner_with_the_descent_check() -> None:
+    """A one-shot pass after a force-push must not review `old-head..new-head`.
+
+    The one-shot rule used the prior review's head as the lower bound with no descent check,
+    while the loop reference fell back to the full diff when the head no longer descended:
+    after a rebase the one-shot range held commits outside the PR and missed rewritten ones.
+    """
+    for path in _copies("review-pr/SKILL.md"):
+        text = _text(path)
+        assert "**Review range.** The lower bound is the head our latest prior" in text
+        assert "has moved past the bound and still descends from it" in text, path
+        assert "no longer descends from the bound" in text, path
+        assert "last-reviewed-by-us..current-head" not in text, path
+    for path in _copies("review-pr/references/LOOP.md"):
+        text = _text(path)
+        assert "`SKILL.md` → *Review range*" in text, path
+        assert "no longer descends" not in text, path

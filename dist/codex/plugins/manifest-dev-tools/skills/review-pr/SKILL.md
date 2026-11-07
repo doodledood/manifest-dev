@@ -18,7 +18,7 @@ High-signal autonomous PR review posted under your account. A review you'd put y
 Every invocation, including non-`--loop`, performs one complete PR-state advance:
 
 1. **Advance our existing threads.** For every unresolved thread we authored or replied to, run the per-thread verification below. Post needed thread replies, resolve terminal threads, and leave genuinely pending threads open.
-2. **Verify the change.** **Manifest mode** (`--manifest`): load `references/MANIFEST_MODE.md` and follow it to verify the manifest contract against the PR head — the generic reviewer fleet is skipped entirely. **No-manifest mode:** run the generic reviewer fleet over the review range — determine that range from durable GitHub state: if we have a prior review on this PR and the head has moved since, use that review's commit/head SHA as the lower bound and review `last-reviewed-by-us..current-head`; otherwise review the full PR diff. Later `--loop` wakes use that invocation's checkpoint instead, per `references/LOOP.md`. In **both** modes, include the judgment pass (below) under its continuation rule.
+2. **Verify the change.** **Manifest mode** (`--manifest`): load `references/MANIFEST_MODE.md` and follow it to verify the manifest contract against the PR head — the generic reviewer fleet is skipped entirely. **No-manifest mode:** run the generic reviewer fleet over the review range (*Review range*, below). In **both** modes, include the judgment pass (below) under its continuation rule.
 3. **Post outcomes.** Submit new surviving findings as a single GitHub review with decision `comment`. Thread replies are posted on their existing threads, not as new review comments. End with the cycle summary below.
 
 Each invocation starts from GitHub state and the current checkout.
@@ -26,6 +26,8 @@ Each invocation starts from GitHub state and the current checkout.
 **An invocation always verifies the change.** Choosing to run review-pr again is the operator's call — often a risky change worth a second read, under a different model — so a fresh invocation reviews the head even when we already reviewed it and nothing has moved since. The review range is then the full PR diff, and the prune below is what keeps the pass to whatever it has new to add: a second read that simply concurs posts nothing.
 
 The one unchanged-head skip is a `--loop` wake after that invocation's first pass (`references/LOOP.md`): there nobody re-decided anything, and re-reviewing one commit on every wake is the nag the check exists to prevent.
+
+**Review range.** The lower bound is the head our latest prior review on this PR recorded in GitHub state; on a `--loop` wake after the invocation's first pass, it is the head of that invocation's latest checkpoint instead. Review `lower-bound..current-head` when the current head has moved past the bound and still descends from it. Otherwise review the full PR diff: with no prior review, at an unchanged head on a fresh invocation, and when a rebase or force-push left a head that no longer descends from the bound, since that range no longer describes the PR's change.
 
 ## Per-Thread Verification
 
