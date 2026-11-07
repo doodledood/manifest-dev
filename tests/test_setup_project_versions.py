@@ -165,6 +165,22 @@ def test_only_setup_project_writes_the_surfaces_version() -> None:
         )
 
 
+# Holds the same record's repair of a legacy section. figure-out writes its decline line directly
+# after the version line, so a legacy section holding only a version line and then declined again
+# holds both. Recognizing only a lone version line read that legacy number as a real version: the
+# run skipped seeding and attributed every older gap to the project.
+def test_a_declined_legacy_section_is_still_read_as_no_version() -> None:
+    text = (SKILLS / "setup-project" / "SKILL.md").read_text(encoding="utf-8")
+    assert re.search(
+        r"section holding nothing but a version line, with or without decline lines",
+        text,
+    ), (
+        "setup-project must read a project-surfaces section holding only a version line and "
+        "decline lines as left by a figure-out decline, since figure-out writes its decline line "
+        "beside the version line"
+    )
+
+
 NEWEST_VERSION_CASE = "45-current-setup-offers-nothing"
 
 
