@@ -65,6 +65,12 @@ def test_review_range_has_one_owner_with_the_descent_check() -> None:
         assert "has moved past the bound and still descends from it" in text, path
         assert "no longer descends from the bound" in text, path
         assert "last-reviewed-by-us..current-head" not in text, path
+        # A head that merged the base in still descends from the bound, and the range then
+        # reviewed the base's commits as the PR's.
+        assert (
+            "When the base branch was merged into the head since the bound" in text
+        ), path
+        assert "its diff now against its diff at the bound" in text, path
     for path in _copies("review-pr/references/LOOP.md"):
         text = _text(path)
         assert "`SKILL.md` → *Review range*" in text, path
