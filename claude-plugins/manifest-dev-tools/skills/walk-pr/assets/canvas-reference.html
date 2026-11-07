@@ -21,6 +21,8 @@
   - Diff drawer: dismissable via backdrop click, Esc, and a visible close button; never a
     full-screen overlay; per-file diffs render lazily on expand; diff2html dark retheme
     must not override code-line padding (its line-number gutter is absolutely positioned).
+  - Step dots and map pins keep separate classes: a dot sharing the map pins' class is
+    hidden by their style and caught by their click handler.
   - Keyboard: arrows/space/Enter advance, Esc closes layers — all guarded against
     textarea/input focus.
   - Map scales to the viewport (vmin-based type, width capped by height×aspect).
@@ -98,7 +100,7 @@ svg#edges path.on{stroke:#38bdf8;opacity:1;stroke-dasharray:9 7;animation:dash 1
 .dot{height:6px;border-radius:3px;flex:1;background:#1e293b;cursor:pointer;position:relative}
 .dot::after{content:'';position:absolute;left:0;right:0;top:-14px;bottom:-14px}
 .dot:hover{background:#334155}
-.dot.done{background:#155e75}.dot.cur{background:#38bdf8}.dot.pin{background:#78350f}.dot.pin.done{background:#f59e0b}.dot.pin.ans{background:#10b981}
+.dot.done{background:#155e75}.dot.cur{background:#38bdf8}.dot.pinstep{background:#78350f}.dot.pinstep.done{background:#f59e0b}.dot.pinstep.ans{background:#10b981}
 #stepnum{font-size:12px;color:#64748b;min-width:56px;text-align:center;font-variant-numeric:tabular-nums}
 .navbtn{background:#1e293b;color:#e2e8f0;border:0;border-radius:12px;padding:12px 22px;font-size:16px;font-weight:700;cursor:pointer}
 .navbtn.primary{background:#0369a1}.navbtn:hover{filter:brightness(1.25)}
@@ -422,7 +424,7 @@ const LS=k=>'walkpr-canvas-reference-v1.'+k;
 const $=id=>document.getElementById(id);
 let cur=parseInt(localStorage.getItem(LS('cur'))||'0'); if(isNaN(cur)||cur>=STEPS.length)cur=0;
 const dots=$('dots');
-STEPS.forEach((s,i)=>{const d=document.createElement('div');d.className='dot'+(s.pin?' pin':'');d.title=s.badge||'';d.onclick=()=>go(i);dots.appendChild(d)});
+STEPS.forEach((s,i)=>{const d=document.createElement('div');d.className='dot'+(s.pin?' pinstep':'');d.title=s.badge||'';d.onclick=()=>go(i);dots.appendChild(d)});
 const pinById=Object.fromEntries(PINS.map(p=>[p.id,p]));
 const getA=k=>localStorage.getItem(LS(k))||'';
 const hasA=k=>getA(k).trim().length>0;
