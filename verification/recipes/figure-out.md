@@ -35,7 +35,7 @@ Check: read
 
 ### from-v1
 Run: `scripts/drive-skill.sh figure-out verification/prompts/figure-out-from-v1.md --scaffold verification/scaffolds/project-at-v1`
-Proves: the reply offers the update and names only what v2 to v11 add, including the move to one harness, the North Star reshape and its *Purpose* opening with the end.
+Proves: the reply offers the update and names only what v2 to v14 add, including the move to one harness, the North Star reshape and its *Purpose* opening with the end.
 Check: read
 
 ### strategy-signpost
