@@ -180,7 +180,8 @@ waiting in whatever way the host allows. At each check-in:
      required check that fails the same way on the base, and two or more for another cause, such
      as a CI or venue that is down — whether a live run records it or a landing finds it, pause
      instead of escalating or repairing each Ticket on its own: write an orchestrator's pause
-     naming the cause and this orchestrator's ID, unless one already names that cause. A cause no
+     naming the cause and this orchestrator's ID, unless one already names that cause. An effort
+     carries one orchestrator's pause per cause, and stays paused while any stands. A cause no
      code change can fix, such as that outage, waits for the person: raise one item naming it on
      the list of what waits on the person.
    - **Repair.** A base check that a code change can fix gets one repair Ticket instead. Whenever an

@@ -30,11 +30,12 @@ inside the North Star's Purpose: the person keeps control of the choices they re
 - A person's pause stops everything in the effort, the repair Ticket an orchestrator's pause names
   included. That Ticket runs and lands during a pause only while no person's `Paused:` line
   holds, and the status page marks it as the repair Ticket only then.
-- An orchestrator's pause is its own record. It names the cause, the orchestrator and the repair
-  Ticket once one is named, and any orchestrator lifts it once the cause is fixed. The
-  status-page link is a record too. On GitHub each is a marked comment on the tracking issue
-  (`<!-- manifest-dev-orchestrate-pause -->`, `<!-- manifest-dev-orchestrate-status-page -->`),
-  under the first-created rule, and automation never edits the tracking issue's body. In a file
+- An orchestrator's pause is its own record, one per cause. It names the cause, the orchestrator
+  and the repair Ticket once one is named, and any orchestrator lifts it once that cause is fixed;
+  the effort stays paused while any stands. The status-page link is a record too. On GitHub each
+  is a marked comment on the tracking issue (`<!-- manifest-dev-orchestrate-pause: <cause> -->`,
+  `<!-- manifest-dev-orchestrate-status-page -->`), under the first-created rule, which for the
+  pause applies per cause, and automation never edits the tracking issue's body. In a file
   store, an orchestrator adds, edits or removes only its own lines, one at a time.
 - A repair Ticket's name is re-read after it is written into the pause. An orchestrator whose
   Ticket the pause does not name closes the one it created as a duplicate.
@@ -45,6 +46,10 @@ inside the North Star's Purpose: the person keeps control of the choices they re
   authority it states.
 
 ## Alternatives Considered
+- **One pause comment per effort, causes added to it**: two orchestrators adding causes at once
+  edit one comment and the last writer wins, so a cause is lost and the effort unpauses while it
+  persists; a second cause written as its own comment under one marker removed itself as not the
+  first.
 - **Let the repair Ticket run under any pause**: automation would launch and merge in an effort
   the person had stopped, the opposite of the person keeping the choices they retain.
 - **Keep the re-read before the edit**: the venue has no compare-and-set on a body, so the window
@@ -74,7 +79,9 @@ GitHub body edit returns. `test_the_pause_line_is_never_erased_and_one_cause_pau
 the old re-read claim comes back. `test_a_persons_answer_is_recorded_beside_the_ticket_body` fails
 if answers go back into a Ticket's body. `test_a_red_base_gets_one_repair_ticket` and
 `tests/test_orchestrate_status_page.py` → `test_a_persons_pause_stops_the_repair_ticket_on_the_page`
-fail if the repair Ticket's exception stops yielding to a person's pause. Whether two failures
+fail if the repair Ticket's exception stops yielding to a person's pause.
+`test_an_orchestrators_pause_is_one_record_per_cause` fails if a venue goes back to one pause
+record per effort. Whether two failures
 share a cause stays judgment.
 
 ## Source

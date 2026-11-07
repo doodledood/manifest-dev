@@ -916,7 +916,7 @@ def test_no_automation_write_replaces_a_persons_pause(root: Path) -> None:
     convention = flat(convention_text(root))
     orchestrate = flat(orchestrate_text(root))
     assert "Automation never edits this body" in github
-    assert "<!-- manifest-dev-orchestrate-pause -->" in github
+    assert "<!-- manifest-dev-orchestrate-pause: <cause> -->" in github
     assert "<!-- manifest-dev-orchestrate-status-page -->" in github
     assert "Remove ended assignments from the active context pointers" not in github
     assert "An orchestrator adds, edits or removes only its own lines" in files
@@ -1351,3 +1351,28 @@ def test_the_grant_and_record_trust_rule_has_one_owner(root: Path) -> None:
         "run-ticket",
     ):
         assert f"*{owner}*" in readers[name], f"{name} does not point to {owner}"
+
+
+# GitHub kept one orchestrator's pause comment per effort, and the first-created rule made a second
+# one remove itself, while orchestrate writes a pause per cause. A venue outage while a base check
+# was red was never recorded; when the check was fixed its comment was deleted and the effort
+# unpaused while the outage persisted. The pause's marker now carries its cause, so the
+# first-created rule applies per cause and the effort stays paused while any stands.
+# Holds docs/adr/20261107-automation-writes-beside-what-a-person-wrote-never-over-it.md.
+@pytest.mark.parametrize("root", [SOURCE_SKILLS, DIST_SKILLS], ids=["source", "codex"])
+def test_an_orchestrators_pause_is_one_record_per_cause(root: Path) -> None:
+    github = flat(ticket_ref(root, "GITHUB_STORE.md"))
+    files = flat(ticket_ref(root, "FILE_STORE.md"))
+    pauses = flat(section(orchestrate_text(root), "Check in"))
+    assert (
+        "One comment on the tracking issue per cause, carrying "
+        "`<!-- manifest-dev-orchestrate-pause: <cause> -->`" in github
+    )
+    assert "the effort stays paused while any stands" in github
+    assert "Where two carry the same marker, cause included" in github
+    assert "deleted when the pause lifts" not in github
+    assert "one `Paused:` line per cause naming the orchestrator's ID" in files
+    assert (
+        "An effort carries one orchestrator's pause per cause, and stays paused while any "
+        "stands." in pauses
+    )
