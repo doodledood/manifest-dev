@@ -61,6 +61,6 @@ Write the manifest where `SKILL.md` writes every Manifest, with the same fallbac
 ## Gotchas
 
 - **One-shot synthesis.** Does not poll or re-synthesize. Manifest written → /do takes over.
-- **Externally-closed PR mid-/do.** Detected at runtime by the selected evaluator activating the `check-pr` skill; FAIL with a hint naming the terminal state. /do treats as terminal; does not reopen; autonomous amendment to suppress is forbidden.
+- **Externally-closed PR mid-/do.** Detected at runtime by the selected evaluator activating the `check-pr` skill; FAIL with a hint naming the terminal state. /do treats as terminal; does not reopen; autonomous amendment to suppress is forbidden. A PR a person merged mid-/do is no blocker either: the merge settles the tending, and /do ends the run as `do/SKILL.md` → *How a run ends* says for work settled from outside, without escalation.
 - **PR description rewrites scoped to /do.** Babysit reads description for intent seeding but does not modify. /do's later sync hint handles description updates if the gate fires.
 - **No retroactive seeding.** Intent seeded once at synthesis. If PR description changes substantively, user invokes amendment to re-sync intent — not by re-running babysit.

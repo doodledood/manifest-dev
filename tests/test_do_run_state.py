@@ -137,7 +137,7 @@ def test_a_manifest_changed_by_another_writer_is_noticed() -> None:
 # whichever path the run ends on.
 def test_every_terminal_path_carries_the_debt() -> None:
     for path, text in flat("do/SKILL.md"):
-        assert "**How a run ends.** A run ends on one of three paths" in text, path
+        assert "**How a run ends.** A run ends on one of" in text, path
         assert "the debt `references/HARVEST.md` lists" in text, path
         for lead in ("**Completion**", "**Escalation**", "**Pending**"):
             assert lead in text, (path, lead)
@@ -146,3 +146,21 @@ def test_every_terminal_path_carries_the_debt() -> None:
             "Carry the list into the run's report on whichever path it ends" in text
         ), path
         assert "a pending report names it the same way" in text, path
+
+
+# A person merging the pull request a babysit Manifest tends failed check-pr's "exactly
+# one open PR" gate, and the closed-PR rule sent it to escalation, reporting an
+# intervention needed for work a person had already settled. A merge is its own terminal
+# state in check-pr and its own path in `/do`, carried into the goal's stop conditions so
+# a host backstop does not hold the run open on a contract that can no longer be met.
+def test_a_merged_pull_request_ends_the_run_without_escalation() -> None:
+    for path, text in flat("do/SKILL.md"):
+        assert "**Settled from outside**" in text, path
+        assert "Nothing waits on a person, so it is no escalation" in text, path
+        assert "or a person settling the work from outside" in text, path
+    for path, text in flat("check-pr/SKILL.md"):
+        assert (
+            "A merged PR is a terminal state of its own, not one to hand off" in text
+        ), path
+    for path, text in flat("define/references/BABYSIT_MODE.md"):
+        assert "A PR a person merged mid-/do is no blocker either" in text, path

@@ -98,7 +98,7 @@ The Manifest changes only through the skill that wrote it, never by direct edit.
 
 Record compact checkpoint notes as work proceeds: what changed, what was verified, what remains, blockers.
 
-Assume the user is AFK; make authorized decisions without asking questions. Surface blockers promptly and continue useful independent work. Stop after reporting completion, a blocker requiring a person when no useful independent work remains, or an external wait that this run's no-wait policy makes terminal. Continue while authorized, actionable work remains.
+Assume the user is AFK; make authorized decisions without asking questions. Surface blockers promptly and continue useful independent work. Stop after reporting completion, a blocker requiring a person when no useful independent work remains, an external wait that this run's no-wait policy makes terminal, or a person settling the work from outside, such as by merging its pull request. Continue while authorized, actionable work remains.
 ```
 
 ## Corrections, debt and the verification harness
@@ -225,7 +225,7 @@ owes none of this.
 When external review feedback arrives, directly or through `check-pr`, load
 `references/EXTERNAL_REVIEW.md` before acting on it.
 
-**How a run ends.** A run ends on one of three paths, and each one's report carries the decisions,
+**How a run ends.** A run ends on one of four paths, and each one's report carries the decisions,
 departures and amendments the sections above ask to be reported, the debt `references/HARVEST.md`
 lists, and the execution log's path when one is kept.
 
@@ -238,6 +238,9 @@ lists, and the execution log's path when one is kept.
   `escalate` with the Manifest path, the unresolved blockers and the evidence behind each.
 - **Pending** — only an external wait remains and this run's no-wait policy makes it terminal:
   report it yourself, naming each gate still open and what it waits on.
+- **Settled from outside** — a person settled what the Manifest owes, such as by merging the pull
+  request it tends: report that yourself, with who and when, what the run completed and the
+  evidence it holds. Nothing waits on a person, so it is no escalation.
 
 ## The execution log
 
