@@ -8,18 +8,42 @@ from html.parser import HTMLParser
 from pathlib import Path
 from typing import Any
 
+# Elements the HTML parser keeps in <head>; any other start tag, or non-whitespace
+# text, ends the head whether or not the source writes </head>.
+HEAD_CONTENT = {
+    "base",
+    "basefont",
+    "bgsound",
+    "link",
+    "meta",
+    "noframes",
+    "noscript",
+    "script",
+    "style",
+    "template",
+    "title",
+}
+
 
 class SourceHTML(HTMLParser):
-    """Source inventory without browser tree repair, CSS or JavaScript evaluation."""
+    """Source inventory without CSS or JavaScript evaluation.
+
+    Tree repair is limited to where <head> ends, the one repair that decides
+    whether later content counts at all.
+    """
 
     def __init__(self) -> None:
         super().__init__(convert_charrefs=True)
         self.elements: list[dict[str, Any]] = []
         self.stack: list[dict[str, Any]] = []
         self.nodes: list[dict[str, Any]] = []
+        # "before", "in" or "after" the document head, as the HTML parser tracks it.
+        self.head = "before"
 
-    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
-        e: dict[str, Any] = {
+    def _new_element(
+        self, tag: str, attrs: list[tuple[str, str | None]]
+    ) -> dict[str, Any]:
+        return {
             "id": f"source-{len(self.elements)}",
             "tag": tag,
             "attributes": dict(attrs),
@@ -27,6 +51,39 @@ class SourceHTML(HTMLParser):
             "text": [],
             "nameText": [],
         }
+
+    def _end_head(self) -> None:
+        for i in range(len(self.stack) - 1, -1, -1):
+            if self.stack[i]["tag"] == "head":
+                self.stack = self.stack[:i]
+                break
+        self.head = "after"
+
+    def _head_is_current(self) -> bool:
+        return (
+            self.head == "in" and bool(self.stack) and self.stack[-1]["tag"] == "head"
+        )
+
+    def _content_arrives(self, head_content: bool) -> None:
+        """Apply the HTML "before head" and "in head" rules to arriving content."""
+        if self.head == "before":
+            if head_content:
+                # The browser opens an implied head; it is not a source element.
+                self.stack.append({**self._new_element("head", []), "id": None})
+                self.head = "in"
+            else:
+                self.head = "after"
+        elif not head_content and self._head_is_current():
+            self._end_head()
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        if tag == "head":
+            if self.head != "before":
+                return  # A second or late <head> is ignored by the browser.
+            self.head = "in"
+        elif tag != "html":
+            self._content_arrives(tag in HEAD_CONTENT)
+        e = self._new_element(tag, attrs)
         self.elements.append(e)
         if tag == "img" and e["attributes"].get("alt"):
             for ancestor in self.stack:
@@ -54,16 +111,25 @@ class SourceHTML(HTMLParser):
         self.handle_endtag(tag)
 
     def handle_endtag(self, tag: str) -> None:
+        if tag == "head":
+            if self._head_is_current():
+                self._end_head()
+            return  # Inside <template>, or after the head ends, </head> is ignored.
+        if tag in {"body", "html", "br"} and self._head_is_current():
+            self._end_head()
         for i in range(len(self.stack) - 1, -1, -1):
             if self.stack[i]["tag"] == tag:
                 self.stack = self.stack[:i]
                 break
+            if self.stack[i]["tag"] == "template":
+                break  # Template content cannot close an element outside it.
 
     def handle_data(self, data: str) -> None:
-        if any(e["tag"] in {"head", "script", "style", "template"} for e in self.stack):
-            return
         text = " ".join(data.split())
         if not text:
+            return
+        self._content_arrives(head_content=False)
+        if any(e["tag"] in {"head", "script", "style", "template"} for e in self.stack):
             return
         for e in self.stack:
             e["text"].append(data)
@@ -172,16 +238,24 @@ class SourceHTML(HTMLParser):
                     ),
                 }
             )
+        coverage: dict[str, Any] = {
+            "basis": "HTML source; no execution, CSS, browser tree repair beyond where the head ends, or external resources",
+            "rendered": False,
+            "bodyContent": bool(self.nodes or controls or headings or media),
+        }
+        if not coverage["bodyContent"]:
+            coverage["unmeasured"] = (
+                "The source holds no body text, headings, controls or media; "
+                "content its scripts or external resources add is not read, "
+                "so an empty inventory does not show the page is empty"
+            )
         return {
             "nodes": self.nodes,
             "controls": controls,
             "headings": headings,
             "media": media,
             "languages": languages,
-            "coverage": {
-                "basis": "HTML source; no execution, CSS, browser tree repair or external resources",
-                "rendered": False,
-            },
+            "coverage": coverage,
         }
 
 
