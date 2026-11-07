@@ -8,7 +8,7 @@ Command-line tool that tracks books a reading club has borrowed.
 
 ## Project surfaces
 
-<!-- setup-project surfaces v12 -->
+<!-- setup-project surfaces v13 -->
 
 This project keeps its direction, vocabulary, and decision memory in the repo. Read
 `NORTH_STAR.md` and `CONTEXT.md` at the start of every session.
@@ -295,7 +295,7 @@ d=.runs/$VERIFY_RUN_ID; test -f "$d/pid" || { echo "no instance for run $VERIFY_
 kill "$(cat "$d/pid")" && rm -f "$d/pid"
 EOF
 chmod +x scripts/serve.sh scripts/stop.sh
-cat > scripts/verify <<'VERIFY_TOOL_V12_EOF'
+cat > scripts/verify <<'VERIFY_TOOL_V13_EOF'
 #!/bin/sh
 # Starts this project's verification tool, verify.mts beside this file: TypeScript that Node
 # 22.18 or newer (23.6 or newer on Node 23) runs directly. `verify --help` says everything else.
@@ -308,9 +308,9 @@ if [ "$major" -lt 22 ] || { [ "$major" -eq 22 ] && [ "$minor" -lt 18 ]; } || { [
   exit 3
 fi
 exec node "$(dirname "$0")/verify.mts" "$@"
-VERIFY_TOOL_V12_EOF
+VERIFY_TOOL_V13_EOF
 chmod +x scripts/verify
-cat > scripts/verify.mts <<'VERIFY_TOOL_V12_EOF'
+cat > scripts/verify.mts <<'VERIFY_TOOL_V13_EOF'
 // verify — this project's one verification harness.
 //
 // Run `verify --help` for everything: what can be checked, how, which checks a change touches,
@@ -1374,7 +1374,7 @@ main(process.argv.slice(2)).then(
     process.exitCode = 1;
   },
 );
-VERIFY_TOOL_V12_EOF
+VERIFY_TOOL_V13_EOF
 cat > verification/harness.md <<'EOF'
 ---
 ask-first: ask

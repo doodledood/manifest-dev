@@ -134,4 +134,5 @@ partly — `tests/test_dist_skill_references.py` — `test_manifest_schema_stays
   20260810-no-verifier-model-granularity,
   20260805-ratchet-judgment-gate-reverification,
   20260810-gate-altitude-repairs-under-advance-delegation;
-  revises the cost position in 20260820-cost-is-a-binding-constraint-second-to-quality.
+  revises the cost position in 20260820-cost-is-a-binding-constraint-second-to-quality;
+  amends the log mechanism of 20260709-do-keeps-default-execution-log-manifest-stays-contract.
