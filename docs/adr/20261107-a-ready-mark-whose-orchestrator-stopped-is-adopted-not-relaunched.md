@@ -36,8 +36,10 @@ proceeds without the person supervising every step.
 - *To land* also holds a Ticket whose ready mark another orchestrator's run left, once that run's
   timeout has passed and no run is live. Before its landing turn the orchestrator adopts the
   mark: it writes a run ID of its own into the run facts and into the mark, keeps the head and
-  base commits the mark names and the launch count, writes a fresh start time, starts no run, and
-  re-reads the Ticket as a launcher does.
+  base commits the mark names, the launch count and whether the last launch repaired a landing,
+  writes a fresh start time, starts no run, and re-reads the Ticket as a launcher does. An
+  adoption is not a launch, so the launch count still reads the last launch and a Ticket that
+  changes hands keeps its row of landing repairs.
 - Adoption is the ready mark's one other writer. The landing procedure then checks the adopted
   mark exactly as it checks one of its own run's: the head is pinned, a moved base relaunches the
   run, and a held review keeps the Ticket held.

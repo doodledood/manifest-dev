@@ -128,7 +128,7 @@ ORead(o) ==
 \* Adopting a ready mark: the run facts and the mark take a run ID of o's own, with a fresh start
 \* time, the head and base kept, and no run started; the next read is the re-read after writing.
 \* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "The ready mark has one other writer: an orchestrator adopting it once the timeout of the run that wrote it has passed and no run is live."
-\* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "keeps the head and base commits the mark names and the launch count, and starts no run"
+\* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "keeps the head and base commits the mark names, the launch count and whether the last launch repaired a landing, and starts no run"
 \* Quote orchestrate/SKILL.md: "Re-read the Ticket after an adoption"
 OAdopt(o) ==
   /\ opc[o] = "adopt"

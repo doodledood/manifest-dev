@@ -82,8 +82,10 @@ the run facts name. That binding decides sorting and landing: a relaunched
 run reads an earlier run's mark as where the work stands. The ready mark has one other writer: an
 orchestrator adopting it once the timeout of the run that wrote it has passed and no run is live.
 It writes a run ID of its own into the run facts and the mark, keeps the head and base commits the
-mark names and the launch count, and starts no run, so a ready pull request whose orchestrator
-stopped still lands under *Landing* and is never relaunched merely to change hands. That timeout
+mark names, the launch count and whether the last launch repaired a landing, and starts no run. An
+adoption is not a launch: the launch count still reads the last launch. So a ready pull request
+whose orchestrator stopped still lands under *Landing* and is never relaunched merely to change
+hands. That timeout
 stands for the holder's absence, not the run's age: an orchestrator holding a Ticket ready to land,
 one it launched or adopted, rewrites the start time in its run facts at a check-in once half the
 timeout has passed since it, so another orchestrator adopts the mark only once the holder has

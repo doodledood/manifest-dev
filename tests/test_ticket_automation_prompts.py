@@ -1413,3 +1413,21 @@ def test_a_held_ticket_is_adopted_only_once_its_holder_stops_checking_in(
     assert "a new one adopts it no sooner than a run timeout after this check-in" in (
         autonomous
     )
+
+
+# Adoption kept the head, the base and the launch count but not whether the last launch repaired a
+# landing, and did not say whether it counts as a launch. An adopter that dropped the flag reset a
+# Ticket's row of landing repairs to one, so a Ticket that changed hands could be repaired past the
+# three launches that send it to a person.
+# Holds docs/adr/20261107-a-ready-mark-whose-orchestrator-stopped-is-adopted-not-relaunched.md.
+@pytest.mark.parametrize("root", [SOURCE_SKILLS, DIST_SKILLS], ids=["source", "codex"])
+def test_an_adoption_keeps_the_landing_repair_row(root: Path) -> None:
+    record = flat(section(automation_text(root), "The attempt record"))
+    assert (
+        "keeps the head and base commits the mark names, the launch count and whether the "
+        "last launch repaired a landing, and starts no run" in record
+    )
+    assert (
+        "An adoption is not a launch: the launch count still reads the last launch."
+        in (record)
+    )
