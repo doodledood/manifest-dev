@@ -122,7 +122,7 @@ def test_every_launch_on_a_manifest_finds_its_log() -> None:
 # and the last write wins: run A reported done against a contract that was no longer in
 # the file, and an amendment could vanish. Before amending and before reporting
 # completion, the run compares the file's hash with the one it last read or wrote, and a
-# difference makes the changed gates unverified and restores a lost amendment.
+# difference makes the changed gates unverified and restores an amendment lost in passing.
 def test_a_manifest_changed_by_another_writer_is_noticed() -> None:
     for path, text in flat("do/SKILL.md"):
         assert "Hash the Manifest each time you read it" in text, path
@@ -133,9 +133,16 @@ def test_a_manifest_changed_by_another_writer_is_noticed() -> None:
             "treat as unverified each gate whose criteria changed or can no longer be shown"
             " unchanged" in text
         ), path
+        # A lost amendment is restored only where the other write never touched what it
+        # changed; a person's write that removed or changed it is steering and stands.
         assert (
-            "make again any amendment of this run's that the file no longer carries"
-            in (text)
+            "Make again an amendment of this run's that the file no longer carries only where the"
+            " gate or section it changed still reads as it did before that amendment"
+            in text
+        ), path
+        assert (
+            "Where the other write removed or changed what the amendment changed, that write is steering"
+            in text
         ), path
 
 
