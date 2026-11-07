@@ -81,6 +81,17 @@ Run: `scripts/drive-skill.sh review-code verification/prompts/acceptance/review-
 Proves: The intentional one-row full export violates its source contract despite its comment. Its mocked test does not establish production behavior despite the unit-only pattern. The deliberately limited preview and its adequate real unit tests are acceptable without an integration-test mandate.
 Check: read
 
+<!-- The two state-machine scenarios hold docs/adr/20261107-review-checks-the-whole-state-machine-a-change-touches.md. -->
+### state-machine-cross-file
+Run: `scripts/drive-skill.sh review-code verification/prompts/review-code-state-machine-cross-file.md --scaffold verification/fixtures/review-state-machine-cross-file`
+Proves: code-bugs rebuilds the order lifecycle from every writer, including the files the change does not touch, and reports that the new cancel lets an order end both refunded and delivered (pay, ship, cancel, the nightly refund, then the carrier's delivery), with each site by file and line and the confirmed sequence as its trigger, at High or Critical, and FAIL. The prompt names no bug and no state machine.
+Check: read
+
+### state-machine-sound
+Run: `scripts/drive-skill.sh review-code verification/prompts/review-code-state-machine-sound.md --scaffold verification/fixtures/review-state-machine-sound`
+Proves: a change that adds a paused state to an explicit machine, with every new transition in its table and every write through one function, draws no state-machine finding, and the verdict is PASS.
+Check: read
+
 ## Gotchas
 
 - Each prompt builds its own scratch repository state: a commit on a branch ahead of its default branch.

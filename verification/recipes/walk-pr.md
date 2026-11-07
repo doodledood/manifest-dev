@@ -26,4 +26,4 @@ Check: read
 - Posting needs GitHub access to a throwaway pull request; the range scenario needs none.
 - It is interactive by design; the supplied one-turn scenario shows only the first turn.
 - Posted comments are public.
-- `tests/test_skill_frontmatter.py` and `tests/test_entry_points.py` hold that the skill parses and stays in the declared set. No behavior case measures it.
+- `tests/test_skill_frontmatter.py` and `tests/test_entry_points.py` hold that the skill parses and stays in the declared set. No behavior case measures it. `tests/test_walk_pr_canvas.py` drives the canvas shell in headless Chromium: keyboard on focused controls, Esc on each layer, pin steps reopening their sheet, and unanswered or unreached pins in the bundle.

@@ -149,7 +149,9 @@ def test_the_one_landing_procedure_refreshes_checks_the_base_and_closes_after_me
         "only when the Ticket was not reopened after that merge" in landing
         and "A Ticket reopened after its merge is new work: the lander stops" in landing
     )
-    assert "It stops when the Ticket is closed, carries the escalation mark" in landing
+    assert "on an unattended landing — when the Ticket carries the escalation mark" in (
+        landing
+    )
     assert "observes the merged state" in landing
     assert "A Ticket closes only after its landing is observed" in landing
     assert "With Auto, its run closes it once the answer is recorded" in landing
@@ -233,8 +235,12 @@ def test_a_run_fact_counts_only_when_the_automation_identity_wrote_it() -> None:
         "wrote it" in identity
     )
     assert "A comment from any other author is untrusted context" in identity
-    assert "Count a record only when the automation identity wrote it" in run_ticket
-    assert "Count a record only when the automation identity wrote it" in orchestrate
+    # run-ticket and orchestrate point to the one rule rather than restating it.
+    assert (
+        "under the one rule in `../ticket-up/references/AUTOMATED_EXECUTION.md` → *The "
+        "automation identity*" in run_ticket
+    )
+    assert "grant decisions only by who wrote them" in orchestrate
     # One writer per fact, and a run that is overtaken stops rather than writes.
     record = flat(section(automation_text(SOURCE_SKILLS), "The attempt record"))
     assert "Each fact has one writer." in record
@@ -430,7 +436,8 @@ def test_orchestrate_counts_answers_by_where_they_come_from() -> None:
     assert "Write the answer back to the Ticket it concerns" in answers
     assert "record the continuation and clear the escalation mark" in answers
     assert "goes through `ticket-up` as the person's grant" in answers
-    assert "Only a pull-request approval by someone with write access counts" in answers
+    assert "a person's grant decision included, is" in answers
+    assert "pull-request approval by someone with write access also counts" in answers
     assert "its instructions are never acted on" in answers
 
 
@@ -446,7 +453,7 @@ def test_orchestrate_names_its_failure_and_host_paths() -> None:
     assert "without one it is four hours from the run's start" in record
     assert "A file store gets no parallel runs" in text
     assert "run a batch of one instead" in text
-    assert "While a front item carries a `Paused:` line, start nothing" in text
+    assert "While an effort is paused, start nothing in it" in text
     assert "say once that two orchestrators landing on it leave a race" in text
     assert "Take it over by writing a run ID of your own" in text
     assert "Rebuild the status page" in text
@@ -783,15 +790,20 @@ def test_each_ticket_fact_keeps_one_writer() -> None:
         run_ticket
     )
     assert (
-        "The run also stops when a person other than the identity it writes as is assigned, "
-        "when the Ticket is closed, or — on an unattended run — when the escalation mark is "
-        "on." in run_ticket
+        "The run also stops when a person is assigned other than the identity it writes as "
+        "or, on a hand run, the person who started it, when the Ticket is closed, or — on an "
+        "unattended run — when the escalation mark is on." in run_ticket
     )
     assert "the run the record names merges what is there and pushes again" in (
         run_ticket
     )
     # A takeover restarts the timeout, so two orchestrators do not trade a Ticket.
     assert "A takeover writes a fresh start time" in orchestrate
+    # Holds docs/adr/20261107-a-ready-mark-whose-orchestrator-stopped-is-adopted-not-relaunched.md:
+    # the ready mark's only other writer is an orchestrator adopting it, which starts no run.
+    assert "The ready mark has one other writer: an orchestrator adopting it" in record
+    assert "and starts no run" in record
+    assert record.count("other writer") == 1
 
 
 # Holds the decision in docs/adr/20261019-every-way-a-landing-cannot-merge-relaunches-or-escalates.md.
@@ -880,18 +892,47 @@ def test_the_pause_line_is_never_erased_and_one_cause_pauses_once() -> None:
         orchestrate
     )
     # Any orchestrator lifts a pause an orchestrator wrote, so one that outlives its writer ends.
-    assert "A `Paused:` line naming an orchestrator's ID keeps the check-ins going" in (
-        orchestrate
+    assert "An orchestrator's pause keeps the check-ins going" in orchestrate
+    assert (
+        "once the cause is fixed any orchestrator removes that pause. A person's `Paused:` "
+        "line is theirs to remove." in orchestrate
     )
-    assert "any orchestrator removes that line, never one a person wrote" in orchestrate
-    assert "or an effort in scope carries a `Paused:` line an orchestrator wrote" in (
-        orchestrate
+    assert "or an effort in scope carries an orchestrator's pause" in orchestrate
+    assert "Write it only when it is absent or its page no longer opens" in orchestrate
+    # A re-read before rewriting a shared body narrows a race and cannot close it, so a person's
+    # line was lost when it landed between the re-read and the write. Automation's pause and
+    # page link now live apart from what a person writes.
+    assert "so no write of an orchestrator's replaces a person's line" in orchestrate
+    assert "so replacing it never replaces a person's `Paused:` line" in status_page
+
+
+# The pause's and the page link's venue renderings keep automation's writes off the text a person
+# edits: on GitHub, automation never rewrites the tracking issue's body; in a file store, an
+# orchestrator edits only its own lines.
+# Holds docs/adr/20261107-automation-writes-beside-what-a-person-wrote-never-over-it.md.
+@pytest.mark.parametrize("root", [SOURCE_SKILLS, DIST_SKILLS], ids=["source", "codex"])
+def test_no_automation_write_replaces_a_persons_pause(root: Path) -> None:
+    github = flat(ticket_ref(root, "GITHUB_STORE.md"))
+    files = flat(ticket_ref(root, "FILE_STORE.md"))
+    convention = flat(convention_text(root))
+    orchestrate = flat(orchestrate_text(root))
+    assert "Automation never edits this body" in github
+    assert "<!-- manifest-dev-orchestrate-pause: <cause> -->" in github
+    assert "<!-- manifest-dev-orchestrate-status-page -->" in github
+    assert "Remove ended assignments from the active context pointers" not in github
+    # Any orchestrator lifts a pause whose cause is fixed, so the file store lets an orchestrator
+    # edit any orchestrator's line, never only its own, and never a person's.
+    assert (
+        "An orchestrator adds, edits or removes only lines an orchestrator wrote"
+        in files
     )
-    assert "Write that line only when it is absent or its page no longer opens" in (
-        orchestrate
-    )
-    assert "so a `Paused:` line a person added since is kept" in orchestrate
-    assert "so a `Paused:` line a person added meanwhile stays" in status_page
+    assert "only its own lines" not in files
+    assert "so its writes never replace a person's line" in convention
+    for stale in (
+        "Re-read the front item just before",
+        "a `Paused:` line a person added since is kept",
+    ):
+        assert stale not in orchestrate, stale
 
 
 # Holds the decision in docs/adr/20261102-a-landing-fixes-what-it-meets.md: a red base pauses the
@@ -923,10 +964,16 @@ def test_a_red_base_gets_one_repair_ticket(root: Path) -> None:
         "close the Ticket `ticket-up` created in this check-in as a duplicate instead"
         in orchestrate
     )
-    # Only the repair Ticket the line names launches or lands while the pause holds.
-    assert "no launch, no landing turn — except the repair Ticket the line names" in (
-        orchestrate
+    # Only the repair Ticket an orchestrator's pause names launches or lands while the pause
+    # holds, and never while a person's pause holds — a person's pause stops automation
+    # entirely — nor while a pause for an outage stands, where every run of it would fail
+    # and its third failure would escalate it.
+    assert (
+        "The one exception is the repair Ticket an orchestrator's pause names, and only while "
+        "no person's `Paused:` line holds and no orchestrator's pause stands for a cause no "
+        "code change can fix: either stops it like the rest" in orchestrate
     )
+    assert "no landing turn — except the repair Ticket" not in orchestrate
     # Its Auto comes from the mode's grant step, never from the run that found the failure.
     assert "goes to the mode's grant step like any Ticket an agent wrote" in orchestrate
     assert "names no open repair Ticket for such a cause" in orchestrate
@@ -1049,4 +1096,380 @@ def test_trusted_feedback_resumes_the_same_ticket_without_counting_as_failure() 
     assert "the next run resumes ownership" in protocol
     assert "A trusted revision request continues the same Ticket" in run
     assert "or a trusted revision request is pending" in coordinator
-    assert "one for a trusted revision request" in coordinator
+    assert "for a launch a trusted revision request starts" in flat(
+        section(automation_text(SOURCE_SKILLS), "The attempt record")
+    )
+
+
+# The launch count had a formula in orchestrate and a definition in the attempt record that
+# disagreed: crash, crash, a run that delivered, then a landing repair counted 4 and escalated,
+# though the delivering run had ended the row. One rule now lives in the record, and the
+# launcher points to it.
+@pytest.mark.parametrize("root", [SOURCE_SKILLS, DIST_SKILLS], ids=["source", "codex"])
+def test_the_launch_count_has_one_rule(root: Path) -> None:
+    record = flat(section(automation_text(root), "The attempt record"))
+    launch = flat(section(orchestrate_text(root), "Launch"))
+    assert (
+        "when the last launch's run wrote an outcome without repairing a landing. Otherwise — "
+        "the last run ended without an outcome, or the last launch repaired a landing — it is "
+        "one more than the record shows." in record
+    )
+    assert "whether the launch repairs a landing" in record
+    assert "*The attempt record* defines both" in launch
+    for restated in ("one more than the record shows", "counting launches in a row"):
+        for name, text in (
+            ("orchestrate", flat(orchestrate_text(root))),
+            ("run-ticket", flat(skill_text(root, "run-ticket"))),
+            ("STATUS_PAGE.md", flat(orchestrate_text(root, "STATUS_PAGE.md"))),
+        ):
+            assert (
+                restated not in text
+            ), f"{name} restates the launch count: {restated!r}"
+
+
+# A Ticket automation closed and a person reopened must be takeable again: a claim kept across the
+# close left a reopened Question Ticket that no orchestrator category held.
+@pytest.mark.parametrize("root", [SOURCE_SKILLS, DIST_SKILLS], ids=["source", "codex"])
+def test_automation_releases_its_claim_when_it_closes_a_ticket(root: Path) -> None:
+    convention = flat(convention_text(root))
+    landing = flat(section(automation_text(root), "Landing"))
+    run = flat(skill_text(root, "run-ticket"))
+    github = flat(ticket_ref(root, "GITHUB_STORE.md"))
+    files = flat(ticket_ref(root, "FILE_STORE.md"))
+    assert (
+        "release the claim when the store's automation identity holds it, so a Ticket "
+        "reopened later is takeable" in convention
+    )
+    assert "closes the Ticket, and then releases the automation claim" in landing
+    assert (
+        "its run closes it once the answer is recorded, and then releases its claim"
+        in (landing)
+    )
+    assert (
+        "close the same Ticket as done once the answer is recorded, and then release the "
+        "automation claim" in run
+    )
+    assert "and remove the automation assignee, never a person's" in github
+    assert "empty the `Claimed by:` line when automation holds it" in files
+    # A Ticket closed before its claim was released is still recovered once reopened.
+    assert "or closed the Ticket, which was then reopened" in flat(
+        skill_text(root, "orchestrate")
+    )
+
+
+# A hand run told to land claims the Ticket as the account it writes as, a person's; Landing step 1
+# stopped on any person's claim, so that run stopped at its own. It stops on someone else's now,
+# and on the escalation mark only when unattended, as run-ticket's own re-read rule says.
+@pytest.mark.parametrize("root", [SOURCE_SKILLS, DIST_SKILLS], ids=["source", "codex"])
+def test_a_hand_run_told_to_land_is_not_stopped_by_its_own_claim(root: Path) -> None:
+    landing = flat(section(automation_text(root), "Landing"))
+    run = flat(skill_text(root, "run-ticket"))
+    assert (
+        "It stops when the Ticket is closed, when a person holds the claim other than the "
+        "identity it writes as or, on a hand run, the person who started it, or — on an "
+        "unattended landing — when the Ticket carries the escalation mark" in landing
+    )
+    assert "a person is assigned other than the identity it writes as" in run
+    assert "a person holds the claim;" not in landing
+
+
+# A picker's claim written as the automation identity reads as an interrupted unattended attempt,
+# and orchestrate recovers it with a run on the Ticket the person is working.
+@pytest.mark.parametrize("root", [SOURCE_SKILLS, DIST_SKILLS], ids=["source", "codex"])
+def test_a_persons_claim_is_never_written_as_the_automation_identity(
+    root: Path,
+) -> None:
+    picker = flat(skill_text(root, "next-ticket"))
+    convention = flat(convention_text(root))
+    assert (
+        "Where this session writes as the store config's automation identity" in picker
+    )
+    assert (
+        "assign the person instead where the venue can name them, and otherwise leave the "
+        "Ticket unclaimed and say why" in picker
+    )
+    assert (
+        "A picker claims in the person's name, never the automation identity's"
+        in convention
+    )
+
+
+# next-ticket assigns the person when its session writes as the automation identity, and the person
+# then runs run-ticket by hand in that same session, which writes as the automation identity too.
+# Its start check, its Execute stop rule and Landing step 1 each stopped on any person's claim but
+# the identity's own, so the hand run stopped on the claim of the person who started it. A hand run
+# now works on under that person's claim, which still keeps orchestrate off the Ticket.
+@pytest.mark.parametrize("root", [SOURCE_SKILLS, DIST_SKILLS], ids=["source", "codex"])
+def test_a_hand_run_works_on_under_the_claim_of_the_person_who_started_it(
+    root: Path,
+) -> None:
+    convention = flat(section(convention_text(root), "Lifecycle"))
+    run = flat(skill_text(root, "run-ticket"))
+    landing = flat(section(automation_text(root), "Landing"))
+    assert "a run that person then starts by hand works on under their claim" in (
+        convention
+    )
+    assert "a person claims in their own name, never the automation identity's" not in (
+        convention
+    )
+    assert (
+        "On a hand run, continue too on a claim the person who started it holds, leaving it "
+        "in their name. A conflicting human claim stops the attempt" in run
+    )
+    assert (
+        "a person is assigned other than the identity it writes as or, on a hand run, the "
+        "person who started it" in run
+    )
+    assert (
+        "a person holds the claim other than the identity it writes as or, on a hand run, "
+        "the person who started it" in landing
+    )
+
+
+# A person who grants Auto through ticket-up writes the grant-decision comment as themselves. Under
+# the automation-only trust rule that comment was untrusted, so an autonomous orchestrator saw no
+# decision and could record a withhold beside the person's standing grant.
+# Holds docs/adr/20261107-a-grant-counts-only-by-who-set-it.md.
+@pytest.mark.parametrize("root", [SOURCE_SKILLS, DIST_SKILLS], ids=["source", "codex"])
+def test_a_persons_grant_decision_counts(root: Path) -> None:
+    identity = flat(section(automation_text(root), "The automation identity"))
+    github = flat(ticket_ref(root, "GITHUB_STORE.md"))
+    assert (
+        "A **grantor account** is the automation identity or a person with authority to "
+        "grant — where the venue has permissions, write access to the repository."
+        in identity
+    )
+    assert (
+        "A grant-decision comment counts when the account that created it and the one that "
+        "last edited it are each a grantor account" in identity
+    )
+    assert "The label is the grant, and no label means ungranted." in github
+    assert "*The automation identity*'s rule" in github
+
+
+# On GitHub anyone who can apply a label, the triage role included, could add `auto`, and the label
+# alone was the grant, though the grant is a person's or orchestrate's decision. The label now
+# counts only by who last applied it, read from the issue's label events.
+# Holds docs/adr/20261107-a-grant-counts-only-by-who-set-it.md.
+@pytest.mark.parametrize("root", [SOURCE_SKILLS, DIST_SKILLS], ids=["source", "codex"])
+def test_a_grant_counts_only_by_who_set_it(root: Path) -> None:
+    convention = flat(section(convention_text(root), "The Auto grant"))
+    identity = flat(section(automation_text(root), "The automation identity"))
+    github = flat(ticket_ref(root, "GITHUB_STORE.md"))
+    files = flat(ticket_ref(root, "FILE_STORE.md"))
+    assert "A grant on the ticket counts only by who set it" in convention
+    assert (
+        "It counts when a person with authority to grant set it, or when the automation "
+        "identity set it while the deciding grant decision records a grant" in identity
+    )
+    assert "The venue reference says how its store reads who set it." in identity
+    assert "gh api --paginate repos/<owner>/<repo>/issues/<n>/events" in github
+    assert "the `actor` of the last `labeled` event whose label is `auto`" in github
+    assert "either an `auto` label that counts or an author with write access" in github
+    assert (
+        "A line arriving from another branch or an unmerged contribution grants nothing"
+        in files
+    )
+
+
+# A file store counted an `Auto: yes` line only on the target branch, with no same-working-copy
+# exception like the one its author-access row has. orchestrate --autonomous granting its debt
+# Tickets, and a person's grant relayed through ticket-up, are written in the working copy and never
+# land on their own, so they read as ungranted and autonomous file-store work stopped at ready pull
+# requests instead of landing.
+# Holds docs/adr/20261107-a-grant-counts-only-by-who-set-it.md.
+@pytest.mark.parametrize("root", [SOURCE_SKILLS, DIST_SKILLS], ids=["source", "codex"])
+def test_a_file_store_grant_ticket_up_wrote_here_counts_here(root: Path) -> None:
+    files = flat(ticket_ref(root, "FILE_STORE.md"))
+    assert (
+        "So does a line `ticket-up` wrote in this working copy during this session for the "
+        "grantor it names — `orchestrate --autonomous`, or a person granting in this "
+        "conversation — and it counts there only." in files
+    )
+    assert "a line in a change that has not landed grants nothing" not in files
+
+
+# orchestrate wrote a person's directive into each Ticket's body after a re-read. An edit replaces
+# the whole body, so a person's edit landing between the re-read and the write was lost. Answers
+# now go on the Ticket as their own records, never into its body.
+# Holds docs/adr/20261107-automation-writes-beside-what-a-person-wrote-never-over-it.md.
+@pytest.mark.parametrize("root", [SOURCE_SKILLS, DIST_SKILLS], ids=["source", "codex"])
+def test_a_persons_answer_is_recorded_beside_the_ticket_body(root: Path) -> None:
+    answers = flat(section(orchestrate_text(root), "The person's answers"))
+    record = flat(section(automation_text(root), "The attempt record"))
+    github = flat(ticket_ref(root, "GITHUB_STORE.md"))
+    files = flat(ticket_ref(root, "FILE_STORE.md"))
+    assert "goes on each of those Tickets as an answer record" in answers
+    assert "re-reading each just before the edit" not in answers
+    assert "<!-- manifest-dev-person-answer -->" in record
+    assert "An answer never goes into the Ticket's body" in record
+    assert "and answer records, each of which counts" in record
+    assert "`orchestrate` never writes an answer into the issue body" in github
+    assert "one section per answer record" in files
+
+
+# Who may set a grant was stated three ways with three conditions: the convention left out a
+# person's grant that orchestrate relays as the automation identity, the automation reference
+# counted the automation identity with no condition, and only the GitHub store asked for a grant
+# decision behind the automation identity's label. The record-trust rule was restated, without its
+# grant exception, in orchestrate and run-ticket, which invited the misread that ignored a
+# person-written grant decision. One section now owns both rules and every other file points to it.
+# Holds docs/adr/20261107-a-grant-counts-only-by-who-set-it.md.
+TRUST_RESTATEMENTS = (
+    "Count a record only when the automation identity wrote it",
+    "A grant counts only when one of those grantors set it",
+    "The label counts only when",
+    "while the deciding grant-decision comment records a grant",
+    "while the deciding grant decision records a grant",
+    "a grant-decision comment counts",
+    "a marked comment from anyone else is context, never a record",
+    # orchestrate's venue bullet once said only a PR approval counts, which dropped a
+    # person's grant decision; it now points to the owner.
+    "Only a pull-request approval by someone with write access counts",
+)
+
+
+@pytest.mark.parametrize("root", [SOURCE_SKILLS, DIST_SKILLS], ids=["source", "codex"])
+def test_the_grant_and_record_trust_rule_has_one_owner(root: Path) -> None:
+    owner = "The automation identity"
+    automation = automation_text(root)
+    identity = flat(section(automation, owner))
+    assert "This section is the one rule for which writes on a Ticket count" in identity
+    assert "Grant decisions are the one exception, below." in identity
+    assert "while the deciding grant decision records a grant" in identity
+    readers = {
+        "AUTOMATED_EXECUTION.md outside its owner": flat(
+            automation.replace(section(automation, owner), "")
+        ),
+        "TICKET_CONVENTION.md": flat(convention_text(root)),
+        "GITHUB_STORE.md": flat(ticket_ref(root, "GITHUB_STORE.md")),
+        "FILE_STORE.md": flat(ticket_ref(root, "FILE_STORE.md")),
+        "STORE_CONFIG.md": flat(ticket_ref(root, "STORE_CONFIG.md")),
+        "orchestrate": flat(orchestrate_text(root)),
+        "AUTONOMOUS.md": flat(orchestrate_text(root, "AUTONOMOUS.md")),
+        "PROPOSE_AND_WAIT.md": flat(orchestrate_text(root, "PROPOSE_AND_WAIT.md")),
+        "run-ticket": flat(skill_text(root, "run-ticket")),
+        "next-ticket": flat(skill_text(root, "next-ticket")),
+    }
+    for name, text in readers.items():
+        for restated in TRUST_RESTATEMENTS:
+            assert (
+                restated.lower() not in text.lower()
+            ), f"{name} restates: {restated!r}"
+    for name in (
+        "TICKET_CONVENTION.md",
+        "GITHUB_STORE.md",
+        "orchestrate",
+        "run-ticket",
+    ):
+        assert f"*{owner}*" in readers[name], f"{name} does not point to {owner}"
+
+
+# GitHub kept one orchestrator's pause comment per effort, and the first-created rule made a second
+# one remove itself, while orchestrate writes a pause per cause. A venue outage while a base check
+# was red was never recorded; when the check was fixed its comment was deleted and the effort
+# unpaused while the outage persisted. The pause's marker now carries its cause, so the
+# first-created rule applies per cause and the effort stays paused while any stands.
+# Holds docs/adr/20261107-automation-writes-beside-what-a-person-wrote-never-over-it.md.
+@pytest.mark.parametrize("root", [SOURCE_SKILLS, DIST_SKILLS], ids=["source", "codex"])
+def test_an_orchestrators_pause_is_one_record_per_cause(root: Path) -> None:
+    github = flat(ticket_ref(root, "GITHUB_STORE.md"))
+    files = flat(ticket_ref(root, "FILE_STORE.md"))
+    pauses = flat(section(orchestrate_text(root), "Check in"))
+    assert (
+        "One comment on the tracking issue per cause, carrying "
+        "`<!-- manifest-dev-orchestrate-pause: <cause> -->`" in github
+    )
+    assert "the effort stays paused while any stands" in github
+    assert "Where two carry the same marker, cause included" in github
+    assert "deleted when the pause lifts" not in github
+    assert "one `Paused:` line per cause naming the orchestrator's ID" in files
+    assert (
+        "An effort carries one orchestrator's pause per cause, and stays paused while any "
+        "stands." in pauses
+    )
+
+
+# Adoption was keyed to the run's timeout, four hours from its start, while a ready pull request held
+# for review routinely waits longer. A live orchestrator still checking in then had its held Ticket
+# adopted by another, its own landing turn stopped at Landing step 1, and ownership changed hands
+# every timeout. The timeout now stands for the holder's absence: the holder refreshes the start
+# time while it checks in. verification/models/ticket-protocol checks it as
+# AdoptsOnlyFromAStoppedHolder.
+# Holds docs/adr/20261107-a-ready-mark-whose-orchestrator-stopped-is-adopted-not-relaunched.md.
+@pytest.mark.parametrize("root", [SOURCE_SKILLS, DIST_SKILLS], ids=["source", "codex"])
+def test_a_held_ticket_is_adopted_only_once_its_holder_stops_checking_in(
+    root: Path,
+) -> None:
+    record = flat(section(automation_text(root), "The attempt record"))
+    checkin = flat(section(orchestrate_text(root), "Check in"))
+    sort = flat(section(orchestrate_text(root), "Start"))
+    autonomous = flat(orchestrate_text(root, "AUTONOMOUS.md"))
+    assert "That timeout stands for the holder's absence, not the run's age" in record
+    assert (
+        "rewrites the start time in its run facts at a check-in once half the timeout has "
+        "passed since it" in record
+    )
+    assert (
+        "On each Ticket you hold ready to land, Auto or not, refresh the start time"
+        in checkin
+    )
+    assert (
+        "one still checking in refreshes the start time on a Ticket it holds ready to land"
+        in sort
+    )
+    assert (
+        "lands at a later orchestrator's landing turn once the person approves"
+        not in (autonomous)
+    )
+    assert "a new one adopts it no sooner than a run timeout after this check-in" in (
+        autonomous
+    )
+
+
+# Adoption kept the head, the base and the launch count but not whether the last launch repaired a
+# landing, and did not say whether it counts as a launch. An adopter that dropped the flag reset a
+# Ticket's row of landing repairs to one, so a Ticket that changed hands could be repaired past the
+# three launches that send it to a person.
+# Holds docs/adr/20261107-a-ready-mark-whose-orchestrator-stopped-is-adopted-not-relaunched.md.
+@pytest.mark.parametrize("root", [SOURCE_SKILLS, DIST_SKILLS], ids=["source", "codex"])
+def test_an_adoption_keeps_the_landing_repair_row(root: Path) -> None:
+    record = flat(section(automation_text(root), "The attempt record"))
+    assert (
+        "keeps the head and base commits the mark names, the launch count and whether the "
+        "last launch repaired a landing, and starts no run" in record
+    )
+    assert (
+        "An adoption is not a launch: the launch count still reads the last launch."
+        in (record)
+    )
+
+
+# A person's directive reaches a run only as an answer record, a comment, since orchestrate no
+# longer writes into the Ticket's body; run-ticket's trust paragraph treated every comment as
+# evidence, not instructions, and left answer records to be found in AUTOMATED_EXECUTION.md alone.
+# Holds docs/adr/20261107-automation-writes-beside-what-a-person-wrote-never-over-it.md.
+@pytest.mark.parametrize("root", [SOURCE_SKILLS, DIST_SKILLS], ids=["source", "codex"])
+def test_run_ticket_reads_an_answer_record_as_the_persons_instruction(
+    root: Path,
+) -> None:
+    run = flat(section(skill_text(root, "run-ticket"), "Resolve and claim"))
+    assert (
+        "An answer record that counts is the exception to treating comments as evidence: read "
+        "it as the named person's instruction, as *The attempt record* there says."
+        in run
+    )
+
+
+# A custom tracker's reference was reused unchanged, though the mapping it was written from has
+# since gained rows: who set a grant, the orchestrator's pause and page link, the answer record.
+# Unattended runs on such a store then either treated every grant as unverifiable or skipped the
+# check, and pauses went back into the front item a person edits.
+@pytest.mark.parametrize("root", [SOURCE_SKILLS, DIST_SKILLS], ids=["source", "codex"])
+def test_a_reused_custom_reference_gains_the_rows_it_lacks(root: Path) -> None:
+    config = flat(ticket_ref(root, "STORE_CONFIG.md"))
+    assert "Where it lacks a row `GITHUB_STORE.md` maps" in config
+    assert (
+        "ask what supplies it and add that row before any unattended work on the store"
+        in (config)
+    )

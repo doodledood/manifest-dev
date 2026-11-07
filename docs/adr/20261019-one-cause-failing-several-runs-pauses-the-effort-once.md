@@ -1,7 +1,7 @@
 # ADR: One cause failing several runs pauses the effort once
 
 ## Status
-Accepted — amended by 20261102-a-landing-fixes-what-it-meets: a base check a code change can fix gets one repair Ticket, which alone may launch and land during the pause
+Accepted — amended by 20261102-a-landing-fixes-what-it-meets: a base check a code change can fix gets one repair Ticket, which alone may launch and land during the pause; amended by 20261107-automation-writes-beside-what-a-person-wrote-never-over-it: an orchestrator's pause and the status-page link are records kept apart from a person's `Paused:` line, not lines written after a re-read
 
 ## Area
 Ticketing
@@ -47,8 +47,11 @@ problem, or runs spend quota repairing what is not theirs.
 
 ## Enforced by
 partly — `tests/test_ticket_automation_prompts.py` — `test_the_pause_line_is_never_erased_and_one_cause_pauses_once`
-fails if the common-cause pause, its own-line-only removal or the re-read before the status-page
-write is dropped; deciding that failures share a cause stays judgment.
+fails if the common-cause pause or the rule that any orchestrator lifts an orchestrator's pause
+and only a person removes a person's is dropped, and
+`test_no_automation_write_replaces_a_persons_pause` fails if a write of automation's moves back
+onto the text a person edits (20261107-automation-writes-beside-what-a-person-wrote-never-over-it);
+deciding that failures share a cause stays judgment.
 
 ## Source
 - Session: figure-out and define reviewing manifest-dev's verification practice (2026-10-19).

@@ -25,7 +25,9 @@ SCRIPT = Path(
 )
 
 
-def run_check(tmp_path: Path, css: str, body: str) -> str:
+def run_check(
+    tmp_path: Path, css: str, body: str, step_seconds: int | None = None
+) -> str:
     node = shutil.which("node")
     if node is None:
         pytest.skip("Node unavailable")
@@ -46,6 +48,11 @@ def run_check(tmp_path: Path, css: str, body: str) -> str:
         text=True,
         check=False,
         timeout=40,
+        env=(
+            {**os.environ, "DESIGN_CHECK_STEP_SECONDS": str(step_seconds)}
+            if step_seconds
+            else None
+        ),
     )
     assert result.returncode == 0, result.stderr
     return result.stdout
@@ -204,3 +211,41 @@ def test_320px_overflow_is_not_hidden_by_390px_success(tmp_path: Path) -> None:
     require_render(output)
     assert "NOTE     overflow@320:" in output
     assert "OK       overflow@390:" in output
+
+
+RENDER_CHECKS = [
+    "body background",
+    "contrast@1440",
+    "overflow@320",
+    "targets@320",
+    "overflow@390",
+    "targets@390",
+]
+
+
+# review-design's SKILL.md: "SKIPPED properties remain unverified." A page that stops
+# responding must end the render checks within a deadline and name each check it kept
+# from running, so the reviewer knows exactly what stays unverified.
+@pytest.mark.parametrize(
+    ("script", "width", "completed"),
+    [
+        (
+            "addEventListener('resize',()=>{if(innerWidth<=320){for(;;){}}})",
+            320,
+            2,
+        ),
+        ("for(;;){}", 1440, 0),
+    ],
+)
+def test_unresponsive_page_names_each_check_that_did_not_run(
+    tmp_path: Path, script: str, width: int, completed: int
+) -> None:
+    require_render(run_check(tmp_path, "", "<p>Responsive</p>"))
+    output = run_check(tmp_path, "", f"<p>Hello</p><script>{script}</script>", 2)
+    assert f"NOTE     page did not respond within 2 s at {width} px" in output
+    for check in RENDER_CHECKS[:completed]:
+        assert f"SKIPPED  {check}:" not in output
+    for check in RENDER_CHECKS[completed:]:
+        assert f"SKIPPED  {check}: did not run" in output
+    if completed:
+        assert "OK       body background" in output

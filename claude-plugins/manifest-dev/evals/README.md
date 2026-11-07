@@ -232,7 +232,7 @@ base model already covers; such a case leaves only through its probe's *Coverage
 | `46-general-question-skips-recall` | autonomous, repository, plugin arm only | Open no earlier session log for a general question the repository's history cannot bear on | tuning |
 | `48-reuse-and-shallow-layer` | autonomous, repository | Before any code, reuse the utilities the codebase already has and question a proposed class that would only forward to them | tuning |
 | `52-projectless-chat-offers-no-surfaces` | autonomous, not a project, plugin arm only | For a one-off script in a folder that is not a project, say how it behaves and how to check it, offering no setup, harness, decision record, glossary or North Star | tuning |
-| `53-update-offer-from-v12` | docs, repository, plugin arm only | Offer only the v13 change: once, a few Taste entries drawn from reasons the owner already stated in the project's history, for the user to accept | tuning |
+| `53-update-offer-from-v13` | docs, repository, plugin arm only | Offer only the v14 changes: deleting or retargeting a draft decision record gives back the Status it changed, and the tool keeps the summary of the run that finished last | tuning |
 | `54-touched-recipe-not-fit` | autonomous, repository | A change touching a feature whose recipe cannot be relied on — started by hand on a fixed port, its last failure unexplained — makes repairing that recipe part of the work | tuning |
 | `55-own-check-not-fit` | autonomous, repository | With no harness, a touched test of the project's own that passes whatever the output is gets repaired in its own form as part of the work, seen failing on a scratch break before it counts, and no harness is built | tuning |
 | `56-order-dependent-design` | autonomous | Model a design whose correctness depends on the order of events before building it, and pick a check that can reach the breaking interleaving | tuning |
@@ -486,7 +486,7 @@ being declared a guard. `tests/test_eval_cases.py` fails when a case has no row 
 | `46` | first run decides | Plugin arm only; mirror of `43` |
 | `48` | first run decides | Reuse and module depth before code |
 | `52` | first run decides | Plugin arm only; a declared guard: the no-plugin arm passes by construction |
-| `53` | keep | Plugin arm only; the one-behind branch, which the version test requires; moved to v5 on 2026-10-15 when v6 shipped, to v6 on 2026-10-18 when v7 shipped, to v7 on 2026-10-21 when v8 shipped, to v8 later that day when v9 shipped, to v9 when v10 shipped, and to v10 on 2026-10-26 when v11 shipped |
+| `53` | keep | Plugin arm only; the one-behind branch, which the version test requires; moved to v5 on 2026-10-15 when v6 shipped, to v6 on 2026-10-18 when v7 shipped, to v7 on 2026-10-21 when v8 shipped, to v8 later that day when v9 shipped, to v9 when v10 shipped, to v10 on 2026-10-26 when v11 shipped, and to v13 on 2026-11-07 when v14 shipped |
 | `54` | first run decides | New on 2026-10-15: the *Fit to trust* jobs v5 added |
 | `55` | first run decides | New on 2026-10-15: repairing a project's own check in its own form, the rule every run owes with or without a harness; the base model likely writes a new test beside the broken one. Its second grader, added 2026-10-19, holds the seen-to-fail job |
 | `56` | first run decides | New on 2026-10-19: the only order-dependent design case; the base model likely goes from the design to example tests |
@@ -894,7 +894,7 @@ file. The row is never deleted while the probe stays.
 | `references/LOG.md` | (whole file) | `01-root-press/log-written`; not graded: log safety and resuming from the log, which have shown no failure and sit outside what a grader reads |
 | `references/RECALL.md` | (whole file) | `43-recalls-earlier-work/carries-the-earlier-ruling-as-a-lead`, `44-debt-on-the-path/offers-the-on-path-debt`, `46-general-question-skips-recall/no-recall-for-a-general-question`, `59-reverted-fix/names-the-reverted-fix` |
 | `references/TASTE.md` | (whole file) | `27-taste-offers/offers-entry-for-the-stated-preference`, `27-taste-offers/offers-entry-for-the-reversal`, `28-universal-not-taste/no-offer-for-a-universal-rule`, `29-ratified-entry-lands/entry-inside-taste-section`, `105-taste-yardstick-offered/offers-the-yardstick` (drives only), `107-steer-without-reason/reads-the-reason` (drives only) |
-| `references/WITH_DOCS.md` | (whole file) | `23-term-and-record/term-captured`, `23-term-and-record/record-written`, `24-ruled-position-holds/position-text-unchanged`, `30-update-offer-for-older-setup/offers-only-whats-new`, `36-marks-drift-it-wont-fix/export-entry-marked-stale`, `45-current-setup-offers-nothing/offers-no-setup-update`, `53-update-offer-from-v12/offers-only-whats-new-since-v12`, `84-chosen-option-goes-to-a-record/ruling-recorded`, `84-chosen-option-goes-to-a-record/north-star-unchanged`, `85-evidence-against-a-bet/bet-challenged`, `85-evidence-against-a-bet/bet-text-kept` |
+| `references/WITH_DOCS.md` | (whole file) | `23-term-and-record/term-captured`, `23-term-and-record/record-written`, `24-ruled-position-holds/position-text-unchanged`, `30-update-offer-for-older-setup/offers-only-whats-new`, `36-marks-drift-it-wont-fix/export-entry-marked-stale`, `45-current-setup-offers-nothing/offers-no-setup-update`, `53-update-offer-from-v13/offers-only-whats-new-since-v13`, `84-chosen-option-goes-to-a-record/ruling-recorded`, `84-chosen-option-goes-to-a-record/north-star-unchanged`, `85-evidence-against-a-bet/bet-challenged`, `85-evidence-against-a-bet/bet-text-kept` |
 | `references/ADR_FORMAT.md` | (whole file) | `23-term-and-record/old-record-restatused`, `23-term-and-record/index-rebuilt`, `24-ruled-position-holds/unattended-record-marked`, `23-term-and-record/record-carries-enforced-by` |
 | `references/autonomous.md` | (whole file) | `25-users-call-and-taste/flags-the-users-calls`, `25-users-call-and-taste/no-taste-offer`, `24-ruled-position-holds/unattended-record-marked`; not graded: never self-accepting an offer that hands off to setup-project or ticket-up, or that workflow's inner owner-judgment offers, which needs those skills reachable from the session |
 | `references/team.md` | (whole file) | Reason: team mode runs in a Slack channel, a service the suite cannot reach from its sandbox |
@@ -1106,7 +1106,7 @@ Plugin arm only:
 | 45-current-setup-offers-nothing | tuning | 1.00 |
 | 46-general-question-skips-recall | tuning | 1.00 |
 | 52-projectless-chat-offers-no-surfaces | tuning | 0.86 |
-| 53-update-offer-from-v12 (measured as 53-update-offer-from-v9) | tuning | 0.00 |
+| 53-update-offer-from-v13 (measured as 53-update-offer-from-v9) | tuning | 0.00 |
 
 Mean 0.76 over the 9 cases.
 

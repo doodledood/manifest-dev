@@ -1,7 +1,7 @@
 # ADR: The Auto marker is an opt-in grant; absence fences automation off entirely
 
 ## Status
-Accepted — irreversible-act authority narrowed by 20260812-auto-ticket-completes-after-required-landing: ordinary landing through declared repository protections is within Auto; actions requiring separate human authority remain excluded; amended by 20261018-a-ticket-without-auto-runs-until-it-needs-a-person-and-never-lands-on-its-own: absence of Auto no longer keeps automation off a Ticket whose author has write access, only from completing or landing it
+Accepted — irreversible-act authority narrowed by 20260812-auto-ticket-completes-after-required-landing: ordinary landing through declared repository protections is within Auto; actions requiring separate human authority remain excluded; amended by 20261018-a-ticket-without-auto-runs-until-it-needs-a-person-and-never-lands-on-its-own: absence of Auto no longer keeps automation off a Ticket whose author has write access, only from completing or landing it; amended by 20261107-a-grant-counts-only-by-who-set-it: a grant counts only when a person with authority to grant or `orchestrate --autonomous` set it, as each venue reads who set it
 
 ## Area
 Ticketing
@@ -47,7 +47,8 @@ Default-off is what makes shared venues safe: nothing is ever marked "not auto" 
 partly — `tests/test_ticket_automation_prompts.py` — `test_ticket_up_preserves_auto_authority_boundary` fails if Shaped starts
 implying Auto, a grant stops naming its grantor, or the run that found the work may grant it;
 `test_a_ticket_without_auto_runs_to_a_ready_pull_request_and_never_lands` holds the amended meaning
-of absence; the granting criterion is judgment. Also `tests/test_ticket_automation_prompts.py` —
+of absence; `test_a_grant_counts_only_by_who_set_it` fails if a grant stops counting only by who set it
+(20261107-a-grant-counts-only-by-who-set-it); the granting criterion is judgment. Also `tests/test_ticket_automation_prompts.py` —
 `test_ticket_execution_skills_ship_on_every_distribution` fails if the distributed copy loses the
 rule that Shaped never implies Auto.
 

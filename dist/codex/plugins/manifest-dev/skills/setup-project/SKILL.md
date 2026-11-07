@@ -68,7 +68,9 @@ run flags the rest, and the surfaces version is not written until each flagged i
 
 ### The surfaces version
 
-The project-surfaces section in the context file records one surfaces version, as the comment the template carries. Read it from the file on disk: a host that loads the context file into the session may strip HTML comments, so the copy already in context can show no version where the file records one. `references/CHANGES.md` lists each version in one line, the last being the newest, and `references/changes/vN.md` holds what version N gives an installed project; read only the files after the recorded version. Only this skill writes that line — when it installs, and when it finishes an update — plus figure-out when the user declines a whole update offer. Content written under the surfaces — a new record, a glossary entry, a recipe — never changes it.
+The project-surfaces section in the context file records one surfaces version, as the comment the template carries. Read it from the file on disk: a host that loads the context file into the session may strip HTML comments, so the copy already in context can show no version where the file records one. `references/CHANGES.md` lists each version in one line, the last being the newest, and `references/changes/vN.md` holds what version N gives an installed project; read only the files after the recorded version. The line says which surfaces the project carries, so only this skill writes it — when it installs, and when it finishes an update. Content written under the surfaces — a new record, a glossary entry, a recipe — never changes it.
+
+figure-out records a declined update offer on a line of its own, `<!-- setup-project update declined through vN -->`. That decline line only stops figure-out repeating its offer: it says nothing about what the project carries, so this run reads no version from it, and removes it when it writes the surfaces version. A project-surfaces section holding nothing but a version line, with or without decline lines beside it, was left by an earlier figure-out decline, not by this skill: read its version line as a decline line through that version and the project as recording no version, and install the section.
 
 The recorded version also decides which differences in a copy the project owns are offered, per *Compare, then offer* below.
 
@@ -82,9 +84,9 @@ On a project that already carries surfaces, the run is an update, and it aims fo
   |---|---|
   | vN, older than the newest `CHANGES.md` lists | `references/upgrades/vN-to-current.md`, then each later `vM-to-current.md` in that folder |
   | the newest | no guide |
-  | none | no version guide; `references/upgrades/MOVE_TO_HARNESS.md` when the project has a feature map, a reader-task list or a verification-surface README to move |
+  | none | no version guide |
 
-  Whatever version is recorded, the newest included, also load `references/upgrades/RESHAPE_NORTH_STAR.md` while the project's `NORTH_STAR.md` is still in the older nine-field form, and offer its reshape as one item: an owner who has not yet ruled its lines is offered it again on every run.
+  Whatever version is recorded, the newest included, also load `references/upgrades/MOVE_TO_HARNESS.md` while the project has a feature map, a reader-task list or a verification-surface README to move, and offer the move as one item — the one `v3-to-current.md` names, where that guide loads: the project's shape, not the number it records, says whether the move is owed. Likewise load `references/upgrades/RESHAPE_NORTH_STAR.md` while the project's `NORTH_STAR.md` is still in the older nine-field form, and offer its reshape as one item: an owner who has not yet ruled its lines is offered it again on every run.
 
 - **The conventions, the North Star conventions, and the surfaces section** — by comparison, per *Compare, then offer* below.
 - **The records written under the conventions** — only their editable fields, and only on records in effect, as the conventions' lifecycle defines them. Add `Enforced by` where a check already holds the record's decision: code that cites the record, or a lint or test configuration that pins what it decided — one that would fail if the decision were reversed. Where that check has no comment citing the record, offer one. Leave a record with no check found without the line. Add a missing `Area`. Rebuild the index, and the North Star's strategy list where it keeps one, per the conventions, and offer the check step 2 describes where nothing holds them yet. Never change a record's body.

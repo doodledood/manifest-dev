@@ -1,7 +1,7 @@
 # ADR: check-pr's third gate is the review-feedback inbox
 
 ## Status
-Accepted; amended by 20261106-review-evidence-serves-substantive-acceptance: a reply must clearly address its actual review item; unrelated later updates do not count
+Accepted; amended by 20261106-review-evidence-serves-substantive-acceptance: a reply must clearly address its actual review item; unrelated later updates do not count; amended by 20261107-the-tending-identity-can-answer-a-review-body: a reply from the identity the inspection runs as, the one tending the PR, counts as the author's would when that identity did not write the item
 
 ## Area
 PR lifecycle
@@ -77,6 +77,8 @@ item, and that `/do` acts on that prose, stay judgment.
 `tests/test_check_pr_feedback_gate.py::test_addressing_signal_is_tied_to_each_actual_item`
 and the check-pr recipe's `item-specific-addressing` scenario hold the item association added
 by 20261106-review-evidence-serves-substantive-acceptance.
+`tests/test_check_pr_feedback_gate.py::test_the_tending_identity_can_address_a_body` holds the
+tending identity added by 20261107-the-tending-identity-can-answer-a-review-body.
 
 ## Source
 - Session: unattended `/auto` on https://github.com/doodledood/manifest-dev/issues/360

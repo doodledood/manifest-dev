@@ -958,3 +958,61 @@ test("source action candidates include native and declared controls without hidd
   assert(controls.some((c) => c.tag === "summary"));
   assert(controls.some((c) => c.role === "switch"));
 });
+
+// usage.md: "Missing evidence is unmeasured or rejected, never an empty success." HTML may
+// omit </head>; the head ends where the browser ends it, so later content is inventoried.
+test("source HTML ends the head where the browser does", async () => {
+  const cases = [
+    [
+      "<!doctype html><html><head><title>T</title><body><h1>Hello</h1><button>Go</button><p>Text</p></body></html>",
+      ["Hello", "Go", "Text"],
+      1,
+      1,
+    ],
+    [
+      "<!doctype html><html><head><head></head> Late <button>Go</button>",
+      ["Late", "Go"],
+      0,
+      1,
+    ],
+    [
+      "<!doctype html><html><head><meta charset=utf-8> Bare text</head><h1>After</h1>",
+      ["Bare text", "After"],
+      1,
+      0,
+    ],
+    ["<!doctype html><title>Implied</title><h1>Body</h1>", ["Body"], 1, 0],
+    [
+      "<!doctype html><html><head><template><h1>Inert</h1></head></template><p>Shown</p>",
+      ["Shown"],
+      0,
+      0,
+    ],
+    ["<!doctype html><html><p><template></p><h1>Inert</h1>", [], 0, 0],
+  ];
+  for (const [i, [source, texts, headings, controls]] of cases.entries()) {
+    const path = join(dir, `head-${i}.html`);
+    await writeFile(path, source);
+    const r = observation(["inspect", path]);
+    assert.deepEqual(
+      r.observations.copy.entries.map((n) => n.text),
+      texts,
+      source,
+    );
+    assert.equal(r.observations.copy.headings.length, headings, source);
+    assert.equal(r.observations.access.controls.length, controls, source);
+    assert.equal(r.coverage.bodyContent, texts.length > 0, source);
+  }
+});
+
+test("source HTML with no body content says so in coverage", async () => {
+  const path = join(dir, "script-built.html");
+  await writeFile(
+    path,
+    '<!doctype html><html><head><title>App</title></head><body><div id="root"></div><script>render()</script></body></html>',
+  );
+  const r = observation(["inspect", path]);
+  assert.equal(r.observations.copy.totalWords, 0);
+  assert.equal(r.coverage.bodyContent, false);
+  assert.match(r.coverage.unmeasured, /does not show the page is empty/);
+});

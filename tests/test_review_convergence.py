@@ -186,7 +186,7 @@ def test_findings_are_adjudicated_without_losing_real_obligations(
         "absence of a criterion is not a dismissal",
         "amend it before treating it as settled",
         "your disposition cannot clear it",
-        "new code, argument or evidence can reopen them",
+        "new code, changed criteria, argument or evidence can reopen them",
         "the bounded mandatory build work above is settled",
     ):
         assert boundary in executor, boundary

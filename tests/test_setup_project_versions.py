@@ -133,6 +133,54 @@ def test_surfaces_template_carries_the_latest_version() -> None:
     )
 
 
+DECLINE_LINE = "`<!-- setup-project update declined through vN -->`"
+WITH_DOCS = SKILLS / "figure-out" / "references" / "WITH_DOCS.md"
+
+
+# Holds the decision in docs/adr/20261107-only-setup-project-writes-the-surfaces-version.md. The
+# version line says which surfaces a project carries, and setup-project attributes every
+# difference by it. figure-out once wrote it on a declined offer, appending a section holding
+# only that line, so a project never set up claimed the newest version and setup-project never
+# offered its wiring or seeded it. No shipped skill but setup-project may emit the version line
+# or the section, and figure-out records its decline in the one form setup-project reads.
+def test_only_setup_project_writes_the_surfaces_version() -> None:
+    writers = sorted(
+        str(path.relative_to(REPO_ROOT))
+        for path in (REPO_ROOT / "claude-plugins").glob("*/skills/**/*.md")
+        if SKILLS / "setup-project" not in path.parents
+        and re.search(
+            r"setup-project surfaces v|^## Project surfaces|into the surfaces version line",
+            path.read_text(encoding="utf-8"),
+            re.MULTILINE,
+        )
+    )
+    assert not writers, (
+        f"{writers} write the surfaces version line or the project-surfaces section; only "
+        "setup-project writes them, and figure-out records a declined offer on its own line"
+    )
+    for path in (WITH_DOCS, SKILLS / "setup-project" / "SKILL.md"):
+        assert DECLINE_LINE in path.read_text(encoding="utf-8"), (
+            f"{path.relative_to(REPO_ROOT)} must name the decline line as {DECLINE_LINE}, the "
+            "form figure-out writes and setup-project reads"
+        )
+
+
+# Holds the same record's repair of a legacy section. figure-out writes its decline line directly
+# after the version line, so a legacy section holding only a version line and then declined again
+# holds both. Recognizing only a lone version line read that legacy number as a real version: the
+# run skipped seeding and attributed every older gap to the project.
+def test_a_declined_legacy_section_is_still_read_as_no_version() -> None:
+    text = (SKILLS / "setup-project" / "SKILL.md").read_text(encoding="utf-8")
+    assert re.search(
+        r"section holding nothing but a version line, with or without decline lines",
+        text,
+    ), (
+        "setup-project must read a project-surfaces section holding only a version line and "
+        "decline lines as left by a figure-out decline, since figure-out writes its decline line "
+        "beside the version line"
+    )
+
+
 NEWEST_VERSION_CASE = "45-current-setup-offers-nothing"
 
 
@@ -216,6 +264,39 @@ def test_one_upgrade_guide_per_older_version_each_covering_only_the_next() -> No
         )
 
 
+def test_shape_guides_load_whatever_version_is_recorded() -> None:
+    # MOVE_TO_HARNESS.md and RESHAPE_NORTH_STAR.md repair a project's shape, so its shape loads
+    # them. The move once loaded only with no version recorded or through v3-to-current.md, so a
+    # pre-v4 project whose line had been advanced past v3 — a figure-out decline used to do it —
+    # kept its feature map and surface README on every later run.
+    skill = re.sub(
+        r"\s+", " ", (SKILLS / "setup-project" / "SKILL.md").read_text("utf-8")
+    )
+    rows = re.findall(r"\| (none|the newest|vN[^|]*) \| ([^|]*) \|", skill)
+    assert rows, "setup-project/SKILL.md lost the table of guides by recorded version"
+    for version, loads in rows:
+        for guide in ("MOVE_TO_HARNESS.md", "RESHAPE_NORTH_STAR.md"):
+            assert guide not in loads, (
+                f"the `{version}` row loads {guide}; a shape guide loads whatever version is "
+                "recorded, from the sentence below the table"
+            )
+    sentence = re.search(
+        r"Whatever version is recorded, the newest included, [^:]*", skill
+    )
+    assert sentence and "MOVE_TO_HARNESS.md" in sentence.group(
+        0
+    ), "MOVE_TO_HARNESS.md must load on the project's shape, whatever version is recorded"
+    assert "RESHAPE_NORTH_STAR.md" in skill
+    # The trigger lives in the loading layer: a deferred guide is read only after the load its
+    # own trigger would gate (docs/adr/20260703-progressive-disclosure-triggers-live-in-loading-layer.md).
+    move = (SKILLS / "setup-project/references/upgrades/MOVE_TO_HARNESS.md").read_text(
+        "utf-8"
+    )
+    assert (
+        "whatever version the project records" not in move
+    ), "MOVE_TO_HARNESS.md restates its own load trigger; setup-project/SKILL.md owns it"
+
+
 def test_setup_project_follows_every_guide_from_the_recorded_version_on() -> None:
     # The other half of the rule above: the loading layer walks the whole path and adds the
     # guides up, so no single guide has to take a project to the newest version.
@@ -227,3 +308,14 @@ def test_setup_project_follows_every_guide_from_the_recorded_version_on() -> Non
         in skill
     )
     assert "an item a later version replaces is not offered" in skill
+
+
+# A project whose ADR conventions never had the draft rule had nowhere to put v14's
+# sentence, so a run following the v13 guide offered it nothing. The guide offers the
+# rule with the sentence, and the change file states the item standalone.
+def test_the_v14_draft_item_reaches_conventions_without_a_draft_rule() -> None:
+    guide = " ".join((UPGRADES / "v13-to-current.md").read_text().split())
+    assert "Where the project's conventions have no draft rule" in guide
+    assert "offer that rule with the sentence, as one item" in guide
+    change = " ".join((CHANGES_DIR / "v14.md").read_text().split())
+    assert "The ADR conventions gain, or extend, their rule for drafts" in change

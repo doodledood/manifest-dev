@@ -59,11 +59,13 @@ The same files always give the same result. `/do` runs it again in full each tim
 the gate. Its result does not change by chance, so it needs no Ratchet.
 
 ### Ratchet
-<!-- context: 169dab6ec6d2 -->
+<!-- context: 050166094c61 -->
 The Ratchet is how `/do` examines a Judgment Gate again after a repair. The first evaluation reads
 the full change. Later evaluations check open findings and problems caused or exposed by the new
-changes. They carry the earlier criteria, subject state, and finding results. New external evidence
-can still show a real failure in material already reviewed.
+changes. They carry the earlier criteria, subject state, and finding results. When the gate's
+criteria change, the next evaluation reads the full change again, so a wider gate cannot keep an
+old pass. New external evidence can still
+show a real failure in material already reviewed.
 
 ### Process Guidance
 <!-- context: abb3d0948b40 -->
@@ -308,10 +310,14 @@ gave the reason. It is small on purpose, and it names what it could not find. It
 full record.
 
 ### Surfaces Version
-<!-- context: 3b5e8ec4011a -->
+<!-- context: eeab9a79f0bc -->
 The Surfaces Version is a number that the Project Context File records. It shows which version of
-the `/setup-project` setup the project has. When the number is older than the newest version,
-`/figure-out` offers the changes since that version. It is not the version of the plugin.
+the `/setup-project` setup the project has. Only `/setup-project` writes it. When the number is
+older than the newest version, `/figure-out` offers the changes since that version. If the user
+says no, `/figure-out` writes a different note, so it does not offer the same changes again.
+
+The number stays the same after that answer, so a later `/setup-project` run still shows those
+changes. The Surfaces Version is not the version of the plugin.
 
 Some changes are offered only one time. For example, v13 offers Taste entries from the project's
 history. A project that records v13 does not get that offer again, so the user is not asked about it

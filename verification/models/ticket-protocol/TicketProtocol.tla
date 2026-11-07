@@ -10,24 +10,29 @@
    Scope: one Ticket; the orchestrators in Orchs, sharing one automation identity, each able to
    launch, take over and land; one run per launch; a person who can push to the pull request's
    branch, claim, close or reopen the Ticket, close or approve the pull request, apply the
-   escalation mark, and answer an escalation;
+   escalation mark, and answer an escalation; an orchestrator that stops for good, after which
+   its run's timeout passes;
    a base branch that moves at most once; each world event at most once. Liveness holds within
    that bound. The three-failed-launches escalation is outside it: one crash at most.
+
+   An orchestrator's read sorts the Ticket as orchestrate/SKILL.md's sort does, into the first
+   category whose conditions hold: LeftAlone, Running, ToLand, ToRecover, Ready.
 
    A deferred Ticket's signpost is world state: its condition reads as met, unmet or unreadable at
    the source it names, as Signpost says at the start, and the world may make it read as met once.
 
-   PreFix = TRUE switches four behaviors back to the protocol as it stood before this model: the
+   PreFix = TRUE switches five behaviors back to the protocol as it stood before this model: the
    landing check stops with nothing relaunched or escalated when the head, a check or a
    protection fails; a launcher decides from its earlier read whether to create the attempt
-   record; the lander does not look for the escalation mark; and a launcher does not read a
-   deferred Ticket's signpost. The `prefix` scenario of
-   verification/recipes/ticket-protocol-model.md expects TLC to report all four. *)
+   record; the lander does not look for the escalation mark; a launcher does not read a
+   deferred Ticket's signpost; and a ready mark another orchestrator's run left fits no category,
+   so nobody adopts it. The `prefix` scenario of
+   verification/recipes/ticket-protocol-model.md expects TLC to report all five. *)
 EXTENDS Integers, Sequences
 
 CONSTANTS Orchs,     \* the orchestrators sharing the automation identity
           Env,       \* the world events this configuration allows, each at most once
-          PreFix,    \* TRUE restores the four old behaviors described above
+          PreFix,    \* TRUE restores the five old behaviors described above
           MaxRuns,   \* launches per orchestrator, a bound for TLC; no run reaches it
           Signpost   \* "none" (not deferred), or how its condition reads at the start: "met", "unmet" or "unreadable"
 
@@ -46,7 +51,7 @@ VARIABLES
   base,        \* the target branch's commit
   nextC,       \* the next fresh commit
   used,        \* the world events already spent
-  opc,         \* each orchestrator's step
+  opc,         \* each orchestrator's step; "gone" once it has stopped
   saw,         \* whether it saw an attempt record at its last read
   lview,       \* the head it read from the record before merging
   n,           \* how many runs it has launched
@@ -83,31 +88,56 @@ Init ==
 ---------------------------------------------------------------------------------------------
 (* Orchestrator o *)
 
-\* Quote orchestrate/SKILL.md: "*Ready*: open, unclaimed, every dependency closed, no escalation mark"
-\* Quote orchestrate/SKILL.md: "*To recover*: the automation identity holds its claim, no run is live"
-\* Quote orchestrate/SKILL.md: "or marked ready a pull request that merged before the Ticket was reopened"
+\* The sort, category by category, in its order.
+\* Quote orchestrate/SKILL.md: "Each Ticket takes the first category below whose conditions hold, so it is in exactly one."
 \* Quote orchestrate/SKILL.md: "A run that is not yours belongs to another orchestrator until its timeout has passed, live or not; leave its Ticket alone until then."
 \* Quote ticket-up/references/TICKET_CONVENTION.md: "when it is deferred — its `Revisit when` condition reads as met at the source it names"
-\* Quote orchestrate/SKILL.md: "its signpost read as met at its source when it is deferred"
-Takeable(o) ==
-  /\ ~closed /\ ~mark /\ claim # "person" /\ ~NamedLive /\ n[o] < MaxRuns
+\* Quote orchestrate/SKILL.md: "it is deferred and its signpost reads as unmet"
+LeftAlone(o) ==
+  \/ closed \/ mark \/ claim = "person"
+  \/ HasRec /\ ~Owner(o) /\ ~TheRec.timedOut
   \* Pre-fix: the launcher does not read the signpost.
-  /\ PreFix \/ Signpost = "none" \/ CondReads = "met"
-  /\ \/ claim = "none"
-     \/ claim = "auto" /\ ~HasRec
-     \/ claim = "auto" /\ HasRec /\ Owner(o) /\ (~ReadyValid \/ Reopened)
-     \/ claim = "auto" /\ HasRec /\ ~Owner(o) /\ TheRec.timedOut
+  \/ ~PreFix /\ Signpost # "none" /\ CondReads # "met"
 
-\* Quote orchestrate/SKILL.md: "*To land*: its record is marked ready to land by a run of yours and no run is live, and the Ticket was not reopened after its pull request merged."
-ToLand(o) == ~closed /\ claim = "auto" /\ ~mark /\ ReadyValid /\ Owner(o) /\ ~NamedLive /\ ~Reopened
+\* Quote orchestrate/SKILL.md: "*Running*: its run facts name a live run."
+Running == NamedLive
+
+\* Quote orchestrate/SKILL.md: "*To land*: its record is marked ready to land by a run of yours, or by another orchestrator's run whose timeout has passed, which you adopt before its landing turn (*Taking over*); no run is live; and the Ticket was not reopened after its pull request merged."
+\* Pre-fix: a ready mark another orchestrator's run left fits no category.
+ToLand(o) == ReadyValid /\ ~Reopened /\ (Owner(o) \/ ~PreFix)
+
+\* Quote orchestrate/SKILL.md: "*To recover*: the automation identity holds its claim, no run is live"
+\* Quote orchestrate/SKILL.md: "or marked ready a pull request that merged before the Ticket was reopened"
+ToRecover == claim = "auto" /\ (~HasRec \/ ~ReadyValid \/ Reopened)
+
+\* Quote orchestrate/SKILL.md: "*Ready*: open, unclaimed, every dependency closed, no escalation mark"
+\* Quote orchestrate/SKILL.md: "its signpost read as met at its source when it is deferred"
+Ready == claim = "none"
 
 \* Quote orchestrate/SKILL.md: "Read every Ticket in scope whole"
+\* Quote orchestrate/SKILL.md: "Once it has passed, that orchestrator has stopped — one still checking in refreshes the start time on a Ticket it holds ready to land (*Check in*) — and its Ticket sorts as below like one of yours (*Taking over*)."
 ORead(o) ==
-  /\ opc[o] = "read"
-  /\ \/ ToLand(o) /\ opc' = [opc EXCEPT ![o] = "land"] /\ UNCHANGED saw
-     \/ ~ToLand(o) /\ Takeable(o) /\ opc' = [opc EXCEPT ![o] = "claim"] /\ saw' = [saw EXCEPT ![o] = HasRec]
+  /\ opc[o] = "read" /\ ~LeftAlone(o) /\ ~Running
+  /\ \/ ToLand(o) /\ Owner(o) /\ opc' = [opc EXCEPT ![o] = "land"] /\ UNCHANGED saw
+     \/ ToLand(o) /\ ~Owner(o) /\ n[o] < MaxRuns /\ opc' = [opc EXCEPT ![o] = "adopt"] /\ UNCHANGED saw
+     \/ ~ToLand(o) /\ (ToRecover \/ Ready) /\ n[o] < MaxRuns
+        /\ opc' = [opc EXCEPT ![o] = "claim"] /\ saw' = [saw EXCEPT ![o] = HasRec]
   /\ UNCHANGED <<recs, claim, closed, autoClosed, landedNow, mark, prOpen, merged, red, review,
                  branch, base, nextC, used, lview, n, rpc, rbase, rlocal, rmerged, bad>>
+
+\* Adopting a ready mark: the run facts and the mark take a run ID of o's own, with a fresh start
+\* time, the head and base kept, and no run started; the next read is the re-read after writing.
+\* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "The ready mark has one other writer: an orchestrator adopting it once the timeout of the run that wrote it has passed and no run is live."
+\* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "keeps the head and base commits the mark names, the launch count and whether the last launch repaired a landing, and starts no run"
+\* Quote orchestrate/SKILL.md: "Re-read the Ticket after an adoption"
+OAdopt(o) ==
+  /\ opc[o] = "adopt"
+  /\ LET r == <<o, n[o] + 1>> IN
+     /\ n' = [n EXCEPT ![o] = @ + 1]
+     /\ recs' = [recs EXCEPT ![1] = [@ EXCEPT !.run = r, !.ready = r, !.timedOut = FALSE]]
+  /\ opc' = [opc EXCEPT ![o] = "read"]
+  /\ UNCHANGED <<claim, closed, autoClosed, landedNow, mark, prOpen, merged, red, review, branch, base,
+                 nextC, used, saw, lview, rpc, rbase, rlocal, rmerged, bad>>
 
 \* Quote orchestrate/SKILL.md: "Claim it and write the launch facts"
 \* Quote orchestrate/SKILL.md: "Create the attempt record when the Ticket has none."
@@ -163,7 +193,7 @@ Relaunch(o) ==   \* launch the run again, which writes fresh run facts
   /\ UNCHANGED <<recs, claim, mark, n>>
 
 \* The landing turn, ticket-up/references/AUTOMATED_EXECUTION.md *Landing* steps 1 to 4.
-\* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "It stops when the Ticket is closed, carries the escalation mark, or a person holds the claim"
+\* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "It stops when the Ticket is closed, when a person holds the claim other than the identity it writes as or, on a hand run, the person who started it, or — on an unattended landing — when the Ticket carries the escalation mark"
 \* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "A merged pull request counts as the Ticket's landing only when the Ticket was not reopened after that merge"
 \* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "When the base has moved since the base commit the record names, the run merges the base in"
 \* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "When the head is not the one the record names, or a required check fails, `orchestrate` relaunches the run to repair it"
@@ -177,8 +207,8 @@ OLand(o) ==
   /\ IF closed \/ claim = "person" \/ (mark /\ ~PreFix) \/ ~ReadyValid \/ ~Owner(o) \/ Reopened
      THEN opc' = [opc EXCEPT ![o] = "read"] /\ UNCHANGED <<recs, claim, mark, saw, n, closed, autoClosed, landedNow>>
      ELSE IF merged /\ landedNow   \* a person merged it since the Ticket was opened
-     THEN /\ closed' = TRUE /\ autoClosed' = TRUE /\ opc' = [opc EXCEPT ![o] = "read"]
-          /\ UNCHANGED <<recs, claim, mark, saw, n, landedNow>>
+     THEN /\ closed' = TRUE /\ autoClosed' = TRUE /\ claim' = "none" /\ opc' = [opc EXCEPT ![o] = "read"]
+          /\ UNCHANGED <<recs, mark, saw, n, landedNow>>
      ELSE IF ~PreFix /\ TheRec.base # base
      THEN Relaunch(o) /\ UNCHANGED <<closed, autoClosed, landedNow>>
      ELSE IF PreFix /\ (TheRec.base # base \/ branch # TheRec.head \/ red \/ review \/ ~prOpen)
@@ -198,20 +228,21 @@ OLand(o) ==
 
 \* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "Merges with the head pinned"
 \* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "A Ticket closes only after its landing is observed"
+\* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "closes the Ticket, and then releases the automation claim"
 OMerge(o) ==
   /\ opc[o] = "merge"
   /\ IF branch = lview[o] /\ prOpen /\ ~merged /\ HasRec /\ TheRec.base = base
         /\ ~closed /\ claim # "person" /\ (~mark \/ PreFix)   \* Pre-fix: the mark is not looked for
      THEN /\ merged' = TRUE /\ landedNow' = TRUE /\ closed' = TRUE /\ autoClosed' = TRUE
-          /\ bad' = (bad \/ mark) /\ opc' = [opc EXCEPT ![o] = "read"]
-     ELSE /\ opc' = [opc EXCEPT ![o] = "land"] /\ UNCHANGED <<merged, landedNow, closed, autoClosed, bad>>
-  /\ UNCHANGED <<recs, claim, mark, prOpen, red, review, branch, base, nextC, used, saw, lview, n,
+          /\ claim' = "none" /\ bad' = (bad \/ mark) /\ opc' = [opc EXCEPT ![o] = "read"]
+     ELSE /\ opc' = [opc EXCEPT ![o] = "land"] /\ UNCHANGED <<merged, landedNow, closed, autoClosed, claim, bad>>
+  /\ UNCHANGED <<recs, mark, prOpen, red, review, branch, base, nextC, used, saw, lview, n,
                  rpc, rbase, rlocal, rmerged>>
 
 ---------------------------------------------------------------------------------------------
 (* The current run of orchestrator o, whose run ID is RunOf(o) *)
 
-\* Quote run-ticket/SKILL.md: "stops when a person other than the identity it writes as is assigned, when the Ticket is closed, or — on an unattended run — when the escalation mark is on"
+\* Quote run-ticket/SKILL.md: "stops when a person is assigned other than the identity it writes as or, on a hand run, the person who started it, when the Ticket is closed, or — on an unattended run — when the escalation mark is on"
 \* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "stops without writing when the run ID there is not its own"
 Stops(o) == ~Named(o) \/ closed \/ claim = "person" \/ mark
 
@@ -331,12 +362,24 @@ WReopen == /\ Event("reopen") /\ closed /\ autoClosed
 WCrash == /\ Event("crash") /\ \E o \in Orchs : LiveRun(o) /\ rpc' = [rpc EXCEPT ![o] = "dead"]
           /\ UNCHANGED <<recs, claim, closed, autoClosed, landedNow, mark, prOpen, merged, red, review,
                          branch, base, nextC, opc, saw, lview, n, rbase, rlocal, rmerged, bad>>
-\* World: the recorded run's timeout passes; its orchestrator stops a run still going.
-WTimeout == /\ Event("timeout") /\ HasRec
+\* World: the recorded run's timeout passes; its orchestrator stops a run still going. Where the
+\* configuration lets an orchestrator stop, the timeout passes after it has stopped. A Ticket held
+\* ready to land times out only once its holder has stopped, since the holder refreshes its start
+\* time at each check-in.
+\* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "That timeout stands for the holder's absence, not the run's age"
+\* Quote orchestrate/SKILL.md: "On each Ticket you hold ready to land, Auto or not, refresh the start time"
+WTimeout == /\ Event("timeout") /\ HasRec /\ ("ostop" \in Env => "ostop" \in used)
+            /\ ~(ReadyValid /\ opc[TheRec.run[1]] # "gone")
             /\ recs' = [recs EXCEPT ![1].timedOut = TRUE]
             /\ rpc' = [o \in Orchs |-> IF Named(o) /\ LiveRun(o) THEN "dead" ELSE rpc[o]]
             /\ UNCHANGED <<claim, closed, autoClosed, landedNow, mark, prOpen, merged, red, review,
                            branch, base, nextC, opc, saw, lview, n, rbase, rlocal, rmerged, bad>>
+
+\* World: an orchestrator's session ends for good (a host limit, the person closing it, its own
+\* stop) while its run, if any, goes on; a later orchestrator takes a new ID.
+WOStop == /\ Event("ostop") /\ \E o \in Orchs : opc[o] \in {"read", "wait"} /\ opc' = [opc EXCEPT ![o] = "gone"]
+          /\ UNCHANGED <<recs, claim, closed, autoClosed, landedNow, mark, prOpen, merged, red, review,
+                         branch, base, nextC, saw, lview, n, rpc, rbase, rlocal, rmerged, bad>>
 
 \* World: the deferred Ticket's condition comes true, or its source becomes readable and shows it met.
 WCond == /\ Event("cond") /\ Signpost \in {"unmet", "unreadable"}
@@ -350,19 +393,20 @@ WAnswer == /\ mark /\ mark' = FALSE /\ prOpen' = (prOpen \/ ~merged) /\ claim' =
                           used, opc, saw, lview, n, rpc, rbase, rlocal, rmerged, bad>>
 
 Next ==
-  \/ \E o \in Orchs : ORead(o) \/ OClaim(o) \/ OVerify(o) \/ OLaunch(o) \/ OWait(o) \/ OLand(o) \/ OMerge(o)
+  \/ \E o \in Orchs : ORead(o) \/ OAdopt(o) \/ OClaim(o) \/ OVerify(o) \/ OLaunch(o) \/ OWait(o) \/ OLand(o) \/ OMerge(o)
   \/ \E o \in Orchs : RStart(o) \/ RWork(o) \/ RPrePush(o) \/ RPush(o) \/ RWriteReady(o)
   \/ WPush \/ WBase \/ WRed \/ WReview \/ WApprove \/ WMark \/ WPrClose \/ WMerge \/ WClaim \/ WClose
   \/ WReopen \/ WCrash
-  \/ WTimeout \/ WAnswer \/ WCond
+  \/ WTimeout \/ WAnswer \/ WCond \/ WOStop
 
 Fair == \A o \in Orchs :
-          /\ WF_vars(ORead(o)) /\ WF_vars(OClaim(o)) /\ WF_vars(OVerify(o)) /\ WF_vars(OLaunch(o))
+          /\ WF_vars(ORead(o)) /\ WF_vars(OAdopt(o)) /\ WF_vars(OClaim(o)) /\ WF_vars(OVerify(o)) /\ WF_vars(OLaunch(o))
           /\ WF_vars(OWait(o)) /\ WF_vars(OLand(o)) /\ WF_vars(OMerge(o))
           /\ WF_vars(RStart(o)) /\ WF_vars(RWork(o)) /\ WF_vars(RPrePush(o)) /\ WF_vars(RPush(o))
           /\ WF_vars(RWriteReady(o))
 
-Spec == Init /\ [][Next]_vars /\ Fair
+\* World: time passes, so once an orchestrator has stopped, its run's timeout passes.
+Spec == Init /\ [][Next]_vars /\ Fair /\ WF_vars(WTimeout /\ "ostop" \in used)
 
 ---------------------------------------------------------------------------------------------
 (* Properties *)
@@ -400,4 +444,14 @@ LaunchedOnlyWhenMet == [][\A o \in Orchs : (opc[o] = "read" /\ opc'[o] = "claim"
 \* gives, within the model's bound.
 \* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "No Ticket keeps a landing turn while nothing works toward its landing."
 ReadyResolves == [](ReadyValid /\ ~closed => <>(closed \/ mark \/ claim = "person" \/ review))
+
+\* Property: an orchestrator adopts a ready mark only from a holder that has stopped, so a Ticket
+\* held ready to land never changes hands while its holder still checks in.
+\* Quote orchestrate/SKILL.md: "so no other orchestrator adopts it while you check in"
+AdoptsOnlyFromAStoppedHolder == [][\A o \in Orchs : (opc[o] = "adopt" /\ opc'[o] = "read") => opc[TheRec.run[1]] = "gone"]_vars
+
+\* Property: a ready pull request held only for a review a person gives is never launched again.
+\* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "A ready pull request or drafted answer uses its existing held state instead; it is never redispatched merely because acceptance has not arrived."
+HeldNotRedispatched == [][\A o \in Orchs : (opc[o] = "read" /\ opc'[o] = "claim") =>
+    ~(ReadyValid /\ review /\ ~red /\ prOpen /\ ~merged /\ branch = TheRec.head /\ TheRec.base = base)]_vars
 =============================================================================

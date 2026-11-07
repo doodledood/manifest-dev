@@ -15,10 +15,10 @@ does not erase a retained recommendation.
 
 On every wake, refresh head, comments, threads, checks, and other relevant evidence
 from GitHub. After thread advancement, skip a previously completed code review when
-its head and relevant inputs have not changed; otherwise review the new range from
-the checkpoint's head. If the head no longer descends from that checkpoint, review
-the full PR diff. Manifest gates with FAIL/BLOCKED or changed evidence still need
-evaluation; an unchanged head alone cannot settle them.
+its head and relevant inputs have not changed; otherwise review the range
+`SKILL.md` → *Review range* sets from the checkpoint's head. Manifest gates with
+FAIL/BLOCKED or changed evidence still need evaluation; an unchanged head alone
+cannot settle them.
 
 Use this checkpoint for later wakes only. A missing checkpoint triggers a fresh
 pass from GitHub state.

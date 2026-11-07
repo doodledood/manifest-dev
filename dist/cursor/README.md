@@ -27,8 +27,8 @@ Update with `git pull` in the clone and copy the two folders again (remove the o
 
 | Plugin | Skills |
 |--------|--------|
-| `manifest-dev` | `auto`, `check-pr`, `define`, `design`, `do`, `done`, `escalate`, `figure-out`, `figure-out-team`, `manifest-dev-help`, `next-ticket`, `orchestrate`, `poll-slack`, `review-code`, `review-design`, `review-writing`, `run-ticket`, `setup-project`, `ticket-up` |
-| `manifest-dev-tools` | `babysit-pr`, `eli5`, `handoff`, `prompt-engineering`, `review-pr`, `review-pr-holistic`, `review-pr-judgment`, `review-pr-thread-verify`, `review-prompt`, `teach-me`, `walk-pr`, `write-goal` |
+| `manifest-dev` | `audit-state-machines`, `auto`, `check-pr`, `define`, `design`, `do`, `done`, `escalate`, `figure-out`, `figure-out-team`, `manifest-dev-help`, `next-ticket`, `orchestrate`, `poll-slack`, `review-code`, `review-design`, `review-writing`, `run-ticket`, `setup-project`, `ticket-up` |
+| `manifest-dev-tools` | `babysit-pr`, `eli5`, `handoff`, `hillclimb`, `prompt-engineering`, `review-pr`, `review-pr-holistic`, `review-pr-judgment`, `review-pr-thread-verify`, `review-prompt`, `teach-me`, `walk-pr`, `write-goal` |
 
 Six of these are dependencies other skills invoke rather than entry points: `done` and `escalate` are called by `do`, `poll-slack` by `figure-out-team`, and the three `review-pr-*` skills by `review-pr`. They ship so the calling skill resolves. Their `user-invocable: false` marker hides them from the slash menu on hosts that read it; Cursor's skill format has no such field, so Cursor lists them alongside the rest. They are not meant to be invoked by hand.
 

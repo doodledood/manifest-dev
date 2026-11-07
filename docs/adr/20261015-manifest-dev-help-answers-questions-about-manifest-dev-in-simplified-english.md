@@ -71,8 +71,9 @@ each exists. Adding a user-invocable skill is a decision under
 ## Enforced by
 partly — `tests/test_manifest_dev_help_skill.py` fails when a `CONTEXT.md` term outside the
 maintainer set has no entry in the skill or the skill defines a term `CONTEXT.md` lacks, when a
-`CONTEXT.md` entry changes without the fingerprint in its entry, when a user-invocable core skill
-is not named in the skill, and when the skill breaks STE's counted limits;
+`CONTEXT.md` entry changes without the fingerprint in its entry, when a user-invocable core or
+tools-plugin skill is not named as `/name` in the skill or a tools-plugin skill only another skill
+calls is not named as `name` (`test_help_names_every_user_invocable_skill`), and when the skill breaks STE's counted limits;
 `tests/test_entry_points.py` holds the declared set with `manifest-dev-help` in it. Whether the
 meaning agrees with `CONTEXT.md` stays judgment.
 

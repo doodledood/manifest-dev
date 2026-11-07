@@ -11,7 +11,10 @@ branches. Show the concrete configuration and its destination before recording a
 - **GitHub Issues:** use `GITHUB_STORE.md` for the mapping.
 - **Another tracker:** use the required mapping rows in `GITHUB_STORE.md`, ask what supplies
   each capability, and record that venue reference at `tickets/<venue>-store.md`. An existing
-  custom reference is reused. The config names the venue and reference.
+  custom reference is reused. Where it lacks a row `GITHUB_STORE.md` maps — how the store reads
+  who set a grant, where an orchestrator's pause and the status-page link go, the answer record —
+  ask what supplies it and add that row before any unattended work on the store. The config names
+  the venue and reference.
 
 Record shared choices at `tickets/store-config.md`, or the configured location. For unattended
 coordination, resolve the stable automation identity and a distinguishable human escalation

@@ -342,7 +342,9 @@ def test_blocker_continuation_survives_every_outer_goal() -> None:
 # Holds the decision in docs/adr/20260905-executors-own-path-bearing-continuation-goals.md.
 def test_auto_chains_leave_goal_emission_to_the_executor() -> None:
     """A chain must remain goal-free until it has handed over a Manifest."""
-    for name, executor in (("auto", "do"),):
+    # hillclimb chains figure-out the same way: a Read-only goal set there would end an
+    # autonomous climb at the Read.
+    for name, executor in (("auto", "do"), ("hillclimb", "do")):
         for path in [source_skills()[name], *dist_copies(name)]:
             text = normalized(read(path))
             assert not blocks_in(path), path
@@ -387,3 +389,56 @@ def test_executor_contract_identifies_manifest_without_prior_context(
             assert recovered.read_text(encoding="utf-8") == "# Distinct test Manifest\n"
             contracts.add(emitted)
     assert len(contracts) == 1
+
+
+HANDS_CONTINUATION = "Do not set or print a continuation goal during understanding"
+OWNS_THE_BACKSTOP = "owns the completion backstop"
+
+
+# Holds the decision in docs/adr/20260905-executors-own-path-bearing-continuation-goals.md and
+# docs/adr/20260624-use-outcome-gated-auto-continuation.md: a caller whose execution step owns the
+# backstop keeps figure-out from arming one of its own. figure-out once suppressed its goal only
+# "when chained under auto", so hillclimb, which hands continuation to /do the same way, got a
+# competing Read-only goal. The rule names the condition, and every caller meeting it says so in
+# the condition's own words; no skill is listed on either side.
+def test_figure_out_suppresses_its_goal_for_any_caller_handing_continuation_on() -> (
+    None
+):
+    callers = sorted(
+        path
+        for root in SEARCH_ROOTS
+        for path in root.glob("**/skills/*/SKILL.md")
+        if TEMPLATE_PLUGIN not in path.parts
+        and HANDS_CONTINUATION in normalized(read(path))
+    )
+    assert callers, "no caller hands continuation to its execution step any more"
+    for path in callers:
+        assert OWNS_THE_BACKSTOP in normalized(read(path)), (
+            f"{path.relative_to(ROOT)} hands continuation on but does not say its execution "
+            f"step `{OWNS_THE_BACKSTOP}`, the condition figure-out suppresses its goal on"
+        )
+    for path in sorted(
+        p
+        for root in SEARCH_ROOTS
+        for p in root.glob("**/figure-out/references/autonomous.md")
+    ):
+        text = normalized(read(path))
+        rule = re.search(r"When your caller hands continuation[^.]*\.", text)
+        assert rule and OWNS_THE_BACKSTOP in rule.group(0), (
+            f"{path.relative_to(ROOT)} must suppress its goal on the condition "
+            f"(`{OWNS_THE_BACKSTOP}`), not on a named caller"
+        )
+        assert "do not set or print a continuation goal" in rule.group(0), path
+        callers_named = {p.parent.name for p in callers} & set(
+            re.findall(r"\b[a-z][a-z-]+\b", rule.group(0))
+        )
+        assert not callers_named, (
+            f"{path.relative_to(ROOT)} names {sorted(callers_named)} in the rule; state the "
+            "condition instead"
+        )
+        assert (
+            "Outside such a caller, this is the standalone-run backstop" in text
+        ), path
+        assert text.index("When your caller hands continuation") < text.index(
+            "Otherwise, your first action"
+        ), path

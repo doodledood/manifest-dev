@@ -11,6 +11,23 @@ Two reasoning modes are required, both applied to every review:
 
 A finding from either mode passes through the same Actionability Filter below.
 
+## State machines
+
+<!-- One statement of the method, used by review and by the audit-state-machines skill; see docs/adr/20261107-review-checks-the-whole-state-machine-a-change-touches.md. -->
+
+A state machine is a value whose changes follow a lifecycle: a set of states and the events that move it between them. It is **explicit** when the code names it — a status type with a transition table, or one function that owns every change. It is **implicit** when nothing does — a status set by branches in several files, or flags whose combinations act as states (`loading` and `failed` both true). Its bugs live between its sites: each site looks correct alone.
+
+When the scope writes a state machine, or reads one to decide what happens next (a scope that only displays a state needs only a check that the displayed states exist):
+
+1. **Rebuild the whole machine**, not only the part in scope: every state, every event that moves it, and every site that writes it, by file and line, across the repository, including code the scope does not touch. For an implicit machine, the states are the value combinations its writers can produce. The rules it must keep come from the code's own guards, its documents, and what its readers assume.
+2. **Check every state against every event, as deep as the risk warrants.** Enumerate inline for a small machine with one writer; walk every reachable state with a script outside the project for a larger one; use a model checker (TLA+ or Alloy, for example), or a script that explores every interleaving, where several writers can interleave. Look for a bad state that can be reached, a transition the rules forbid, a state with no way out, a combination that means nothing, and two writers whose interleaving loses a change.
+3. **Confirm every counterexample on the real code** before it counts: trace its sequence through the actual sites, or run it. The model is your translation of the code and can be wrong; a counterexample the code does not reproduce is dropped. The confirmed sequence is the finding's trigger.
+4. **A model that finds nothing proves nothing.** Say what it covered — its states, events and writers — never that the machine is correct.
+
+A machine can also be written as instructions that runs, agents or people follow — a prompt, a skill, a runbook that says who sets a status or a claim, and when. Check it the same way. Its sites are the rules, by file and line, and its writers are the runs that follow them. A counterexample counts once each step of its sequence is either allowed by a rule you quote or an event the environment can produce — a run that stops partway, a second run at the same time — and nothing in the text forbids that step.
+
+In a review of a change, the Actionability Filter's *In scope* applies: a bug the change introduced or exposed is in scope, including one now reachable only through writers the change did not touch. Report it with Category `State machine`. A transition the author meant differently, with no mechanical defect, belongs to the change-intent dimension; a missing discriminant in a type belongs to the type-safety dimension.
+
 ## Bug detection categories
 
 Walk the categories as failure-mode lenses, not as a checklist — a finding in one category does not stop analysis of others, and a bug that fits this dimension but matches no listed category is still reportable. Respect the Out of Scope boundaries to maintain orthogonality. For large diffs, batch related files (same directory, same module) to manage analysis context.
@@ -53,7 +70,7 @@ Note: Inconsistent error handling PATTERNS belong to the code-maintainability di
 
 *Report requires naming the specific state, its writers and readers, and the sequence that leaves it inconsistent — not just "state sync gap" or "cache may be stale."*
 
-Note: Implicit dependencies on execution order belong to the code-maintainability dimension. This category focuses on state that IS explicitly managed but becomes inconsistent.
+Note: Implicit dependencies on execution order belong to the code-maintainability dimension, unless the order lets a bad state be reached, which *State machines* reports. This category focuses on state that IS explicitly managed but becomes inconsistent.
 
 **Category 6 — Resource Leaks**
 - Unclosed file handles, connections, streams
@@ -126,4 +143,4 @@ Use the shared ladder. Wrong results, omitted data, stale substantive informatio
 
 ## Report expectations (this dimension)
 
-Beyond the shared report format: add a **Category** field naming the category from the detection list above. Where a code snippet showing the bug clarifies the finding, include it. The shared format's required **Trigger** field carries the conditions that produce the failure.
+Beyond the shared report format: add a **Category** field naming the category from the detection list above, or `State machine` for a finding from *State machines*. Where a code snippet showing the bug clarifies the finding, include it. The shared format's required **Trigger** field carries the conditions that produce the failure.

@@ -68,7 +68,7 @@ Read before building plugins:
 
 ## Project Surfaces
 
-<!-- setup-project surfaces v13 -->
+<!-- setup-project surfaces v14 -->
 
 This project keeps its direction, vocabulary, and decision memory in the repo — shared ground for every contributor and agent, regardless of tooling.
 

@@ -57,3 +57,54 @@ def test_adr_index_equals_a_rebuild_from_the_records() -> None:
         "The index); rewrite it from the records:\n"
         + ("\n".join(rows[:10]) or "rows match; line endings or row count differ")
     )
+
+
+STANDING_CHANGED_BY = re.compile(
+    r"(?i)\b(?:superseded|narrowed|amended|replaced|retired|lifted)(?: in part)? by "
+    r"\[?`?(\d{8}-[a-z0-9-]+)"
+)
+
+
+# Holds CONVENTIONS.md → *Immutability*: deleting a draft, or changing which records it
+# supersedes, narrows or amends, gives back the Status each record had before it. A record's
+# Status naming a record that is gone, or one that no longer names it back, is that restatus left
+# behind — the old decision drops out of effect, from the index and the strategy list, with
+# nothing in force replacing it.
+def test_every_status_names_a_record_that_names_it_back() -> None:
+    records = {
+        p.stem: p.read_text(encoding="utf-8")
+        for p in ADR.glob("*.md")
+        if p.name not in ("README.md", "CONVENTIONS.md")
+    }
+    stale = []
+    for name, text in sorted(records.items()):
+        for later in STANDING_CHANGED_BY.findall(
+            _field(text, "Status", ADR / f"{name}.md")
+        ):
+            if later not in records:
+                stale.append(f"{name}: its Status names {later}, which does not exist")
+            elif name not in records[later]:
+                stale.append(
+                    f"{name}: its Status names {later}, which never names it back"
+                )
+    assert not stale, (
+        "a record's Status says a record changed its standing, but that record is gone or "
+        "no longer names it; give the record back its earlier Status, or name it in the "
+        "later record's Source:\n" + "\n".join(stale)
+    )
+
+
+ADR_FORMAT = (
+    ADR.parent.parent
+    / "claude-plugins/manifest-dev/skills/figure-out/references/ADR_FORMAT.md"
+)
+
+
+# Holds the same rule's third half. Step 2 retargets or retires the check an old record's
+# `Enforced by` names; giving back only the Status and that line left the check holding the
+# draft's decision, so the restored record named a check that no longer enforced it. Both copies
+# of the convention say the check holds the record's decision again.
+def test_a_taken_back_restatus_gives_back_its_check() -> None:
+    clause = "the check step 2 retargeted or retired holds that record's decision again"
+    for path in (ADR / "CONVENTIONS.md", ADR_FORMAT):
+        assert clause in path.read_text(encoding="utf-8"), path

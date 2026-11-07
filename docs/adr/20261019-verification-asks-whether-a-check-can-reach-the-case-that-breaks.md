@@ -1,7 +1,7 @@
 # ADR: Verification asks whether a check can reach the case that breaks, and names the kind of check
 
 ## Status
-Accepted — amended by 20261019-define-searches-each-new-manifest-for-a-wrong-result-that-passes-every-gate: define's review searches a Manifest for holes, extending a design model that already exists by adding the Manifest's gates; proving a Manifest in a formal language stays rejected
+Accepted — amended by 20261019-define-searches-each-new-manifest-for-a-wrong-result-that-passes-every-gate: define's review searches a Manifest for holes, extending a design model that already exists by adding the Manifest's gates; proving a Manifest in a formal language stays rejected; narrowed by 20261107-a-figure-out-wrapper-sweeps-existing-code-for-state-machines: a skill does sweep existing code for state machines and model-checks them sized to the risk, since no design-time probe reaches defects in code no change touches
 
 ## Area
 Task guidance

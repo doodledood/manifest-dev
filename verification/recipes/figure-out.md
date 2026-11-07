@@ -29,13 +29,13 @@ Proves: the reply says the setup is current, lists nothing the project lacks, do
 Check: read
 
 ### one-version-behind
-Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/53-update-offer-from-v12/prompt.md --scaffold claude-plugins/manifest-dev/evals/53-update-offer-from-v12`
-Proves: the reply offers only the v13 change — once, a few Taste entries drawn from reasons the owner already stated in the project's history, for the user to accept — and offers nothing from v12 or earlier as new.
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/53-update-offer-from-v13/prompt.md --scaffold claude-plugins/manifest-dev/evals/53-update-offer-from-v13`
+Proves: the reply offers only the v14 changes — the ADR-conventions rule that deleting or retargeting a draft record gives back the Status it changed and the check it moved, and the tool update that keeps the summary of the run that finished last — and offers nothing from v13 or earlier as new.
 Check: read
 
 ### from-v1
 Run: `scripts/drive-skill.sh figure-out verification/prompts/figure-out-from-v1.md --scaffold verification/scaffolds/project-at-v1`
-Proves: the reply offers the update and names only what v2 to v11 add, including the move to one harness, the North Star reshape and its *Purpose* opening with the end.
+Proves: the reply offers the update and names only what v2 to v14 add, including the move to one harness, the North Star reshape and its *Purpose* opening with the end.
 Check: read
 
 ### strategy-signpost

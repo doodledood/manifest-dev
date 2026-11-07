@@ -115,11 +115,11 @@ def test_template_reads_every_field_the_reference_documents() -> None:
 
 def test_reference_documents_every_status_and_phase_the_template_knows() -> None:
     code = script()
-    statuses = set(re.findall(r"(\w+):", declared("TONE", code)))
+    statuses = set(re.findall(r'"?([\w-]+)"?:', declared("TONE", code)))
     phases = set(re.findall(r'\["(\w+)", "', declared("PHASES", code)))
     text = reference()
     status_table = text.split("### Statuses", 1)[1].split("###", 1)[0]
-    documented_statuses = set(re.findall(r"^\| `(\w+)` \|", status_table, re.M))
+    documented_statuses = set(re.findall(r"^\| `([\w-]+)` \|", status_table, re.M))
     assert statuses == documented_statuses
     assert all(f"`{p}`" in text for p in phases), phases
 
@@ -160,6 +160,15 @@ def validate(snapshot: dict[str, Any]) -> bool:
 
 def test_the_sample_snapshot_is_valid() -> None:
     assert validate(sample())
+
+
+def test_an_auto_ticket_waiting_for_its_landing_turn_has_a_status() -> None:
+    # A run marks an Auto Ticket ready and no run is live while it waits for its landing turn;
+    # with no status for that, the orchestrator had none to write and the page refused the snapshot.
+    snapshot = sample()
+    snapshot["tickets"][0]["status"] = "to-land"
+    snapshot["tickets"][0].pop("phase", None)
+    assert validate(snapshot)
 
 
 @pytest.mark.parametrize(
@@ -275,4 +284,75 @@ def test_outcome_state_is_independent_of_a_finished_empty_plan(state: str) -> No
 def test_incomplete_or_unknown_outcome_state_is_refused(coordination: object) -> None:
     snapshot = sample()
     snapshot["coordination"] = coordination
+    assert not validate(snapshot)
+
+
+def status_text(ticket: dict[str, Any], paused: bool) -> str:
+    """The template's own `statusText()`, run in Node on one Ticket of a paused or running effort."""
+    code = script()
+    tables = "\n".join(
+        re.search(rf"var {name} = .*?;\n", code, re.S).group(0)  # type: ignore[union-attr]
+        for name in ("PHASES", "LABEL")
+    )
+    start = code.index("  function statusText(")
+    end = code.index("  function aria(")
+    model = "true" if paused else "false"
+    program = (
+        tables
+        + "function time() { return 'T'; }\n"
+        + "function phaseIndex(p) { for (var i = 0; i < PHASES.length; i++) "
+        + "if (PHASES[i][0] === p) return i; return 0; }\n"
+        + code[start:end]
+        + "var t = JSON.parse(require('fs').readFileSync(0, 'utf8'));"
+        + f"var m = {{ paused: {model}, byId: {{}}, edgesOf: function () {{ return []; }} }};"
+        + "process.stdout.write(statusText(m, t));"
+    )
+    done = subprocess.run(
+        ["node", "-e", program],
+        input=json.dumps(ticket),
+        capture_output=True,
+        text=True,
+        timeout=30,
+        check=True,
+    )
+    return done.stdout
+
+
+# STATUS_PAGE.md exempted the repair Ticket from showing as Paused, but no snapshot field named it,
+# so the page showed the one Ticket that runs during a pause as Paused.
+@pytest.mark.parametrize("status", ["queued", "waiting", "to-land"])
+def test_the_repair_ticket_never_shows_as_paused(status: str) -> None:
+    ticket = {"id": "#9", "title": "Make the base check pass", "status": status}
+    assert status_text(ticket, paused=True) == "Paused"
+    assert status_text({**ticket, "repair": True}, paused=True) != "Paused"
+    assert status_text({**ticket, "repair": True}, paused=False) == status_text(
+        ticket, paused=False
+    )
+
+
+# An orchestrator's pause names a repair Ticket, then a person adds their own `Paused:` line. The
+# repair Ticket ran and landed anyway, because the exception ignored which kind of pause held, and
+# the page showed it running "during the pause". A person's pause stops the repair Ticket too, so
+# the snapshot leaves `repair` off while one holds and the Ticket reads as Paused.
+def test_a_persons_pause_stops_the_repair_ticket_on_the_page() -> None:
+    row = re.search(r"^\| `repair` \| (.*?)$", reference(), re.M)
+    assert row, "STATUS_PAGE.md no longer documents `repair`"
+    assert "while no person's `Paused:` line holds the effort" in row.group(1)
+    assert (
+        "no orchestrator's pause stands for a cause no code change can fix"
+        in row.group(1)
+    )
+    assert "Under either of those it stops like the rest, so leave it out" in row.group(
+        1
+    )
+    # Both kinds of pause present: the snapshot carries no `repair`, and the page shows Paused.
+    ticket = {"id": "#9", "title": "Make the base check pass", "status": "queued"}
+    assert status_text(ticket, paused=True) == "Paused"
+
+
+def test_a_repair_flag_is_valid_only_as_true() -> None:
+    snapshot = sample()
+    snapshot["tickets"][0]["repair"] = True
+    assert validate(snapshot)
+    snapshot["tickets"][0]["repair"] = "yes"
     assert not validate(snapshot)

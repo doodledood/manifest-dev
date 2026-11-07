@@ -46,6 +46,11 @@ Run: `scripts/drive-skill.sh manifest-dev-help verification/prompts/manifest-dev
 Proves: for a why that the skill's own text does not carry, the answer reads the skill that owns the behavior (`do` and its log reference), names that file, and gives the reason; it invents nothing that file does not say.
 Check: read
 
+### walk-a-pull-request
+Run: `scripts/drive-skill.sh manifest-dev-help verification/prompts/manifest-dev-help-walk-a-pull-request.md`
+Proves: asked for a job only a tools-plugin skill does, with the tools plugin not installed, the answer names `/walk-pr`, says it is in the tools plugin, which installs separately, and names the guide as its source, in short plain sentences. The prompt names no skill; the manifest-dev plugin before the guide covered the tools plugin mentions `walk-pr` nowhere, so the answer comes from the guide.
+Check: read
+
 ### overview
 Run: `scripts/drive-skill.sh manifest-dev-help verification/prompts/manifest-dev-help-overview.md`
 Proves: with no question, the answer gives what manifest-dev is for, the workflow and the autonomy ladder, and stops there.
@@ -53,5 +58,5 @@ Check: read
 
 ## Gotchas
 
-- `tests/test_manifest_dev_help_skill.py` holds the term set and each entry's fingerprint against `CONTEXT.md`, the skill list against the plugin, and STE's counted limits. Whether an answer is right stays a read.
+- `tests/test_manifest_dev_help_skill.py` holds the term set and each entry's fingerprint against `CONTEXT.md`, the skill list against both plugins, and STE's counted limits. Whether an answer is right stays a read.
 - An answer that no file supports is a failure, even when it is true: the skill reads the owning skill or the artifact the user points at, names it, and says so when no file answers.

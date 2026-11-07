@@ -34,4 +34,6 @@ here becomes a candidate for useful work inside the assignment, not an obligatio
 For a queue assignment, stop when no ready work is left in scope, nothing waits for a landing turn but a pull request held
 for a person's review, and no run is live.
 Check in a last time, then report what landed, what waits on the person in its order, and the
-page's link. For an outcome assignment, use `OUTCOME.md` to continue, wait, finish or report an operating limit; queue exhaustion alone does not finish that assignment.
+page's link. Say that a pull request held for review, once approved, lands only when the person
+merges it or an orchestrator works the effort again, and that a new one adopts it no sooner than a
+run timeout after this check-in (`../SKILL.md` → *Taking over*). For an outcome assignment, use `OUTCOME.md` to continue, wait, finish or report an operating limit; queue exhaustion alone does not finish that assignment.

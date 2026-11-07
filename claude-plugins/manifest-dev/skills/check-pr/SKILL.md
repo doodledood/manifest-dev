@@ -22,9 +22,9 @@ Return PASS when the PR is mergeable; return FAIL with per-gate findings when it
 
 The PR is ready when each gate holds:
 
-1. **PR exists** — exactly one open PR on the named branch.
+1. **PR exists** — exactly one open PR on the named branch. A merged PR is a terminal state of its own: report who merged it and when, and that nothing remains to tend, as the merged-PR example below shows.
 2. **CI green** — required checks pass on the current head commit.
-3. **Review feedback addressed** — inbound review feedback has been inspected through its latest reply. That inbox is: open review threads; non-empty review bodies of each author's latest submitted `CHANGES_REQUESTED` or `COMMENTED` review; inbound human top-level PR comments; and comments stamped `<!-- manifest-dev:review-pr -->` (the marker is an inbox signal, not a skip). Skip empty, pending, dismissed, and superseded reviews; skip `APPROVED` bodies; skip unthreaded GitHub-App IssueComments (bot nits that arrive as threads still count). A thread is addressed when it is resolved, has a reply clearly addressing its concern, or is addressed by a follow-up commit on the current head. A review body or top-level comment is addressed when the PR author has later replied on the Conversation with a response clearly tied to that item, the review is dismissed, or a newer submitted review from the same reviewer supersedes it — a follow-up commit or unrelated later update does not address a body or comment. Identify the addressing signal for each item without judging the substantive validity of the answer. Leave human-authored threads open for their authors to resolve. Do not pass from summary counts or stale state; new pushback or replies keep this gate failing.
+3. **Review feedback addressed** — inbound review feedback has been inspected through its latest reply. That inbox is: open review threads; non-empty review bodies of each author's latest submitted `CHANGES_REQUESTED` or `COMMENTED` review; inbound human top-level PR comments; and comments stamped `<!-- manifest-dev:review-pr -->` (the marker is an inbox signal, not a skip). Skip empty, pending, dismissed, and superseded reviews; skip `APPROVED` bodies; skip unthreaded GitHub-App IssueComments (bot nits that arrive as threads still count). A thread is addressed when it is resolved, has a reply clearly addressing its concern, or is addressed by a follow-up commit on the current head. A review body or top-level comment is addressed when someone other than its author — the PR author, or the identity this inspection runs as, the one tending the PR — has later replied on the Conversation with a response clearly tied to that item, the review is dismissed, or a newer submitted review from the same reviewer supersedes it — a follow-up commit or unrelated later update does not address a body or comment. Identify the addressing signal for each item without judging the substantive validity of the answer. Leave human-authored threads open for their authors to resolve. Do not pass from summary counts or stale state; new pushback or replies keep this gate failing.
 4. **Description in sync** — PR description reflects the current diff's intent.
 5. **Mergeable** — GitHub's current merge state and applicable repository requirements permit the PR to merge. Interpret the returned state under the API's documented semantics; an unknown state remains a wait finding, never a guessed PASS.
 
@@ -97,6 +97,18 @@ Breakdown:
   Reason: PR was closed externally by @bob at 2026-05-17T14:32Z.
   Suggested: Unrecoverable from automated inspection — caller should hand off to a human; reopening from the agent's path is forbidden.
   Context: GraphQL state `CLOSED`, last commit on head matches the diff at close time.
+```
+
+Example merged-PR FAIL (a terminal state of its own — nothing remains to tend):
+
+```
+## check-pr: FAIL
+
+Breakdown:
+- PR exists: FAIL
+  Reason: PR was merged by @bob at 2026-05-17T14:32Z.
+  Suggested: Nothing remains to tend on this PR; the merge is its final lifecycle state.
+  Context: GraphQL state `MERGED`, merge commit `def5678` on `main`.
 ```
 
 **Multi-line per-gate form.** When a failing gate has meaningful context the caller needs inline (especially `reply <thread-id>` / `reply-and-resolve <thread-id>` — the caller shouldn't have to re-fetch the thread to identify the target or understand why it blocks mergeability — or a review body / top-level comment with no thread id, or any prose-finding case where the observation is more than a single vocabulary token), the per-gate breakdown line expands into a named-field block:

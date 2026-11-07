@@ -41,7 +41,7 @@ followed, or that no entry applied.
 
 Choose solutions that make the outcome durable and the next change easier to get right; the initial plan is yours to change. A disposable draft is the exception: a throwaway rendering, such as one page with fake data, made only so a person can react to what they cannot yet put into words, which a Deliverable may ask for. Keep it outside the project's files, as finished as that person expects, shown in minutes rather than late, and never perfected or verified beyond reaching that person with the question it poses. The choice it poses waits for that person's reaction, and work that depends on the choice is blocked on that reaction until it arrives. What the run makes durable is the decision and the criteria their reaction draws out, never the draft. Appetite — the size of change the problem is worth — may be revised by amendment (*Amendments*), never to excuse excess already produced. The Outcome, hard exclusions, hard requirements and permissions stay fixed without authorization from their source, and absence from an exclusion list authorizes nothing unrelated beyond the fixes *What holds for every gate* asks of every run.
 
-An obligation is blocked only when no authorized path remains after investigating credible alternatives: it needs knowledge, access or authority the run lacks, or a change to the Outcome or a hard requirement. A failed approach is yours to redesign rather than repeat; track related repairs by the underlying promise they try to satisfy, across finding IDs and commits. Keep that promise, its source in the accepted contract, attempted repairs and their outcomes in the execution log or checkpoint notes. When two repairs on that promise have failed, test the premise against the contract, Appetite and scope before a third: determine whether the promise is actually owed and whether a simpler repair meets it. A repair's commit wording does not strengthen acceptance. Preserve the Outcome and hard promises; correct a mistaken working claim through amendment. Overall plan approval does not make an agent's choice hard. A false hard premise follows the blocker rule. Where there is always one more thing to try, evidence, never a count of tries, says when a gate is out of reach: a measured limiter that every remaining authorized option leaves in place, recent attempts that no longer move the result beyond its run-to-run noise, or two gates where repairing one fails the other. The burden of proof is the run's: the limiter measured rather than guessed, and credible, materially different authorized approaches tried or ruled out by demonstrated evidence. A limiter may rule out a family of options without implementing each hypothetical variant; a plausible redesign, replacement or other approach that could evade it remains actionable. Difficulty, cost, a flat result from one approach or a retry count does not establish futility. Until credible alternatives are resolved, the gate is not out of reach and the work goes on. Any of these, so earned, makes it blocked when it needs a change to the Outcome or a hard requirement; its blocker names the best result reached, the limiter, the attempts made and the requirement change that would unblock it, and the bar stays as written. Surface a blocker promptly with its evidence and the intervention it needs, then continue useful independent work that does not guess the blocked decision; invoke `/escalate` with the unresolved blockers only when no useful independent work remains. An external process still running is a wait, never completion.
+An obligation is blocked only when no authorized path remains after investigating credible alternatives: it needs knowledge, access or authority the run lacks, or a change to the Outcome or a hard requirement. A failed approach is yours to redesign rather than repeat; track related repairs by the underlying promise they try to satisfy, across finding IDs and commits. Keep that promise, its source in the accepted contract, attempted repairs and their outcomes in the execution log or checkpoint notes. When two repairs on that promise have failed, test the premise against the contract, Appetite and scope before a third: determine whether the promise is actually owed and whether a simpler repair meets it. A repair's commit wording does not strengthen acceptance. Preserve the Outcome and hard promises; correct a mistaken working claim through amendment. Overall plan approval does not make an agent's choice hard. A false hard premise follows the blocker rule. Where there is always one more thing to try, evidence, never a count of tries, says when a gate is out of reach: a measured limiter that every remaining authorized option leaves in place, recent attempts that no longer move the result beyond its run-to-run noise, or two gates where repairing one fails the other. The burden of proof is the run's: the limiter measured rather than guessed, and credible, materially different authorized approaches tried or ruled out by demonstrated evidence. A limiter may rule out a family of options without implementing each hypothetical variant; a plausible redesign, replacement or other approach that could evade it remains actionable. Difficulty, cost, a flat result from one approach or a retry count does not establish futility. Until credible alternatives are resolved, the gate is not out of reach and the work goes on. Any of these, so earned, makes it blocked when it needs a change to the Outcome or a hard requirement; its blocker names the best result reached, the limiter, the attempts made and the requirement change that would unblock it, and the bar stays as written. Surface a blocker promptly with its evidence and the intervention it needs, then continue useful independent work that does not guess the blocked decision; invoke `/escalate` only when no useful independent work remains (*How a run ends*, below). An external process still running is a wait, never completion.
 
 ## Amendments
 
@@ -62,10 +62,25 @@ if the needed decision is unavailable, report the boundary and continue independ
 
 Wait for active gate evaluations to finish before amending. If an amendment races
 an evaluation, discard that evaluation's verdicts and evaluate the amended file.
-Re-read the amended Manifest. Re-verify every gate whose text, subject, or
-interpretation changed, including the Outcome assessment where affected and the ceiling when Appetite changes; keep other
-evidence only while it remains valid. Report material amendments on every terminal
+When the execution log is kept, mark the amendment pending there before invoking `define` and
+close it after the re-read, as `references/LOG.md` → *A changed Manifest* says.
+Re-read the amended Manifest. Re-verify every gate whose criteria, subject, or
+interpretation changed, including the Outcome assessment where affected; keep other
+evidence only while it remains valid. A gate's criteria are its text and every Manifest section
+its claim reads, so the ceiling (INV-G1), which reads the whole Manifest, re-verifies after every
+amendment. Report material amendments on every terminal
 path and record them in the execution log when kept.
+
+Another run, or a person through `define`, can change the same Manifest while this run works, and
+the last write wins. Hash the Manifest each time you read it. Before amending and before reporting
+completion, hash it again; when the hash differs from the one this run last read or wrote, re-read
+the Manifest, treat as unverified each gate whose criteria changed or can no longer be shown
+unchanged. The file as it now reads is the contract: an amendment of this run's that it no longer
+carries stays out, since a person reverting it and a write from an older copy look the same. Name
+each such amendment, with its evidence, in the terminal report and in the execution log when kept;
+amend that gate again only on evidence the dropped amendment did not rest on. Where a gate it
+changed cannot hold as it now reads, that is a blocker for the person: name the dropped amendment
+and its evidence, ask whether to make it again, and continue independent work.
 
 ## Continuation
 
@@ -87,7 +102,7 @@ The Manifest changes only through the skill that wrote it, never by direct edit.
 
 Record compact checkpoint notes as work proceeds: what changed, what was verified, what remains, blockers.
 
-Assume the user is AFK; make authorized decisions without asking questions. Surface blockers promptly and continue useful independent work. Stop after reporting completion, a blocker requiring a person when no useful independent work remains, or an external wait that this run's no-wait policy makes terminal. Continue while authorized, actionable work remains.
+Assume the user is AFK; make authorized decisions without asking questions. Surface blockers promptly and continue useful independent work. Stop after reporting completion, a blocker requiring a person when no useful independent work remains, an external wait that this run's no-wait policy makes terminal, or a person settling from outside everything the work still owes, such as by merging the pull request that carries all of it. Continue while authorized, actionable work remains.
 ```
 
 ## Corrections, debt and the verification harness
@@ -138,6 +153,9 @@ external state, not just a commit identifier.
 
 A judgment gate reads the full change once, then checks outstanding findings and failures
 introduced or exposed by the changes since that evaluation; a deterministic gate re-runs in full.
+When a judgment gate's criteria change, its next evaluation is a new full look, since work the old
+criteria did not reach has never been judged. It is that gate's first full look under its new
+criteria for every rule below that names a first full look, the ceiling's included.
 Give an invoked evaluator that reporting scope, the assessed state, prior findings and supported dispositions, their underlying promises and accepted sources, verified
 repairs, failed attempts on those promises, and the intervening changes. Recover missing context rather than silently requesting
 another full look. Contextual reading may be wide; touching an old line alone does not make an
@@ -158,8 +176,8 @@ categories and acceptance thresholds when they are part of its claim; otherwise 
 the substantive assessment. Regrade correctness or safety failures and broken binding promises
 received as Low from their evidence before applying that policy. Keep a deliberately required
 reviewer approval or external check unresolved until it actually holds; your disposition cannot
-clear it. Preserve supported dispositions across new IDs, pushes and sessions; new code, argument
-or evidence can reopen them. Below-bar findings do not defeat the claim under its policy; the
+clear it. Preserve supported dispositions across new IDs, pushes and sessions; new code, changed
+criteria, argument or evidence can reopen them. Below-bar findings do not defeat the claim under its policy; the
 batching and continued-review rules below govern their handling, not the definition of Low.
 
 Every pull request leaves the repository better. A pre-existing issue the work meets, related to the
@@ -212,15 +230,33 @@ owes none of this.
 When external review feedback arrives, directly or through `check-pr`, load
 `references/EXTERNAL_REVIEW.md` before acting on it.
 
-When the Outcome and every current gate have fresh PASS evidence and the bounded mandatory
-build work above is settled, invoke `done` with the Manifest path, that evidence and the
-dispositions of that work. Necessary missing evidence, a wait or an unresolved amendment is not
-completion. Once these conditions hold, stop; a further possible improvement adds no obligation.
+**How a run ends.** A run ends on one of four paths, and each one's report carries the decisions,
+departures and amendments the sections above ask to be reported, the debt `references/HARVEST.md`
+lists, and the execution log's path when one is kept.
+
+- **Completion** — the Outcome and every current gate have fresh PASS evidence and the bounded
+  mandatory build work above is settled: invoke `done` with the Manifest path, that evidence and
+  the dispositions of that work. Necessary missing evidence, a wait or an unresolved amendment is
+  not completion. Once these conditions hold, stop; a further possible improvement adds no
+  obligation.
+- **Escalation** — a blocker needs a person and no useful independent work remains: invoke
+  `escalate` with the Manifest path, the unresolved blockers and the evidence behind each.
+- **Pending** — only an external wait remains and this run's no-wait policy makes it terminal:
+  report it yourself, naming each gate still open and what it waits on.
+- **Settled from outside** — a person settled everything the Manifest still owes, such as by
+  merging the pull request it tends when nothing it owes lies beyond that pull request: report that
+  yourself, with who and when, what the run completed and the evidence it holds. Nothing waits on a
+  person, so it is no escalation. Where the Manifest owes more than the merged pull request — another
+  Deliverable, a gate checked after the merge, an Outcome shown in real use — the merge is an event
+  of the run, not its end: record it, and continue the gates still open. The merge is the evidence for
+  the pull-request lifecycle gates the merged pull request carried; work still owed goes to a new pull
+  request, through an amendment that points those gates at it.
 
 ## The execution log
 
 Unless `--no-log`, keep an append-only log at `~/.manifest-dev/logs/do-<name>-<hash>.md`,
 where `<name>` is the Manifest's filename without extension and `<hash>` the first eight
 hex characters of SHA-256 over its absolute path, so every launch on this Manifest reopens
-the same log. Read it before resuming and append as you go: the goal block's checkpoint
+the same log — where a caller supplied a journal, by the pointer `references/LOG.md` → *Path*
+leaves at that path. Read it before resuming and append as you go: the goal block's checkpoint
 notes land there. `references/LOG.md` holds what a resumed run needs from it.

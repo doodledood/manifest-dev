@@ -13,7 +13,7 @@ Tends the user's own pull request through CI, review threads, description sync a
 - `/babysit-pr [pr-url] [--manifest <path>] [--ci] [--no-log]`; the Pi template `dist/pi/prompts/babysit-pr.md`.
 - Phrases its description matches: "babysit my PR", "get this PR through CI and reviews".
 - No other skill calls it.
-- With no URL it takes the current branch's only open pull request. `--manifest <path>` uses that Manifest; otherwise it runs define `--babysit <url> --autonomous`, then do. Its journal is append-only at `~/.manifest-dev/logs/babysit-<owner>-<repo>-<N>.md`; `--no-log` turns it off.
+- With no URL it takes the current branch's only open pull request. `--manifest <path>` uses that Manifest; otherwise it resumes the newest Manifest path its journal records, and only with none runs define `--babysit <url> --autonomous`; then do. Its journal is append-only at `~/.manifest-dev/logs/babysit-<owner>-<repo>-<N>.md`; `--no-log` turns it off.
 
 ## Scenarios
 

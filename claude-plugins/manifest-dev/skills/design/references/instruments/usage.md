@@ -26,7 +26,7 @@ node scripts/design-tools.mjs inspect screen.html --tools copy,access,media --ou
 node scripts/design-tools.mjs inspect article.md --tools copy
 ```
 
-HTML's default instruments are `copy,access,media`; text defaults to `copy`. Hidden-by-CSS source text can appear in the inventory. Scripts, styles, templates and head text are excluded; scripts and external resources are not executed or fetched. This is a source parser, without browser tree repair or accessible-name computation. Labels and attributes are candidates, not complete accessible names. Hidden inputs are excluded from action candidates. Declared image dimensions do not establish actual rendered dimensions or crop.
+HTML's default instruments are `copy,access,media`; text defaults to `copy`. Hidden-by-CSS source text can appear in the inventory. Scripts, styles, templates and head text are excluded; scripts and external resources are not executed or fetched. This is a source parser: it ends the head where a browser does, with or without `</head>`, and makes no other tree repair or accessible-name computation. When the source holds no body text, headings, controls or media — a page its scripts build, for instance — `coverage.bodyContent` is false and `coverage.unmeasured` says what was not read. Labels and attributes are candidates, not complete accessible names. Hidden inputs are excluded from action candidates. Declared image dimensions do not establish actual rendered dimensions or crop.
 
 ## Supplied observations
 

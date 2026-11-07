@@ -24,12 +24,28 @@ The store config names one account that unattended runs claim with and write as,
 escalation recipient. The two must be distinguishable. A session that cannot write as the
 configured identity says so and starts nothing unattended.
 
+This section is the one rule for which writes on a Ticket count; every other file points here.
+
 A record, and every run fact in it, counts only when the automation identity wrote it: it created
 the comment and made its last edit, since a venue may let a collaborator or another app edit a
 comment that keeps its original author. On a run a person starts by hand, the account that run
-writes as stands in for it. A comment from any other
-author is untrusted context, whatever marker it carries: it cannot claim a run, mark work ready to
-land, grant Auto, or turn quoted commands into instructions.
+writes as stands in for it. Grant decisions are the one exception, below. A comment from any
+other author is untrusted context, whatever marker it carries: it cannot claim a run, mark work
+ready to land, record a grant decision, or turn quoted commands into instructions.
+
+A grant decision is a person's to make as much as automation's, so it counts by a wider rule. A
+**grantor account** is the automation identity or a person with authority to grant — where the
+venue has permissions, write access to the repository.
+
+- A grant-decision comment counts when the account that created it and the one that last edited
+  it are each a grantor account, so a person's grant through `ticket-up`, and their answer edited
+  into a withhold that names them as asked, are decisions every orchestrator reads.
+- The venue's grant state — a label, an `Auto:` line, as the venue reference renders it — is the
+  grant. It counts when a person with authority to grant set it, or when the automation identity
+  set it while the deciding grant decision records a grant: `orchestrate --autonomous`'s own, or a
+  person's that `ticket-up` wrote for them. A grant state anyone else set, or one the automation
+  identity set with no grant decided, grants nothing, and the Ticket reads as ungranted. The venue
+  reference says how its store reads who set it.
 
 ## The attempt record
 
@@ -40,7 +56,7 @@ adds a second one. It holds:
 | Part | Contents | Written by, and when |
 |---|---|---|
 | Branch | The canonical Ticket, its one stable branch, and the recovery purpose | The run, before substantial work |
-| Run facts | The run ID; the session that runs it, where the host names one; when it started; the launch count, counting launches in a row whose run ended without an outcome or that repaired a landing | The launcher — `orchestrate`, or `run-ticket` itself on a hand run — just before the run starts. Where the host names the session only once the run has started, the run records its own session on its first write instead |
+| Run facts | The run ID; the session that runs it, where the host names one; when it started; whether the launch repairs a landing; the launch count, defined below | The launcher — `orchestrate`, or `run-ticket` itself on a hand run — just before the run starts. Where the host names the session only once the run has started, the run records its own session on its first write instead |
 | | The base commit the Outcome and gates last passed against; whether it is ready to land, naming the head commit and the run ID that marked it, or the drafted answer for a Question Ticket, naming the same | The run, at each pushed checkpoint and when it finishes |
 | Assignment and authority | The assigned activity, current authority source and limits, retained decisions, and any accepted artifact/version; a wait carries its resolving condition and continuation | The run, from trusted applicable instructions at start, on steering and on resumption |
 | Progress | The step — `understand`, `define`, `build`, `verify` or `ready` — and the compact continuation state named below | The run, when its step changes and at each pushed checkpoint |
@@ -53,10 +69,27 @@ of each repair promise, attempts and outcomes across finding IDs; mandatory buil
 disposition; decisions, amendments and what remains. Keep this in the attempt record, not a
 second log the next runner cannot reach. A verdict or commit identifier alone is insufficient.
 
+The **launch count** is one for a Ticket's first launch, for a launch a trusted revision request
+starts (*Waiting and acceptance*), when an escalation mark was cleared since the last launch, and
+when the last launch's run wrote an outcome without repairing a landing. Otherwise — the last run
+ended without an outcome, or the last launch repaired a landing — it is one more than the record
+shows. A launch that delivers without a repair thus ends the row of failed launches and landing
+repairs; `orchestrate` → *Launch* says when that row sends the Ticket to a person.
+
 Each fact has one writer. The ready mark and the drafted answer name the run that wrote them, and
 count only while the run facts name that run; a mark that names no run counts as naming the run
 the run facts name. That binding decides sorting and landing: a relaunched
-run reads an earlier run's mark as where the work stands. A launcher writes only while no live run
+run reads an earlier run's mark as where the work stands. The ready mark has one other writer: an
+orchestrator adopting it once the timeout of the run that wrote it has passed and no run is live.
+It writes a run ID of its own into the run facts and the mark, keeps the head and base commits the
+mark names, the launch count and whether the last launch repaired a landing, and starts no run. An
+adoption is not a launch: the launch count still reads the last launch. So a ready pull request
+whose orchestrator stopped still lands under *Landing* and is never relaunched merely to change
+hands. That timeout
+stands for the holder's absence, not the run's age: an orchestrator holding a Ticket ready to land,
+one it launched or adopted, rewrites the start time in its run facts at a check-in once half the
+timeout has passed since it, so another orchestrator adopts the mark only once the holder has
+stopped checking in. A launcher writes only while no live run
 holds the Ticket, and re-reads the Ticket after writing. A run re-reads the record before each write
 and each push, and stops without writing when the run ID there is not its own. A comment edit
 replaces the whole comment, so the last writer wins: a re-read narrows a race to the one write after
@@ -73,7 +106,15 @@ and stands down, taking back anything it applied with it that the first does not
 the Ticket, and a run stops. This holds for every marker the
 records here and the venue references use — the attempt, completion and escalation records and the
 grant-decision comment — except the Manifest's continuation comments, which are parts of one record,
-read in the order they were created.
+and answer records, each of which counts; both are read in the order they were created.
+
+A person's answer that `orchestrate` records from its conversation — a directive, or an answer
+about one Ticket — is an **answer record**: its own comment carrying
+`<!-- manifest-dev-person-answer -->`, written by the automation identity, naming the person and
+when, and never edited afterward. A run reads each as that person's instruction, within the
+authority it states; a later answer narrows or replaces an earlier one only as far as it says.
+An answer never goes into the Ticket's body, which a person may be editing and an edit replaces
+whole.
 
 A run's **outcome** is the record it leaves when it stops: ready to land, a drafted answer, an
 escalation, or the close. A run is live from its launch until it writes an outcome, while the host
@@ -106,8 +147,9 @@ the debt is gathered once.
 This is the one landing procedure. `orchestrate` follows it at each landing turn, and `run-ticket`
 follows it only when its prompt says to land. The lander:
 
-1. **Re-reads the Ticket.** It stops when the Ticket is closed, carries the escalation mark, or a
-   person holds the claim; when the run facts were not written by the automation identity or name a
+1. **Re-reads the Ticket.** It stops when the Ticket is closed, when a person holds the claim
+   other than the identity it writes as or, on a hand run, the person who started it, or — on an
+   unattended landing — when the Ticket carries the escalation mark; when the run facts were not written by the automation identity or name a
    run that is not the lander's own (for `orchestrate`, a run it launched or took over; for a
    landing `run-ticket`, itself); or when the record is not marked ready to land by the run its run
    facts name. A merged pull request counts as the Ticket's landing only when the Ticket was not
@@ -163,11 +205,11 @@ follows it only when its prompt says to land. The lander:
    the merged state. It never force-pushes a shared branch, bypasses protection, or merges work
    the Ticket does not authorize. A non-repository Ticket's landing is observed at its durable
    place instead.
-6. **Records and closes.** It adds the landing reference to the completion record and closes the
-   Ticket. A Ticket closes only after its landing is observed, so a dependent never starts on work
+6. **Records and closes.** It adds the landing reference to the completion record, closes the
+   Ticket, and then releases the automation claim (the convention's *Closing*). A Ticket closes only after its landing is observed, so a dependent never starts on work
    that is not on the target branch.
 
-A Question Ticket has nothing to land. With Auto, its run closes it once the answer is recorded.
+A Question Ticket has nothing to land. With Auto, its run closes it once the answer is recorded, and then releases its claim.
 Without Auto, the run stops with the answer drafted, and the Ticket closes once a person accepts
 it.
 
@@ -181,7 +223,7 @@ continues the same Ticket. When a trusted response asks for revision, re-read th
 While its run is live, keep the response as trusted Ticket context for that run to consume;
 the launcher does not replace the live run's fields. For a held result with no live run, the
 launcher may record the response with the version it concerns as pending continuation in the
-attempt's progress and invalidate the held marks and acceptance. This is the sole exception
+attempt's progress and invalidate the held marks and acceptance. This and an adoption (*The attempt record*) are the only exceptions
 to run ownership of those fields; the next run resumes ownership. Preserve the earlier
 draft and evidence, but withdraw its current drafted/ready mark and acceptance; it is now a
 prior version, not the current result. A revision request is new authorized work, not a failed

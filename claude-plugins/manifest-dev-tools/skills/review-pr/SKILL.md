@@ -17,8 +17,8 @@ High-signal autonomous PR review posted under your account. A review you'd put y
 
 Every invocation, including non-`--loop`, performs one complete PR-state advance:
 
-1. **Advance our existing threads.** For every unresolved thread we authored or replied to, run the per-thread verification below. Post needed thread replies, resolve terminal threads, and leave genuinely pending threads open.
-2. **Verify the change.** **Manifest mode** (`--manifest`): load `references/MANIFEST_MODE.md` and follow it to verify the manifest contract against the PR head — the generic reviewer fleet is skipped entirely. **No-manifest mode:** run the generic reviewer fleet over the review range — determine that range from durable GitHub state: if we have a prior review on this PR and the head has moved since, use that review's commit/head SHA as the lower bound and review `last-reviewed-by-us..current-head`; otherwise review the full PR diff. Later `--loop` wakes use that invocation's checkpoint instead, per `references/LOOP.md`. In **both** modes, include the judgment pass (below) under its continuation rule.
+1. **Advance our existing threads.** For every thread *Per-Thread Verification* covers, run that verification and act on its disposition. Post needed thread replies, resolve terminal threads, reopen a resolved one whose concern still stands, and leave genuinely pending threads open.
+2. **Verify the change.** **Manifest mode** (`--manifest`): load `references/MANIFEST_MODE.md` and follow it to verify the manifest contract against the PR head — the generic reviewer fleet is skipped entirely. **No-manifest mode:** run the generic reviewer fleet over the review range (*Review range*, below). In **both** modes, include the judgment pass (below) under its continuation rule.
 3. **Post outcomes.** Submit new surviving findings as a single GitHub review with decision `comment`. Thread replies are posted on their existing threads, not as new review comments. End with the cycle summary below.
 
 Each invocation starts from GitHub state and the current checkout.
@@ -27,11 +27,14 @@ Each invocation starts from GitHub state and the current checkout.
 
 The one unchanged-head skip is a `--loop` wake after that invocation's first pass (`references/LOOP.md`): there nobody re-decided anything, and re-reviewing one commit on every wake is the nag the check exists to prevent.
 
+**Review range.** The lower bound is the head our latest prior review on this PR recorded in GitHub state; on a `--loop` wake after the invocation's first pass, it is the head of that invocation's latest checkpoint instead. Review `lower-bound..current-head` when the current head has moved past the bound and still descends from it. Otherwise review the full PR diff: with no prior review, at an unchanged head on a fresh invocation, and when a rebase or force-push left a head that no longer descends from the bound, since that range no longer describes the PR's change. When the base branch was merged into the head since the bound, `lower-bound..current-head` also carries the base's commits as if they were the PR's: review what the PR's own diff, from its merge base to its head, gained since the bound — its diff now against its diff at the bound — or the full PR diff where that comparison is unclear.
+
 ## Per-Thread Verification
 
-For every unresolved thread we authored or replied to, invoke the `review-pr-thread-verify` skill. Supply the evidence for that thread:
+This verification covers every unresolved thread we authored or replied to, and every thread opened by our finding that someone other than this account resolved — a resolution says nothing about whether the concern is gone, so it is verified like a reply. Such a resolved thread is verified once per invocation: on a `--loop` wake, only when a reply, a commit touching its range, or a new resolution arrived after the checkpoint that recorded its disposition. A resolved judgment-marked thread is recovered by *Judgment continuation* instead. For each, invoke the `review-pr-thread-verify` skill. Supply the evidence for that thread:
 
 - The original finding: anchor, body, review commit/head SHA, and concrete concern.
+- Whether the thread is resolved, and by whom.
 - Every author reply on this thread since our last message, plus every prior reply we posted on this thread.
 - Current code at the anchor, with nearby context, and any commits since the original review that touched the relevant range.
 - Full PR history: all comments, review threads, commit messages, current PR description, and our prior review/comment bodies.
@@ -39,7 +42,17 @@ For every unresolved thread we authored or replied to, invoke the `review-pr-thr
 - For a judgment thread, the relevant project direction and decisions, the prior recommendation and the evidence or accepted trade-off it rested on.
 - The voice profile below, for any reply it drafts.
 
-It returns exactly one disposition, a short reason, and a drafted reply where the disposition calls for one; for judgment, also the current recommendation and whether the discussion is settled. Preserve that assessment in the cycle summary even after resolving the thread. Act on it: `addressed-by-fix` → resolve the thread, posting the reply only if it drafted one; `addressed-by-valid-reply` → post its concession, then resolve; `false-positive-or-stale` → post its correction, then resolve; `needs-our-pushback` → post its reply on the existing thread and keep it pending; `still-pending` → leave the thread open and post nothing.
+It returns exactly one disposition, a short reason, and a drafted reply where the disposition calls for one; for judgment, also the current recommendation and whether the discussion is settled. Preserve that assessment in the cycle summary even after resolving the thread. Act on it:
+
+| Disposition | Unresolved thread | Thread someone else resolved |
+|---|---|---|
+| `addressed-by-fix` | Resolve it, posting the reply only if one was drafted. | Leave it resolved, posting the reply only if one was drafted. |
+| `addressed-by-valid-reply` | Post the concession, then resolve. | Post the concession; leave it resolved. |
+| `false-positive-or-stale` | Post the correction, then resolve. | Post the correction; leave it resolved. |
+| `needs-our-pushback` | Post the reply; keep it pending. | Reopen it, post the reply; keep it pending. |
+| `still-pending` | Leave it open; post nothing. | Someone resolved it again after our pushback, with no fix or reply since: leave it resolved and post nothing, since our argument is already on the thread. Its concern still stands: carry it into the cycle summary and count it against acceptance. |
+
+Post a drafted reply only when, read fresh just before posting, our latest message on that thread does not already say it — a pass stopped after replying and before resolving, or another invocation, may have posted it — then take the row's remaining step.
 
 **Caller policy.** In no-manifest mode, assess whether the change fulfills its stated purpose
 and applicable obligations without demonstrated defects or material quality costs in its
@@ -96,7 +109,7 @@ Structural defaults: prose, not bullets, for a single suggestion; no markdown he
 
 Target voice: *"Empty input skips the null check — `if (input?.value)` at `parser.ts:42` short-circuits before the parse at `parser.ts:47`, so `{}` reaches `parse()` without the guard. Tighten to `if (input?.value != null)`, or move the `parse()` call inside the existing branch."*
 
-**Posting.** When the holistic pass returns comments to post, submit a single GitHub PR review with decision `comment` — all comments batched atomically. In CI or non-interactive contexts, do not wait for approval.
+**Posting.** When the holistic pass returns comments to post, submit a single GitHub PR review with decision `comment` — all comments batched atomically. Just before submitting, re-read the PR's comments carrying our marker and drop any comment whose concern one posted since this pass read the PR already raises, so a second invocation running on the same PR at once does not post the same findings twice; name the drops in the cycle summary. In CI or non-interactive contexts, do not wait for approval.
 
 **Zero comments to post.** Report implementation clean only when its required assessments support acceptance,
 no supported implementation failure or material verification uncertainty remains, every required

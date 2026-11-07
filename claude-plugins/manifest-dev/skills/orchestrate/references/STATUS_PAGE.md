@@ -47,12 +47,12 @@ local HTML file. Pick the first that applies:
 
 The page never writes to the store, the data file or anything else. A person who opens it reads it.
 
-Save the page's link on the effort's front item, on a line of its own: `Status page: <link or
-path>`. At the start of every plan, and when a new orchestrator session starts on the effort, read
-that line and update the page it names instead of making a new one. If the link no longer opens, or
-the host will not let you update that page, publish a new one and replace the line: re-read the
-front item just before that edit and change nothing else in it, so a `Paused:` line a person added
-meanwhile stays.
+Save the page's link as the effort's status-page link (`Status page: <link or path>`), where the
+venue reference keeps it apart from what a person writes on the front item, so replacing it never
+replaces a person's `Paused:` line. At the start of every plan, and when a new orchestrator session
+starts on the effort, read that link and update the page it names instead of making a new one. If
+the link no longer opens, or the host will not let you update that page, publish a new one and
+replace the link.
 
 The page holds Ticket titles and the person's open questions. On a host where pages can be shared,
 leave it private unless the person shares it.
@@ -100,7 +100,7 @@ may be left out; `null` counts as left out.
 | `effort.name` | string | The effort's name, shown as the page's title. | The front item's title. |
 | `effort.destination` | string, optional | One sentence on what done means for the effort, shown as the Goal. | The front item's destination. |
 | `mode` | `"default"` or `"autonomous"` | How this orchestrator runs: proposing each plan and waiting for approval, or acting on its own (`--autonomous`). | This orchestrator's own invocation. |
-| `state` | `"running"`, `"paused"` or `"finished"` | Whether runs are going, the effort is paused, or the plan has ended. | `paused` when the front item carries the pause line; `finished` once the plan has ended, including when the orchestrator stops; `running` otherwise. |
+| `state` | `"running"`, `"paused"` or `"finished"` | Whether runs are going, the effort is paused, or the plan has ended. | `paused` while the effort is paused, by a person or an orchestrator (`../SKILL.md` → *Check in*); `finished` once the plan has ended, including when the orchestrator stops; `running` otherwise. |
 | `coordination` | object, optional | Present only for an assigned outcome. Plan completion alone never means the outcome was achieved. | The current coordination record on the effort's front item. |
 | `coordination.state` | `"working"`, `"waiting-evidence"`, `"waiting-decision"`, `"complete"` or `"limit"` | What the outcome assignment needs next; shown above the graph even with no Tickets. | The coordinator's evidence-based continuation decision. |
 | `coordination.summary` | nonempty string | A concise account of progress or the unresolved condition; distinguish delivered work from observed use. | The current coordination record. |
@@ -148,6 +148,7 @@ item.
 | `from` | list of ids, optional | Tickets whose debt this one was written from. | The Ticket's source link. |
 | `kind` | `"debt"` or `"refactor"`, optional | A Ticket the orchestrator wrote from debt, or a structural refactor it proposes. | The Ticket's source link and how it was written. |
 | `grant` | string, `null` or `"never"`, optional | For a Ticket an agent wrote: who granted it Auto, the grant that lets automation take it end to end; `null` while no one has; `"never"` where the person explicitly retains direction, including a refactor proposal without delegated direction. | The grant line on the Ticket. |
+| `repair` | `true`, optional | Set on the repair Ticket an orchestrator's pause names while no person's `Paused:` line holds the effort and no orchestrator's pause stands for a cause no code change can fix: it then runs and lands during the pause, so it never shows as Paused. Under either of those it stops like the rest, so leave it out. | The orchestrator's pause and the person's `Paused:` line on the effort (`../SKILL.md` → *Check in*). |
 | `auto` | `false`, optional | Set on a Ticket in the plan that does not carry Auto: it runs to its retained decision or acceptance, which can concern a Read, another artifact or landing a pull request. | The Ticket's Auto grant. |
 
 An id in `dependsOn`, `after` or `from` that is not on the page draws no edge.
@@ -170,11 +171,12 @@ use their own types gives `type` only for these five.
 | `grant` | Grant Auto? | An agent wrote it, and in default mode it waits for the person to grant Auto. |
 | `proposal` | Your call | A structural refactor the orchestrator proposes, because one area keeps producing debt. |
 | `queued` | Up next | In the plan and ready, waiting for a free run slot. |
+| `to-land` | Waiting to land | It has Auto and its run marked it ready to land, and it waits for its landing turn (`../SKILL.md` → *Check in*), with no run live. |
 | `waiting` | After its open dependencies, or Up next | In the plan, waiting on the Tickets in its `dependsOn` or `after`. |
 | `skipped` | Left alone | In scope, but automation may not take it: for example, its author lacks write access, or a person is assigned. Say why in `note`. |
 | `proposed` | Proposed | In the next plan the orchestrator proposes, not yet approved. |
 
-While the state is `paused`, `queued` and `waiting` Tickets show as Paused, except the repair Ticket the `Paused:` line names.
+While the state is `paused`, `queued`, `to-land` and `waiting` Tickets show as Paused, except a Ticket carrying `repair`: the repair Ticket an orchestrator's pause names.
 
 ### What needs the person
 

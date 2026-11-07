@@ -126,7 +126,7 @@ Whether a check a project keeps — a Verification Harness recipe, or a test, sc
 _Avoid_: Complete, conformant, healthy.
 
 **Surfaces Version**:
-The integer, listed in setup-project's `CHANGES.md`, that a project's context file records in its project-surfaces section. Setup-project writes it when it installs or updates the surfaces, and figure-out writes it when the user declines the whole update offer. The recorded number decides whether figure-out offers an update — none at the newest version — and lets a setup-project run mark which of its offers are new since then; a version item a guide offers once, such as v13's Taste offer, is not offered again to a project recording that version or later, whatever the answer. A setup-project run audits the whole setup whatever number is recorded, and compares in full when none is. Unrelated to the plugin's own version.
+The integer, listed in setup-project's `CHANGES.md`, that a project's context file records in its project-surfaces section. It says which surfaces the project carries, so only setup-project writes it, when it installs or updates the surfaces; when the user declines figure-out's whole update offer, figure-out records that on a decline line of its own, which only stops figure-out repeating the offer. The recorded number, or a later declined one, decides whether figure-out offers an update — none at the newest version — and the recorded number lets a setup-project run mark which of its offers are new since then; a version item a guide offers once, such as v13's Taste offer, is not offered again to a project recording that version or later, whatever the answer. A setup-project run audits the whole setup whatever number is recorded, and compares in full when none is. Unrelated to the plugin's own version.
 _Avoid_: Plugin version, setup version, template version.
 
 **Lock**:
@@ -190,7 +190,7 @@ A gate whose verdict comes from a command or check that returns the same outcome
 _Avoid_: Binary gate.
 
 **Ratchet**:
-A re-verification discipline for Judgment Gates where the first evaluation reads the full change and later evaluations check outstanding findings and failures introduced or exposed by subsequent changes. Applicable criteria, subject state, and finding dispositions travel with the evaluation. This bounds repeat searches without suppressing independently supplied evidence of a relevant failure.
+A re-verification discipline for Judgment Gates where the first evaluation reads the full change and later evaluations, under unchanged criteria, check outstanding findings and failures introduced or exposed by subsequent changes; a change to a gate's criteria starts a new full look. Applicable criteria, subject state, and finding dispositions travel with the evaluation. This bounds repeat searches without suppressing independently supplied evidence of a relevant failure.
 _Avoid_: Round cap, round limit.
 
 **Skill**:

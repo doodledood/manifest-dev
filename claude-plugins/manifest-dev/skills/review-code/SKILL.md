@@ -40,13 +40,15 @@ Roles define what to look for. **Defect-finders** report divergences, defects, c
 ## Determining scope (shared across dimensions)
 
 For a requested follow-up, the caller supplies the prior assessed state and criteria, findings,
-supported dispositions, verified repairs, and changes since that evaluation; use what applies. Report outstanding findings
+supported dispositions, verified repairs, and changes since that evaluation; use what applies. Criteria
+that changed since that evaluation make this a fresh review, scoped as below, since work the old
+criteria did not reach has never been reviewed. Otherwise report outstanding findings
 and failures introduced or exposed by the intervening changes, with evidence for which prior
 findings are repaired. Read context as widely as needed; an old issue on a touched line is not
 new merely because the line changed. If the needed prior state is missing, recover it or report
 BLOCKED with what is missing, rather than silently reviewing the complete change again. A new ID
-or repeated assertion does not reopen an evidenced disposition; changed code, argument or evidence
-can. Assess its support independently rather than requiring agreement with a previous reviewer.
+or repeated assertion does not reopen an evidenced disposition; changed code, criteria, argument or
+evidence can. Assess its support independently rather than requiring agreement with a previous reviewer.
 
 For a fresh review — including a new standalone review when an earlier report exists — resolve its scope as follows:
 

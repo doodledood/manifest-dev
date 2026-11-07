@@ -8,11 +8,11 @@ This log is not a transcript (raw conversation history), a handoff (curated rewr
 
 Resolve the active log path before the first question and surface it immediately. The log's first line is a title naming the topic, and the next names the repository it is about — its remote URL, or its path when it has none — so a later session's recall can match logs by repository and topic and skip the rest.
 
-Create the log at `~/.manifest-dev/logs/figure-out-log-{timestamp}.md` (create the dir; `~` = `$HOME` / `%USERPROFILE%`) — a durable home so logs from long investigations survive OS temp cleanup. Fall back to a writable temp path (`/tmp`, else the host temp directory) only when the home directory isn't writable. `{timestamp}` is UTC `YYYYMMDD-HHMMSS`.
+Create the log at `~/.manifest-dev/logs/figure-out-log-{timestamp}-{id}.md` (create the dir; `~` = `$HOME` / `%USERPROFILE%`) — a durable home so logs from long investigations survive OS temp cleanup. Fall back to a writable temp path (`/tmp`, else the host temp directory) only when the home directory isn't writable. `{timestamp}` is UTC `YYYYMMDD-HHMMSS` and `{id}` four random hex characters. Sessions started in the same second each need a log of their own, so create the file only where that path does not exist yet, and draw a new `{id}` where it does.
 
 ## Models
 
-When the session builds a model of the design — a model checker's spec, a state machine, a generator of call sequences — save it under `~/.manifest-dev/models/{timestamp}/`, the log's own timestamp, rather than in a temp directory, and record in the next entry its path, what it checks and what it found. It stays out of the project's files, and a later session that finds this log can extend the model instead of rebuilding it from its description.
+When the session builds a model of the design — a model checker's spec, a state machine, a generator of call sequences — save it under `~/.manifest-dev/models/{timestamp}-{id}/`, the log's own timestamp and id, rather than in a temp directory, and record in the next entry its path, what it checks and what it found. It stays out of the project's files, and a later session that finds this log can extend the model instead of rebuilding it from its description.
 
 ## Append Discipline
 

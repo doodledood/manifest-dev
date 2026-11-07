@@ -51,7 +51,7 @@ General rule for future goals and manifests:
 - Existing docs/ADRs from 2026-06-23 remain historical context and must be read with this clarification.
 
 ## Enforced by
-partly — `tests/test_dist_skill_references.py` — `test_do_completion_contract_requires_auditable_gate_ledger` fails if `/do` stops requiring every Acceptance Criterion and Global Invariant to hold on evidence from the artifacts it names, or accepts a summary claim; `test_auto_investigation_keeps_read_bar_without_a_phase_goal` fails if figure-out under `/auto` sets its own goal or drops its Read bar; and `test_auto_continues_past_each_child_skills_stop` fails if `/auto` stops treating figure-out's Read and define's handoff as checkpoints it continues past in the same turn; what counts as a terminal state is judgment.
+partly — `tests/test_dist_skill_references.py` — `test_do_completion_contract_requires_auditable_gate_ledger` fails if `/do` stops requiring every Acceptance Criterion and Global Invariant to hold on evidence from the artifacts it names, or accepts a summary claim; `tests/test_goal_contract_blocks.py` — `test_figure_out_suppresses_its_goal_for_any_caller_handing_continuation_on` fails if figure-out under `/auto`, or any caller whose execution step owns the backstop, sets its own goal or drops its Read bar; and `test_auto_continues_past_each_child_skills_stop` fails if `/auto` stops treating figure-out's Read and define's handoff as checkpoints it continues past in the same turn; what counts as a terminal state is judgment.
 
 ## Source
 

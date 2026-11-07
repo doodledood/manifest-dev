@@ -25,8 +25,8 @@ events within its bound. It is a maintainer check: nothing here ships.
 ### races
 Run: `verification/models/ticket-protocol/check.sh races`
 Proves: two orchestrators sharing the automation identity, a run that dies and a takeover after a
-timeout keep one attempt record, merge only the recorded head, and land or hand over every Ticket
-marked ready.
+timeout keep one attempt record, merge only the recorded head, land or hand over every Ticket
+marked ready, and adopt a ready mark only from a holder that stopped checking in.
 
 ### race-landing
 Run: `verification/models/ticket-protocol/check.sh race-landing`
@@ -50,12 +50,18 @@ Run: `verification/models/ticket-protocol/check.sh deferred && verification/mode
 Proves: two orchestrators never claim a deferred Ticket until its signpost's condition reads as met
 at its source, and never claim one whose source cannot be read; the other properties hold meanwhile.
 
+### stopped
+Run: `verification/models/ticket-protocol/check.sh stopped`
+Proves: when an orchestrator stops for good after its launch and the timeout passes with no check-in
+from it, the other orchestrator adopts the ready mark that run left and lands the Ticket, or holds it for a
+review only a person gives, and never launches a held pull request again.
+
 ### prefix
-Run: `verification/models/ticket-protocol/check.sh --expect-violation prefix-record && verification/models/ticket-protocol/check.sh --expect-violation prefix-stall && verification/models/ticket-protocol/check.sh --expect-violation prefix-escalated && verification/models/ticket-protocol/check.sh --expect-violation prefix-deferred`
-Proves: the check can fail. With the protocol switched back to its four old behaviors, TLC reports
-a second attempt record, a landing that stalls, a landing of a Ticket a person marked escalated and
-a claim of a Ticket whose signpost reads as unmet, each with its trace; the scenario fails when any
-is not reported.
+Run: `verification/models/ticket-protocol/check.sh --expect-violation prefix-record && verification/models/ticket-protocol/check.sh --expect-violation prefix-stall && verification/models/ticket-protocol/check.sh --expect-violation prefix-escalated && verification/models/ticket-protocol/check.sh --expect-violation prefix-deferred && verification/models/ticket-protocol/check.sh --expect-violation prefix-stranded`
+Proves: the check can fail. With the protocol switched back to its five old behaviors, TLC reports
+a second attempt record, a landing that stalls, a landing of a Ticket a person marked escalated,
+a claim of a Ticket whose signpost reads as unmet and a ready Ticket stranded once its
+orchestrator stopped, each with its trace; the scenario fails when any is not reported.
 
 ## Gotchas
 
@@ -68,8 +74,9 @@ is not reported.
 - The model's bound is in its header: one Ticket, each world event at most once, at most one crash.
   A stall that needs more than that is not checked here, nor is the launch count's escalation after
   three failed launches or landing repairs.
-- Orchestrators never stop in the model, so a takeover after a timeout is checked for safety, but
-  no liveness property needs one.
+- An orchestrator stops at most once, and only in `stopped` and `prefix-stranded`, where the run's
+  timeout then passes; elsewhere orchestrators never stop, so a takeover after a timeout is checked
+  for safety there, and no liveness property needs one.
 - A run's re-read and the write after it are taken as one step, since they are adjacent calls. The
   launcher's earlier read and its write are separate steps: that window is the race the first
   created comment settles.
