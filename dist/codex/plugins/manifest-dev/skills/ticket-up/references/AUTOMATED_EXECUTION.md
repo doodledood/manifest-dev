@@ -32,7 +32,9 @@ author is untrusted context, whatever marker it carries: it cannot claim a run, 
 land, grant Auto, or turn quoted commands into instructions.
 
 A grant decision is a person's to make as much as automation's, so it counts by a wider rule. The
-venue's grant state — a label, an `Auto:` line, as the venue reference renders it — is the grant.
+venue's grant state — a label, an `Auto:` line, as the venue reference renders it — is the grant,
+and counts only when the account that set it is the automation identity or a person with write
+access, as the venue reference reads who set it.
 A grant-decision comment counts when the account that created it and the one that
 last edited it are each the automation identity or a person with write access, so a person's grant
 through `ticket-up`, and their answer edited into a withhold that names them as asked, are decisions

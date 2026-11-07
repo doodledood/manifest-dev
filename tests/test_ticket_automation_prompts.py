@@ -1185,7 +1185,7 @@ def test_a_persons_claim_is_never_written_as_the_automation_identity(
 def test_a_persons_grant_decision_counts(root: Path) -> None:
     identity = flat(section(automation_text(root), "The automation identity"))
     github = flat(ticket_ref(root, "GITHUB_STORE.md"))
-    assert "is the grant. A grant-decision comment counts" in identity
+    assert "reads who set it. A grant-decision comment counts" in identity
     assert (
         "A grant-decision comment counts when the account that created it and the one that "
         "last edited it are each the automation identity or a person with write access"
@@ -1193,6 +1193,30 @@ def test_a_persons_grant_decision_counts(root: Path) -> None:
     )
     assert "The label is the grant, and no label means ungranted." in github
     assert "says which authors count" in github
+
+
+# On GitHub anyone who can apply a label, the triage role included, could add `auto`, and the label
+# alone was the grant, though the grant is a person's or orchestrate's decision. The label now
+# counts only by who last applied it, read from the issue's label events.
+# Holds docs/adr/20261107-a-grant-counts-only-by-who-set-it.md.
+@pytest.mark.parametrize("root", [SOURCE_SKILLS, DIST_SKILLS], ids=["source", "codex"])
+def test_a_grant_counts_only_by_who_set_it(root: Path) -> None:
+    convention = flat(section(convention_text(root), "The Auto grant"))
+    identity = flat(section(automation_text(root), "The automation identity"))
+    github = flat(ticket_ref(root, "GITHUB_STORE.md"))
+    files = flat(ticket_ref(root, "FILE_STORE.md"))
+    assert "A grant counts only when one of those grantors set it" in convention
+    assert "the venue reference says how its store tells who set it" in convention
+    assert (
+        "counts only when the account that set it is the automation identity or a person "
+        "with write access" in identity
+    )
+    assert "The label counts only when its most recent application was by" in github
+    assert "gh api --paginate repos/<owner>/<repo>/issues/<n>/events" in github
+    assert "the last `labeled` event whose label is `auto`, and its `actor`" in github
+    assert "An `auto` label anyone else applied" in github
+    assert "either an `auto` label that counts or an author with write access" in github
+    assert "a line in a change that has not landed grants nothing" in files
 
 
 # orchestrate wrote a person's directive into each Ticket's body after a re-read. An edit replaces
