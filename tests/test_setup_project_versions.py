@@ -133,6 +133,38 @@ def test_surfaces_template_carries_the_latest_version() -> None:
     )
 
 
+DECLINE_LINE = "`<!-- setup-project update declined through vN -->`"
+WITH_DOCS = SKILLS / "figure-out" / "references" / "WITH_DOCS.md"
+
+
+# Holds the decision in docs/adr/20261107-only-setup-project-writes-the-surfaces-version.md. The
+# version line says which surfaces a project carries, and setup-project attributes every
+# difference by it. figure-out once wrote it on a declined offer, appending a section holding
+# only that line, so a project never set up claimed the newest version and setup-project never
+# offered its wiring or seeded it. No shipped skill but setup-project may emit the version line
+# or the section, and figure-out records its decline in the one form setup-project reads.
+def test_only_setup_project_writes_the_surfaces_version() -> None:
+    writers = sorted(
+        str(path.relative_to(REPO_ROOT))
+        for path in (REPO_ROOT / "claude-plugins").glob("*/skills/**/*.md")
+        if SKILLS / "setup-project" not in path.parents
+        and re.search(
+            r"setup-project surfaces v|^## Project surfaces|into the surfaces version line",
+            path.read_text(encoding="utf-8"),
+            re.MULTILINE,
+        )
+    )
+    assert not writers, (
+        f"{writers} write the surfaces version line or the project-surfaces section; only "
+        "setup-project writes them, and figure-out records a declined offer on its own line"
+    )
+    for path in (WITH_DOCS, SKILLS / "setup-project" / "SKILL.md"):
+        assert DECLINE_LINE in path.read_text(encoding="utf-8"), (
+            f"{path.relative_to(REPO_ROOT)} must name the decline line as {DECLINE_LINE}, the "
+            "form figure-out writes and setup-project reads"
+        )
+
+
 NEWEST_VERSION_CASE = "45-current-setup-offers-nothing"
 
 
