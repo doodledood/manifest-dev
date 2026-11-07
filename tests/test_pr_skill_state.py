@@ -87,3 +87,18 @@ def test_a_thread_resolved_without_a_fix_is_verified_and_reopened() -> None:
         assert "whether the thread is resolved, and by whom" in text, path
         assert "A resolution is not a fix" in text, path
         assert "`still-pending` — The thread is unresolved" in text, path
+
+
+def test_posting_prunes_against_marker_comments_read_just_before() -> None:
+    """Two review-pr invocations on one PR at once must not both post the same findings.
+
+    Each pruned against the PR as it read it at the start, so neither saw the other's
+    comments and both posted.
+    """
+    for path in _copies("review-pr/SKILL.md"):
+        text = _text(path)
+        assert (
+            "Just before submitting, re-read the PR's comments carrying our marker"
+            in text
+        )
+        assert "a second invocation running on the same PR at once" in text, path

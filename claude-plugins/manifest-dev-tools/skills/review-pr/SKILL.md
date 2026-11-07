@@ -107,7 +107,7 @@ Structural defaults: prose, not bullets, for a single suggestion; no markdown he
 
 Target voice: *"Empty input skips the null check — `if (input?.value)` at `parser.ts:42` short-circuits before the parse at `parser.ts:47`, so `{}` reaches `parse()` without the guard. Tighten to `if (input?.value != null)`, or move the `parse()` call inside the existing branch."*
 
-**Posting.** When the holistic pass returns comments to post, submit a single GitHub PR review with decision `comment` — all comments batched atomically. In CI or non-interactive contexts, do not wait for approval.
+**Posting.** When the holistic pass returns comments to post, submit a single GitHub PR review with decision `comment` — all comments batched atomically. Just before submitting, re-read the PR's comments carrying our marker and drop any comment whose concern one posted since this pass read the PR already raises, so a second invocation running on the same PR at once does not post the same findings twice; name the drops in the cycle summary. In CI or non-interactive contexts, do not wait for approval.
 
 **Zero comments to post.** Report implementation clean only when its required assessments support acceptance,
 no supported implementation failure or material verification uncertainty remains, every required
