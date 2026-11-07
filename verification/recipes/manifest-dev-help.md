@@ -46,9 +46,9 @@ Run: `scripts/drive-skill.sh manifest-dev-help verification/prompts/manifest-dev
 Proves: for a why that the skill's own text does not carry, the answer reads the skill that owns the behavior (`do` and its log reference), names that file, and gives the reason; it invents nothing that file does not say.
 Check: read
 
-### pull-request
-Run: `scripts/drive-skill.sh manifest-dev-help verification/prompts/manifest-dev-help-pull-request.md`
-Proves: asked for a skill the guide does not ship, with the tools plugin not installed, the answer names `/babysit-pr`, says it is in the tools plugin, which installs separately, and says it does not merge, from the guide's own text, in short plain sentences. The prompt names no skill.
+### walk-a-pull-request
+Run: `scripts/drive-skill.sh manifest-dev-help verification/prompts/manifest-dev-help-walk-a-pull-request.md`
+Proves: asked for a job only a tools-plugin skill does, with the tools plugin not installed, the answer names `/walk-pr`, says it is in the tools plugin, which installs separately, and names the guide as its source, in short plain sentences. The prompt names no skill; the manifest-dev plugin before the guide covered the tools plugin mentions `walk-pr` nowhere, so the answer comes from the guide.
 Check: read
 
 ### overview
