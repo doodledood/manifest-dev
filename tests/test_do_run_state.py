@@ -55,3 +55,30 @@ def test_changed_criteria_take_a_new_full_look() -> None:
         assert "changed code, criteria, argument or evidence can" in text, path
     for path, text in flat("do/references/LOG.md"):
         assert "taken its full look under its current criteria" in text, path
+
+
+# `define` rewrites the Manifest in place and the Manifest carries no version. A run that
+# stopped between that write and its next log entry resumed holding verdicts recorded by
+# gate ID alone, so it kept PASS on text that had changed. Each verdict records the hash
+# of the Manifest it read, an amendment is marked pending before `define` runs and closed
+# after the re-read, and a resumed run trusts a verdict only where the hashes say its
+# criteria did not move.
+def test_a_resumed_run_detects_a_changed_manifest() -> None:
+    for path, text in flat("do/references/LOG.md"):
+        assert "## A changed Manifest" in text, path
+        assert (
+            "Record with each verdict the SHA-256 of the Manifest file it was assessed"
+            " against" in text
+        ), path
+        assert (
+            "append an `Amendment pending` entry carrying the current hash" in text
+        ), path
+        assert "and is otherwise unverified" in text, path
+        assert "A pending entry left open means its amendment may not have landed" in (
+            text
+        ), path
+    for path, text in flat("do/SKILL.md"):
+        assert (
+            "mark the amendment pending there before invoking `define` and close it after"
+            " the re-read" in text
+        ), path

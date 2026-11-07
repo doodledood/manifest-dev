@@ -36,7 +36,8 @@ Record what the finished state will not reconstruct on its own:
 - **Departures** — from the Initial Approach, the Deliverable order or a Process Guidance item,
   and why.
 - **Dead ends** — fixes tried and reverted, approaches rejected that left no commit; group repairs by their underlying promise and its accepted source, with each attempt and outcome, so new finding IDs or commit wording do not reset the premise history.
-- **Outcome and gate state** — assessed criteria and subject, verdicts and their evidence, staleness, and
+- **Outcome and gate state** — assessed criteria, as the Manifest hash that *A changed Manifest*
+  below names, and subject, verdicts and their evidence, staleness, and
   whether each judgment gate has taken its full look under its current criteria. Identify relevant local work and external
   observations as well as the repository head. Keep the findings, their dispositions and support,
   and which repairs are verified, so a resumed run can determine what evidence still applies and
@@ -46,3 +47,16 @@ Record what the finished state will not reconstruct on its own:
   whether it was fixed, applied, dismissed with the reason, or left from a continued look; each gigantic issue with why it is a
   project of its own; and a gate bar the run read as suspect with how that settled.
 - **Operational steps** — retriggers, waits and environment actions.
+
+## A changed Manifest
+
+`define` rewrites the Manifest in place and the Manifest carries no version, so the log is what
+tells a resumed run whether a verdict read the text that stands now. Record with each verdict the
+SHA-256 of the Manifest file it was assessed against. Before invoking `define`, append an
+`Amendment pending` entry carrying the current hash; after re-reading the result, close it with
+the new hash and the gates whose criteria — their text and every Manifest section their claim
+reads — changed. On resume, hash the Manifest. A verdict carrying the current hash assessed the
+current criteria; one carrying an older hash did too only where closed amendments lead from its
+hash to the current one without changing that gate's criteria, and is otherwise unverified. A
+pending entry left open means its amendment may not have landed: re-read the Manifest and confirm
+it, or make it again.

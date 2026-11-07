@@ -62,6 +62,8 @@ if the needed decision is unavailable, report the boundary and continue independ
 
 Wait for active gate evaluations to finish before amending. If an amendment races
 an evaluation, discard that evaluation's verdicts and evaluate the amended file.
+When the execution log is kept, mark the amendment pending there before invoking `define` and
+close it after the re-read, as `references/LOG.md` → *A changed Manifest* says.
 Re-read the amended Manifest. Re-verify every gate whose criteria, subject, or
 interpretation changed, including the Outcome assessment where affected; keep other
 evidence only while it remains valid. A gate's criteria are its text and every Manifest section
