@@ -92,3 +92,19 @@ def test_every_status_names_a_record_that_names_it_back() -> None:
         "no longer names it; give the record back its earlier Status, or name it in the "
         "later record's Source:\n" + "\n".join(stale)
     )
+
+
+ADR_FORMAT = (
+    ADR.parent.parent
+    / "claude-plugins/manifest-dev/skills/figure-out/references/ADR_FORMAT.md"
+)
+
+
+# Holds the same rule's third half. Step 2 retargets or retires the check an old record's
+# `Enforced by` names; giving back only the Status and that line left the check holding the
+# draft's decision, so the restored record named a check that no longer enforced it. Both copies
+# of the convention say the check holds the record's decision again.
+def test_a_taken_back_restatus_gives_back_its_check() -> None:
+    clause = "the check step 2 retargeted or retired holds that record's decision again"
+    for path in (ADR / "CONVENTIONS.md", ADR_FORMAT):
+        assert clause in path.read_text(encoding="utf-8"), path
