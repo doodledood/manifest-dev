@@ -116,3 +116,18 @@ def test_a_thread_reply_already_posted_is_not_posted_again() -> None:
             "Post a drafted reply only when, read fresh just before posting, our latest message"
             " on that thread does not already say it" in text
         ), path
+
+
+def test_babysit_ci_runs_one_tend_per_pr_and_stops_on_a_moved_head() -> None:
+    """Two `--ci` runs on one PR post duplicate replies; a rejected push had no next step.
+
+    The CI cadence decision accepted that users may need concurrency controls, but the skill
+    never told them, and nothing said what to do when a push came back non-fast-forward.
+    """
+    for path in _copies("babysit-pr/SKILL.md"):
+        text = _text(path)
+        assert "Run one tend per PR at a time" in text, path
+        assert "a concurrency group keyed to the PR" in text, path
+        assert "When a push is rejected as not a fast-forward" in text, path
+        assert "push nothing from the stale checkout" in text, path
+        assert "under `--ci`, end the run reporting the new head" in text, path
