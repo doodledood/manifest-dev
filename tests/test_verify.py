@@ -865,6 +865,12 @@ def test_a_job_left_holding_the_output_does_not_hold_the_run(tmp_path: Path) -> 
     )
     # The foreground shell ends only after its background job can handle TERM.
     # Without that handshake, a newly forked shell can legitimately need the grace.
+    # A grace far above the bound below keeps "no grace waited" apart from the ordinary work a
+    # run does after the stop: the bound once sat at 1.9 s against the default 2 s grace, and a
+    # loaded machine crossed it with no grace waited at all.
+    (tmp_path / "verification" / "harness.md").write_text(
+        "---\nask-first: ask\ngrace: 30\n---\n", encoding="utf-8"
+    )
     drive = subprocess.Popen(
         [str(VERIFY), "drive", "thing"],
         env=env,
@@ -876,10 +882,10 @@ def test_a_job_left_holding_the_output_does_not_hold_the_run(tmp_path: Path) -> 
     assert drive.stdout.readline().startswith("running [once]")
     assert drive.stdout.readline().strip() == "started"
     began = time.monotonic()
-    stdout, stderr = drive.communicate(timeout=10)
+    stdout, stderr = drive.communicate(timeout=60)
     assert (
-        time.monotonic() - began < 1.9
-    )  # the job heeds the stop's SIGTERM: no grace waited
+        time.monotonic() - began < 15
+    )  # the job heeds the stop's SIGTERM: none of the 30 s grace waited
     assert drive.returncode == 0, stdout + stderr
     assert stopped.exists(), "the background job did not receive graceful termination"
     assert not _appears(marker, 4)
