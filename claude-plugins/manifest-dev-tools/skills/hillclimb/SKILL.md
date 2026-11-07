@@ -19,6 +19,10 @@ requester points to.
 - **With `--autonomous`:** invoke `figure-out --autonomous` where shared understanding is missing,
   then `define --autonomous`. Nobody is asked from start to end.
 
+Do not set or print a continuation goal during understanding or definition, and tell figure-out
+that it runs chained under this command, which continues from its Read as a checkpoint: /do owns
+the completion backstop, and automatic continuation begins at execution.
+
 When `define` reports the Manifest path, invoke `do` with that exact path in the same turn, unless
-the requester asked to stop at the plan; no path → stop and report. An attended climb asks at the
+the requester asked to stop at the plan. No path → stop and report. An attended climb asks at the
 end whether to push, unless the requester already said.

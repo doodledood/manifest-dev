@@ -342,7 +342,9 @@ def test_blocker_continuation_survives_every_outer_goal() -> None:
 # Holds the decision in docs/adr/20260905-executors-own-path-bearing-continuation-goals.md.
 def test_auto_chains_leave_goal_emission_to_the_executor() -> None:
     """A chain must remain goal-free until it has handed over a Manifest."""
-    for name, executor in (("auto", "do"),):
+    # hillclimb chains figure-out the same way: a Read-only goal set there would end an
+    # autonomous climb at the Read.
+    for name, executor in (("auto", "do"), ("hillclimb", "do")):
         for path in [source_skills()[name], *dist_copies(name)]:
             text = normalized(read(path))
             assert not blocks_in(path), path
