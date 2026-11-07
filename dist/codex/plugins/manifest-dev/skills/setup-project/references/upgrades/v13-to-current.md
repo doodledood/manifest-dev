@@ -5,7 +5,9 @@ anything.
 
 1. **A deleted or retargeted draft gives back what it changed:** add the sentence that follows the
    draft rule in `../../../figure-out/references/ADR_FORMAT.md` → *Immutability* to the same place in
-   the project's `docs/adr/CONVENTIONS.md`. Where a record's Status in the project names a record
+   the project's `docs/adr/CONVENTIONS.md`. Where the project's conventions have no draft rule — a
+   record on its own open branch is edited or deleted in place — offer that rule with the sentence,
+   as one item. Where a record's Status in the project names a record
    that does not exist, or one that does not name it back, show it beside this item: it is a
    restatus a deleted or retargeted draft left behind, and the person decides whether the record
    gets its earlier Status back.
