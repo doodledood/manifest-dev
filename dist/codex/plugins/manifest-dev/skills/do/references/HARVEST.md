@@ -107,7 +107,7 @@ findings, are fixed, applied or dismissed with a reason, never debt.
 
 - Record each item in the execution log as it is found.
 - Carry the list into the run's report on whichever path it ends (`../SKILL.md` → *How a run ends*):
-  `/done` and `/escalate` name it with the ticket-up offer, and a pending report names it the same way.
+  `/done` and `/escalate` name it with the ticket-up offer, and any report `/do` writes itself names it the same way.
 - Every pull request the run opens or updates carries a "Debt left" section listing the same
   items, one line each — what, where, why it was left — whether anyone is watching or not. It is
   the record any runner can read later; the execution log stays on this machine. The description

@@ -129,6 +129,9 @@ def test_every_launch_on_a_manifest_finds_its_log() -> None:
     for path, text in flat("escalate/SKILL.md"):
         assert "Name the execution log's path when `/do` kept one" in text, path
         assert "with the log path this report named" in text, path
+    # Completion carries the log path too, so a later session finds the run's record.
+    for path, text in flat("done/SKILL.md"):
+        assert "Name the execution log's path when `/do` kept one" in text, path
 
 
 # Nothing claims a Manifest, so two `/do` runs on one file both amend it through `define`
@@ -168,13 +171,19 @@ def test_every_terminal_path_carries_the_debt() -> None:
     for path, text in flat("do/SKILL.md"):
         assert "**How a run ends.** A run ends on one of" in text, path
         assert "the debt `references/HARVEST.md` lists" in text, path
-        for lead in ("**Completion**", "**Escalation**", "**Pending**"):
+        for lead in (
+            "**Completion**",
+            "**Escalation**",
+            "**Pending**",
+            "**Settled from outside**",
+        ):
             assert lead in text, (path, lead)
     for path, text in flat("do/references/HARVEST.md"):
         assert (
             "Carry the list into the run's report on whichever path it ends" in text
         ), path
-        assert "a pending report names it the same way" in text, path
+        # Pending and settled-from-outside reports are both written by /do itself.
+        assert "any report `/do` writes itself names it the same way" in text, path
 
 
 # A person merging the pull request a babysit Manifest tends failed check-pr's "exactly
