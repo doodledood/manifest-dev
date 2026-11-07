@@ -304,6 +304,14 @@ def test_shape_guides_load_whatever_version_is_recorded() -> None:
         0
     ), "MOVE_TO_HARNESS.md must load on the project's shape, whatever version is recorded"
     assert "RESHAPE_NORTH_STAR.md" in skill
+    # The trigger lives in the loading layer: a deferred guide is read only after the load its
+    # own trigger would gate (docs/adr/20260703-progressive-disclosure-triggers-live-in-loading-layer.md).
+    move = (SKILLS / "setup-project/references/upgrades/MOVE_TO_HARNESS.md").read_text(
+        "utf-8"
+    )
+    assert (
+        "whatever version the project records" not in move
+    ), "MOVE_TO_HARNESS.md restates its own load trigger; setup-project/SKILL.md owns it"
 
 
 def test_setup_project_follows_every_guide_from_the_recorded_version_on() -> None:

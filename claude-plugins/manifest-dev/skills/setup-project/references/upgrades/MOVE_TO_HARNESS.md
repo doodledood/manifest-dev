@@ -4,9 +4,7 @@ A project set up before v4 may carry up to three verification pieces: a verifica
 (a harness, an eval suite, or a reader-task list, with its own README and statuses), a feature
 map (an index plus one file per feature, each with a `Status:` line), and the context-file
 bullets that named them. v4 replaces all of them with one harness, as
-`../VERIFICATION_HARNESS.md` describes. Any of those pieces still present is what calls for this
-move, whatever version the project records. Offer the move as one item, showing what it writes. The
-context-file bullet and the ask-first setting are items of their own, offered by `v3-to-current.md`
+`../VERIFICATION_HARNESS.md` describes. Offer the move as one item, showing what it writes. The context-file bullet and the ask-first setting are items of their own, offered by `v3-to-current.md`
 where it loads, and otherwise by the update pass for the harness the move leaves.
 
 Keep everything the project wrote; change only its shape:
