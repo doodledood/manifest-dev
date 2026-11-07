@@ -144,8 +144,8 @@ def test_babysit_backstop_stops_when_a_person_merges_the_pr() -> None:
         text = _text(path)
         assert "until it is mergeable, a person merges it, or a blocker" in text, path
         assert (
-            "or a person settling the work from outside, such as by merging its pull request"
-            in text
+            "or a person settling from outside everything the work still owes, such as by"
+            " merging the pull request that carries all of it" in text
         ), path
         assert "its *How a run ends* names" in text, path
         assert "stops via `/done`, `/escalate`, or CI pending-summary" not in text, path

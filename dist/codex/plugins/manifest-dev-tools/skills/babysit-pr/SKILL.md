@@ -26,7 +26,7 @@ The Manifest changes only through the skill that wrote it, never by direct edit.
 
 Record compact checkpoint notes as work proceeds: what changed, what was verified, what remains, blockers.
 
-Assume the user is AFK; make authorized decisions without asking questions. Surface blockers promptly and continue useful independent work. Stop after reporting completion, a blocker requiring a person when no useful independent work remains, an external wait that this run's no-wait policy makes terminal, or a person settling the work from outside, such as by merging its pull request. Continue while authorized, actionable work remains.
+Assume the user is AFK; make authorized decisions without asking questions. Surface blockers promptly and continue useful independent work. Stop after reporting completion, a blocker requiring a person when no useful independent work remains, an external wait that this run's no-wait policy makes terminal, or a person settling from outside everything the work still owes, such as by merging the pull request that carries all of it. Continue while authorized, actionable work remains.
 ```
 
 ```gate-clause

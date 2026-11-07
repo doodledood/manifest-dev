@@ -173,7 +173,12 @@ def test_a_merged_pull_request_ends_the_run_without_escalation() -> None:
     for path, text in flat("do/SKILL.md"):
         assert "**Settled from outside**" in text, path
         assert "Nothing waits on a person, so it is no escalation" in text, path
-        assert "or a person settling the work from outside" in text, path
+        assert (
+            "or a person settling from outside everything the work still owes" in text
+        ), path
+        # A merge settles the run only when the Manifest owes nothing beyond that pull
+        # request; otherwise the run records it and continues the gates still open.
+        assert "the merge is an event of the run, not its end" in text, path
     for path, text in flat("check-pr/SKILL.md"):
         assert (
             "A merged PR is a terminal state of its own, not one to hand off" in text

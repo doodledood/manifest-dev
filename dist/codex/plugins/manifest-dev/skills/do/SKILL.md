@@ -101,7 +101,7 @@ The Manifest changes only through the skill that wrote it, never by direct edit.
 
 Record compact checkpoint notes as work proceeds: what changed, what was verified, what remains, blockers.
 
-Assume the user is AFK; make authorized decisions without asking questions. Surface blockers promptly and continue useful independent work. Stop after reporting completion, a blocker requiring a person when no useful independent work remains, an external wait that this run's no-wait policy makes terminal, or a person settling the work from outside, such as by merging its pull request. Continue while authorized, actionable work remains.
+Assume the user is AFK; make authorized decisions without asking questions. Surface blockers promptly and continue useful independent work. Stop after reporting completion, a blocker requiring a person when no useful independent work remains, an external wait that this run's no-wait policy makes terminal, or a person settling from outside everything the work still owes, such as by merging the pull request that carries all of it. Continue while authorized, actionable work remains.
 ```
 
 ## Corrections, debt and the verification harness
@@ -242,9 +242,12 @@ lists, and the execution log's path when one is kept.
   `escalate` with the Manifest path, the unresolved blockers and the evidence behind each.
 - **Pending** — only an external wait remains and this run's no-wait policy makes it terminal:
   report it yourself, naming each gate still open and what it waits on.
-- **Settled from outside** — a person settled what the Manifest owes, such as by merging the pull
-  request it tends: report that yourself, with who and when, what the run completed and the
-  evidence it holds. Nothing waits on a person, so it is no escalation.
+- **Settled from outside** — a person settled everything the Manifest still owes, such as by
+  merging the pull request it tends when nothing it owes lies beyond that pull request: report that
+  yourself, with who and when, what the run completed and the evidence it holds. Nothing waits on a
+  person, so it is no escalation. Where the Manifest owes more than the merged pull request — another
+  Deliverable, a gate checked after the merge, an Outcome shown in real use — the merge is an event
+  of the run, not its end: record it and continue the gates still open.
 
 ## The execution log
 
