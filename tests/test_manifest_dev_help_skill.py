@@ -169,12 +169,18 @@ def test_every_glossary_term_has_a_help_entry_and_help_defines_no_other() -> Non
     )
 
 
+# Holds docs/adr/20261015-manifest-dev-help-answers-questions-about-manifest-dev-in-simplified-english.md:
+# the guide names every core skill a user invokes and every skill the tools plugin ships.
 def test_help_names_every_user_invocable_skill() -> None:
     text = (SKILL_DIR / "SKILL.md").read_text(encoding="utf-8")
-    missing = sorted(s for s in user_invocable("manifest-dev") if f"`/{s}`" not in text)
+    invocable = user_invocable("manifest-dev") | user_invocable("manifest-dev-tools")
+    missing = sorted(f"/{s}" for s in invocable if f"`/{s}`" not in text)
+    tools = {p.parent.name for p in (REPO_ROOT / "claude-plugins" / "manifest-dev-tools" / "skills").glob("*/SKILL.md")}
+    missing += sorted(s for s in tools - invocable if f"`{s}`" not in text)
     assert not missing, (
-        f"manifest-dev-help/SKILL.md does not name {missing}: add each as `/name` with when a user reaches"
-        " for it."
+        f"manifest-dev-help/SKILL.md does not name {missing}: add each skill a user invokes as `/name`"
+        " with when a user reaches for it, and each tools-plugin skill only another skill calls as"
+        " `name`, saying which skill calls it."
     )
 
 

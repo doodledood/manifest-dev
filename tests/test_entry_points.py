@@ -23,6 +23,9 @@ USER_INVOCABLE = {
         "do",
         "figure-out",
         "figure-out-team",
+        # An optional extra the workflow never depends on; review reaches the same check through
+        # code-bugs. See docs/adr/20261107-a-figure-out-wrapper-sweeps-existing-code-for-state-machines.md.
+        "audit-state-machines",
         "manifest-dev-help",
         "next-ticket",
         "review-code",

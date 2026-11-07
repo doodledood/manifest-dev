@@ -18,6 +18,7 @@ ASD-STE100: short sentences, one topic in each sentence, and simple words with o
 5. When the question is about the project of the user, also read its Project Surfaces.
 6. When this skill does not give the answer or its reason, read the skill that owns that behavior.
 7. Find that skill in the folder next to this one: its `SKILL.md` and its `references/` folder.
+   A skill of the tools plugin is in the `skills/` folder of that plugin.
 8. Answer only the question.
 9. Give the reason for each part, not only what it is.
 10. When the answer comes from a file other than this skill, name that file.
@@ -110,11 +111,33 @@ For example, delegate visual direction but retain acceptance of the rendered res
 | `/orchestrate` | Coordinate a queue or assigned outcome, with a status page and a list of what waits for you. |
 | `/figure-out-team` | Do the work of `/figure-out` with a team in a Slack channel or thread. |
 | `/review-code` | Review a change for one quality dimension. Manifest gates use it. |
+| `/audit-state-machines` | Find each state machine in a codebase, check each one with a model, and get the bugs it finds. It does not change code. |
 | `/review-writing` | Review text against its style standards. |
 | `/design` | Get design direction for a page, app, document or other visual work. |
 | `/review-design` | Review a design in the medium that it is for. |
 | `/check-pr` | Find if a pull request is ready to merge. It does not merge. |
 | `/manifest-dev-help` | Read this guide, or ask it a question. |
+
+## The tools plugin
+
+The `manifest-dev-tools` plugin adds the skills below. On a host that installs plugins one at a
+time, install it as well. When it is not installed, these skills are not available.
+
+| Skill | Use it to |
+|---|---|
+| `/babysit-pr` | Move your open pull request through CI, review comments and conflicts until it can merge. It does not merge. |
+| `/review-pr` | Review a pull request and post comments under your account. |
+| `/walk-pr` | Go through a pull request or a large diff with the agent, one part at a time. |
+| `/hillclimb` | Make an existing artifact better, round by round, toward a goal. |
+| `/prompt-engineering` | Write, change or discuss a prompt, a skill or an agent. |
+| `/review-prompt` | Review a prompt and get findings. It does not change the file. |
+| `/write-goal` | Write one short goal that says what "done" means, to paste into a goal field. |
+| `/handoff` | Give a new session or another agent the context it needs to continue. |
+| `/teach-me` | Learn a change, a pull request or a topic, one step at a time. |
+| `/eli5` | Get a very simple explanation of a topic, with pictures. |
+
+`/review-pr` calls three skills that you do not use yourself: `review-pr-holistic`,
+`review-pr-judgment` and `review-pr-thread-verify`.
 
 This guide writes each skill as `/name`. Your host can use a different prefix, for example `$name`
 or `/skill:name`.
