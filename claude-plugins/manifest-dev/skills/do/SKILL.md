@@ -71,6 +71,13 @@ its claim reads, so the ceiling (INV-G1), which reads the whole Manifest, re-ver
 amendment. Report material amendments on every terminal
 path and record them in the execution log when kept.
 
+Another run, or a person through `define`, can change the same Manifest while this run works, and
+the last write wins. Hash the Manifest each time you read it. Before amending and before reporting
+completion, hash it again; when the hash differs from the one this run last read or wrote, re-read
+the Manifest, treat as unverified each gate whose criteria changed or can no longer be shown
+unchanged, and make again any amendment of this run's that the file no longer carries and nothing newer in
+it replaces.
+
 ## Continuation
 
 Before implementation, including when called by /auto, resolve the absolute Manifest path

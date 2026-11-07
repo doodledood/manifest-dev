@@ -107,3 +107,24 @@ def test_every_launch_on_a_manifest_finds_its_log() -> None:
     for path, text in flat("escalate/SKILL.md"):
         assert "Name the execution log's path when `/do` kept one" in text, path
         assert "with the log path this report named" in text, path
+
+
+# Nothing claims a Manifest, so two `/do` runs on one file both amend it through `define`
+# and the last write wins: run A reported done against a contract that was no longer in
+# the file, and an amendment could vanish. Before amending and before reporting
+# completion, the run compares the file's hash with the one it last read or wrote, and a
+# difference makes the changed gates unverified and restores a lost amendment.
+def test_a_manifest_changed_by_another_writer_is_noticed() -> None:
+    for path, text in flat("do/SKILL.md"):
+        assert "Hash the Manifest each time you read it" in text, path
+        assert (
+            "Before amending and before reporting completion, hash it again" in text
+        ), path
+        assert (
+            "treat as unverified each gate whose criteria changed or can no longer be shown"
+            " unchanged" in text
+        ), path
+        assert (
+            "make again any amendment of this run's that the file no longer carries"
+            in (text)
+        ), path
