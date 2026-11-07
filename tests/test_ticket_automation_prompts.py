@@ -149,7 +149,9 @@ def test_the_one_landing_procedure_refreshes_checks_the_base_and_closes_after_me
         "only when the Ticket was not reopened after that merge" in landing
         and "A Ticket reopened after its merge is new work: the lander stops" in landing
     )
-    assert "It stops when the Ticket is closed, carries the escalation mark" in landing
+    assert "on an unattended landing — when the Ticket carries the escalation mark" in (
+        landing
+    )
     assert "observes the merged state" in landing
     assert "A Ticket closes only after its landing is observed" in landing
     assert "With Auto, its run closes it once the answer is recorded" in landing
@@ -1108,3 +1110,19 @@ def test_automation_releases_its_claim_when_it_closes_a_ticket(root: Path) -> No
     assert "or closed the Ticket, which was then reopened" in flat(
         skill_text(root, "orchestrate")
     )
+
+
+# A hand run told to land claims the Ticket as the account it writes as, a person's; Landing step 1
+# stopped on any person's claim, so that run stopped at its own. It stops on someone else's now,
+# and on the escalation mark only when unattended, as run-ticket's own re-read rule says.
+@pytest.mark.parametrize("root", [SOURCE_SKILLS, DIST_SKILLS], ids=["source", "codex"])
+def test_a_hand_run_told_to_land_is_not_stopped_by_its_own_claim(root: Path) -> None:
+    landing = flat(section(automation_text(root), "Landing"))
+    run = flat(skill_text(root, "run-ticket"))
+    assert (
+        "It stops when the Ticket is closed, when a person other than the identity it writes "
+        "as holds the claim, or — on an unattended landing — when the Ticket carries the "
+        "escalation mark" in landing
+    )
+    assert "a person other than the identity it writes as is assigned" in run
+    assert "a person holds the claim" not in landing

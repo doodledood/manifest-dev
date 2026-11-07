@@ -117,8 +117,9 @@ the debt is gathered once.
 This is the one landing procedure. `orchestrate` follows it at each landing turn, and `run-ticket`
 follows it only when its prompt says to land. The lander:
 
-1. **Re-reads the Ticket.** It stops when the Ticket is closed, carries the escalation mark, or a
-   person holds the claim; when the run facts were not written by the automation identity or name a
+1. **Re-reads the Ticket.** It stops when the Ticket is closed, when a person other than the
+   identity it writes as holds the claim, or — on an unattended landing — when the Ticket carries
+   the escalation mark; when the run facts were not written by the automation identity or name a
    run that is not the lander's own (for `orchestrate`, a run it launched or took over; for a
    landing `run-ticket`, itself); or when the record is not marked ready to land by the run its run
    facts name. A merged pull request counts as the Ticket's landing only when the Ticket was not

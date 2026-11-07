@@ -193,7 +193,7 @@ Relaunch(o) ==   \* launch the run again, which writes fresh run facts
   /\ UNCHANGED <<recs, claim, mark, n>>
 
 \* The landing turn, ticket-up/references/AUTOMATED_EXECUTION.md *Landing* steps 1 to 4.
-\* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "It stops when the Ticket is closed, carries the escalation mark, or a person holds the claim"
+\* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "It stops when the Ticket is closed, when a person other than the identity it writes as holds the claim, or — on an unattended landing — when the Ticket carries the escalation mark"
 \* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "A merged pull request counts as the Ticket's landing only when the Ticket was not reopened after that merge"
 \* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "When the base has moved since the base commit the record names, the run merges the base in"
 \* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "When the head is not the one the record names, or a required check fails, `orchestrate` relaunches the run to repair it"
