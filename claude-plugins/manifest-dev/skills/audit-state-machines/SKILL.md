@@ -11,9 +11,7 @@ Invoke the figure-out skill with the brief below, the person's arguments, `--aut
 
 Brief:
 
-> Audit [the scope] for state machines, implicit and explicit, following `../review-code/references/code-bugs.md` → *State machines*. Every bug you find counts, whether or not anything changed recently: this is an audit, not a review of a change.
->
-> A machine can also be written as instructions that runs, agents or people follow — a prompt, a skill, a runbook that says who sets a status or a claim, and when. Audit it the same way. Its sites are the rules, by file and line; a counterexample counts once you quote the rule that allows each step of its sequence, and nothing in the text forbids that step.
+> Audit [the scope] for state machines, implicit and explicit, following `../review-code/references/code-bugs.md` → *State machines*. Every bug you find counts, whether or not anything changed recently: this is an audit, not a review of a change. Machines written as instructions count too, checked as that section says.
 >
 > - List every machine in the scope searched: what it tracks, explicit or implicit, its states, and its writers by file and line. Say which parts of the scope you searched and which you did not, with why. On a large repository, record each machine in your log as you finish it.
 > - Rank confirmed bugs by consequence. For each, give each site by file and line, the sequence that reaches the bad state, and the model that found it — its saved path, or its scratch path when no log is kept. For a bug in an implicit machine, the fix is to make the machine explicit: one owner of its transitions, and a test or a type that fails when anything else writes the state.

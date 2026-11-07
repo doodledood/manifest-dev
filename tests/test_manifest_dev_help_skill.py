@@ -175,7 +175,12 @@ def test_help_names_every_user_invocable_skill() -> None:
     text = (SKILL_DIR / "SKILL.md").read_text(encoding="utf-8")
     invocable = user_invocable("manifest-dev") | user_invocable("manifest-dev-tools")
     missing = sorted(f"/{s}" for s in invocable if f"`/{s}`" not in text)
-    tools = {p.parent.name for p in (REPO_ROOT / "claude-plugins" / "manifest-dev-tools" / "skills").glob("*/SKILL.md")}
+    tools = {
+        p.parent.name
+        for p in (REPO_ROOT / "claude-plugins" / "manifest-dev-tools" / "skills").glob(
+            "*/SKILL.md"
+        )
+    }
     missing += sorted(s for s in tools - invocable if f"`{s}`" not in text)
     assert not missing, (
         f"manifest-dev-help/SKILL.md does not name {missing}: add each skill a user invokes as `/name`"

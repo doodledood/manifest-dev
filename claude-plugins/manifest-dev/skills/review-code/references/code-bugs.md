@@ -24,6 +24,8 @@ When the scope writes a state machine, or reads one to decide what happens next:
 3. **Confirm every counterexample on the real code** before it counts: trace its sequence through the actual sites, or run it. The model is your translation of the code and can be wrong; a counterexample the code does not reproduce is dropped. The confirmed sequence is the finding's trigger.
 4. **A model that finds nothing proves nothing.** Say what it covered — its states, events and writers — never that the machine is correct.
 
+A machine can also be written as instructions that runs, agents or people follow — a prompt, a skill, a runbook that says who sets a status or a claim, and when. Check it the same way. Its sites are the rules, by file and line, and its writers are the runs that follow them. A counterexample counts once you quote the rule that allows each step of its sequence, and nothing in the text forbids that step.
+
 In a review of a change, the Actionability Filter's *In scope* applies: a bug the change introduced or exposed is in scope, including one now reachable only through writers the change did not touch. Report it with Category `State machine`. A transition the author meant differently, with no mechanical defect, belongs to the change-intent dimension; a missing discriminant in a type belongs to the type-safety dimension.
 
 ## Bug detection categories
