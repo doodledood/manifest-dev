@@ -82,3 +82,28 @@ def test_a_resumed_run_detects_a_changed_manifest() -> None:
             "mark the amendment pending there before invoking `define` and close it after"
             " the re-read" in text
         ), path
+
+
+# A caller-supplied journal (babysit-pr's) was the log, with nothing at the path `/do`
+# keys to the Manifest. A launch without the caller — after compaction, in a new session,
+# or resuming an escalation whose report named no log — opened that path, found it empty,
+# and lost the dispositions, dead ends and full-look state. The Manifest-keyed path now
+# points to the journal, and the escalation report names the log the resumed run reads.
+def test_every_launch_on_a_manifest_finds_its_log() -> None:
+    for path, text in flat("do/references/LOG.md"):
+        assert "caller-supplied journal" in text, path
+        assert (
+            "Append one line to the path `SKILL.md` names pointing to that journal"
+            in (text)
+        ), (path)
+        assert "follows its newest pointer and reads the journal" in text, path
+        assert "no second file" not in text, path
+    for path, text in flat("do/SKILL.md"):
+        assert (
+            "where a caller supplied a journal, by the pointer `references/LOG.md` → *Path*"
+            in text
+        ), path
+        assert "and the execution log's path when one is kept" in text, path
+    for path, text in flat("escalate/SKILL.md"):
+        assert "Name the execution log's path when `/do` kept one" in text, path
+        assert "with the log path this report named" in text, path

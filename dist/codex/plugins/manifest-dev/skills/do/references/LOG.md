@@ -12,7 +12,10 @@ next names the repository it is about — its remote URL, or its path when it ha
 session's recall can match logs by repository and topic.
 
 When a caller supplies a journal path (for example, the default `/babysit-pr` journal), that
-caller-supplied journal *is* the log — no second file. When the caller reinvokes `/do` on it for
+caller-supplied journal *is* the log, and the run's record goes nowhere else. Append one line to
+the path `SKILL.md` names pointing to that journal, so a launch on this Manifest without the
+caller — after compaction, in a new session, or resuming an escalation — opens that path, follows
+its newest pointer and reads the journal. When the caller reinvokes `/do` on it for
 a new run, append a `Run initialized` boundary. Recheck the applicability of prior evidence
 against the current criteria and subject before carrying it forward. Preserve supported finding
 dispositions and verified repairs; a new invocation alone does not erase them.
