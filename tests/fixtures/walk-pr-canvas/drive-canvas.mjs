@@ -64,6 +64,42 @@ await scenario("pin-step dots", async (page) => {
   check("and opens its sheet", await isOpen(page, "sheet"));
 });
 
+// Finding: Enter or Space on a focused control advanced the story instead of pressing it.
+await scenario("keys press a focused control", async (page) => {
+  await page.focus("#nerd");
+  await page.keyboard.press("Enter");
+  check("Enter on the diffs button opens the drawer", await isOpen(page, "drawer"));
+  await atStep(page, "Enter on the diffs button keeps the step", "1 / 13");
+  await page.keyboard.press("Escape");
+  check("Esc closes the drawer", !(await isOpen(page, "drawer")));
+  await page.focus("#nerd");
+  await page.keyboard.press(" ");
+  check("Space on the diffs button opens the drawer", await isOpen(page, "drawer"));
+  await atStep(page, "Space on the diffs button keeps the step", "1 / 13");
+  await page.focus(".difffile summary");
+  await page.keyboard.press("Enter");
+  check(
+    "Enter on a file row expands it",
+    await page.evaluate(() => document.querySelector(".difffile").open),
+  );
+  await atStep(page, "Enter on a file row keeps the step", "1 / 13");
+  await page.keyboard.press("Escape");
+  await page.focus("#nerd");
+  await page.keyboard.press("ArrowRight");
+  await atStep(page, "ArrowRight still advances over a focused button", "2 / 13");
+  await jump(page, 3);
+  await settle(page);
+  check("arriving at a pin step opens its sheet", await isOpen(page, "sheet"));
+  await page.focus("#sh-agree");
+  await page.keyboard.press("Enter");
+  await settle(page);
+  const answer = await page.evaluate(() =>
+    localStorage.getItem("walkpr-canvas-reference-v1.pin.p3"),
+  );
+  check("Enter on Agree records the agreement", answer === "Agree — as recommended.", String(answer));
+  await atStep(page, "Agree then moves one step on", "5 / 13");
+});
+
 await browser.close();
 if (failures.length) {
   console.error(failures.map((f) => `FAIL ${f}`).join("\n"));

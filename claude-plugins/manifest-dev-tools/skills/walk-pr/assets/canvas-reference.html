@@ -23,8 +23,9 @@
     must not override code-line padding (its line-number gutter is absolutely positioned).
   - Step dots and map pins keep separate classes: a dot sharing the map pins' class is
     hidden by their style and caught by their click handler.
-  - Keyboard: arrows/space/Enter advance, Esc closes layers — all guarded against
-    textarea/input focus.
+  - Keyboard: arrows/space/Enter advance, Esc closes layers — guarded against
+    textarea/input focus, and space/Enter left to a focused button, summary or link so they
+    press it.
   - Map scales to the viewport (vmin-based type, width capped by height×aspect).
   - Diff code is syntax-highlighted per line AFTER diff2html renders (language from the
     file extension); lines carrying word-level ins/del markers are left unhighlighted so
@@ -468,7 +469,10 @@ function render(){
 function go(i){cur=Math.max(0,Math.min(STEPS.length-1,i));render()}
 $('prev').onclick=()=>go(cur-1);$('next').onclick=()=>go(cur+1);
 document.addEventListener('keydown',e=>{
-  if(e.target.tagName==='TEXTAREA'||e.target.tagName==='INPUT'||e.target.tagName==='SELECT')return;
+  const t=e.target instanceof Element?e.target:null;
+  if(t&&t.closest('textarea,input,select,[contenteditable]'))return;
+  // Space and Enter press a focused control natively; only arrows navigate over it.
+  if((e.key===' '||e.key==='Enter')&&t&&t.closest('button,summary,a[href],[role=button]'))return;
   if(e.key==='ArrowRight'||e.key===' '||e.key==='Enter'){e.preventDefault();go(cur+1)}
   if(e.key==='ArrowLeft')go(cur-1);
   if(e.key==='w'||e.key==='W'){if($('whybtn').style.display!=='none')$('whybtn').click()}
