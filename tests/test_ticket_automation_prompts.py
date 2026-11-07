@@ -785,9 +785,9 @@ def test_each_ticket_fact_keeps_one_writer() -> None:
         run_ticket
     )
     assert (
-        "The run also stops when a person other than the identity it writes as is assigned, "
-        "when the Ticket is closed, or — on an unattended run — when the escalation mark is "
-        "on." in run_ticket
+        "The run also stops when a person is assigned other than the identity it writes as "
+        "or, on a hand run, the person who started it, when the Ticket is closed, or — on an "
+        "unattended run — when the escalation mark is on." in run_ticket
     )
     assert "the run the record names merges what is there and pushes again" in (
         run_ticket
@@ -1152,12 +1152,12 @@ def test_a_hand_run_told_to_land_is_not_stopped_by_its_own_claim(root: Path) -> 
     landing = flat(section(automation_text(root), "Landing"))
     run = flat(skill_text(root, "run-ticket"))
     assert (
-        "It stops when the Ticket is closed, when a person other than the identity it writes "
-        "as holds the claim, or — on an unattended landing — when the Ticket carries the "
-        "escalation mark" in landing
+        "It stops when the Ticket is closed, when a person holds the claim other than the "
+        "identity it writes as or, on a hand run, the person who started it, or — on an "
+        "unattended landing — when the Ticket carries the escalation mark" in landing
     )
-    assert "a person other than the identity it writes as is assigned" in run
-    assert "a person holds the claim" not in landing
+    assert "a person is assigned other than the identity it writes as" in run
+    assert "a person holds the claim;" not in landing
 
 
 # A picker's claim written as the automation identity reads as an interrupted unattended attempt,
@@ -1176,8 +1176,40 @@ def test_a_persons_claim_is_never_written_as_the_automation_identity(
         "Ticket unclaimed and say why" in picker
     )
     assert (
-        "a person claims in their own name, never the automation identity's"
+        "A picker claims in the person's name, never the automation identity's"
         in convention
+    )
+
+
+# next-ticket assigns the person when its session writes as the automation identity, and the person
+# then runs run-ticket by hand in that same session, which writes as the automation identity too.
+# Its start check, its Execute stop rule and Landing step 1 each stopped on any person's claim but
+# the identity's own, so the hand run stopped on the claim of the person who started it. A hand run
+# now works on under that person's claim, which still keeps orchestrate off the Ticket.
+@pytest.mark.parametrize("root", [SOURCE_SKILLS, DIST_SKILLS], ids=["source", "codex"])
+def test_a_hand_run_works_on_under_the_claim_of_the_person_who_started_it(
+    root: Path,
+) -> None:
+    convention = flat(section(convention_text(root), "Lifecycle"))
+    run = flat(skill_text(root, "run-ticket"))
+    landing = flat(section(automation_text(root), "Landing"))
+    assert "a run that person then starts by hand works on under their claim" in (
+        convention
+    )
+    assert "a person claims in their own name, never the automation identity's" not in (
+        convention
+    )
+    assert (
+        "On a hand run, continue too on a claim the person who started it holds, leaving it "
+        "in their name. A conflicting human claim stops the attempt" in run
+    )
+    assert (
+        "a person is assigned other than the identity it writes as or, on a hand run, the "
+        "person who started it" in run
+    )
+    assert (
+        "a person holds the claim other than the identity it writes as or, on a hand run, "
+        "the person who started it" in landing
     )
 
 

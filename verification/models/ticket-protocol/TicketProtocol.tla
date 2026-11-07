@@ -193,7 +193,7 @@ Relaunch(o) ==   \* launch the run again, which writes fresh run facts
   /\ UNCHANGED <<recs, claim, mark, n>>
 
 \* The landing turn, ticket-up/references/AUTOMATED_EXECUTION.md *Landing* steps 1 to 4.
-\* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "It stops when the Ticket is closed, when a person other than the identity it writes as holds the claim, or — on an unattended landing — when the Ticket carries the escalation mark"
+\* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "It stops when the Ticket is closed, when a person holds the claim other than the identity it writes as or, on a hand run, the person who started it, or — on an unattended landing — when the Ticket carries the escalation mark"
 \* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "A merged pull request counts as the Ticket's landing only when the Ticket was not reopened after that merge"
 \* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "When the base has moved since the base commit the record names, the run merges the base in"
 \* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "When the head is not the one the record names, or a required check fails, `orchestrate` relaunches the run to repair it"
@@ -242,7 +242,7 @@ OMerge(o) ==
 ---------------------------------------------------------------------------------------------
 (* The current run of orchestrator o, whose run ID is RunOf(o) *)
 
-\* Quote run-ticket/SKILL.md: "stops when a person other than the identity it writes as is assigned, when the Ticket is closed, or — on an unattended run — when the escalation mark is on"
+\* Quote run-ticket/SKILL.md: "stops when a person is assigned other than the identity it writes as or, on a hand run, the person who started it, when the Ticket is closed, or — on an unattended run — when the escalation mark is on"
 \* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "stops without writing when the run ID there is not its own"
 Stops(o) == ~Named(o) \/ closed \/ claim = "person" \/ mark
 
