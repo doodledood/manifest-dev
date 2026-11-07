@@ -1,7 +1,7 @@
 # ADR: check-pr's third gate is the review-feedback inbox
 
 ## Status
-Accepted; amended by 20261106-review-evidence-serves-substantive-acceptance: a reply must clearly address its actual review item; unrelated later updates do not count; amended by 20261107-the-tending-identity-can-answer-a-review-body: a reply from the identity the inspection runs as, the one tending the PR, counts as the author's would
+Accepted; amended by 20261106-review-evidence-serves-substantive-acceptance: a reply must clearly address its actual review item; unrelated later updates do not count; amended by 20261107-the-tending-identity-can-answer-a-review-body: a reply from the identity the inspection runs as, the one tending the PR, counts as the author's would when that identity did not write the item
 
 ## Area
 PR lifecycle

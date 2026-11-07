@@ -21,14 +21,19 @@ exist. The record did not weigh this case, so the choice is open again. The deci
 inside the North Star's Purpose: delegated work proceeds without needless intervention.
 
 ## Decision
-A review body or top-level comment is addressed when the PR author, or the identity this
-inspection runs as — the one tending the pull request — has later replied on the Conversation
-with a response clearly tied to that item, or when the review is dismissed or superseded as
-before. The rest of the inbox decision stands.
+A review body or top-level comment is addressed when someone other than its author — the PR
+author, or the identity this inspection runs as, the one tending the pull request — has later
+replied on the Conversation with a response clearly tied to that item, or when the review is
+dismissed or superseded as before. An identity's reply never addresses an item it wrote, so a
+reviewer's own follow-up cannot clear their `CHANGES_REQUESTED`. The rest of the inbox decision
+stands.
 
 ## Alternatives Considered
 - **Any collaborator with write access**: covers every tender — Rejected: a second reviewer's
   "+1" to a body would count as addressing it.
+- **Any reply from the PR author or the inspecting identity**: simpler — Rejected: where the
+  inspection runs as the reviewer who wrote a body, that reviewer's own follow-up would clear
+  their own request for changes.
 - **A tending identity passed in as an input**: explicit — Rejected: every caller, and every
   Manifest gate that activates `check-pr`, would have to carry it, and the inspection already
   knows which identity it runs as.
@@ -44,8 +49,8 @@ before. The rest of the inbox decision stands.
 
 ## Enforced by
 partly — `tests/test_check_pr_feedback_gate.py::test_the_tending_identity_can_address_a_body`
-fails if gate 3 stops counting a reply from the identity the inspection runs as; whether a
-reply is tied to its item stays judgment.
+fails if gate 3 stops counting a reply from the identity the inspection runs as, or counts a
+reply from the item's own author; whether a reply is tied to its item stays judgment.
 
 ## Source
 - Amends 20261021-check-pr-review-feedback-is-one-inbox

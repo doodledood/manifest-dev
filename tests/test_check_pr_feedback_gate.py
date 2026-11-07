@@ -159,8 +159,13 @@ def test_the_tending_identity_can_address_a_body() -> None:
     # access who is not the PR's author answered a body, and only the author's reply
     # counted, so the gate failed until the run escalated a block that did not exist.
     _title, body = gate_three()
+    # The reply must come from someone other than the item's author: where the inspection
+    # runs as the reviewer who wrote a body, their own follow-up cleared their own request.
     assert re.search(
-        r"addressed when the PR author, or the identity this inspection runs as — the one"
-        r" tending the PR — has later replied",
+        r"addressed when someone other than its author — the PR author, or the identity this"
+        r" inspection runs as, the one tending the PR — has later replied",
         body,
-    ), f"{CHECK_PR.name} gate 3 counts only the PR author's reply; see the ADR above"
+    ), (
+        f"{CHECK_PR.name} gate 3 must count a reply from the PR author or the tending "
+        "identity, and never one from the item's own author; see the ADR above"
+    )
