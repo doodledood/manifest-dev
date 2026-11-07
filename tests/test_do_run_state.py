@@ -120,6 +120,13 @@ def test_every_launch_on_a_manifest_finds_its_log() -> None:
             " appends there" in text
         ), path
         assert "no second file" not in text, path
+        # Resuming an escalation passes the log the report named, often the default path
+        # itself; read as a caller journal it pointed to itself.
+        assert (
+            "When a caller supplies a journal path other than the one `SKILL.md` names"
+            in text
+        ), path
+        assert "is that log itself: keep it, and write no pointer" in text, path
     for path, text in flat("do/SKILL.md"):
         assert (
             "where a caller supplied a journal, by the pointer `references/LOG.md` → *Path*"

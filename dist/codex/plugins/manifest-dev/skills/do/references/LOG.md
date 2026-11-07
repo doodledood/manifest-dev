@@ -11,12 +11,13 @@ home directory is not writable. The first line is a title naming the Manifest's 
 next names the repository it is about — its remote URL, or its path when it has none — so a later
 session's recall can match logs by repository and topic.
 
-When a caller supplies a journal path (for example, the default `/babysit-pr` journal), that
-caller-supplied journal *is* the log, and the run's record goes nowhere else. Append one line to
+When a caller supplies a journal path other than the one `SKILL.md` names (for example, the
+default `/babysit-pr` journal), that caller-supplied journal *is* the log, and the run's record goes nowhere else. Append one line to
 the path `SKILL.md` names pointing to that journal, so a launch on this Manifest without the
 caller — after compaction, in a new session, or resuming an escalation — opens that path, follows
 its newest pointer, and keeps that journal as its log: it reads it and appends there. When the caller reinvokes `/do` on it for
-a new run, append a `Run initialized` boundary. Recheck the applicability of prior evidence
+a new run, append a `Run initialized` boundary. A supplied path that is the one `SKILL.md` names, such as the log an escalation
+report named, is that log itself: keep it, and write no pointer. Recheck the applicability of prior evidence
 against the current criteria and subject before carrying it forward. Preserve supported finding
 dispositions and verified repairs; a new invocation alone does not erase them.
 
