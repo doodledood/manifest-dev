@@ -37,7 +37,7 @@ The North Star asks that anything adding cost or wait to every run — another a
 - Reviews of changes that touch lifecycle state take longer where a model is built.
 
 ## Enforced by
-not yet — a before-and-after drive of review-code's `code-bugs` on a diff that changes one writer of a status while another file makes a bad transition reachable.
+partly — `tests/test_audit_state_machines.py` fails when `code-bugs` loses its *State machines* section or another file restates its steps. Whether review catches a cross-file bad transition and passes a sound machine stays judgment, read in `verification/recipes/review-code.md`'s `state-machine-cross-file` and `state-machine-sound` drives.
 
 ## Revisit when
 The before-and-after drive shows `code-bugs` misses the planted defect with the check in place (then a conditional dimension), or catches it without the check (then review needs no new text), read in that drive's evidence.

@@ -44,7 +44,7 @@ The owner ran the plain prompt "find all of the implicit state machines in my ap
 - The evidence for the lens is one run on one project.
 
 ## Enforced by
-not yet — the wrapper's recipe under `scripts/verify`, driven on a fixture with planted state-machine defects and one sound machine, checks that each planted defect comes back confirmed and the sound machine draws no finding; the property suite checks that the wrapper ships beside the skills it names.
+partly — `tests/test_audit_state_machines.py` fails when the wrapper stops invoking figure-out with `--autonomous` and `--no-docs`, or when the audit and review stop sharing one statement of the method in `review-code/references/code-bugs.md` → *State machines*; `tests/test_entry_points.py` keeps the wrapper listed beside the skills it names. Whether a sweep confirms each planted defect and spares the sound machine stays judgment, read in `verification/recipes/audit-state-machines.md`'s `courier` drive.
 
 ## Revisit when
 A sweep on a second project returns mostly findings that cannot be confirmed on the code, read in that sweep's report.

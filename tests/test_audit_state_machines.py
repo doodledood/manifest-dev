@@ -3,6 +3,9 @@
 The audit and review share one statement of the state-machine method, in code-bugs, so the two
 cannot drift; the wrapper runs figure-out unattended and with its project-document writes off, so
 an audit writes nothing in the audited project.
+
+Holds docs/adr/20261107-a-figure-out-wrapper-sweeps-existing-code-for-state-machines.md and
+docs/adr/20261107-review-checks-the-whole-state-machine-a-change-touches.md.
 """
 
 from __future__ import annotations
