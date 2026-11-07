@@ -39,9 +39,15 @@ def test_babysit_resumes_the_manifest_its_journal_recorded() -> None:
         assert (
             "only when no recorded Manifest file still exists, invoke `define`" in text
         ), path
+        # The path is recorded when it exists, on its own line: a first run's file has no
+        # boundary, a synthesis run's boundary predates its Manifest, and /do appends
+        # boundaries of its own, so "the latest boundary" named no Manifest reliably.
         assert (
-            "Each run boundary records the Manifest path this run tends" in text
+            "As soon as a run has resolved or synthesized its Manifest, it appends a line"
+            " `Manifest: <absolute path>`, and a later run resumes the newest path such a line"
+            " records" in text
         ), path
+        assert "Each run boundary records the Manifest path" not in text, path
         assert "pass `--manifest` to keep a tended Manifest" in text, path
         assert "`/do` is the sole journal consumer" not in text, path
 
