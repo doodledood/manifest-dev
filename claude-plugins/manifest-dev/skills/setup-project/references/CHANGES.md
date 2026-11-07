@@ -18,4 +18,4 @@ says how an update reads and offers them, and when it records the newest.
 - v11 — `changes/v11.md`: decision records give grounds, not a veto, and unattended runs reopen them where a need makes sense and report it first; North Star lines get a fit check before they cut an option.
 - v12 — `changes/v12.md`: time lines are removed — no `Line:` or `Workload:` field, no `headroom:` or `raise:` setting, no `line`, `raise` or `freeze` command and no exit 5 — and runs report their duration as the only time signal.
 - v13 — `changes/v13.md`: setup offers, once, a few Taste entries drawn from reasons the owner already stated in the project's history.
-- v14 — `changes/v14.md`: deleting or retargeting a draft decision record gives back the Status it changed; overlapping drives keep the summary of the run that finished last.
+- v14 — `changes/v14.md`: deleting or retargeting a draft decision record gives back the Status it changed and the check it moved; overlapping drives keep the summary of the run that finished last.

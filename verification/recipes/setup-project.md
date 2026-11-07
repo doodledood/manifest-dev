@@ -20,7 +20,7 @@ Installs a project's surfaces — North Star, glossary, ADR conventions, a verif
 
 ### update-from-v13
 Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-update-one-behind.md --scaffold claude-plugins/manifest-dev/evals/53-update-offer-from-v13 --max-turns 80`
-Proves: it follows the v13 guide: it offers, and on acceptance adds to `docs/adr/CONVENTIONS.md`, the rule that deleting or retargeting a draft record gives back the Status it changed, and offers the tool update that keeps the summary of the run that finished last; the version line reaches v14 only after the offer has an answer. Nothing from v13 or earlier is offered as new — not the Taste entries, not the time-line removal — and no record, North Star position or code is rewritten.
+Proves: it follows the v13 guide: it offers, and on acceptance adds to `docs/adr/CONVENTIONS.md`, the rule that deleting or retargeting a draft record gives back the Status it changed and the check it moved, and offers the tool update that keeps the summary of the run that finished last; the version line reaches v14 only after the offer has an answer. Nothing from v13 or earlier is offered as new — not the Taste entries, not the time-line removal — and no record, North Star position or code is rewritten.
 Check: read
 
 ### update-from-v3
