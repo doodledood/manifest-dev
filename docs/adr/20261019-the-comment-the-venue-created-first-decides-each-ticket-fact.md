@@ -1,7 +1,7 @@
 # ADR: The comment the venue created first decides each Ticket fact
 
 ## Status
-Accepted; amended by 20261107-a-ready-mark-whose-orchestrator-stopped-is-adopted-not-relaunched: an orchestrator adopting a ready mark another orchestrator's timed-out run left is the mark's one other writer; amended by 20261107-automation-writes-beside-what-a-person-wrote-never-over-it: answer records each count, in the order created, as an exception to the first-created rule
+Accepted; amended by 20261107-a-ready-mark-whose-orchestrator-stopped-is-adopted-not-relaunched: an orchestrator adopting a ready mark another orchestrator's timed-out run left is the mark's one other writer; amended by 20261107-automation-writes-beside-what-a-person-wrote-never-over-it: answer records each count, in the order created, as an exception to the first-created rule; amended by 20261107-a-grant-counts-only-by-who-set-it: a grant-decision comment counts when its creator and last editor are each the automation identity or a person with write access
 
 ## Area
 Ticketing
@@ -65,7 +65,8 @@ partly — `tests/test_ticket_automation_prompts.py` — `test_where_two_comment
 fails if the rule loses its one home or a skill restates it, and
 `test_each_ticket_fact_keeps_one_writer` fails if the session or the start time gains a second
 writer, or the ready mark a writer beyond the adopting orchestrator
-20261107-a-ready-mark-whose-orchestrator-stopped-is-adopted-not-relaunched names; `verification/recipes/ticket-protocol-model.md` model-checks one attempt
+20261107-a-ready-mark-whose-orchestrator-stopped-is-adopted-not-relaunched names; `test_a_persons_grant_decision_counts` fails if a grant-decision comment loses the wider
+author rule 20261107-a-grant-counts-only-by-who-set-it gives it; `verification/recipes/ticket-protocol-model.md` model-checks one attempt
 record, pushes that build on the head and merges only at the recorded head, and
 `tests/test_ticket_protocol_model.py` fails when a sentence the model quotes leaves its file. Which
 marker kinds exist stays judgment.

@@ -1181,6 +1181,7 @@ def test_a_persons_claim_is_never_written_as_the_automation_identity(
 # A person who grants Auto through ticket-up writes the grant-decision comment as themselves. Under
 # the automation-only trust rule that comment was untrusted, so an autonomous orchestrator saw no
 # decision and could record a withhold beside the person's standing grant.
+# Holds docs/adr/20261107-a-grant-counts-only-by-who-set-it.md.
 @pytest.mark.parametrize("root", [SOURCE_SKILLS, DIST_SKILLS], ids=["source", "codex"])
 def test_a_persons_grant_decision_counts(root: Path) -> None:
     identity = flat(section(automation_text(root), "The automation identity"))
