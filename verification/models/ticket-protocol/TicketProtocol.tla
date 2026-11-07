@@ -207,8 +207,8 @@ OLand(o) ==
   /\ IF closed \/ claim = "person" \/ (mark /\ ~PreFix) \/ ~ReadyValid \/ ~Owner(o) \/ Reopened
      THEN opc' = [opc EXCEPT ![o] = "read"] /\ UNCHANGED <<recs, claim, mark, saw, n, closed, autoClosed, landedNow>>
      ELSE IF merged /\ landedNow   \* a person merged it since the Ticket was opened
-     THEN /\ closed' = TRUE /\ autoClosed' = TRUE /\ opc' = [opc EXCEPT ![o] = "read"]
-          /\ UNCHANGED <<recs, claim, mark, saw, n, landedNow>>
+     THEN /\ closed' = TRUE /\ autoClosed' = TRUE /\ claim' = "none" /\ opc' = [opc EXCEPT ![o] = "read"]
+          /\ UNCHANGED <<recs, mark, saw, n, landedNow>>
      ELSE IF ~PreFix /\ TheRec.base # base
      THEN Relaunch(o) /\ UNCHANGED <<closed, autoClosed, landedNow>>
      ELSE IF PreFix /\ (TheRec.base # base \/ branch # TheRec.head \/ red \/ review \/ ~prOpen)
@@ -228,14 +228,15 @@ OLand(o) ==
 
 \* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "Merges with the head pinned"
 \* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "A Ticket closes only after its landing is observed"
+\* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "closes the Ticket, and then releases the automation claim"
 OMerge(o) ==
   /\ opc[o] = "merge"
   /\ IF branch = lview[o] /\ prOpen /\ ~merged /\ HasRec /\ TheRec.base = base
         /\ ~closed /\ claim # "person" /\ (~mark \/ PreFix)   \* Pre-fix: the mark is not looked for
      THEN /\ merged' = TRUE /\ landedNow' = TRUE /\ closed' = TRUE /\ autoClosed' = TRUE
-          /\ bad' = (bad \/ mark) /\ opc' = [opc EXCEPT ![o] = "read"]
-     ELSE /\ opc' = [opc EXCEPT ![o] = "land"] /\ UNCHANGED <<merged, landedNow, closed, autoClosed, bad>>
-  /\ UNCHANGED <<recs, claim, mark, prOpen, red, review, branch, base, nextC, used, saw, lview, n,
+          /\ claim' = "none" /\ bad' = (bad \/ mark) /\ opc' = [opc EXCEPT ![o] = "read"]
+     ELSE /\ opc' = [opc EXCEPT ![o] = "land"] /\ UNCHANGED <<merged, landedNow, closed, autoClosed, claim, bad>>
+  /\ UNCHANGED <<recs, mark, prOpen, red, review, branch, base, nextC, used, saw, lview, n,
                  rpc, rbase, rlocal, rmerged>>
 
 ---------------------------------------------------------------------------------------------

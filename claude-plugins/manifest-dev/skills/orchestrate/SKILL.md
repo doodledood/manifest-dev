@@ -89,7 +89,8 @@ deferred Ticket, or after a title in the North Star's list of strategy choices i
    - *To recover*: the automation identity holds its claim, no run is live, and its last run
      wrote no outcome (*The attempt record* lists them) — a failed launch — or wrote an escalation
      whose mark is now gone, or marked ready a pull request that merged before the Ticket was
-     reopened, or a trusted revision request is pending.
+     reopened, or closed the Ticket, which was then reopened, or a trusted revision request is
+     pending.
    - *Ready*: open, unclaimed, every dependency closed, no escalation mark, its signpost read as
      met at its source when it is deferred, matching any type filter, and either granted Auto or, without it, allowed under the convention's *The Auto
      grant*.

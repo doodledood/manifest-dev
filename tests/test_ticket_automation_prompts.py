@@ -1050,3 +1050,33 @@ def test_trusted_feedback_resumes_the_same_ticket_without_counting_as_failure() 
     assert "A trusted revision request continues the same Ticket" in run
     assert "or a trusted revision request is pending" in coordinator
     assert "one for a trusted revision request" in coordinator
+
+
+# A Ticket automation closed and a person reopened must be takeable again: a claim kept across the
+# close left a reopened Question Ticket that no orchestrator category held.
+@pytest.mark.parametrize("root", [SOURCE_SKILLS, DIST_SKILLS], ids=["source", "codex"])
+def test_automation_releases_its_claim_when_it_closes_a_ticket(root: Path) -> None:
+    convention = flat(convention_text(root))
+    landing = flat(section(automation_text(root), "Landing"))
+    run = flat(skill_text(root, "run-ticket"))
+    github = flat(ticket_ref(root, "GITHUB_STORE.md"))
+    files = flat(ticket_ref(root, "FILE_STORE.md"))
+    assert (
+        "release the claim when the store's automation identity holds it, so a Ticket "
+        "reopened later is takeable" in convention
+    )
+    assert "closes the Ticket, and then releases the automation claim" in landing
+    assert (
+        "its run closes it once the answer is recorded, and then releases its claim"
+        in (landing)
+    )
+    assert (
+        "close the same Ticket as done once the answer is recorded, and then release the "
+        "automation claim" in run
+    )
+    assert "and remove the automation assignee, never a person's" in github
+    assert "empty the `Claimed by:` line when automation holds it" in files
+    # A Ticket closed before its claim was released is still recovered once reopened.
+    assert "or closed the Ticket, which was then reopened" in flat(
+        skill_text(root, "orchestrate")
+    )

@@ -161,7 +161,8 @@ Questions that do not need their own lifecycle stay in the completion record.
 
 **A Question Ticket** whose answer is its result has no pull request. Record the answer in the
 completion record (`../ticket-up/references/AUTOMATED_EXECUTION.md` → *The completion record*).
-With Auto, close the same Ticket as done once the answer is recorded: it has nothing to land.
+With Auto, close the same Ticket as done once the answer is recorded, and then release the
+automation claim: it has nothing to land.
 Without Auto, mark the answer drafted in the run facts and stop; the Ticket closes once a person
 accepts the answer.
 

@@ -24,7 +24,8 @@ ORCHESTRATE = (
 State = dict[str, object]
 
 # The facts the sort reads about one open Ticket. `owner` is whose run the run facts name (none: no
-# attempt record); `outcome` is what that run left.
+# attempt record); `outcome` is what that run left, a close included, since a closed Ticket a person
+# reopened is open again.
 DOMAIN: dict[str, list[object]] = {
     "assignee": ["none", "person", "auto"],
     "author_write": [True, False],
@@ -33,7 +34,7 @@ DOMAIN: dict[str, list[object]] = {
     "owner": ["none", "mine", "foreign"],
     "live": [True, False],
     "timed_out": [True, False],
-    "outcome": ["none", "ready", "answer", "escalation"],
+    "outcome": ["none", "ready", "answer", "escalation", "close"],
     "merged_before_reopen": [True, False],
     "revision": [True, False],
     "deps": ["closed", "planned", "open"],
@@ -90,6 +91,7 @@ def to_recover(s: State) -> bool:
         s["outcome"] == "none"
         or (s["outcome"] == "escalation" and not s["mark"])
         or (s["outcome"] == "ready" and s["merged_before_reopen"])
+        or s["outcome"] == "close"
         or s["revision"]
     )
 
@@ -140,7 +142,8 @@ CATEGORIES: list[tuple[str, Callable[[State], bool], list[str]]] = [
             "*To recover*: the automation identity holds its claim, no run is live, and its "
             "last run wrote no outcome",
             "or wrote an escalation whose mark is now gone, or marked ready a pull request that "
-            "merged before the Ticket was reopened, or a trusted revision request is pending.",
+            "merged before the Ticket was reopened, or closed the Ticket, which was then "
+            "reopened, or a trusted revision request is pending.",
         ],
     ),
     (
@@ -213,3 +216,26 @@ def test_a_ready_mark_whose_orchestrator_stopped_is_to_land() -> None:
     }
     assert category(s) == "to land"
     assert category({**s, "timed_out": False}) == "left alone"
+
+
+def test_a_ticket_its_own_run_closed_is_recovered_once_reopened() -> None:
+    """A Question Ticket its Auto run closed, which a person then reopened."""
+    s: State = {
+        "assignee": "auto",
+        "author_write": True,
+        "auto": True,
+        "mark": False,
+        "owner": "mine",
+        "live": False,
+        "timed_out": False,
+        "outcome": "close",
+        "merged_before_reopen": False,
+        "revision": False,
+        "deps": "closed",
+        "signpost": "none",
+        "type_passes": True,
+    }
+    # The claim outlived the close: the run stopped between the two writes.
+    assert category(s) == "to recover"
+    # Released with the close, as the convention's *Closing* says, it is ready work.
+    assert category({**s, "assignee": "none"}) == "ready"

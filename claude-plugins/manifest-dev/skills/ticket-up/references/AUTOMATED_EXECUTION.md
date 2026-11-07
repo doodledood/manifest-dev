@@ -167,11 +167,11 @@ follows it only when its prompt says to land. The lander:
    the merged state. It never force-pushes a shared branch, bypasses protection, or merges work
    the Ticket does not authorize. A non-repository Ticket's landing is observed at its durable
    place instead.
-6. **Records and closes.** It adds the landing reference to the completion record and closes the
-   Ticket. A Ticket closes only after its landing is observed, so a dependent never starts on work
+6. **Records and closes.** It adds the landing reference to the completion record, closes the
+   Ticket, and then releases the automation claim (the convention's *Closing*). A Ticket closes only after its landing is observed, so a dependent never starts on work
    that is not on the target branch.
 
-A Question Ticket has nothing to land. With Auto, its run closes it once the answer is recorded.
+A Question Ticket has nothing to land. With Auto, its run closes it once the answer is recorded, and then releases its claim.
 Without Auto, the run stops with the answer drafted, and the Ticket closes once a person accepts
 it.
 
