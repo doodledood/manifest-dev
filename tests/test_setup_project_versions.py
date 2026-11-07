@@ -181,6 +181,23 @@ def test_a_declined_legacy_section_is_still_read_as_no_version() -> None:
     )
 
 
+# Holds the same record's repair of an advanced version. An earlier figure-out decline also wrote
+# the newest number into a full section's version line, so the project records a version newer
+# than the surfaces it carries and *Compare, then offer* treats every gap between them as the
+# project's own choice. setup-project reads the number back from history where history shows it,
+# and otherwise says plainly how the project can ask for a full comparison.
+def test_a_version_a_decline_advanced_is_read_back_from_history() -> None:
+    text = (SKILLS / "setup-project" / "SKILL.md").read_text(encoding="utf-8")
+    for clause in (
+        "take the number from before that commit as the recorded version",
+        "can remove the version line, so the next run compares every copy in full",
+    ):
+        assert clause in text, (
+            f"setup-project must keep {clause!r}: a version line a figure-out decline advanced "
+            "hides every gap below it as the project's own choice"
+        )
+
+
 NEWEST_VERSION_CASE = "45-current-setup-offers-nothing"
 
 

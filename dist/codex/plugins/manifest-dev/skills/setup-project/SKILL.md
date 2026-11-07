@@ -72,6 +72,8 @@ The project-surfaces section in the context file records one surfaces version, a
 
 figure-out records a declined update offer on a line of its own, `<!-- setup-project update declined through vN -->`. That decline line only stops figure-out repeating its offer: it says nothing about what the project carries, so this run reads no version from it, and removes it when it writes the surfaces version. A project-surfaces section holding nothing but a version line, with or without decline lines beside it, was left by an earlier figure-out decline, not by this skill: read its version line as a decline line through that version and the project as recording no version, and install the section.
 
+Such a decline could also advance the version line inside a full section, past the surfaces the project carries. Too new a version hides gaps as the project's own choice, while too old a one only offers again what the project may have ruled out. So where the project's history shows the line's number last changed in a commit that changed nothing else in the section or in the copies this skill emits, take the number from before that commit as the recorded version, and say so in the report. Where no history shows how the number was set, take it as written, and say in the report that a project whose number a figure-out decline advanced can remove the version line, so the next run compares every copy in full.
+
 The recorded version also decides which differences in a copy the project owns are offered, per *Compare, then offer* below.
 
 ### The update pass
