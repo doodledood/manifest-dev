@@ -851,6 +851,7 @@ file. The row is never deleted while the probe stays.
 | `tasks/HILLCLIMB.md` | How careful | `109-climb-a-signup-page/says-how-careful-and-why` |
 | `tasks/HILLCLIMB.md` | Where the cheap check and real use differ | Reason: a slow measure is define's case `d31-climb-a-slow-simulation` and the `hillclimb` recipe's `slow-sim` scenario; a figure-out read on the same artifact would test it twice at twice the runs |
 | `tasks/HILLCLIMB.md` | What a round can afford | Reason: the cost of a round is tested where the climb runs, by define's case `d31-climb-a-slow-simulation` and the `hillclimb` recipe's `slow-sim` scenario |
+| `tasks/HILLCLIMB.md` | What the next round sees | Reason: what a proposer reads is visible only inside a climb's rounds, which a figure-out case never reaches; the `hillclimb` recipe's `thorough-number` and `slow-sim` scenarios read it in the climb's record |
 | `tasks/HILLCLIMB.md` | A priority that moves | Reason: a priority changes partway through a session, which a single-prompt case cannot stage; the `hillclimb` recipe's `attended-copy` scenario reverses one |
 | `tasks/HILLCLIMB.md` | A judge that can be fooled | `109-climb-a-signup-page/proves-the-judge-first` |
 | `tasks/HILLCLIMB.md` | Trade-off: One primary with the rest as guards vs the requester choosing among a few whole versions | Reason: whole-version picks need a requester present each round, which an unattended case cannot supply; the `hillclimb` recipe's requester-chooses scenario stages it |

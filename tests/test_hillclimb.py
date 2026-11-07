@@ -98,6 +98,9 @@ def test_stop_rule_defaults_and_rerun_continue_the_record() -> None:
         in climb
     )
     assert "When nothing beats the original, the climb keeps it" in climb
+    assert "with the raw evidence of why each lost rather than only its score" in climb
+    probes = _text(FIGURE_OUT / "tasks/HILLCLIMB.md")
+    assert "**What the next round sees**" in probes
 
 
 # Holds docs/adr/20261106-a-climb-runs-without-a-person-choosing-by-default.md.

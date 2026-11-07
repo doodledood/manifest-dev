@@ -20,7 +20,7 @@ Each scenario runs a climb in a scratch project from its fixture. Grade from the
 
 ### thorough-number
 Run: `scripts/drive-skill.sh hillclimb verification/prompts/hillclimb-thorough-number.md --scaffold verification/fixtures/climb-number --tools --max-turns 200`
-Proves: the first lines say thorough and why, how rounds try changes and how the climb measures; before round 1 the record shows the benchmark's spread, a clearly worse version losing, memory as a guard against the original and the behavior tests protected; rounds try several different candidates with a bold one, keep only gains beyond the spread on fresh runs, and stop after two rounds with no confirmed gain; the final version beats the original on fresh runs with memory within its margin; the record shows every attempt; the climb's Manifest has no pull-request gate, and nothing reached the local bare remote.
+Proves: the first lines say thorough and why, how rounds try changes and how the climb measures; before round 1 the record shows the benchmark's spread, a clearly worse version losing, memory as a guard against the original and the behavior tests protected; rounds try several different candidates with a bold one, each round drawing on the raw evidence of why the last versions lost, keep only gains beyond the spread on fresh runs, and stop after two rounds with no confirmed gain; the final version beats the original on fresh runs with memory within its margin; the record shows every attempt; the climb's Manifest has no pull-request gate, and nothing reached the local bare remote.
 Check: read
 
 ### already-at-best
