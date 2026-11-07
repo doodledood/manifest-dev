@@ -66,5 +66,5 @@ hash to the current one without changing that gate's criteria, or a copy of the 
 shows them unchanged, and is otherwise unverified. A
 pending entry left open means its amendment may not have landed. When the Manifest still hashes to
 the entry's hash, it did not: make it again from the entry. Otherwise re-read the Manifest and
-confirm the change the entry names is there; where it is not, `SKILL.md` → *Amendments* says
-when to make it again.
+confirm the change the entry names is there; where it is not, another write replaced it, and
+`SKILL.md` → *Amendments* says how that stands.

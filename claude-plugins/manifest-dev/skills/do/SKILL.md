@@ -75,11 +75,10 @@ Another run, or a person through `define`, can change the same Manifest while th
 the last write wins. Hash the Manifest each time you read it. Before amending and before reporting
 completion, hash it again; when the hash differs from the one this run last read or wrote, re-read
 the Manifest, treat as unverified each gate whose criteria changed or can no longer be shown
-unchanged. Make again an amendment of this run's that the file no longer carries only where the
-gate or section it changed still reads as it did before that amendment: the other write started from
-an older copy and dropped it in passing. Where the other write removed or changed what the amendment
-changed, that write is steering: keep it, and record the amendment it set aside in the execution log
-when kept.
+unchanged. The file as it now reads is the contract: an amendment of this run's that it no longer
+carries stays out, since a person reverting it and a write from an older copy look the same. Name
+each such amendment, with its evidence, in the terminal report and in the execution log when kept;
+amend that gate again only on evidence the dropped amendment did not rest on.
 
 ## Continuation
 
@@ -247,7 +246,9 @@ lists, and the execution log's path when one is kept.
   yourself, with who and when, what the run completed and the evidence it holds. Nothing waits on a
   person, so it is no escalation. Where the Manifest owes more than the merged pull request — another
   Deliverable, a gate checked after the merge, an Outcome shown in real use — the merge is an event
-  of the run, not its end: record it and continue the gates still open.
+  of the run, not its end: record it, and continue the gates still open. The merge is the evidence for
+  the pull-request lifecycle gates the merged pull request carried; work still owed goes to a new pull
+  request, through an amendment that points those gates at it.
 
 ## The execution log
 

@@ -156,17 +156,14 @@ def test_a_manifest_changed_by_another_writer_is_noticed() -> None:
             "treat as unverified each gate whose criteria changed or can no longer be shown"
             " unchanged" in text
         ), path
-        # A lost amendment is restored only where the other write never touched what it
-        # changed; a person's write that removed or changed it is steering and stands.
+        # A dropped amendment is never made again: a person's revert and a write from an
+        # older copy look the same, so the current file stands and the drop is reported.
+        assert "The file as it now reads is the contract" in text, path
         assert (
-            "Make again an amendment of this run's that the file no longer carries only where the"
-            " gate or section it changed still reads as it did before that amendment"
+            "amend that gate again only on evidence the dropped amendment did not rest on"
             in text
         ), path
-        assert (
-            "Where the other write removed or changed what the amendment changed, that write is steering"
-            in text
-        ), path
+        assert "Make again an amendment" not in text, path
 
 
 # A run ends on completion, escalation or a pending external wait, but the paths were
@@ -208,6 +205,12 @@ def test_a_merged_pull_request_ends_the_run_without_escalation() -> None:
         # A merge settles the run only when the Manifest owes nothing beyond that pull
         # request; otherwise the run records it and continues the gates still open.
         assert "the merge is an event of the run, not its end" in text, path
+        # check-pr FAILs a merged PR, so the merge itself must settle that PR's lifecycle
+        # gates, or the continuing run can never reach fresh PASS on them.
+        assert (
+            "The merge is the evidence for the pull-request lifecycle gates the merged pull"
+            " request carried" in text
+        ), path
     for path, text in flat("check-pr/SKILL.md"):
         assert (
             "A merged PR is a terminal state of its own: report who merged it" in text
