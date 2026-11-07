@@ -100,6 +100,37 @@ await scenario("keys press a focused control", async (page) => {
   await atStep(page, "Agree then moves one step on", "5 / 13");
 });
 
+// Finding: a pin step did not reopen its sheet after a step without one.
+await scenario("pin sheet reopens on return", async (page) => {
+  await jump(page, 3);
+  await settle(page);
+  check("pin sheet opens on first arrival", await isOpen(page, "sheet"));
+  await page.keyboard.press("ArrowRight");
+  await settle(page);
+  check("a pinless step closes the pin sheet", !(await isOpen(page, "sheet")));
+  await page.keyboard.press("ArrowLeft");
+  await settle(page);
+  check("returning to the pin step reopens its sheet", await isOpen(page, "sheet"));
+});
+
+// Finding: Esc in the auto-focused textarea left the sheet open; the completion panel had no Esc.
+await scenario("Esc closes layers", async (page) => {
+  await page.click("#queue");
+  await settle(page);
+  check(
+    "the comment box takes focus",
+    await page.evaluate(() => document.activeElement && document.activeElement.id === "sh-ta"),
+  );
+  await page.keyboard.press("Escape");
+  check("Esc in the comment box closes the sheet", !(await isOpen(page, "sheet")));
+  await jump(page, 12);
+  await settle(page);
+  check("the last step opens the completion panel", await isOpen(page, "endpanel"));
+  await page.keyboard.press("Escape");
+  check("Esc closes the completion panel", !(await isOpen(page, "endpanel")));
+  await atStep(page, "closing it returns to the step before", "12 / 13");
+});
+
 // Finding: the bundle marked pins the reviewer never saw as captured.
 await scenario("bundle marks unseen pins", async (page) => {
   await jump(page, 3);

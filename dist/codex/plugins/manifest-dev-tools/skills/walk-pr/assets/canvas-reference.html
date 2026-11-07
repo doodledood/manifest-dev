@@ -23,9 +23,10 @@
     must not override code-line padding (its line-number gutter is absolutely positioned).
   - Step dots and map pins keep separate classes: a dot sharing the map pins' class is
     hidden by their style and caught by their click handler.
-  - Keyboard: arrows/space/Enter advance, Esc closes layers — guarded against
-    textarea/input focus, and space/Enter left to a focused button, summary or link so they
-    press it.
+  - Keyboard: arrows/space/Enter advance — guarded against textarea/input focus, and
+    space/Enter left to a focused button, summary or link so they press it; Esc closes the
+    topmost layer (drawer, then sheet, then completion panel), from the textarea too.
+  - Arriving at a pin's step opens its sheet every time, including after a step without one.
   - The bundle tells a pin answered apart from one opened but unanswered and one never opened
     (the dots allow jumping past it), so an unseen call never reads as a captured answer.
   - Map scales to the viewport (vmin-based type, width capped by height×aspect).
@@ -432,7 +433,7 @@ const pinById=Object.fromEntries(PINS.map(p=>[p.id,p]));
 const getA=k=>localStorage.getItem(LS(k))||'';
 const hasA=k=>getA(k).trim().length>0;
 
-let sheetKey=null, sheetKind=null, autoOpenedFor=-1;
+let sheetKey=null, sheetKind=null, renderedStep=-1;
 const seen=pid=>localStorage.getItem(LS('seen.'+pid))==='1';
 
 function render(){
@@ -464,22 +465,29 @@ function render(){
   $('capwhy').classList.remove('open');
   $('capwhy').textContent=w||'';
   localStorage.setItem(LS('cur'),String(cur));
-  if(s.pin && autoOpenedFor!==cur){autoOpenedFor=cur;openPin(s.pin);}
+  const arrived=renderedStep!==cur; renderedStep=cur;
+  if(s.pin && arrived){openPin(s.pin);}
   else if(!s.pin && sheetKind==='pin'){closeSheet();}
   $('endpanel').classList.toggle('open', !!s.end);
   if(s.end) renderSummary();
 }
 function go(i){cur=Math.max(0,Math.min(STEPS.length-1,i));render()}
 $('prev').onclick=()=>go(cur-1);$('next').onclick=()=>go(cur+1);
+// Esc closes the topmost open layer: drawer, then sheet, then completion panel.
+function closeTopLayer(){
+  if($('drawer').classList.contains('open')){closeDrawer();return}
+  if($('sheet').classList.contains('open')){closeSheet();return}
+  if($('endpanel').classList.contains('open'))go(cur-1);
+}
 document.addEventListener('keydown',e=>{
   const t=e.target instanceof Element?e.target:null;
+  if(e.key==='Escape'){if(t&&t.closest('textarea,input,select'))t.blur();closeTopLayer();return}
   if(t&&t.closest('textarea,input,select,[contenteditable]'))return;
   // Space and Enter press a focused control natively; only arrows navigate over it.
   if((e.key===' '||e.key==='Enter')&&t&&t.closest('button,summary,a[href],[role=button]'))return;
   if(e.key==='ArrowRight'||e.key===' '||e.key==='Enter'){e.preventDefault();go(cur+1)}
   if(e.key==='ArrowLeft')go(cur-1);
   if(e.key==='w'||e.key==='W'){if($('whybtn').style.display!=='none')$('whybtn').click()}
-  if(e.key==='Escape'){closeSheet();closeDrawer()}
 });
 
 // ---- sheet (shared by pins + elements + step captions) ----
