@@ -136,7 +136,12 @@ def test_babysit_ci_runs_one_tend_per_pr_and_stops_on_a_moved_head() -> None:
         assert "a concurrency group keyed to the PR" in text, path
         assert "When a push is rejected as not a fast-forward" in text, path
         assert "push nothing from the stale checkout" in text, path
-        assert "under `--ci`, end the run reporting the new head" in text, path
+        # The moved head ends a CI run on one of /do's terminal paths, pending, not an
+        # unnamed fifth one.
+        assert (
+            "under `--ci`, the run ends pending, waiting on the run the new head triggers"
+            in text
+        ), path
 
 
 def test_babysit_backstop_stops_when_a_person_merges_the_pr() -> None:
