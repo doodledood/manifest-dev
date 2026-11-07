@@ -74,6 +74,9 @@ def test_a_resumed_run_detects_a_changed_manifest() -> None:
             "append an `Amendment pending` entry carrying the current hash" in text
         ), path
         assert "and is otherwise unverified" in text, path
+        # A copy of the earlier Manifest can show a gate unchanged; the evidence-resume
+        # recipe retains the receipt judgment that way after an owner's direct edit.
+        assert "or a copy of the Manifest it read shows them unchanged" in text, path
         assert "A pending entry left open means its amendment may not have landed" in (
             text
         ), path

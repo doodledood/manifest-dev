@@ -60,6 +60,7 @@ SHA-256 of the Manifest file it was assessed against. Before invoking `define`, 
 the new hash and the gates whose criteria — their text and every Manifest section their claim
 reads — changed. On resume, hash the Manifest. A verdict carrying the current hash assessed the
 current criteria; one carrying an older hash did too only where closed amendments lead from its
-hash to the current one without changing that gate's criteria, and is otherwise unverified. A
+hash to the current one without changing that gate's criteria, or a copy of the Manifest it read
+shows them unchanged, and is otherwise unverified. A
 pending entry left open means its amendment may not have landed: re-read the Manifest and confirm
 it, or make it again.
