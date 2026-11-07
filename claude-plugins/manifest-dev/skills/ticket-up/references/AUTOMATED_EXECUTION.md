@@ -91,7 +91,15 @@ and stands down, taking back anything it applied with it that the first does not
 the Ticket, and a run stops. This holds for every marker the
 records here and the venue references use — the attempt, completion and escalation records and the
 grant-decision comment — except the Manifest's continuation comments, which are parts of one record,
-read in the order they were created.
+and answer records, each of which counts; both are read in the order they were created.
+
+A person's answer that `orchestrate` records from its conversation — a directive, or an answer
+about one Ticket — is an **answer record**: its own comment carrying
+`<!-- manifest-dev-person-answer -->`, written by the automation identity, naming the person and
+when, and never edited afterward. A run reads each as that person's instruction, within the
+authority it states; a later answer narrows or replaces an earlier one only as far as it says.
+An answer never goes into the Ticket's body, which a person may be editing and an edit replaces
+whole.
 
 A run's **outcome** is the record it leaves when it stops: ready to land, a drafted answer, an
 escalation, or the close. A run is live from its launch until it writes an outcome, while the host

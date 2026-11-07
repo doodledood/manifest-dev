@@ -244,12 +244,13 @@ and the items still waiting.
 
 Answers count by where they come from.
 
-- **In this conversation.** Write the answer back to the Ticket it concerns, naming the person. On
+- **In this conversation.** Write the answer back to the Ticket it concerns as an answer record
+  (`../ticket-up/references/AUTOMATED_EXECUTION.md` → *The attempt record*), naming the person. On
   their explicit answer to an escalation, record the continuation and clear the escalation mark;
   clearing the mark also clears any automation claim, so the Ticket is ready again. A directive that
-  bears on Tickets in scope — "none of these may add a dependency" — is added to each of those
-  Tickets as a line of its own, re-reading each just before the edit and changing nothing else in
-  it, so every run reads it rather than it being held only in this conversation. A grant ("grant
+  bears on Tickets in scope — "none of these may add a dependency" — goes on each of those Tickets
+  as an answer record, so every run reads it rather than it being held only in this conversation,
+  and no write of yours replaces text a person put in a Ticket's body. A grant ("grant
   Auto to #12") goes through `ticket-up` as the person's grant, under its criterion. Their
   revision request follows `../ticket-up/references/AUTOMATED_EXECUTION.md` → *Waiting and
   acceptance*: record it on the same Ticket, preserve the prior draft, and make its continuation

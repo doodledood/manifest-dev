@@ -1192,3 +1192,21 @@ def test_a_persons_grant_decision_counts(root: Path) -> None:
     )
     assert "The label is the grant, and no label means ungranted." in github
     assert "says which authors count" in github
+
+
+# orchestrate wrote a person's directive into each Ticket's body after a re-read. An edit replaces
+# the whole body, so a person's edit landing between the re-read and the write was lost. Answers
+# now go on the Ticket as their own records, never into its body.
+@pytest.mark.parametrize("root", [SOURCE_SKILLS, DIST_SKILLS], ids=["source", "codex"])
+def test_a_persons_answer_is_recorded_beside_the_ticket_body(root: Path) -> None:
+    answers = flat(section(orchestrate_text(root), "The person's answers"))
+    record = flat(section(automation_text(root), "The attempt record"))
+    github = flat(ticket_ref(root, "GITHUB_STORE.md"))
+    files = flat(ticket_ref(root, "FILE_STORE.md"))
+    assert "goes on each of those Tickets as an answer record" in answers
+    assert "re-reading each just before the edit" not in answers
+    assert "<!-- manifest-dev-person-answer -->" in record
+    assert "An answer never goes into the Ticket's body" in record
+    assert "and answer records, each of which counts" in record
+    assert "`orchestrate` never writes an answer into the issue body" in github
+    assert "one section per answer record" in files
