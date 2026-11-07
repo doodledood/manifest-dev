@@ -1,7 +1,8 @@
 """define's pull-request task file carries the gate that a pull request shows the change working.
 
 Holds the decision in docs/adr/20261018-every-pull-request-shows-the-change-working.md: the
-proof gate's templated Acceptance Criterion keeps the one-minute top of the description, the rule
+proof gate's templated Acceptance Criterion keeps the one-minute top of the description, one
+example before and after (docs/adr/20261107-a-pull-request-shows-one-example-before-and-after.md), the rule
 that proof never comes from production, media attached with `--attach`, media that still reaches
 the pull request through a kept `pr-media/<number>` branch where the upload is unavailable, and
 text alone only when neither works — and a rule that drops the `check-pr` lifecycle gate does not
@@ -44,6 +45,12 @@ CLAUSES = {
         "next, and the debt left."
     ),
     "long lists fold": "Long lists fold",
+    "one example before and after": (
+        "one short before-and-after helps a reader understand what the change does in practice "
+        "and what to expect. It explains rather than proves: one example, real or illustrative "
+        "and marked as such, followed through what a person does and sees or gets before the "
+        "change and after it"
+    ),
     "never production": "never on production",
     "proof from the touched checks": "runs of the checks the change touches",
     "screenshots and motion": "screenshots, and motion as a short GIF or video",
