@@ -89,7 +89,7 @@ Each effort's store carries one small front file (in a file store, a README besi
 - **Destination** — what reaching the end of this effort looks like, in a line or two. Pickers use it to judge what project value is delayed when a Ticket waits.
 - **Priority rule override**, when the effort ranks differently than the default below.
 - **Context pointers** — the key decision records, and where the effort's reads or logs live, so a cold picker gets effort-level orientation before opening a ticket.
-- **Standing automation settings**, when set — a pause line that stops unattended work from starting anything new in the effort, and the link to its status page. `orchestrate` reads and writes them.
+- **Standing automation settings**, when set — a pause that stops unattended work from starting anything new in the effort, and the link to its status page. A person pauses with a `Paused:` line here; `orchestrate` writes its own pause and the link where the venue reference keeps them apart from what a person writes, so its writes never replace a person's line.
 
 Never put derivable state here: no ticket lists, statuses, or ready/next — anything a close would stale belongs to the tickets themselves, where it can't rot. Where a tracker groups its items natively, that grouping is the tracker's to keep current rather than a list anyone edits.
 

@@ -9,7 +9,7 @@ another until it is merged.
 | Convention | Files realization |
 |---|---|
 | Store | `tickets/`, one directory per effort: `tickets/<effort-slug>/` |
-| Front file | `tickets/<effort-slug>/README.md`: destination, priority override, context pointers, and the standing automation settings when set (a `Paused:` line, a `Status page:` line). Never a Ticket list or status summary |
+| Front file | `tickets/<effort-slug>/README.md`: destination, priority override, context pointers, and the standing automation settings when set: a person's `Paused:` line; an orchestrator's pause, a `Paused:` line naming the orchestrator's ID and the cause, and the repair Ticket once one is named; and a `Status page:` line. An orchestrator adds, edits or removes only its own lines, one line at a time, never rewriting the file. Never a Ticket list or status summary |
 | Coordination record | A separate marked section on the front file per outcome assignment, following `../../orchestrate/references/OUTCOME.md` → *The coordination record*. Update in place in the same working copy; archive an ended assignment under the effort's existing `done/` folder with a link from the front file. Git retains earlier versions |
 | Ticket | `tickets/<effort-slug>/NN-<ticket-slug>.md`, opening with `Kind:`, `Status:`, `Depends on:` and `Claimed by:` lines, then the anatomy |
 | Revisit when | A `Revisit when: <condition> — read <where>` line among the opening lines, after `Depends on:`, on a deferred Ticket only. A picker reads the condition at that source; selection never edits the line; an assigned change needs explicit authority |

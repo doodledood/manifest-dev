@@ -1502,7 +1502,7 @@ code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, mo
     var b = "", cls = "";
     if (S.bad) { b = "The latest update could not be read. This shows the last good one."; cls = "stop"; }
     else if (stale) { b = "No check-in since " + time(d.checkedAt) + "; the next was due " + time(d.nextCheckAt) + ". Runs already started keep going."; cls = "stop"; }
-    else if (S.m && S.m.paused) { b = "Paused from the front item. Nothing new starts; runs already started finish."; cls = "idle"; }
+    else if (S.m && S.m.paused) { b = "Paused. Nothing new starts; runs already started finish."; cls = "idle"; }
     if (b !== S.bText) {
       S.bText = b;
       S.hb.hidden = !b;

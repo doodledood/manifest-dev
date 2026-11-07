@@ -51,8 +51,8 @@ deferred Ticket, or after a title in the North Star's list of strategy choices i
    and write as — and the human escalation recipient. When this session cannot write as that
    identity, say which account the store config needs and stop before any launch.
 2. **Read the front items.** For each effort in scope, read its front item's destination, its
-   priority override, and its standing settings: a `Paused:` line, and a `Status page:` line
-   holding the page's link. Then read every strategy signpost in the project's North Star
+   priority override, and its standing settings, as the venue reference renders them: a person's
+   `Paused:` line, an orchestrator's pause (*Check in*), and the link to the effort's status page. Then read every strategy signpost in the project's North Star
    (`NORTH_STAR.md`, or wherever the project context file says it lives) at the source it names,
    whatever the scope. A met signpost is evidence to reconsider a choice, not authority to
    change it. Within an assigned outcome and applicable delegation, use the outcome path;
@@ -113,7 +113,7 @@ deferred Ticket, or after a title in the North Star's list of strategy choices i
 8. **Write the plan**: the Tickets to land, then the runs in order, each Ticket that waits on
    another placed behind it; how many run at once — one, inside this session, on a file store or a
    host that cannot start sessions; which stop at a ready pull request for the person; what is
-   left alone and why; and whether a pause line holds. When the target branch requires neither
+   left alone and why; and whether a pause holds. When the target branch requires neither
    up-to-date branches nor a merge queue, say once that two orchestrators landing on it leave a
    race of seconds between a run's last check and its merge, and that requiring either closes it.
    Then follow the mode's reference.
@@ -162,38 +162,40 @@ does not take the Ticket straight back.
 ## Check in
 
 Check in whenever a run or a landing turn ends, and otherwise every ten minutes while a run is live,
-a Ticket in scope waits for a landing turn, or an effort in scope carries a `Paused:` line an
-orchestrator wrote, waiting in whatever way the host allows. At each
-check-in:
+a Ticket in scope waits for a landing turn, or an effort in scope carries an orchestrator's pause,
+waiting in whatever way the host allows. At each check-in:
 
 1. **Re-read every Ticket in scope.** For an outcome assignment, also recover its compact coordination record and changed designated evidence as `references/OUTCOME.md` says.
-2. **Honor the pause line.**
-   - **Hold.** While a front item carries a `Paused:` line, start nothing in that effort — no
-     launch, no landing turn — except the repair Ticket the line names, and let live runs finish. A
-     line a person wrote holds until a person removes it: once no run is live there, stop working
-     the effort and say so.
+2. **Honor the pauses.** A person pauses an effort with a `Paused:` line on its front item. An
+   orchestrator pauses it with an **orchestrator's pause**: a record naming the cause, the
+   orchestrator that wrote it and any repair Ticket, kept where the venue reference puts it, apart
+   from what a person writes, so no write of an orchestrator's replaces a person's line.
+   - **Hold.** While an effort is paused, start nothing in it — no launch, no landing turn — except
+     the repair Ticket an orchestrator's pause names, and let live runs finish. A person's pause
+     holds until a person removes it: once no run is live there, stop working the effort and say so.
    - **Pause.** When Tickets in an effort fail on a cause outside them — one is enough for a
      required check that fails the same way on the base, and two or more for another cause, such
      as a CI or venue that is down — whether a live run records it or a landing finds it, pause
-     instead of escalating or repairing each Ticket on its own: write a `Paused:` line naming the
-     cause and this orchestrator's ID. A cause no code change can fix, such as that outage, waits
-     for the person: raise one item naming it on the list of what waits on the person.
-   - **Repair.** A base check that a code change can fix gets one repair Ticket instead. Whenever a
-     `Paused:` line naming an orchestrator names no open repair Ticket for such a cause while that
-     check still fails the same way on the base, write one through `ticket-up` in that effort,
-     scoped to making that check pass on the base, in either mode; `ticket-up` reuses an open Ticket
-     that already covers it. Then name it in the line. When the line already names another open
-     repair Ticket, or is gone, close the Ticket `ticket-up` created in this check-in as a duplicate
+     instead of escalating or repairing each Ticket on its own: write an orchestrator's pause
+     naming the cause and this orchestrator's ID, unless one already names that cause. A cause no
+     code change can fix, such as that outage, waits for the person: raise one item naming it on
+     the list of what waits on the person.
+   - **Repair.** A base check that a code change can fix gets one repair Ticket instead. Whenever an
+     orchestrator's pause names no open repair Ticket for such a cause while that check still
+     fails the same way on the base, write one through `ticket-up` in that effort, scoped to making
+     that check pass on the base, in either mode; `ticket-up` reuses an open Ticket that already
+     covers it. Then name it in that pause and re-read it. When the pause names another open repair
+     Ticket, or is gone, close the Ticket `ticket-up` created in this check-in as a duplicate
      instead; leave a reused one as it was. The repair Ticket goes to the mode's grant step like any
      Ticket an agent wrote. In the default mode it is the pause's one item on the list of what waits
      on the person, with its grant recommendation, and joins the current plan once the person
      approves it; `--autonomous` launches it at its next free slot, and without Auto its run stops
      at a ready pull request for the person. It lands under that mode's rules.
-   - **Lift.** A `Paused:` line naming an orchestrator's ID keeps the check-ins going: at each,
-     check its cause, and once the cause is fixed any orchestrator removes that line, never one a
-     person wrote.
+   - **Lift.** An orchestrator's pause keeps the check-ins going: at each, check its cause, and once
+     the cause is fixed any orchestrator removes that pause. A person's `Paused:` line is theirs to
+     remove.
 
-   Re-read the front item just before each edit and change nothing else in it.
+   Re-read an orchestrator's pause just before each edit and change nothing else in it.
 3. **Give out one landing turn at a time** across the scope, to the Auto Ticket ready to land whose
    delay costs most. Follow `../ticket-up/references/AUTOMATED_EXECUTION.md` → *Landing*, re-reading
    the Ticket before each merge, close or mark change. When the base has moved, launch the run again
@@ -221,10 +223,10 @@ check-in:
    does not itself authorize the refactor.
 6. **Rebuild the status pages** from the store, one page per effort in scope, each showing only
    that effort's Tickets, and publish them as `references/STATUS_PAGE.md` describes. Save each
-   page's link on its own effort's front item, as a `Status page:` line, so later plans on that
-   effort update the same page. Write that line only when it is absent or its page no longer
-   opens: re-read the front item just before the edit and change nothing else in it, so a
-   `Paused:` line a person added since is kept. The page is a view: never read state back from it.
+   page's link as its effort's status-page link, which the venue reference keeps apart from what a
+   person writes, like an orchestrator's pause, so later plans on that effort update the same page.
+   Write it only when it is absent or its page no longer opens. The page is a view: never read
+   state back from it.
 7. **Fill free slots** as the mode's reference says. A Ticket waiting on the person holds no slot.
 
 Keep **one list of what waits on the person**, ordered by what waiting costs: held pull requests

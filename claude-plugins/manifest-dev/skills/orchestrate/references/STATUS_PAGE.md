@@ -47,12 +47,12 @@ local HTML file. Pick the first that applies:
 
 The page never writes to the store, the data file or anything else. A person who opens it reads it.
 
-Save the page's link on the effort's front item, on a line of its own: `Status page: <link or
-path>`. At the start of every plan, and when a new orchestrator session starts on the effort, read
-that line and update the page it names instead of making a new one. If the link no longer opens, or
-the host will not let you update that page, publish a new one and replace the line: re-read the
-front item just before that edit and change nothing else in it, so a `Paused:` line a person added
-meanwhile stays.
+Save the page's link as the effort's status-page link (`Status page: <link or path>`), where the
+venue reference keeps it apart from what a person writes on the front item, so replacing it never
+replaces a person's `Paused:` line. At the start of every plan, and when a new orchestrator session
+starts on the effort, read that link and update the page it names instead of making a new one. If
+the link no longer opens, or the host will not let you update that page, publish a new one and
+replace the link.
 
 The page holds Ticket titles and the person's open questions. On a host where pages can be shared,
 leave it private unless the person shares it.
@@ -100,7 +100,7 @@ may be left out; `null` counts as left out.
 | `effort.name` | string | The effort's name, shown as the page's title. | The front item's title. |
 | `effort.destination` | string, optional | One sentence on what done means for the effort, shown as the Goal. | The front item's destination. |
 | `mode` | `"default"` or `"autonomous"` | How this orchestrator runs: proposing each plan and waiting for approval, or acting on its own (`--autonomous`). | This orchestrator's own invocation. |
-| `state` | `"running"`, `"paused"` or `"finished"` | Whether runs are going, the effort is paused, or the plan has ended. | `paused` when the front item carries the pause line; `finished` once the plan has ended, including when the orchestrator stops; `running` otherwise. |
+| `state` | `"running"`, `"paused"` or `"finished"` | Whether runs are going, the effort is paused, or the plan has ended. | `paused` while the effort is paused, by a person or an orchestrator (`../SKILL.md` → *Check in*); `finished` once the plan has ended, including when the orchestrator stops; `running` otherwise. |
 | `coordination` | object, optional | Present only for an assigned outcome. Plan completion alone never means the outcome was achieved. | The current coordination record on the effort's front item. |
 | `coordination.state` | `"working"`, `"waiting-evidence"`, `"waiting-decision"`, `"complete"` or `"limit"` | What the outcome assignment needs next; shown above the graph even with no Tickets. | The coordinator's evidence-based continuation decision. |
 | `coordination.summary` | nonempty string | A concise account of progress or the unresolved condition; distinguish delivered work from observed use. | The current coordination record. |
@@ -175,7 +175,7 @@ use their own types gives `type` only for these five.
 | `skipped` | Left alone | In scope, but automation may not take it: for example, its author lacks write access, or a person is assigned. Say why in `note`. |
 | `proposed` | Proposed | In the next plan the orchestrator proposes, not yet approved. |
 
-While the state is `paused`, `queued`, `to-land` and `waiting` Tickets show as Paused, except the repair Ticket the `Paused:` line names.
+While the state is `paused`, `queued`, `to-land` and `waiting` Tickets show as Paused, except the repair Ticket an orchestrator's pause names.
 
 ### What needs the person
 

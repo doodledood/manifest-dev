@@ -7,8 +7,10 @@ Renders the ticket convention onto GitHub Issues. Use whatever GitHub access the
 | Convention | GitHub realization |
 |---|---|
 | Store | The repository's issues, grouped under one **tracking issue** per effort |
-| Front file | The tracking issue's body: destination, priority override, context pointers, and the standing automation settings when set (a `Paused:` line, a `Status page:` line). No ticket list — GitHub's own child list is the grouping, and it stays current with nobody editing it |
-| Coordination record | One marked comment per outcome assignment on the tracking issue, following `../../orchestrate/references/OUTCOME.md` → *The coordination record*. Use its comment ID for direct reads and update in place. Remove ended assignments from the active context pointers; the ended comment and closed source issues remain the archive |
+| Front file | The tracking issue's body: destination, priority override, context pointers, and a person's `Paused:` line when they set one. Automation never edits this body, since an edit replaces the whole of it and would drop a line a person added meanwhile: what automation writes here goes in its own marked comments below. No ticket list — GitHub's own child list is the grouping, and it stays current with nobody editing it |
+| Coordination record | One marked comment per outcome assignment on the tracking issue, following `../../orchestrate/references/OUTCOME.md` → *The coordination record*. Use its comment ID for direct reads and update in place. Mark an ended assignment ended in its own comment; the ended comment and closed source issues remain the archive |
+| Orchestrator's pause | One comment on the tracking issue carrying `<!-- manifest-dev-orchestrate-pause -->`, written by the automation identity: the cause, the orchestrator's ID, and the repair Ticket once one is named. Edited in place, and deleted when the pause lifts. Where two exist, `AUTOMATED_EXECUTION.md` → *The attempt record* says which decides |
+| Status page link | One comment on the tracking issue carrying `<!-- manifest-dev-orchestrate-status-page -->` and a `Status page: <link>` line, written by the automation identity and edited in place. Where two exist, the same rule decides |
 | Ticket | An issue; the full ticket anatomy is the issue body |
 | Effort membership | The native **sub-issue** relation, with the effort's tracking issue as the parent |
 | Effort | An `effort:<slug>` label, on every ticket and on its tracking issue — same slug the files venue would use for the directory name |

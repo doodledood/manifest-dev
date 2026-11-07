@@ -448,7 +448,7 @@ def test_orchestrate_names_its_failure_and_host_paths() -> None:
     assert "without one it is four hours from the run's start" in record
     assert "A file store gets no parallel runs" in text
     assert "run a batch of one instead" in text
-    assert "While a front item carries a `Paused:` line, start nothing" in text
+    assert "While an effort is paused, start nothing in it" in text
     assert "say once that two orchestrators landing on it leave a race" in text
     assert "Take it over by writing a run ID of your own" in text
     assert "Rebuild the status page" in text
@@ -882,18 +882,40 @@ def test_the_pause_line_is_never_erased_and_one_cause_pauses_once() -> None:
         orchestrate
     )
     # Any orchestrator lifts a pause an orchestrator wrote, so one that outlives its writer ends.
-    assert "A `Paused:` line naming an orchestrator's ID keeps the check-ins going" in (
-        orchestrate
+    assert "An orchestrator's pause keeps the check-ins going" in orchestrate
+    assert (
+        "once the cause is fixed any orchestrator removes that pause. A person's `Paused:` "
+        "line is theirs to remove." in orchestrate
     )
-    assert "any orchestrator removes that line, never one a person wrote" in orchestrate
-    assert "or an effort in scope carries a `Paused:` line an orchestrator wrote" in (
-        orchestrate
-    )
-    assert "Write that line only when it is absent or its page no longer opens" in (
-        orchestrate
-    )
-    assert "so a `Paused:` line a person added since is kept" in orchestrate
-    assert "so a `Paused:` line a person added meanwhile stays" in status_page
+    assert "or an effort in scope carries an orchestrator's pause" in orchestrate
+    assert "Write it only when it is absent or its page no longer opens" in orchestrate
+    # A re-read before rewriting a shared body narrows a race and cannot close it, so a person's
+    # line was lost when it landed between the re-read and the write. Automation's pause and
+    # page link now live apart from what a person writes.
+    assert "so no write of an orchestrator's replaces a person's line" in orchestrate
+    assert "so replacing it never replaces a person's `Paused:` line" in status_page
+
+
+# The pause's and the page link's venue renderings keep automation's writes off the text a person
+# edits: on GitHub, automation never rewrites the tracking issue's body; in a file store, an
+# orchestrator edits only its own lines.
+@pytest.mark.parametrize("root", [SOURCE_SKILLS, DIST_SKILLS], ids=["source", "codex"])
+def test_no_automation_write_replaces_a_persons_pause(root: Path) -> None:
+    github = flat(ticket_ref(root, "GITHUB_STORE.md"))
+    files = flat(ticket_ref(root, "FILE_STORE.md"))
+    convention = flat(convention_text(root))
+    orchestrate = flat(orchestrate_text(root))
+    assert "Automation never edits this body" in github
+    assert "<!-- manifest-dev-orchestrate-pause -->" in github
+    assert "<!-- manifest-dev-orchestrate-status-page -->" in github
+    assert "Remove ended assignments from the active context pointers" not in github
+    assert "An orchestrator adds, edits or removes only its own lines" in files
+    assert "so its writes never replace a person's line" in convention
+    for stale in (
+        "Re-read the front item just before",
+        "a `Paused:` line a person added since is kept",
+    ):
+        assert stale not in orchestrate, stale
 
 
 # Holds the decision in docs/adr/20261102-a-landing-fixes-what-it-meets.md: a red base pauses the
@@ -926,8 +948,9 @@ def test_a_red_base_gets_one_repair_ticket(root: Path) -> None:
         in orchestrate
     )
     # Only the repair Ticket the line names launches or lands while the pause holds.
-    assert "no launch, no landing turn — except the repair Ticket the line names" in (
-        orchestrate
+    assert (
+        "no launch, no landing turn — except the repair Ticket an orchestrator's pause names"
+        in (orchestrate)
     )
     # Its Auto comes from the mode's grant step, never from the run that found the failure.
     assert "goes to the mode's grant step like any Ticket an agent wrote" in orchestrate
