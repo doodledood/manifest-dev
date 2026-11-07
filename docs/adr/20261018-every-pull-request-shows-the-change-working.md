@@ -1,7 +1,7 @@
 # ADR: Every pull request shows the change working
 
 ## Status
-Accepted
+Accepted; amended by 20261107-a-pull-request-shows-one-example-before-and-after: the description also shows one short example of the change before and after
 
 ## Area
 PR lifecycle
@@ -86,7 +86,7 @@ request's description or comments with `--attach`, through the same upload the w
 ## Enforced by
 partly — `tests/test_pr_lifecycle_proof_gate.py` fails if the proof gate templated in
 `claude-plugins/manifest-dev/skills/define/tasks/PR_LIFECYCLE.md` loses the one-minute top of the
-description, the never-production rule, images attached with `--attach`, the kept
+description, the one example shown before and after, the never-production rule, images attached with `--attach`, the kept
 `pr-media/<number>` branch where the upload is unavailable, or text alone only when neither works,
 or if a rule dropping the `check-pr` lifecycle gate would drop it too; that define composes it into every Manifest shipping through a GitHub pull request, and
 whether a description meets it, stay judgment.
