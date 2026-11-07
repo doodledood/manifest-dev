@@ -69,8 +69,8 @@ each gate has evidence, or when a person must act.
 
 When the work goes into a pull request, its description shows the change working. The top tells
 what changed and why, how the run showed that it works, the decisions, and the Debt left. It also
-lists the problems that the run fixed on the way. One short example shows what you do and what
-you see, before and after the change. Screenshots show a change that you can see.
+lists the problems that the run fixed on the way. A short example tells what you do and what you
+get, before and after the change. Screenshots show a change that you can see.
 
 ## The autonomy ladder
 

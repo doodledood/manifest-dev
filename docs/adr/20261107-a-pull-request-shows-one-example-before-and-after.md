@@ -13,8 +13,8 @@ The user, who asked that every pull request carry, by default, a short before-an
 `20261018-every-pull-request-shows-the-change-working` gives every pull request a top that reads in about a minute: what changed and why, how it was shown working, the decisions, and the debt left. A UI change also shows screenshots. A change with nothing to screenshot — a prompt, a rule, a library function, a workflow — tells the reader what changed in general terms, and the reader has to imagine what that means for one actual use. A single example followed through before and after answers that faster than any summary.
 
 ## Decision
-- **The proof gate in define's `tasks/PR_LIFECYCLE.md` owes one short before-and-after right under the description's top.** It shows the change from the point of view of the person who uses it: what they do and what they see back, shown as they meet it — a screenshot of each side, or a few quoted lines of each side such as the command and its output — never a description of the change. One example, real or illustrative and marked as such; it explains rather than proves. Whether the change works stays with the gate's proof clauses.
-- **For a change a person can see, before-and-after screenshots carry it.** No second example is owed.
+- **The proof gate in define's `tasks/PR_LIFECYCLE.md` owes one short before-and-after right under the description's top.** It gives a quick feel for what the change means to the person who uses it, so the reader can tell whether the after is what they want: one line naming a task, then a sentence or two for each side saying, from that person's side, what they do and what they get or notice. A real example or an illustrative one marked as such; a screenshot or real output may carry a side but is not required. It explains rather than proves. Whether the change works stays with the gate's proof clauses.
+- **Light by default.** A told example from the user's side is enough; screenshots or quoted output are one way to show a side, not a requirement.
 - **It amends `20261018-every-pull-request-shows-the-change-working`**, which keeps every other clause.
 
 ## Alternatives Considered
