@@ -131,3 +131,21 @@ def test_babysit_ci_runs_one_tend_per_pr_and_stops_on_a_moved_head() -> None:
         assert "When a push is rejected as not a fast-forward" in text, path
         assert "push nothing from the stale checkout" in text, path
         assert "under `--ci`, end the run reporting the new head" in text, path
+
+
+def test_babysit_backstop_stops_when_a_person_merges_the_pr() -> None:
+    """A person merges the tended PR: /do now ends there, so the outer backstop must too.
+
+    /do's own goal block stops on a person settling the work from outside, but the tend's
+    prefix and goal block, which own the outer backstop, named only mergeable, a blocker or a
+    terminal wait, so they held the run open on a merged PR.
+    """
+    for path in _copies("babysit-pr/SKILL.md"):
+        text = _text(path)
+        assert "until it is mergeable, a person merges it, or a blocker" in text, path
+        assert (
+            "or a person settling the work from outside, such as by merging its pull request"
+            in text
+        ), path
+        assert "its *How a run ends* names" in text, path
+        assert "stops via `/done`, `/escalate`, or CI pending-summary" not in text, path
