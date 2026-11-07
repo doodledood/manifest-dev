@@ -10,7 +10,10 @@
 // Render samples (opaque flat-color text contrast, overflow at 320/390px, target
 // candidates, transparent body background) run when Playwright with a Chromium
 // browser is available; otherwise they are reported as SKIPPED so the gap
-// stays visible instead of silently passing.
+// stays visible instead of silently passing. Each render step has a deadline
+// (DESIGN_CHECK_STEP_SECONDS, default 10): a page that stops responding ends
+// the render checks with a NOTE naming the width, and every check that did not
+// run is reported SKIPPED by name.
 //
 // Exit code 0 = checks completed (findings, if any, are printed);
 // exit code 1 = the run itself failed (bad usage, unreadable file, crash).
@@ -228,19 +231,47 @@ async function launchBrowser() {
   }
 }
 
+const WIDTHS = [320, 390];
+// Every render check, in run order; each leaves this list only once it ran.
+const pending = [
+  "body background",
+  "contrast@1440",
+  ...WIDTHS.flatMap((w) => [`overflow@${w}`, `targets@${w}`]),
+];
+const ran = (...names) => {
+  for (const name of names) pending.splice(pending.indexOf(name), 1);
+};
+const stepSeconds = Number(process.env.DESIGN_CHECK_STEP_SECONDS) || 10;
+class Unresponsive extends Error {}
+// A page can block its own event loop forever; no render step waits past this.
+const within = (promise) => {
+  let timer;
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => {
+      timer = setTimeout(() => reject(new Unresponsive()), stepSeconds * 1000);
+    }),
+  ]).finally(() => clearTimeout(timer));
+};
+
 if (!chromium) {
-  skipped.push("render samples — Playwright not available");
+  skipped.push(`render samples — Playwright not available: ${pending.join(", ")}`);
 } else {
   let browser;
+  let width = 1440;
   try {
-    browser = await launchBrowser();
-    const page = await browser.newPage({ viewport: { width: 1440, height: 900 }, colorScheme: "light" });
-    await page.goto(pathToFileURL(resolve(file)).href, { waitUntil: "load" });
+    const launching = launchBrowser();
+    browser = await within(launching).catch((e) => {
+      launching.then((late) => late.close(), () => {});
+      throw e;
+    });
+    const page = await within(browser.newPage({ viewport: { width, height: 900 }, colorScheme: "light" }));
+    await within(page.goto(pathToFileURL(resolve(file)).href, { waitUntil: "load" }));
     // Freeze animations/transitions so geometry and color measurements are
     // stable (a rotating element inflates its own bounding box).
-    await page.addStyleTag({
+    await within(page.addStyleTag({
       content: "*, *::before, *::after { animation: none !important; transition: none !important; }",
-    });
+    }));
 
     const parse = (s) => {
       const m = s && s.match(/^rgba?\((\d+(?:\.\d+)?),\s*(\d+(?:\.\d+)?),\s*(\d+(?:\.\d+)?)(?:,\s*([\d.]+))?\)$/);
@@ -250,10 +281,10 @@ if (!chromium) {
     };
 
     // Body background.
-    const bodyBg = await page.evaluate(() => {
+    const bodyBg = await within(page.evaluate(() => {
       const bg = (el) => getComputedStyle(el).backgroundColor;
       return { body: bg(document.body), html: bg(document.documentElement) };
-    });
+    }));
     const bodyC = parse(bodyBg.body);
     const htmlC = parse(bodyBg.html);
     if (!bodyC || !htmlC) {
@@ -265,9 +296,10 @@ if (!chromium) {
     } else {
       ok.push("body background");
     }
+    ran("body background");
 
     // Conservative samples only: unhandled paint is SKIPPED, never a pass.
-    const textInventory = await page.evaluate(() => {
+    const textInventory = await within(page.evaluate(() => {
       const out = [];
       const walk = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
       const seen = new Set();
@@ -303,7 +335,7 @@ if (!chromium) {
         });
       }
       return { samples: out.slice(0, 400), total: out.length };
-    });
+    }));
     let measured = 0;
     let contrastFails = 0;
     const exclusions = new Map();
@@ -341,12 +373,14 @@ if (!chromium) {
     if (textInventory.total > textInventory.samples.length) skipped.push("contrast: remaining text beyond the 400-element sample limit");
     if (measured && !contrastFails) ok.push(`contrast: ${measured} supported opaque samples met their thresholds; other paint, states and text are not certified`);
     notes.push("render scope: initial light-theme DOM text, animations frozen; inspect overlap, pseudo-elements, canvas/SVG, other themes and interactive states with appropriate tools");
+    ran("contrast@1440");
 
     // Width and target candidates require applicability/exception review.
-    for (const width of [320, 390]) {
-      await page.setViewportSize({ width, height: 844 });
-      await page.waitForTimeout(150);
-      const narrow = await page.evaluate(() => {
+    for (const w of WIDTHS) {
+      width = w;
+      await within(page.setViewportSize({ width, height: 844 }));
+      await within(page.waitForTimeout(150));
+      const narrow = await within(page.evaluate(() => {
         const doc = document.scrollingElement || document.documentElement;
         const small = [];
         let inspected = 0;
@@ -363,18 +397,24 @@ if (!chromium) {
           });
         }
         return { overflow: doc.scrollWidth > window.innerWidth + 1, scrollWidth: doc.scrollWidth, small: small.slice(0, 10), smallCount: small.length, inspected };
-      });
+      }));
       if (narrow.overflow) notes.push(`overflow@${width}: content width ${narrow.scrollWidth}px — inspect loss of content/function and necessary two-dimensional-content exceptions`);
       else ok.push(`overflow@${width}: no page-width overflow in this state; zoom and content loss remain separate checks`);
       for (const target of narrow.small) notes.push(
         `target candidate@${width}: <${target.tag}> "${target.text}" ${target.w}×${target.h}px — review spacing, equivalent, inline, user-agent and essential exceptions before grading`,
       );
       notes.push(`target coverage@${width}: ${narrow.inspected} detected controls, ${narrow.smallCount} undersized bounding boxes; effective hit areas and custom controls need review`);
+      ran(`overflow@${width}`, `targets@${width}`);
     }
   } catch (e) {
-    skipped.push(`render checks failed to run: ${e.message.split("\n")[0]}`);
+    notes.push(
+      e instanceof Unresponsive
+        ? `page did not respond within ${stepSeconds} s at ${width} px; render checks stopped`
+        : `render checks failed to run at ${width} px: ${e.message.split("\n")[0]}`,
+    );
   } finally {
-    if (browser) await browser.close();
+    for (const name of pending) skipped.push(`${name}: did not run`);
+    if (browser) await within(browser.close()).catch(() => {});
   }
 }
 
@@ -387,3 +427,5 @@ for (const o of ok) console.log(`OK       ${o}`);
 console.log(
   `\n${findings.length} finding(s), ${notes.length} note(s), ${skipped.length} skipped — ${file}`,
 );
+// A browser that would not close must not hold the finished run open.
+setTimeout(() => process.exit(0), 1000).unref();
