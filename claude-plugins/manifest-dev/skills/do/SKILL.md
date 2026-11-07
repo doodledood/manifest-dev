@@ -150,7 +150,8 @@ external state, not just a commit identifier.
 A judgment gate reads the full change once, then checks outstanding findings and failures
 introduced or exposed by the changes since that evaluation; a deterministic gate re-runs in full.
 When a judgment gate's criteria change, its next evaluation is a new full look, since work the old
-criteria did not reach has never been judged.
+criteria did not reach has never been judged. It is that gate's first full look under its new
+criteria for every rule below that names a first full look, the ceiling's included.
 Give an invoked evaluator that reporting scope, the assessed state, prior findings and supported dispositions, their underlying promises and accepted sources, verified
 repairs, failed attempts on those promises, and the intervening changes. Recover missing context rather than silently requesting
 another full look. Contextual reading may be wide; touching an old line alone does not make an

@@ -43,6 +43,12 @@ def test_changed_criteria_take_a_new_full_look() -> None:
             in (text)
         ), path
         assert "re-verifies after every amendment" in text, path
+        # The below-bar and Pre-existing rules, and the ceiling's list of required work, key on
+        # a "first full look"; a new full look must be one, or its findings fit no rule.
+        assert (
+            "It is that gate's first full look under its new criteria for every rule below that "
+            "names a first full look" in text
+        ), path
         assert "the ceiling when Appetite changes" not in text, path
         assert (
             "new code, changed criteria, argument or evidence can reopen them" in text
