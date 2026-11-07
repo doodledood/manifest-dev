@@ -538,9 +538,10 @@ def test_executor_amendments_preserve_verification() -> None:
     assert "Invoke `define` with the Manifest path" in executor
     assert "Wait for active gate evaluations to finish before amending" in executor
     assert "discard that evaluation's verdicts" in executor
+    assert "including the Outcome assessment where affected" in executor
     assert (
-        "including the Outcome assessment where affected and the ceiling when Appetite changes"
-        in executor
+        "the ceiling (INV-G1), which reads the whole Manifest, re-verifies after every"
+        " amendment" in executor
     )
     assert "An amendment from an unattended executor is unattended" in author
     assert "ask no questions, and wait for no approval" in author

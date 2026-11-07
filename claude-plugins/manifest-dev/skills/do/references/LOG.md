@@ -37,7 +37,7 @@ Record what the finished state will not reconstruct on its own:
   and why.
 - **Dead ends** — fixes tried and reverted, approaches rejected that left no commit; group repairs by their underlying promise and its accepted source, with each attempt and outcome, so new finding IDs or commit wording do not reset the premise history.
 - **Outcome and gate state** — assessed criteria and subject, verdicts and their evidence, staleness, and
-  whether each judgment gate has taken its full look. Identify relevant local work and external
+  whether each judgment gate has taken its full look under its current criteria. Identify relevant local work and external
   observations as well as the repository head. Keep the findings, their dispositions and support,
   and which repairs are verified, so a resumed run can determine what evidence still applies and
   what each continued evaluation must check.

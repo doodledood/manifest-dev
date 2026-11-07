@@ -62,9 +62,11 @@ if the needed decision is unavailable, report the boundary and continue independ
 
 Wait for active gate evaluations to finish before amending. If an amendment races
 an evaluation, discard that evaluation's verdicts and evaluate the amended file.
-Re-read the amended Manifest. Re-verify every gate whose text, subject, or
-interpretation changed, including the Outcome assessment where affected and the ceiling when Appetite changes; keep other
-evidence only while it remains valid. Report material amendments on every terminal
+Re-read the amended Manifest. Re-verify every gate whose criteria, subject, or
+interpretation changed, including the Outcome assessment where affected; keep other
+evidence only while it remains valid. A gate's criteria are its text and every Manifest section
+its claim reads, so the ceiling (INV-G1), which reads the whole Manifest, re-verifies after every
+amendment. Report material amendments on every terminal
 path and record them in the execution log when kept.
 
 ## Continuation
@@ -138,6 +140,8 @@ external state, not just a commit identifier.
 
 A judgment gate reads the full change once, then checks outstanding findings and failures
 introduced or exposed by the changes since that evaluation; a deterministic gate re-runs in full.
+When a judgment gate's criteria change, its next evaluation is a new full look, since work the old
+criteria did not reach has never been judged.
 Give an invoked evaluator that reporting scope, the assessed state, prior findings and supported dispositions, their underlying promises and accepted sources, verified
 repairs, failed attempts on those promises, and the intervening changes. Recover missing context rather than silently requesting
 another full look. Contextual reading may be wide; touching an old line alone does not make an
@@ -158,8 +162,8 @@ categories and acceptance thresholds when they are part of its claim; otherwise 
 the substantive assessment. Regrade correctness or safety failures and broken binding promises
 received as Low from their evidence before applying that policy. Keep a deliberately required
 reviewer approval or external check unresolved until it actually holds; your disposition cannot
-clear it. Preserve supported dispositions across new IDs, pushes and sessions; new code, argument
-or evidence can reopen them. Below-bar findings do not defeat the claim under its policy; the
+clear it. Preserve supported dispositions across new IDs, pushes and sessions; new code, changed
+criteria, argument or evidence can reopen them. Below-bar findings do not defeat the claim under its policy; the
 batching and continued-review rules below govern their handling, not the definition of Low.
 
 Every pull request leaves the repository better. A pre-existing issue the work meets, related to the
