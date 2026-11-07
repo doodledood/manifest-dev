@@ -170,9 +170,11 @@ waiting in whatever way the host allows. At each check-in:
    orchestrator pauses it with an **orchestrator's pause**: a record naming the cause, the
    orchestrator that wrote it and any repair Ticket, kept where the venue reference puts it, apart
    from what a person writes, so no write of an orchestrator's replaces a person's line.
-   - **Hold.** While an effort is paused, start nothing in it — no launch, no landing turn — except
-     the repair Ticket an orchestrator's pause names, and let live runs finish. A person's pause
-     holds until a person removes it: once no run is live there, stop working the effort and say so.
+   - **Hold.** While an effort is paused, start nothing in it — no launch, no landing turn — and let
+     live runs finish. The one exception is the repair Ticket an orchestrator's pause names, and
+     only while no person's `Paused:` line holds: a person's pause stops it like the rest. A
+     person's pause holds until a person removes it: once no run is live there, stop working the
+     effort and say so.
    - **Pause.** When Tickets in an effort fail on a cause outside them — one is enough for a
      required check that fails the same way on the base, and two or more for another cause, such
      as a CI or venue that is down — whether a live run records it or a landing finds it, pause

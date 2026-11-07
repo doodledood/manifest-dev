@@ -27,6 +27,9 @@ inside the North Star's Purpose: the person keeps control of the choices they re
 ## Decision
 - A person's text and automation's writes live apart. A person still pauses an effort with a
   `Paused:` line on its front item, and only a person removes it.
+- A person's pause stops everything in the effort, the repair Ticket an orchestrator's pause names
+  included. That Ticket runs and lands during a pause only while no person's `Paused:` line
+  holds, and the status page marks it as the repair Ticket only then.
 - An orchestrator's pause is its own record. It names the cause, the orchestrator and the repair
   Ticket once one is named, and any orchestrator lifts it once the cause is fixed. The
   status-page link is a record too. On GitHub each is a marked comment on the tracking issue
@@ -42,6 +45,8 @@ inside the North Star's Purpose: the person keeps control of the choices they re
   authority it states.
 
 ## Alternatives Considered
+- **Let the repair Ticket run under any pause**: automation would launch and merge in an effort
+  the person had stopped, the opposite of the person keeping the choices they retain.
 - **Keep the re-read before the edit**: the venue has no compare-and-set on a body, so the window
   stays and a person's line can still be lost.
 - **Make a person's pause a comment too**: anyone who can comment on a public issue could then
@@ -67,7 +72,10 @@ partly — `tests/test_ticket_automation_prompts.py` — `test_no_automation_wri
 fails, on the source and the Codex copy, if a venue loses the pause or page-link record or the
 GitHub body edit returns. `test_the_pause_line_is_never_erased_and_one_cause_pauses_once` fails if
 the old re-read claim comes back. `test_a_persons_answer_is_recorded_beside_the_ticket_body` fails
-if answers go back into a Ticket's body. Whether two failures share a cause stays judgment.
+if answers go back into a Ticket's body. `test_a_red_base_gets_one_repair_ticket` and
+`tests/test_orchestrate_status_page.py` → `test_a_persons_pause_stops_the_repair_ticket_on_the_page`
+fail if the repair Ticket's exception stops yielding to a person's pause. Whether two failures
+share a cause stays judgment.
 
 ## Source
 - Session: an audit of the skills' state machines and the fixes to its findings (2026-11-07).

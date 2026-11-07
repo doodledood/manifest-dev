@@ -953,11 +953,14 @@ def test_a_red_base_gets_one_repair_ticket(root: Path) -> None:
         "close the Ticket `ticket-up` created in this check-in as a duplicate instead"
         in orchestrate
     )
-    # Only the repair Ticket the line names launches or lands while the pause holds.
+    # Only the repair Ticket an orchestrator's pause names launches or lands while the pause
+    # holds, and never while a person's pause holds: a person's pause stops automation entirely.
     assert (
-        "no launch, no landing turn — except the repair Ticket an orchestrator's pause names"
-        in (orchestrate)
+        "The one exception is the repair Ticket an orchestrator's pause names, and only while "
+        "no person's `Paused:` line holds: a person's pause stops it like the rest"
+        in orchestrate
     )
+    assert "no landing turn — except the repair Ticket" not in orchestrate
     # Its Auto comes from the mode's grant step, never from the run that found the failure.
     assert "goes to the mode's grant step like any Ticket an agent wrote" in orchestrate
     assert "names no open repair Ticket for such a cause" in orchestrate

@@ -330,6 +330,22 @@ def test_the_repair_ticket_never_shows_as_paused(status: str) -> None:
     )
 
 
+# An orchestrator's pause names a repair Ticket, then a person adds their own `Paused:` line. The
+# repair Ticket ran and landed anyway, because the exception ignored which kind of pause held, and
+# the page showed it running "during the pause". A person's pause stops the repair Ticket too, so
+# the snapshot leaves `repair` off while one holds and the Ticket reads as Paused.
+def test_a_persons_pause_stops_the_repair_ticket_on_the_page() -> None:
+    row = re.search(r"^\| `repair` \| (.*?)$", reference(), re.M)
+    assert row, "STATUS_PAGE.md no longer documents `repair`"
+    assert "while no person's `Paused:` line holds the effort" in row.group(1)
+    assert (
+        "Under a person's pause it stops like the rest, so leave it out" in row.group(1)
+    )
+    # Both kinds of pause present: the snapshot carries no `repair`, and the page shows Paused.
+    ticket = {"id": "#9", "title": "Make the base check pass", "status": "queued"}
+    assert status_text(ticket, paused=True) == "Paused"
+
+
 def test_a_repair_flag_is_valid_only_as_true() -> None:
     snapshot = sample()
     snapshot["tickets"][0]["repair"] = True
