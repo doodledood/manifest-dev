@@ -46,10 +46,9 @@ CLAUSES = {
     ),
     "long lists fold": "Long lists fold",
     "one example before and after": (
-        "one short before-and-after helps a reader understand what the change does in practice "
-        "and what to expect. It explains rather than proves: one example, real or illustrative "
-        "and marked as such, followed through what a person does and sees or gets before the "
-        "change and after it"
+        "one short before-and-after shows the change from the point of view of the person who "
+        "uses it, so a reader knows what to expect: what they do and what they see back, shown "
+        "as they meet it rather than described"
     ),
     "never production": "never on production",
     "proof from the touched checks": "runs of the checks the change touches",

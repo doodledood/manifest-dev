@@ -58,11 +58,12 @@ Done when the pull request's description shows the change working:
 - Its top reads in about a minute: what changed and why, how the change was shown working, the
   decisions made with any reopened decision record first and the user's calls next, and the
   debt left. Long lists fold into collapsed sections below it.
-- Right under that top, one short before-and-after helps a reader understand what the change does
-  in practice and what to expect. It explains rather than proves: one example, real or
-  illustrative and marked as such, followed through what a person does and sees or gets before
-  the change and after it, in a few lines. For a change a person can see, before-and-after
-  screenshots carry it.
+- Right under that top, one short before-and-after shows the change from the point of view of the
+  person who uses it, so a reader knows what to expect: what they do and what they see back,
+  shown as they meet it rather than described. For a change they can see, a screenshot of each
+  side; otherwise a few quoted lines of each side, such as the command and its output, the
+  request and the reply, or the call and its result. One example, real or illustrative and marked
+  as such; it explains rather than proves.
 - The proof comes from runs of the checks the change touches, on a local or dev instance, or on a
   preview deploy the project's CI already makes — never on production. The description, or a
   comment it links, carries each run's command and the output that shows the result.
