@@ -248,6 +248,31 @@ def test_one_upgrade_guide_per_older_version_each_covering_only_the_next() -> No
         )
 
 
+def test_shape_guides_load_whatever_version_is_recorded() -> None:
+    # MOVE_TO_HARNESS.md and RESHAPE_NORTH_STAR.md repair a project's shape, so its shape loads
+    # them. The move once loaded only with no version recorded or through v3-to-current.md, so a
+    # pre-v4 project whose line had been advanced past v3 — a figure-out decline used to do it —
+    # kept its feature map and surface README on every later run.
+    skill = re.sub(
+        r"\s+", " ", (SKILLS / "setup-project" / "SKILL.md").read_text("utf-8")
+    )
+    rows = re.findall(r"\| (none|the newest|vN[^|]*) \| ([^|]*) \|", skill)
+    assert rows, "setup-project/SKILL.md lost the table of guides by recorded version"
+    for version, loads in rows:
+        for guide in ("MOVE_TO_HARNESS.md", "RESHAPE_NORTH_STAR.md"):
+            assert guide not in loads, (
+                f"the `{version}` row loads {guide}; a shape guide loads whatever version is "
+                "recorded, from the sentence below the table"
+            )
+    sentence = re.search(
+        r"Whatever version is recorded, the newest included, [^:]*", skill
+    )
+    assert sentence and "MOVE_TO_HARNESS.md" in sentence.group(
+        0
+    ), "MOVE_TO_HARNESS.md must load on the project's shape, whatever version is recorded"
+    assert "RESHAPE_NORTH_STAR.md" in skill
+
+
 def test_setup_project_follows_every_guide_from_the_recorded_version_on() -> None:
     # The other half of the rule above: the loading layer walks the whole path and adds the
     # guides up, so no single guide has to take a project to the newest version.
