@@ -113,7 +113,12 @@ def test_every_launch_on_a_manifest_finds_its_log() -> None:
             "Append one line to the path `SKILL.md` names pointing to that journal"
             in (text)
         ), (path)
-        assert "follows its newest pointer and reads the journal" in text, path
+        # The launch that followed the pointer must also write there, or its record splits
+        # between the pointer file and the journal.
+        assert (
+            "follows its newest pointer, and keeps that journal as its log: it reads it and"
+            " appends there" in text
+        ), path
         assert "no second file" not in text, path
     for path, text in flat("do/SKILL.md"):
         assert (

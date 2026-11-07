@@ -15,7 +15,7 @@ When a caller supplies a journal path (for example, the default `/babysit-pr` jo
 caller-supplied journal *is* the log, and the run's record goes nowhere else. Append one line to
 the path `SKILL.md` names pointing to that journal, so a launch on this Manifest without the
 caller — after compaction, in a new session, or resuming an escalation — opens that path, follows
-its newest pointer and reads the journal. When the caller reinvokes `/do` on it for
+its newest pointer, and keeps that journal as its log: it reads it and appends there. When the caller reinvokes `/do` on it for
 a new run, append a `Run initialized` boundary. Recheck the applicability of prior evidence
 against the current criteria and subject before carrying it forward. Preserve supported finding
 dispositions and verified repairs; a new invocation alone does not erase them.
