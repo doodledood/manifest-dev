@@ -1143,6 +1143,32 @@ def test_a_run_never_takes_a_name_that_sorts_before_the_one_it_replaces(
     assert [p.name for p in _summaries(tmp_path)] == ["20260101T000000Z-3.md"]
 
 
+def test_overlapping_drives_keep_the_run_that_finished_last(tmp_path: Path) -> None:
+    # A scenario keeps one summary on this machine, the run that finished last. Two drives that
+    # overlapped once both kept theirs: the slow one, started first, removed only summaries
+    # stamped before its own start, and `help` reported the one that started later — a pass —
+    # while the run that ended last had failed.
+    env = _harness(
+        tmp_path, "", '### once\nRun: `if [ -n "$SLOW" ]; then sleep 3; exit 1; fi`\n'
+    )
+    slow = subprocess.Popen(
+        [str(VERIFY), "drive", "thing"],
+        cwd=REPO_ROOT,
+        env={**env, "SLOW": "1"},
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+    )
+    time.sleep(1.2)  # the fast run's stamp sorts after the slow run's
+    assert run_verify("drive", "thing", env=env).returncode == 0
+    slow.communicate(timeout=60)
+    assert slow.returncode != 0
+    (kept,) = _summaries(tmp_path)
+    assert "- **Outcome:** failed" in kept.read_text(encoding="utf-8")
+    shown = run_verify("help", "thing", env=env).stdout
+    assert "failed" in shown and "passed" not in shown, shown
+
+
 def test_older_summaries_of_a_scenario_fold_into_one_on_its_next_run(
     tmp_path: Path,
 ) -> None:

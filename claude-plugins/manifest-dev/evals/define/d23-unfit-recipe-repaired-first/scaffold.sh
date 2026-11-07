@@ -505,6 +505,7 @@ interface Summary {
   outcome: string;
   machine: string;
   duration: number | undefined; // seconds
+  ended: number; // when the run finished: the summary's write time, in ms
 }
 
 /** A file's text, or undefined when a run beside this one removed it while this one listed it. */
@@ -537,6 +538,8 @@ function readSummary(path: string): Summary | undefined {
   const head = at < 0 ? text : text.slice(0, at);
   const field = (name: string): string => new RegExp(`^- \\*\\*${name}:\\*\\* (.+)$`, "m").exec(head)?.[1]?.trim() ?? "";
   const duration = /^(\d+(?:\.\d+)?) s$/.exec(field("Duration"))?.[1];
+  const ended = statSync(path, { throwIfNoEntry: false })?.mtimeMs;
+  if (ended === undefined) return undefined;
   return {
     path,
     when: stamp[1],
@@ -545,10 +548,17 @@ function readSummary(path: string): Summary | undefined {
     outcome: /^\w+/.exec(field("Outcome"))?.[0] ?? "",
     machine: field("Machine"),
     duration: duration === undefined ? undefined : Number(duration),
+    ended,
   };
 }
 
 const older = (a: Summary, b: Summary): number => a.when.localeCompare(b.when) || a.order - b.order;
+
+/**
+ * Orders summaries by when their runs finished, the path breaking a tie, so runs that overlapped
+ * agree on which one is latest: a run started first may finish last.
+ */
+const finishedBefore = (a: Summary, b: Summary): number => a.ended - b.ended || a.path.localeCompare(b.path);
 
 /** The summaries this machine keeps for a recipe, oldest first. */
 function summariesFor(recipe: Recipe): Summary[] {
@@ -558,9 +568,12 @@ function summariesFor(recipe: Recipe): Summary[] {
     .sort(older);
 }
 
-/** The latest run of a scenario on this machine, or undefined when it has not run here. */
+/** The scenario's run that finished last on this machine, or undefined when it has not run here. */
 function latestRun(recipe: Recipe, scenario: string): Summary | undefined {
-  return summariesFor(recipe).filter((s) => s.scenario === scenario).at(-1);
+  return summariesFor(recipe)
+    .filter((s) => s.scenario === scenario)
+    .sort(finishedBefore)
+    .at(-1);
 }
 
 /**
@@ -870,10 +883,13 @@ function plantedDuration(): number | undefined {
   return Number(planted);
 }
 
-/** Remove the scenario's summaries older than the one just written, so this machine keeps one. */
+/**
+ * Remove the scenario's summaries of runs that finished before the one just written, so this
+ * machine keeps one — the run that finished last, however the runs overlapped.
+ */
 function replaceOlder(recipe: Recipe, scenario: string, kept: Summary): void {
   for (const item of summariesFor(recipe)) {
-    if (item.path !== kept.path && item.scenario === scenario && older(item, kept) < 0) rmSync(item.path, { force: true });
+    if (item.path !== kept.path && item.scenario === scenario && finishedBefore(item, kept) < 0) rmSync(item.path, { force: true });
   }
 }
 

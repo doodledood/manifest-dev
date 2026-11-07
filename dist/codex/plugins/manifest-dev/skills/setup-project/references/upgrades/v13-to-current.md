@@ -9,6 +9,12 @@ anything.
    that does not exist, or one that does not name it back, show it beside this item: it is a
    restatus a deleted or retargeted draft left behind, and the person decides whether the record
    gets its earlier Status back.
+2. **The tool update**, for a project that keeps the harness: the shipped `../harness/verify.mts`
+   shown as a difference from the project's own copy, keeping its path lines and customizations,
+   per `../VERIFICATION_HARNESS.md` → *The parts*. A scenario keeps the summary of the run that
+   finished last, and `help` reports that one, however two drives overlapped. A ported tool gets
+   the same change in its own language. A project whose verification bullet names its own way
+   gets none of this.
 
 Record the newest surfaces version only after each applicable offer has an answer, as the setup
 skill specifies.
