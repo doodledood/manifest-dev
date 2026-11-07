@@ -102,3 +102,17 @@ def test_posting_prunes_against_marker_comments_read_just_before() -> None:
             in text
         )
         assert "a second invocation running on the same PR at once" in text, path
+
+
+def test_a_thread_reply_already_posted_is_not_posted_again() -> None:
+    """A pass stopped between posting a concession and resolving must not concede twice.
+
+    The next pass found the thread still unresolved, got the same disposition and drafted
+    reply back, and posted it again.
+    """
+    for path in _copies("review-pr/SKILL.md"):
+        text = _text(path)
+        assert (
+            "Post a drafted reply only when, read fresh just before posting, our latest message"
+            " on that thread does not already say it" in text
+        ), path

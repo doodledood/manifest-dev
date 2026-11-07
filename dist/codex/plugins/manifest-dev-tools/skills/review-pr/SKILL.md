@@ -52,6 +52,8 @@ It returns exactly one disposition, a short reason, and a drafted reply where th
 | `needs-our-pushback` | Post the reply; keep it pending. | Reopen it, post the reply; keep it pending. |
 | `still-pending` | Leave it open; post nothing. | Not returned: a resolution with no fix and no conceding reply leaves the concern standing. |
 
+Post a drafted reply only when, read fresh just before posting, our latest message on that thread does not already say it — a pass stopped after replying and before resolving, or another invocation, may have posted it — then take the row's remaining step.
+
 **Caller policy.** In no-manifest mode, assess whether the change fulfills its stated purpose
 and applicable obligations without demonstrated defects or material quality costs in its
 supported use and expected maintenance. Pass those claims to each inspection. Grades describe
