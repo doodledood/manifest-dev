@@ -1126,3 +1126,24 @@ def test_a_hand_run_told_to_land_is_not_stopped_by_its_own_claim(root: Path) -> 
     )
     assert "a person other than the identity it writes as is assigned" in run
     assert "a person holds the claim" not in landing
+
+
+# A picker's claim written as the automation identity reads as an interrupted unattended attempt,
+# and orchestrate recovers it with a run on the Ticket the person is working.
+@pytest.mark.parametrize("root", [SOURCE_SKILLS, DIST_SKILLS], ids=["source", "codex"])
+def test_a_persons_claim_is_never_written_as_the_automation_identity(
+    root: Path,
+) -> None:
+    picker = flat(skill_text(root, "next-ticket"))
+    convention = flat(convention_text(root))
+    assert (
+        "Where this session writes as the store config's automation identity" in picker
+    )
+    assert (
+        "assign the person instead where the venue can name them, and otherwise leave the "
+        "Ticket unclaimed and say why" in picker
+    )
+    assert (
+        "a person claims in their own name, never the automation identity's"
+        in convention
+    )
