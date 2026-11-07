@@ -70,7 +70,7 @@ Check: read
 
 ### slow-sim
 Run: `scripts/drive-skill.sh hillclimb verification/prompts/hillclimb-slow-sim.md --scaffold verification/fixtures/climb-slow-sim --tools --max-turns 300`
-Proves: the climb stages its measure: before trusting `measure.quick_check` it shows it with a known-worse version under each condition people meet the artifact in — motion against the still, and every preset rather than `grid` alone — finds that it passes a version that moves badly, and extends the check or sends those conditions to `measure.full`; each round makes one change aimed at a diagnosed cause; kept changes become the current best only once `measure.full` confirms them; no more than 8 runs of `measure.full`; the frame budget holds in every kept version; the final comparison against the original uses `measure.full`; the report names each condition the quick check does not cover.
+Proves: the climb stages its measure: before trusting `measure.quick_check` it shows it with a known-worse version under each condition people meet the artifact in — motion against the still, and every preset rather than `grid` alone — finds that it passes a version that moves badly, and extends the check or sends those conditions to `measure.full`; each round aims at a diagnosed cause, screening candidates on the proven cheap check; kept changes become the current best only once `measure.full` confirms them; no more than 8 runs of `measure.full`; the frame budget holds in every kept version; the final comparison against the original uses `measure.full`; the report names each condition the quick check does not cover.
 Check: read
 
 ## Gotchas
