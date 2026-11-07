@@ -31,7 +31,7 @@ The one unchanged-head skip is a `--loop` wake after that invocation's first pas
 
 ## Per-Thread Verification
 
-This verification covers every unresolved thread we authored or replied to, and every thread opened by our finding that someone other than this account resolved — a resolution says nothing about whether the concern is gone, so it is verified like a reply. A resolved judgment-marked thread is recovered by *Judgment continuation* instead. For each, invoke the `review-pr-thread-verify` skill. Supply the evidence for that thread:
+This verification covers every unresolved thread we authored or replied to, and every thread opened by our finding that someone other than this account resolved — a resolution says nothing about whether the concern is gone, so it is verified like a reply. Such a resolved thread is verified once per invocation: on a `--loop` wake, only when a reply, a commit touching its range, or a new resolution arrived after the checkpoint that recorded its disposition. A resolved judgment-marked thread is recovered by *Judgment continuation* instead. For each, invoke the `review-pr-thread-verify` skill. Supply the evidence for that thread:
 
 - The original finding: anchor, body, review commit/head SHA, and concrete concern.
 - Whether the thread is resolved, and by whom.
@@ -50,7 +50,7 @@ It returns exactly one disposition, a short reason, and a drafted reply where th
 | `addressed-by-valid-reply` | Post the concession, then resolve. | Post the concession; leave it resolved. |
 | `false-positive-or-stale` | Post the correction, then resolve. | Post the correction; leave it resolved. |
 | `needs-our-pushback` | Post the reply; keep it pending. | Reopen it, post the reply; keep it pending. |
-| `still-pending` | Leave it open; post nothing. | Not returned: a resolution with no fix and no conceding reply leaves the concern standing. |
+| `still-pending` | Leave it open; post nothing. | Someone resolved it again after our pushback, with no fix or reply since: leave it resolved and post nothing, since our argument is already on the thread. Its concern still stands: carry it into the cycle summary and count it against acceptance. |
 
 Post a drafted reply only when, read fresh just before posting, our latest message on that thread does not already say it — a pass stopped after replying and before resolving, or another invocation, may have posted it — then take the row's remaining step.
 

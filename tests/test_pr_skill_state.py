@@ -92,7 +92,31 @@ def test_a_thread_resolved_without_a_fix_is_verified_and_reopened() -> None:
         text = _text(path)
         assert "whether the thread is resolved, and by whom" in text, path
         assert "A resolution is not a fix" in text, path
-        assert "`still-pending` — The thread is unresolved" in text, path
+        assert "`still-pending` — No relevant new author reply" in text, path
+
+
+def test_a_resolved_thread_has_an_end_after_our_pushback() -> None:
+    """Someone re-resolves our thread after our pushback with nothing new; we must not loop.
+
+    A thread someone else resolved stayed in scope with no end: every wake verified it again,
+    and a re-resolution after our pushback counted as new signal, so the verifier owed a reply
+    while its own rule forbade repeating the argument, and the pass reopened the thread again.
+    """
+    for path in _copies("review-pr/SKILL.md"):
+        text = _text(path)
+        assert "Such a resolved thread is verified once per invocation" in text, path
+        assert (
+            "Someone resolved it again after our pushback, with no fix or reply since: leave it"
+            " resolved and post nothing" in text
+        ), path
+        assert "count it against acceptance" in text, path
+        assert "Not returned: a resolution with no fix" not in text, path
+    for path in _copies("review-pr-thread-verify/SKILL.md"):
+        text = _text(path)
+        assert (
+            "A resolution after our pushback, with no new reply or fix, is no new signal"
+            in text
+        ), path
 
 
 def test_posting_prunes_against_marker_comments_read_just_before() -> None:
