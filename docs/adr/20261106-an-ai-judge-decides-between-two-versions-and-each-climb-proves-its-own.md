@@ -1,7 +1,7 @@
 # ADR: An AI judge in a hill-climb decides between two versions, and each climb builds and proves its own
 
 ## Status
-Accepted
+Accepted; narrowed by 20261107-climb-guidance-states-outcomes-and-rulings-not-steps: the judge's proof stays as an outcome in define's `HILLCLIMB.md`; `AI_JUDGE.md`, the vote mechanics, the teaching procedure and the proposer's separate context are retired
 
 ## Area
 Task guidance
@@ -48,7 +48,7 @@ Context and structure help: assessing each version against the goal before decid
 - A judge without results from real use cannot know what people will actually do, so a climb toward a behavior ends with a prediction until a test on real use runs.
 
 ## Enforced by
-`tests/test_hillclimb.py` (`test_the_judge_decides_between_versions_sees_no_examples_and_keeps_guards_off`) fails when the judge reference drops the verdict between versions, the ban on examples, the per-climb proof or the guards' off default. Whether a judge fits its task stays judgment, read in the `hillclimb` recipe's `quick-text`, `attended-copy` and `signup-page` scenarios.
+partly — `tests/test_hillclimb.py` (`test_the_judge_is_proven_sees_no_examples_and_ships_no_reference`) fails when define's `HILLCLIMB.md` drops the judge's comparison of two versions, its proof, the ban on examples or the guards' off default. The retired mechanics are held by nothing, per `20261107-climb-guidance-states-outcomes-and-rulings-not-steps`. Whether a judge fits its task stays judgment, read in the `hillclimb` recipe's `quick-text`, `attended-copy` and `signup-page` scenarios.
 
 ## Revisit when
 Climbs' final checks or later results from real use overturn their judges' winners more often than they confirm them; read in the climbs' reports and execution logs.

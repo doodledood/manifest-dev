@@ -1,7 +1,7 @@
 # ADR: Hill-climbing runs through figure-out, define and do, started by an optional thin /hillclimb command
 
 ## Status
-Accepted
+Accepted; narrowed by 20261107-climb-guidance-states-outcomes-and-rulings-not-steps: no judge reference ships, and the command routes only, restating no climb rule
 
 ## Area
 Task guidance
@@ -48,7 +48,7 @@ This decision sits inside what the North Star's *Purpose* names: work moves towa
 - `HILLCLIMB.md` is the first task file that composes onto any domain's file as well as its base. Both skills' task-file indexes state it.
 
 ## Enforced by
-`tests/test_hillclimb.py` (`test_command_hands_the_climb_to_figure_out_define_and_do` and `test_each_climb_and_measure_file_has_its_mirror_and_composes_onto_measure`) fails when the command stops handing off to figure-out, define and do or gains a loop of its own, or when a climb or measure task file loses its mirror or its composition. Whether any other machinery is added stays judgment.
+`tests/test_hillclimb.py` (`test_command_routes_and_restates_no_climb_rule` and `test_each_climb_and_measure_file_has_its_mirror_and_composes_onto_measure`) fails when the command stops handing off to figure-out, define and do or restates a climb rule, or when a climb or measure task file loses its mirror or its composition. Whether any other machinery is added stays judgment.
 
 ## Revisit when
 Climbs miscount rounds or votes, or a re-run fails to find the earlier climb's record, often enough that prose cannot carry the bookkeeping; read in the climbs' reports and execution logs.
