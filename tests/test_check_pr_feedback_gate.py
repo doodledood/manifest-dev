@@ -152,3 +152,15 @@ def test_addressing_signal_is_tied_to_each_actual_item() -> None:
     assert "a response clearly tied to that item" in body
     assert "Identify the addressing signal for each item" in body
     assert "without judging the substantive validity" in body
+
+
+def test_the_tending_identity_can_address_a_body() -> None:
+    # ADR: 20261107-the-tending-identity-can-answer-a-review-body. A tender with push
+    # access who is not the PR's author answered a body, and only the author's reply
+    # counted, so the gate failed until the run escalated a block that did not exist.
+    _title, body = gate_three()
+    assert re.search(
+        r"addressed when the PR author, or the identity this inspection runs as — the one"
+        r" tending the PR — has later replied",
+        body,
+    ), f"{CHECK_PR.name} gate 3 counts only the PR author's reply; see the ADR above"
