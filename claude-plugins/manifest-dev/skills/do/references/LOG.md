@@ -56,11 +56,14 @@ Record what the finished state will not reconstruct on its own:
 `define` rewrites the Manifest in place and the Manifest carries no version, so the log is what
 tells a resumed run whether a verdict read the text that stands now. Record with each verdict the
 SHA-256 of the Manifest file it was assessed against. Before invoking `define`, append an
-`Amendment pending` entry carrying the current hash; after re-reading the result, close it with
+`Amendment pending` entry carrying the current hash and the change asked of `define` with its
+evidence, as passed to it; after re-reading the result, close it with
 the new hash and the gates whose criteria — their text and every Manifest section their claim
 reads — changed. On resume, hash the Manifest. A verdict carrying the current hash assessed the
 current criteria; one carrying an older hash did too only where closed amendments lead from its
 hash to the current one without changing that gate's criteria, or a copy of the Manifest it read
 shows them unchanged, and is otherwise unverified. A
-pending entry left open means its amendment may not have landed: re-read the Manifest and confirm
-it, or make it again.
+pending entry left open means its amendment may not have landed. When the Manifest still hashes to
+the entry's hash, it did not: make it again from the entry. Otherwise re-read the Manifest and
+confirm the change the entry names is there; where it is not, `SKILL.md` → *Amendments* says
+when to make it again.

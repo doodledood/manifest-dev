@@ -86,6 +86,14 @@ def test_a_resumed_run_detects_a_changed_manifest() -> None:
         assert "A pending entry left open means its amendment may not have landed" in (
             text
         ), path
+        # A resumed run told to make a lost amendment again needs the amendment itself, and an
+        # unchanged hash is the one sign that it never landed.
+        assert (
+            "the change asked of `define` with its evidence, as passed to it" in text
+        ), path
+        assert (
+            "When the Manifest still hashes to the entry's hash, it did not" in text
+        ), path
     for path, text in flat("do/SKILL.md"):
         assert (
             "mark the amendment pending there before invoking `define` and close it after"
