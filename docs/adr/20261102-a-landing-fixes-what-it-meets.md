@@ -1,7 +1,7 @@
 # ADR: A landing fixes what it meets — a cross-cut extends the run, and a red base gets one repair Ticket
 
 ## Status
-Accepted
+Accepted; amended by 20261107-automation-writes-beside-what-a-person-wrote-never-over-it: the repair Ticket is named in an orchestrator's pause, a record apart from a person's `Paused:` line, and re-read after it is named
 
 ## Area
 Ticketing

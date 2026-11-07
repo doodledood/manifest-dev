@@ -904,6 +904,7 @@ def test_the_pause_line_is_never_erased_and_one_cause_pauses_once() -> None:
 # The pause's and the page link's venue renderings keep automation's writes off the text a person
 # edits: on GitHub, automation never rewrites the tracking issue's body; in a file store, an
 # orchestrator edits only its own lines.
+# Holds docs/adr/20261107-automation-writes-beside-what-a-person-wrote-never-over-it.md.
 @pytest.mark.parametrize("root", [SOURCE_SKILLS, DIST_SKILLS], ids=["source", "codex"])
 def test_no_automation_write_replaces_a_persons_pause(root: Path) -> None:
     github = flat(ticket_ref(root, "GITHUB_STORE.md"))
@@ -1197,6 +1198,7 @@ def test_a_persons_grant_decision_counts(root: Path) -> None:
 # orchestrate wrote a person's directive into each Ticket's body after a re-read. An edit replaces
 # the whole body, so a person's edit landing between the re-read and the write was lost. Answers
 # now go on the Ticket as their own records, never into its body.
+# Holds docs/adr/20261107-automation-writes-beside-what-a-person-wrote-never-over-it.md.
 @pytest.mark.parametrize("root", [SOURCE_SKILLS, DIST_SKILLS], ids=["source", "codex"])
 def test_a_persons_answer_is_recorded_beside_the_ticket_body(root: Path) -> None:
     answers = flat(section(orchestrate_text(root), "The person's answers"))

@@ -1,7 +1,7 @@
 # ADR: The comment the venue created first decides each Ticket fact
 
 ## Status
-Accepted; amended by 20261107-a-ready-mark-whose-orchestrator-stopped-is-adopted-not-relaunched: an orchestrator adopting a ready mark another orchestrator's timed-out run left is the mark's one other writer
+Accepted; amended by 20261107-a-ready-mark-whose-orchestrator-stopped-is-adopted-not-relaunched: an orchestrator adopting a ready mark another orchestrator's timed-out run left is the mark's one other writer; amended by 20261107-automation-writes-beside-what-a-person-wrote-never-over-it: answer records each count, in the order created, as an exception to the first-created rule
 
 ## Area
 Ticketing
