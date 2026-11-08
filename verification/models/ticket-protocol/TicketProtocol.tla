@@ -90,9 +90,10 @@ Init ==
 
 \* The sort, category by category, in its order.
 \* Quote orchestrate/SKILL.md: "Each Ticket takes the first category below whose conditions hold, so it is in exactly one."
-\* Quote orchestrate/SKILL.md: "A run that is not yours belongs to another orchestrator until its timeout has passed, live or not; leave its Ticket alone until then."
-\* Quote ticket-up/references/TICKET_CONVENTION.md: "when it is deferred — its `Revisit when` condition reads as met at the source it names"
-\* Quote orchestrate/SKILL.md: "it is deferred and its signpost reads as unmet"
+\* Quote orchestrate/SKILL.md: "A run that is not yours belongs to another orchestrator until row *Take over* lets you take its Ticket; leave it alone until then"
+\* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "| **Take over** | The run facts name another orchestrator's run whose timeout has passed |"
+\* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "when it is deferred, its `Revisit when` condition read as met at the source it names"
+\* Quote orchestrate/SKILL.md: "*Left alone*, each with its reason: the state *Dispatchable* or row *Launch* asks for that it lacks"
 LeftAlone(o) ==
   \/ closed \/ mark \/ claim = "person"
   \/ HasRec /\ ~Owner(o) /\ ~TheRec.timedOut
@@ -102,20 +103,22 @@ LeftAlone(o) ==
 \* Quote orchestrate/SKILL.md: "*Running*: its run facts name a live run."
 Running == NamedLive
 
-\* Quote orchestrate/SKILL.md: "*To land*: its record is marked ready to land by a run of yours, or by another orchestrator's run whose timeout has passed, which you adopt before its landing turn (*Taking over*); no run is live; and the Ticket was not reopened after its pull request merged."
+\* Quote orchestrate/SKILL.md: "*To land*: ready to land and not reopened after its merge, under a run of yours or one you adopt before its landing turn (row *Adopt a ready mark*)."
 \* Pre-fix: a ready mark another orchestrator's run left fits no category.
 ToLand(o) == ReadyValid /\ ~Reopened /\ (Owner(o) \/ ~PreFix)
 
-\* Quote orchestrate/SKILL.md: "*To recover*: the automation identity holds its claim, no run is live"
-\* Quote orchestrate/SKILL.md: "or marked ready a pull request that merged before the Ticket was reopened"
+\* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "**To recover**: held by automation, no live run, and the last run wrote no outcome"
+\* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "marked ready a pull request that merged before the Ticket was reopened"
 ToRecover == claim = "auto" /\ (~HasRec \/ ~ReadyValid \/ Reopened)
 
-\* Quote orchestrate/SKILL.md: "*Ready*: open, unclaimed, every dependency closed, no escalation mark"
-\* Quote orchestrate/SKILL.md: "its signpost read as met at its source when it is deferred"
+\* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "**Ready**: open, unclaimed, every Ticket it depends on closed"
+\* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "**Dispatchable**: ready, not escalated"
+\* Quote orchestrate/SKILL.md: "*Ready*: dispatchable, and matching any type filter."
 Ready == claim = "none"
 
 \* Quote orchestrate/SKILL.md: "Read every Ticket in scope whole"
-\* Quote orchestrate/SKILL.md: "Once it has passed, that orchestrator has stopped — one still checking in refreshes the start time on a Ticket it holds ready to land (*Check in*) — and its Ticket sorts as below like one of yours (*Taking over*)."
+\* Quote orchestrate/SKILL.md: "from then on it sorts as below like one of yours (*Taking over*)"
+\* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "so no other orchestrator adopts the mark while its holder checks in"
 ORead(o) ==
   /\ opc[o] = "read" /\ ~LeftAlone(o) /\ ~Running
   /\ \/ ToLand(o) /\ Owner(o) /\ opc' = [opc EXCEPT ![o] = "land"] /\ UNCHANGED saw
@@ -127,7 +130,7 @@ ORead(o) ==
 
 \* Adopting a ready mark: the run facts and the mark take a run ID of o's own, with a fresh start
 \* time, the head and base kept, and no run started; the next read is the re-read after writing.
-\* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "The ready mark has one other writer: an orchestrator adopting it once the timeout of the run that wrote it has passed and no run is live."
+\* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "| **Adopt a ready mark** | Ready to land, the timeout of the run that wrote the mark passed, and no live run | An orchestrator |"
 \* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "keeps the head and base commits the mark names, the launch count and whether the last launch repaired a landing, and starts no run"
 \* Quote orchestrate/SKILL.md: "Re-read the Ticket after an adoption"
 OAdopt(o) ==
@@ -141,7 +144,7 @@ OAdopt(o) ==
 
 \* Quote orchestrate/SKILL.md: "Claim it and write the launch facts"
 \* Quote orchestrate/SKILL.md: "Create the attempt record when the Ticket has none."
-\* Quote orchestrate/SKILL.md: "A takeover writes a fresh start time"
+\* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "The run facts name a run of its own with a fresh start time, so its timeout runs from the takeover"
 \* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "A comment edit replaces the whole comment, so the last writer wins"
 OClaim(o) ==
   /\ opc[o] = "claim"
@@ -193,13 +196,13 @@ Relaunch(o) ==   \* launch the run again, which writes fresh run facts
   /\ UNCHANGED <<recs, claim, mark, n>>
 
 \* The landing turn, ticket-up/references/AUTOMATED_EXECUTION.md *Landing* steps 1 to 4.
-\* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "It stops when the Ticket is closed, when a person holds the claim other than the identity it writes as or, on a hand run, the person who started it, or — on an unattended landing — when the Ticket carries the escalation mark"
+\* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "when the Ticket is closed; when a person holds the claim other than the identity it writes as or, on a hand run, the person who started it; or, on an unattended run or landing, when the Ticket is escalated"
 \* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "A merged pull request counts as the Ticket's landing only when the Ticket was not reopened after that merge"
 \* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "When the base has moved since the base commit the record names, the run merges the base in"
 \* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "When the head is not the one the record names, or a required check fails, `orchestrate` relaunches the run to repair it"
 \* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "A Ticket reopened after its merge is new work: the lander stops"
 \* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "When the merge waits only on a review the repository requires, the Ticket waits on the person's list as a held pull request, with no escalation mark"
-\* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "When another protection needs what no run can give, or the pull request was closed without merging, the lander writes the escalation record"
+\* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "When another protection needs what no run can give, or the pull request was closed without merging, the lander escalates"
 \* Quote orchestrate/SKILL.md: "it keeps the turn meanwhile"
 OLand(o) ==
   /\ opc[o] = "land"
@@ -242,8 +245,9 @@ OMerge(o) ==
 ---------------------------------------------------------------------------------------------
 (* The current run of orchestrator o, whose run ID is RunOf(o) *)
 
-\* Quote run-ticket/SKILL.md: "stops when a person is assigned other than the identity it writes as or, on a hand run, the person who started it, when the Ticket is closed, or — on an unattended run — when the escalation mark is on"
-\* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "stops without writing when the run ID there is not its own"
+\* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "when the Ticket is closed; when a person holds the claim other than the identity it writes as or, on a hand run, the person who started it; or, on an unattended run or landing, when the Ticket is escalated"
+\* Quote run-ticket/SKILL.md: "stand down where `../ticket-up/references/AUTOMATED_EXECUTION.md` → *Transitions*, row *Stand down*, says"
+\* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "when the run ID in the record is not its own"
 Stops(o) == ~Named(o) \/ closed \/ claim = "person" \/ mark
 
 \* Quote run-ticket/SKILL.md: "there is nothing to redo only when the pull request's head is the head the record names, the base has not moved, and the recorded evidence still applies to the current criteria and actual subject, including relevant external state"
@@ -386,7 +390,7 @@ WCond == /\ Event("cond") /\ Signpost \in {"unmet", "unreadable"}
          /\ UNCHANGED <<recs, claim, closed, autoClosed, landedNow, mark, prOpen, merged, red, review,
                         branch, base, nextC, opc, saw, lview, n, rpc, rbase, rlocal, rmerged, bad>>
 
-\* Quote orchestrate/SKILL.md: "clearing the mark also clears any automation claim"
+\* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "Not escalated, and any automation claim cleared too"
 \* Quote ticket-up/references/GITHUB_STORE.md: "removes the `escalated` label and any automation assignee"
 WAnswer == /\ mark /\ mark' = FALSE /\ prOpen' = (prOpen \/ ~merged) /\ claim' = "none"
            /\ UNCHANGED <<recs, closed, autoClosed, landedNow, merged, red, review, branch, base, nextC,
@@ -436,7 +440,7 @@ NoLandWhileEscalated == ~bad
 \* Holds docs/adr/20261021-the-north-star-opens-with-its-end-and-signposts-reopen-choices-and-deferred-work.md.
 \* Property: a deferred Ticket is launched only after its condition reads as met at its source;
 \* unmet or unreadable, it is never claimed.
-\* Quote ticket-up/references/TICKET_CONVENTION.md: "A deferred ticket whose source the picker cannot read is not ready and not out of sight"
+\* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "A deferred Ticket whose source cannot be read is not ready"
 LaunchedOnlyWhenMet == [][\A o \in Orchs : (opc[o] = "read" /\ opc'[o] = "claim") => (Signpost = "none" \/ CondReads = "met")]_vars
 
 \* Property: every Ticket marked ready to land is landed, handed to a person through an
@@ -447,7 +451,7 @@ ReadyResolves == [](ReadyValid /\ ~closed => <>(closed \/ mark \/ claim = "perso
 
 \* Property: an orchestrator adopts a ready mark only from a holder that has stopped, so a Ticket
 \* held ready to land never changes hands while its holder still checks in.
-\* Quote orchestrate/SKILL.md: "so no other orchestrator adopts it while you check in"
+\* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "so no other orchestrator adopts the mark while its holder checks in"
 AdoptsOnlyFromAStoppedHolder == [][\A o \in Orchs : (opc[o] = "adopt" /\ opc'[o] = "read") => opc[TheRec.run[1]] = "gone"]_vars
 
 \* Property: a ready pull request held only for a review a person gives is never launched again.

@@ -148,7 +148,7 @@ item.
 | `from` | list of ids, optional | Tickets whose debt this one was written from. | The Ticket's source link. |
 | `kind` | `"debt"` or `"refactor"`, optional | A Ticket the orchestrator wrote from debt, or a structural refactor it proposes. | The Ticket's source link and how it was written. |
 | `grant` | string, `null` or `"never"`, optional | For a Ticket an agent wrote: who granted it Auto, the grant that lets automation take it end to end; `null` while no one has; `"never"` where the person explicitly retains direction, including a refactor proposal without delegated direction. | The grant line on the Ticket. |
-| `repair` | `true`, optional | Set on the repair Ticket an orchestrator's pause names while no person's `Paused:` line holds the effort and no orchestrator's pause stands for a cause no code change can fix: it then runs and lands during the pause, so it never shows as Paused. Under either of those it stops like the rest, so leave it out. | The orchestrator's pause and the person's `Paused:` line on the effort (`../SKILL.md` → *Check in*). |
+| `repair` | `true`, optional | Set on the repair Ticket an orchestrator's pause names while `../../ticket-up/references/AUTOMATED_EXECUTION.md` → *Transitions*, row *Launch a repair Ticket*, lets it through: it then runs and lands during the pause, so it never shows as Paused. Otherwise it stops like the rest, so leave it out. | The orchestrator's pause and the person's `Paused:` line on the effort (`../SKILL.md` → *Check in*). |
 | `auto` | `false`, optional | Set on a Ticket in the plan that does not carry Auto: it runs to its retained decision or acceptance, which can concern a Read, another artifact or landing a pull request. | The Ticket's Auto grant. |
 
 An id in `dependsOn`, `after` or `from` that is not on the page draws no edge.
@@ -167,7 +167,7 @@ use their own types gives `type` only for these five.
 | `landed` | Landed, with the time | Its pull request merged and the Ticket closed. |
 | `held` | Your look | It stopped at a ready pull request or a drafted answer that waits for the person: it has no Auto, or its landing needs the person. |
 | `escalated` | Your answer | It carries an escalation mark: the record on the Ticket that says a person is needed. |
-| `failed` | Launch failed | Its third launch in a row failed, or a landing repair would have taken its launch count past three (`../SKILL.md` → *Launch*), and it went to a person; shown as `failed` rather than `escalated`. |
+| `failed` | Launch failed | Its third launch in a row failed, or a landing repair would have taken its launch count past three (`../../ticket-up/references/AUTOMATED_EXECUTION.md` → *Transitions*, row *Fail a launch*), and it went to a person; shown as `failed` rather than `escalated`. |
 | `grant` | Grant Auto? | An agent wrote it, and in default mode it waits for the person to grant Auto. |
 | `proposal` | Your call | A structural refactor the orchestrator proposes, because one area keeps producing debt. |
 | `queued` | Up next | In the plan and ready, waiting for a free run slot. |

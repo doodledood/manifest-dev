@@ -42,16 +42,32 @@ def section(text: str, heading: str) -> str:
     return text[start : end if end != -1 else len(text)]
 
 
+
+def move_row(root: Path, move: str) -> str:
+    """One row of AUTOMATED_EXECUTION.md → *Transitions*, flattened: where a move's condition lives."""
+    for line in section(automation_text(root), "Transitions").splitlines():
+        if line.startswith(f"| **{move}** |"):
+            return flat(line)
+    raise AssertionError(f"*Transitions* has no row *{move}*")
+
+
+def states(root: Path) -> str:
+    """The *Transitions* section above its table: the states every row names."""
+    text = section(automation_text(root), "Transitions")
+    return flat(text[: text.index("| Move |")])
+
 # Holds the decision in docs/adr/20260812-run-ticket-owns-attempt-not-dispatch.md.
 def test_run_ticket_has_exact_input_and_dispatch_boundaries() -> None:
     text = skill_text(SOURCE_SKILLS, "run-ticket")
 
     assert "identifies exactly one Ticket" in text
     assert "Never scan the store, rank work, or invoke `next-ticket`" in text
-    assert "Do not check for the Auto grant to decide whether to begin" in text
-    assert "a person may invoke\n`run-ticket` on an ungranted Ticket" in text
+    assert "Do not check for the Auto grant or an escalation mark to decide whether to begin" in (
+        flat(text)
+    )
+    assert "Open, whatever its grant or escalation mark" in move_row(SOURCE_SKILLS, "Hand run")
     assert "invoke `auto`" in text
-    assert "A conflicting human claim stops the attempt" in text
+    assert "Any other claim stops the attempt" in flat(text)
 
 
 # Holds the decision in docs/adr/20261018-orchestrate-lands-and-run-ticket-stops-at-a-ready-pull-request.md.
@@ -101,7 +117,7 @@ def test_the_one_landing_procedure_refreshes_checks_the_base_and_closes_after_me
     # and checking the head first stopped the landing before the base was ever merged in.
     steps = [
         "**Re-reads the Ticket.**",
-        "**Checks authority.**",
+        "**Checks authority**",
         "**Checks the base.**",
         "**Refreshes acceptance and the pull request.**",
         "**Merges with the head pinned**",
@@ -109,7 +125,12 @@ def test_the_one_landing_procedure_refreshes_checks_the_base_and_closes_after_me
     ]
     positions = [landing.index(step) for step in steps]
     assert positions == sorted(positions), "the landing steps are out of order"
-    assert "An unattended landing needs Auto still present" in landing
+    assert "**Checks authority**: who may land this Ticket, as *Transitions*, row *Land*, says." in (
+        landing
+    )
+    assert "on an unattended landing, also granted and not escalated" in move_row(
+        SOURCE_SKILLS, "Land"
+    )
     assert "Its head must be the head commit the record names" in landing
     assert "When the base has moved since the base commit the record names" in landing
     # After a base move, only what the base change can reach re-runs.
@@ -125,7 +146,7 @@ def test_the_one_landing_procedure_refreshes_checks_the_base_and_closes_after_me
     )
     assert (
         "When another protection needs what no run can give, or the pull request was closed "
-        "without merging, the lander writes the escalation record" in landing
+        "without merging, the lander escalates (*Transitions*, row *Escalate*)" in landing
     )
     # A review only a person can give holds the pull request without escalating it.
     assert (
@@ -149,12 +170,15 @@ def test_the_one_landing_procedure_refreshes_checks_the_base_and_closes_after_me
         "only when the Ticket was not reopened after that merge" in landing
         and "A Ticket reopened after its merge is new work: the lander stops" in landing
     )
-    assert "on an unattended landing — when the Ticket carries the escalation mark" in (
-        landing
+    assert "on an unattended run or landing, when the Ticket is escalated" in move_row(
+        SOURCE_SKILLS, "Stand down"
+    )
+    assert "on an unattended landing, also granted and not escalated" in move_row(
+        SOURCE_SKILLS, "Land"
     )
     assert "observes the merged state" in landing
     assert "A Ticket closes only after its landing is observed" in landing
-    assert "With Auto, its run closes it once the answer is recorded" in landing
+    assert "granted, its run closes it once the answer is recorded" in landing
     assert "through the venue's normal protected mechanism" in landing
     assert "It never force-pushes a shared branch, bypasses protection" in landing
 
@@ -244,7 +268,10 @@ def test_a_run_fact_counts_only_when_the_automation_identity_wrote_it() -> None:
     # One writer per fact, and a run that is overtaken stops rather than writes.
     record = flat(section(automation_text(SOURCE_SKILLS), "The attempt record"))
     assert "Each fact has one writer." in record
-    assert "stops without writing when the run ID there is not its own" in record
+    assert "a run under rows *Write an outcome* and *Stand down*" in record
+    stand_down = move_row(SOURCE_SKILLS, "Stand down")
+    assert "when the run ID in the record is not its own" in stand_down
+    assert "It stops without writing" in stand_down
     assert "The first live run on a Ticket wins" in run_ticket
 
 
@@ -261,25 +288,31 @@ def test_a_ticket_without_auto_runs_to_a_ready_pull_request_and_never_lands() ->
         "may still be worked by automation, but never completed or landed by it"
         in convention
     )
-    assert "only when its author has write access to the repository" in convention
-    assert "no person is assigned to it" in convention
-    assert "stops at a ready pull request" in convention
-    assert "A ticket whose author lacks write access is never worked unattended" in (
+    assert "only where `AUTOMATED_EXECUTION.md` → *Transitions* calls it dispatchable" in (
         convention
     )
+    assert "stops at a ready pull request" in convention
+    # Dispatchable needs the author's write access or a person's grant or plan approval;
+    # unclaimed comes with *Ready*, so no person is assigned.
+    assert (
+        "Dispatchable**: ready, not escalated, and either granted, written by an author with "
+        "write access to the repository, or included in a plan a person with write access "
+        "approved" in states(SOURCE_SKILLS)
+    )
+    assert "**Ready**: open, unclaimed" in states(SOURCE_SKILLS)
     # The superseded meaning of absence.
     assert "Absence is the fence" not in convention
     assert "not touched by automation at all" not in convention
 
-    assert "allowed under the convention's *The Auto grant*" in orchestrate
-    assert "a person is assigned; its author lacks write access" in orchestrate
-    assert "A Ticket without Auto is never landed here." in orchestrate
-    assert "they never land here" in autonomous
-    assert "never lands it, whatever its prompt says" in run_ticket
-    assert (
-        "Without Auto, mark the answer drafted in the run facts and stop" in run_ticket
+    assert "- *Ready*: dispatchable, and matching any type filter." in orchestrate
+    assert "Row *Land* says which Tickets are landed here." in orchestrate
+    assert "never an orchestrator on an ungranted Ticket, which only a person lands" in (
+        move_row(SOURCE_SKILLS, "Land")
     )
-    assert "A Ticket without Auto is never landed by automation" in landing
+    assert "they never land here" in autonomous
+    assert "row *Land* leaves its landing to a person" in run_ticket
+    assert "Ungranted, mark the answer drafted in the run facts and stop" in run_ticket
+    assert "who may land this Ticket, as *Transitions*, row *Land*, says" in landing
     for venue in ("GITHUB_STORE.md", "FILE_STORE.md"):
         assert "| Author's write access |" in ticket_ref(SOURCE_SKILLS, venue), venue
 
@@ -298,13 +331,18 @@ def test_ticket_up_preserves_auto_authority_boundary() -> None:
     )
     assert "Question Ticket only when the question needs its own lifecycle" in text
     # Two grantors: a person, and orchestrate --autonomous under the criterion.
-    assert "Two grantors exist." in body
-    assert "`orchestrate --autonomous` grants too" in body
+    assert "Who may grant is `references/AUTOMATED_EXECUTION.md` → *Transitions*, row *Grant*." in (
+        body
+    )
+    assert "`orchestrate --autonomous` invokes this skill for a Ticket an agent wrote" in body
     assert "grants only where the criterion above holds" in body
     assert "Record the grantor with the grant" in body
-    assert "carries no Auto, whatever its source carries" in body
-    assert "The run that found the work never grants it" in body
-    assert "merely invoking `run-ticket` manually on a source is not a grant" in body
+    grant = move_row(SOURCE_SKILLS, "Grant")
+    assert "A person with authority to grant, through `ticket-up`" in grant
+    assert "an orchestrator running `--autonomous`" in grant
+    assert "whatever its source carries" in grant
+    assert "Never the run that found the work" in grant
+    assert "a person invoking `run-ticket` on the source grants it nothing" in grant
     assert "Shaped never implies Auto" in text
     assert "must carry Auto" not in text
     # The superseded rule that only a person grants Auto to agent-written work.
@@ -359,7 +397,7 @@ def test_orchestrate_proposes_and_waits_by_default() -> None:
     assert "No answer means stop" in default
     assert "Approving a plan is not an Auto grant." in default
     # Autonomous runs take Auto Tickets end to end and fill slots until nothing is left.
-    assert "Auto Tickets run end to end and land." in autonomous
+    assert "Granted Tickets run end to end and land." in autonomous
     assert "fill useful authorized slots" in autonomous
     assert (
         "For a queue assignment, stop when no ready work is left in scope" in autonomous
@@ -374,10 +412,12 @@ def test_orchestrate_selects_recovers_first_and_leaves_paused_work_alone() -> No
 
     assert "With none named, the whole store" in text
     assert "A Ticket with no type never matches." in text
+    assert "- *To recover*: the state of that name." in text
+    assert "**To recover**: held by automation, no live run" in states(SOURCE_SKILLS)
     assert (
-        "*To recover*: the automation identity holds its claim, no run is live" in text
+        "*Left alone*, each with its reason: the state *Dispatchable* or row *Launch* asks "
+        "for that it lacks" in text
     )
-    assert "*Left alone*, each with its reason: a person is assigned" in text
     assert (
         "Venue items that are not Tickets are never touched as executable work." in text
     )
@@ -392,14 +432,14 @@ def test_orchestrate_rereads_one_ticket_before_each_launch_merge_close_or_mark_c
 ):
     text = flat(orchestrate_text(SOURCE_SKILLS))
 
-    assert "**Re-read that one Ticket.**" in text
+    assert "**Re-read that one Ticket**, and skip it unless" in text
     assert (
-        "its run facts name another orchestrator's run whose timeout has not passed"
-        in text
+        "no run facts naming another orchestrator's run whose timeout has not passed"
+        in move_row(SOURCE_SKILLS, "Launch")
     )
     assert "re-reading the Ticket before each merge, close or mark change" in text
     assert "the first live run on a Ticket wins" in text
-    assert text.index("**Re-read that one Ticket.**") < text.index(
+    assert text.index("**Re-read that one Ticket**") < text.index(
         "**Start a new agent session**"
     )
 
@@ -446,16 +486,20 @@ def test_orchestrate_names_its_failure_and_host_paths() -> None:
     text = flat(orchestrate_text(SOURCE_SKILLS))
     record = flat(section(automation_text(SOURCE_SKILLS), "The attempt record"))
 
+    assert "Launch a failed Ticket again, until that row sends it to a person" in text
     assert (
-        "When the third launch in a row fails, or a landing repair would take the launch count past three, the Ticket goes to a person"
-        in text
+        "The third failed launch in a row, or a landing repair that would take the launch "
+        "count past three, goes to *Escalate* instead" in move_row(SOURCE_SKILLS, "Fail a launch")
     )
     assert "without one it is four hours from the run's start" in record
     assert "A file store gets no parallel runs" in text
     assert "run a batch of one instead" in text
-    assert "While an effort is paused, start nothing in it" in text
+    assert "Hold** a paused effort as row *Hold a paused effort* says" in text
+    assert "Nothing starts in it — no launch, no landing turn — and live runs finish" in (
+        move_row(SOURCE_SKILLS, "Hold a paused effort")
+    )
     assert "say once that two orchestrators landing on it leave a race" in text
-    assert "Take it over by writing a run ID of your own" in text
+    assert "Take it over as that row says, and treat it as yours from then on" in text
     assert "Rebuild the status page" in text
     assert "never read state back from it" in text
 
@@ -481,8 +525,8 @@ def test_orchestrate_tickets_up_debt_and_grants_only_where_it_may() -> None:
     assert "finding a hotspot does not itself authorize the refactor" in text
     # Grants: under the criterion in --autonomous, asked in default mode, never by the finder.
     assert "apply the convention's grant criterion" in autonomous
-    assert "naming `orchestrate --autonomous` as the grantor" in autonomous
-    assert "Each Ticket is judged once: a grant a person withdrew stays withdrawn" in (
+    assert "a grant names `orchestrate --autonomous` as the grantor" in autonomous
+    assert "A judged Ticket is not judged again: a grant a person withdrew stays withdrawn" in (
         autonomous
     )
     assert "Never grant on your own in this mode." in default
@@ -526,7 +570,7 @@ def test_run_ticket_preserves_ticket_identity_and_routes_follow_ups() -> None:
     text = skill_text(SOURCE_SKILLS, "run-ticket")
 
     assert "close the same Ticket as done" in flat(text)
-    assert "Leave the Ticket open" in text
+    assert "It stays open, and keeps Auto when granted" in move_row(SOURCE_SKILLS, "Escalate")
     assert "Escalation ends this attempt, not the work" in flat(text)
     assert "Never close the source or create a replacement Ticket" in flat(text)
     assert "invoke `ticket-up`" in text
@@ -538,9 +582,16 @@ def test_convention_escalation_releases_the_claim_and_marks_the_ticket() -> None
     text = convention_text(SOURCE_SKILLS)
 
     assert "a handoff record carrying a mark automation can recognize" in flat(text)
-    assert "retain Auto when present, and release the claim" in flat(text)
+    assert "as `AUTOMATED_EXECUTION.md` → *Transitions*, row *Escalate*, says" in flat(text)
+    escalate = move_row(SOURCE_SKILLS, "Escalate")
+    assert "then the automation claim released. It stays open, and keeps Auto when granted" in (
+        escalate
+    )
     assert "unattended dispatch skips a marked Ticket" in flat(text)
-    assert "records the continuation context and clears the mark" in flat(text)
+    assert "The mark is cleared as row *Clear the mark* says" in flat(text)
+    assert "A person, after recording the continuation context" in move_row(
+        SOURCE_SKILLS, "Clear the mark"
+    )
     assert "A venue reference maps how the mark renders" in flat(text)
     assert (
         "Unattended dispatch never touches a Ticket carrying the escalation mark"
@@ -556,19 +607,18 @@ def test_run_ticket_escalation_releases_the_claim_and_marks_the_ticket() -> None
 
     assert "<!-- manifest-dev-run-ticket-escalated -->" in text
     assert "apply the venue's escalation mark" in flat(text)
-    assert (
-        "retain its Auto grant when it is still present, and release the automation claim"
-        in flat(text)
-    )
-    assert "never removing a person's" in flat(text)
-    assert (
-        "clearing the mark also clears any automation claim, which makes the Ticket eligible"
-        in flat(text)
+    assert "row *Escalate*, says — the mark first, then the automation claim" in flat(text)
+    assert "never a person's" in flat(text)
+    assert "The mark is cleared as row *Clear the mark* says." in flat(text)
+    assert "Not escalated, and any automation claim cleared too, so it can be dispatchable again" in (
+        move_row(SOURCE_SKILLS, "Clear the mark")
     )
     # Ordering is load-bearing: releasing the claim is itself a dispatch event.
-    assert "release the automation claim — in that order, mark first" in flat(text)
+    assert "Escalated: the escalation record and mark first, then the automation claim released" in (
+        move_row(SOURCE_SKILLS, "Escalate")
+    )
     # An escalation mark is a dispatch rule, enforced by dispatchers rather than here.
-    assert "never stops a person who invokes this skill on it deliberately" in flat(
+    assert "neither stops a person who invokes this skill on a Ticket deliberately" in flat(
         text
     )
     assert "otherwise preserve a claim" not in flat(text)
@@ -580,14 +630,18 @@ def test_orchestrate_excludes_escalated_tickets_where_it_decides() -> None:
     text = flat(orchestrate_text(SOURCE_SKILLS))
 
     # The ready set tests for the mark, not the recovery branch.
-    assert "every dependency closed, no escalation mark" in text
+    assert "- *Ready*: dispatchable, and matching any type filter." in text
+    assert "**Dispatchable**: ready, not escalated" in states(SOURCE_SKILLS)
     # Recovery takes only a run that wrote no outcome, and an escalation is one.
-    assert "its last run wrote no outcome" in text
+    assert "the last run wrote no outcome" in states(SOURCE_SKILLS)
     assert "an escalation" in flat(
         section(automation_text(SOURCE_SKILLS), "The attempt record")
     )
     # And the launch re-read tests for it again, where it decides to start.
-    assert "it carries the escalation mark" in text
+    assert "skip it unless `../ticket-up/references/AUTOMATED_EXECUTION.md` → *Transitions*, row *Launch*, still lets you launch it" in (
+        text
+    )
+    assert move_row(SOURCE_SKILLS, "Launch").startswith("| **Launch** | Dispatchable;")
 
 
 # Holds the decision in docs/adr/20260825-escalation-clears-the-claim-and-carries-its-own-mark.md.
@@ -601,7 +655,9 @@ def test_github_venue_renders_the_escalation_mark_as_a_label() -> None:
     )
     assert "removes the `escalated` label and any automation assignee" in flat(text)
     assert "removes the `escalated` label" in flat(text)
-    assert "it also requires the absence of the `escalated` label" in flat(text)
+    assert "the `escalated` label, the `auto` label and the author's write access, as `AUTOMATED_EXECUTION.md` → *Transitions* defines *Ready* and *Dispatchable*" in (
+        flat(text)
+    )
     assert "assign the person needed next" not in flat(text)
     # Tidying surfaces a stale escalation; only the continuation step clears the mark.
     assert "clearing that label belongs to the continuation step" in flat(text)
@@ -634,9 +690,7 @@ def test_human_picker_needs_no_escalation_special_case() -> None:
     """Releasing the claim is what lets the selector rank escalated work unchanged."""
     text = skill_text(SOURCE_SKILLS, "next-ticket")
 
-    assert "keep only ready Tickets: open, unclaimed, all dependencies done" in flat(
-        text
-    )
+    assert "keep only ready Tickets, as *Transitions* defines them" in flat(text)
     assert "escalat" not in text.lower()
 
 
@@ -659,12 +713,12 @@ def test_ticket_execution_skills_ship_on_every_distribution() -> None:
         orchestrate = flat(skill_text(skills_root, "orchestrate"))
         assert "name: orchestrate" in orchestrate
         assert "Without it, propose each plan and wait for approval." in orchestrate
-        assert "**Re-read that one Ticket.**" in orchestrate
+        assert "**Re-read that one Ticket**" in orchestrate
         for reference in ("PROPOSE_AND_WAIT.md", "AUTONOMOUS.md"):
             assert (skills_root / "orchestrate" / "references" / reference).is_file()
 
         ticket_up = skill_text(skills_root, "ticket-up")
-        assert "carries no Auto, whatever its source carries" in ticket_up
+        assert "A follow-up gets Auto only as that row says." in ticket_up
         assert "Shaped never implies Auto" in ticket_up
 
         selector = skill_text(skills_root, "next-ticket")
@@ -674,7 +728,8 @@ def test_ticket_execution_skills_ship_on_every_distribution() -> None:
         convention = convention_text(skills_root)
         assert "expected project value lost while work waits" in convention
         assert "urgent → unblocking → impact → cheap" not in convention
-        assert "retain Auto when present, and release the claim" in flat(convention)
+        assert "row *Escalate*, says" in flat(convention)
+        assert "It stays open, and keeps Auto when granted" in move_row(skills_root, "Escalate")
         assert "transfer or preserve its claim" not in flat(convention)
 
         assert "This is the one landing procedure." in flat(
@@ -703,11 +758,11 @@ def test_a_runs_outcomes_are_defined_once_and_a_drafted_answer_waits_on_the_pers
 
     orchestrate = flat(orchestrate_text(SOURCE_SKILLS))
     assert (
-        "*Answered*: its record holds a drafted answer, no trusted revision is pending and no run is live."
+        "*Answered*: an answer drafted, no trusted revision pending and no live run."
         in (orchestrate)
     )
-    assert "its last run wrote no outcome (*The attempt record* lists them)" in (
-        orchestrate
+    assert "a **failed launch**, a last run no longer live that wrote no outcome" in (
+        states(SOURCE_SKILLS)
     )
     run_ticket = flat(skill_text(SOURCE_SKILLS, "run-ticket"))
     assert (
@@ -789,20 +844,21 @@ def test_each_ticket_fact_keeps_one_writer() -> None:
     assert "Re-read the record and the Ticket before each write and each push" in (
         run_ticket
     )
-    assert (
-        "The run also stops when a person is assigned other than the identity it writes as "
-        "or, on a hand run, the person who started it, when the Ticket is closed, or — on an "
-        "unattended run — when the escalation mark is on." in run_ticket
+    assert "row *Stand down*, says" in run_ticket
+    assert "when the Ticket is closed; when a person holds the claim" in move_row(
+        SOURCE_SKILLS, "Stand down"
     )
     assert "the run the record names merges what is there and pushes again" in (
         run_ticket
     )
     # A takeover restarts the timeout, so two orchestrators do not trade a Ticket.
-    assert "A takeover writes a fresh start time" in orchestrate
+    assert "a run of its own with a fresh start time, so its timeout runs from the takeover" in (
+        move_row(SOURCE_SKILLS, "Take over")
+    )
     # Holds docs/adr/20261107-a-ready-mark-whose-orchestrator-stopped-is-adopted-not-relaunched.md:
     # the ready mark's only other writer is an orchestrator adopting it, which starts no run.
     assert "The ready mark has one other writer: an orchestrator adopting it" in record
-    assert "and starts no run" in record
+    assert "and starts no run" in move_row(SOURCE_SKILLS, "Adopt a ready mark")
     assert record.count("other writer") == 1
 
 
@@ -826,20 +882,20 @@ def test_orchestrate_sorts_each_ticket_into_one_category_and_keeps_checking_in()
     positions = [orchestrate.index(f"- {name}") for name in order]
     assert positions == sorted(positions), "the categories are out of order"
     # An escalation that ended before its claim was released is recovered once the mark is gone.
-    assert "or wrote an escalation whose mark is now gone" in orchestrate
+    assert "wrote an escalation whose mark is now gone" in states(SOURCE_SKILLS)
     # The launch count resets through the launch rule alone, so it keeps one writer.
-    assert (
-        "clearing the mark also clears any automation claim, so the Ticket is ready again"
-        in (orchestrate)
+    assert "clear the escalation mark (`../ticket-up/references/AUTOMATED_EXECUTION.md` → *Transitions*, row *Clear the mark*)" in (
+        orchestrate
+    )
+    assert "any automation claim cleared too, so it can be dispatchable again" in (
+        move_row(SOURCE_SKILLS, "Clear the mark")
     )
     assert "resets the launch count" not in orchestrate
     # A Ticket reopened after its merge is launched again, never given a landing turn.
+    assert "*To land*: ready to land and not reopened after its merge" in orchestrate
     assert (
-        "and the Ticket was not reopened after its pull request merged" in orchestrate
-    )
-    assert (
-        "or marked ready a pull request that merged before the Ticket was reopened"
-        in (orchestrate)
+        "marked ready a pull request that merged before the Ticket was reopened"
+        in states(SOURCE_SKILLS)
     )
     # Tickets waiting to land keep the check-ins going.
     assert (
@@ -863,9 +919,15 @@ def test_debt_and_grants_are_decided_once_and_a_persons_no_stands() -> None:
     convention = flat(convention_text(SOURCE_SKILLS))
 
     assert "when this orchestrator recorded its landing" in orchestrate
-    assert "a person being asked is recorded as a withhold naming them" in orchestrate
-    assert "a withhold naming the person as asked" in default
-    assert "any grant the Ticket already carries is removed" in default
+    assert "rows *Grant* and *Withhold*" in orchestrate
+    assert "in the default mode before it asks a person, naming that person as asked" in (
+        move_row(SOURCE_SKILLS, "Withhold")
+    )
+    assert "naming the person as asked" in default
+    assert "A grant they decline is recorded as row *Decline or withdraw* says" in default
+    assert "Judged and ungranted, with any grant removed" in move_row(
+        SOURCE_SKILLS, "Decline or withdraw"
+    )
     assert (
         "a withhold naming a person who was asked leaves the grant to that person"
         in (autonomous)
@@ -888,15 +950,16 @@ def test_the_pause_line_is_never_erased_and_one_cause_pauses_once() -> None:
     orchestrate = flat(orchestrate_text(SOURCE_SKILLS))
     status_page = flat(orchestrate_text(SOURCE_SKILLS, "STATUS_PAGE.md"))
 
-    assert "one is enough for a required check that fails the same way on the base" in (
-        orchestrate
+    assert "**Pause** where row *Pause by an orchestrator* applies" in orchestrate
+    assert "one Ticket for a required check that fails the same way on the base" in (
+        move_row(SOURCE_SKILLS, "Pause by an orchestrator")
     )
     # Any orchestrator lifts a pause an orchestrator wrote, so one that outlives its writer ends.
     assert "An orchestrator's pause keeps the check-ins going" in orchestrate
-    assert (
-        "once the cause is fixed any orchestrator removes that pause. A person's `Paused:` "
-        "line is theirs to remove." in orchestrate
-    )
+    assert "lift it as row *Lift a pause* says" in orchestrate
+    lift = move_row(SOURCE_SKILLS, "Lift a pause")
+    assert "An orchestrator's pause whose cause is fixed | Any orchestrator" in lift
+    assert "Only a person removes a person's line" in lift
     assert "or an effort in scope carries an orchestrator's pause" in orchestrate
     assert "Write it only when it is absent or its page no longer opens" in orchestrate
     # A re-read before rewriting a shared body narrows a race and cannot close it, so a person's
@@ -951,12 +1014,13 @@ def test_a_red_base_gets_one_repair_ticket(root: Path) -> None:
     )
     assert "unless making that check pass is the Ticket's own work" in run_ticket
     # The effort pauses once on the cause.
-    assert "one is enough for a required check that fails the same way on the base" in (
-        orchestrate
+    assert "one Ticket for a required check that fails the same way on the base" in (
+        move_row(SOURCE_SKILLS, "Pause by an orchestrator")
     )
     # One repair Ticket per cause, written in either mode and deduplicated.
-    assert "A base check that a code change can fix gets one repair Ticket instead" in (
-        orchestrate
+    assert "A code-fixable cause gets one repair Ticket instead" in orchestrate
+    assert "whose pause names no open repair Ticket" in move_row(
+        SOURCE_SKILLS, "Write a repair Ticket"
     )
     assert "scoped to making that check pass on the base, in either mode" in orchestrate
     assert "`ticket-up` reuses an open Ticket that already covers it" in orchestrate
@@ -968,18 +1032,20 @@ def test_a_red_base_gets_one_repair_ticket(root: Path) -> None:
     # holds, and never while a person's pause holds — a person's pause stops automation
     # entirely — nor while a pause for an outage stands, where every run of it would fail
     # and its third failure would escalate it.
+    assert "letting through only what row *Launch a repair Ticket* lets through" in orchestrate
     assert (
-        "The one exception is the repair Ticket an orchestrator's pause names, and only while "
-        "no person's `Paused:` line holds and no orchestrator's pause stands for a cause no "
-        "code change can fix: either stops it like the rest" in orchestrate
+        "Paused only by orchestrator's pauses, each for a code-fixable cause, with no person's "
+        "`Paused:` line; the Ticket is the repair Ticket a pause names"
+        in move_row(SOURCE_SKILLS, "Launch a repair Ticket")
     )
     assert "no landing turn — except the repair Ticket" not in orchestrate
     # Its Auto comes from the mode's grant step, never from the run that found the failure.
     assert "goes to the mode's grant step like any Ticket an agent wrote" in orchestrate
-    assert "names no open repair Ticket for such a cause" in orchestrate
+    assert "Where row *Write a repair Ticket* applies, write one" in orchestrate
     assert (
-        "while that check still fails the same way on the base, write one"
-        in orchestrate
+        "Paused by an orchestrator for a code-fixable cause whose pause names no open repair "
+        "Ticket, while that check still fails the same way on the base"
+        in move_row(SOURCE_SKILLS, "Write a repair Ticket")
     )
     assert (
         "it is the pause's one item on the list of what waits on the person"
@@ -1095,7 +1161,8 @@ def test_trusted_feedback_resumes_the_same_ticket_without_counting_as_failure() 
     assert "For a held result with no live run" in protocol
     assert "the next run resumes ownership" in protocol
     assert "A trusted revision request continues the same Ticket" in run
-    assert "or a trusted revision request is pending" in coordinator
+    assert "or a trusted revision request is pending" in states(SOURCE_SKILLS)
+    assert "- *To recover*: the state of that name." in coordinator
     assert "for a launch a trusted revision request starts" in flat(
         section(automation_text(SOURCE_SKILLS), "The attempt record")
     )
@@ -1137,14 +1204,12 @@ def test_automation_releases_its_claim_when_it_closes_a_ticket(root: Path) -> No
     github = flat(ticket_ref(root, "GITHUB_STORE.md"))
     files = flat(ticket_ref(root, "FILE_STORE.md"))
     assert (
-        "release the claim when the store's automation identity holds it, so a Ticket "
-        "reopened later is takeable" in convention
+        "release the claim when the store's automation identity holds it (`AUTOMATED_EXECUTION.md` "
+        "→ *Transitions*, row *Close*), so a Ticket reopened later is takeable" in convention
     )
     assert "closes the Ticket, and then releases the automation claim" in landing
-    assert (
-        "its run closes it once the answer is recorded, and then releases its claim"
-        in (landing)
-    )
+    assert "granted, its run closes it once the answer is recorded" in landing
+    assert "Closed, then the automation claim released" in move_row(root, "Close")
     assert (
         "close the same Ticket as done once the answer is recorded, and then release the "
         "automation claim" in run
@@ -1152,9 +1217,7 @@ def test_automation_releases_its_claim_when_it_closes_a_ticket(root: Path) -> No
     assert "and remove the automation assignee, never a person's" in github
     assert "empty the `Claimed by:` line when automation holds it" in files
     # A Ticket closed before its claim was released is still recovered once reopened.
-    assert "or closed the Ticket, which was then reopened" in flat(
-        skill_text(root, "orchestrate")
-    )
+    assert "or closed the Ticket, which was then reopened" in states(root)
 
 
 # A hand run told to land claims the Ticket as the account it writes as, a person's; Landing step 1
@@ -1164,13 +1227,17 @@ def test_automation_releases_its_claim_when_it_closes_a_ticket(root: Path) -> No
 def test_a_hand_run_told_to_land_is_not_stopped_by_its_own_claim(root: Path) -> None:
     landing = flat(section(automation_text(root), "Landing"))
     run = flat(skill_text(root, "run-ticket"))
-    assert (
-        "It stops when the Ticket is closed, when a person holds the claim other than the "
-        "identity it writes as or, on a hand run, the person who started it, or — on an "
-        "unattended landing — when the Ticket carries the escalation mark" in landing
+    stand_down = move_row(root, "Stand down")
+    assert "It stands down as *Transitions*, row *Stand down*, says" in landing
+    assert "stand down where `../ticket-up/references/AUTOMATED_EXECUTION.md` → *Transitions*, row *Stand down*, says" in (
+        run
     )
-    assert "a person is assigned other than the identity it writes as" in run
-    assert "a person holds the claim;" not in landing
+    assert (
+        "when a person holds the claim other than the identity it writes as or, on a hand "
+        "run, the person who started it; or, on an unattended run or landing, when the "
+        "Ticket is escalated" in stand_down
+    )
+    assert "a person holds the claim;" not in stand_down
 
 
 # A picker's claim written as the automation identity reads as an interrupted unattended attempt,
@@ -1181,17 +1248,14 @@ def test_a_persons_claim_is_never_written_as_the_automation_identity(
 ) -> None:
     picker = flat(skill_text(root, "next-ticket"))
     convention = flat(convention_text(root))
+    assert "Write the claim as *Transitions*, row *Pick*, says" in picker
+    assert "Where the row leaves the Ticket unclaimed, say why." in picker
     assert (
-        "Where this session writes as the store config's automation identity" in picker
+        "a picker never writes the claim as the automation identity, and where it writes as "
+        "that identity it assigns the person where the venue can name them, and otherwise "
+        "leaves the Ticket unclaimed" in move_row(root, "Pick")
     )
-    assert (
-        "assign the person instead where the venue can name them, and otherwise leave the "
-        "Ticket unclaimed and say why" in picker
-    )
-    assert (
-        "A picker claims in the person's name, never the automation identity's"
-        in convention
-    )
+    assert "rows *Pick*, *Hand run* and *Launch*" in convention
 
 
 # next-ticket assigns the person when its session writes as the automation identity, and the person
@@ -1206,23 +1270,17 @@ def test_a_hand_run_works_on_under_the_claim_of_the_person_who_started_it(
     convention = flat(section(convention_text(root), "Lifecycle"))
     run = flat(skill_text(root, "run-ticket"))
     landing = flat(section(automation_text(root), "Landing"))
-    assert "a run that person then starts by hand works on under their claim" in (
-        convention
-    )
+    assert "rows *Pick*, *Hand run* and *Launch*" in convention
     assert "a person claims in their own name, never the automation identity's" not in (
         convention
     )
-    assert (
-        "On a hand run, continue too on a claim the person who started it holds, leaving it "
-        "in their name. A conflicting human claim stops the attempt" in run
-    )
-    assert (
-        "a person is assigned other than the identity it writes as or, on a hand run, the "
-        "person who started it" in run
-    )
+    assert "row *Hand run* for a hand run. Any other claim stops the attempt" in run
+    hand_run = move_row(root, "Hand run")
+    assert "held by the account the run writes as or by the person who started it" in hand_run
+    assert "leaving a claim the person who started it holds in their name" in hand_run
     assert (
         "a person holds the claim other than the identity it writes as or, on a hand run, "
-        "the person who started it" in landing
+        "the person who started it" in move_row(root, "Stand down")
     )
 
 
@@ -1257,7 +1315,7 @@ def test_a_grant_counts_only_by_who_set_it(root: Path) -> None:
     identity = flat(section(automation_text(root), "The automation identity"))
     github = flat(ticket_ref(root, "GITHUB_STORE.md"))
     files = flat(ticket_ref(root, "FILE_STORE.md"))
-    assert "A grant on the ticket counts only by who set it" in convention
+    assert "*The automation identity* there says which grant on the ticket counts" in convention
     assert (
         "It counts when a person with authority to grant set it, or when the automation "
         "identity set it while the deciding grant decision records a grant" in identity
@@ -1265,7 +1323,8 @@ def test_a_grant_counts_only_by_who_set_it(root: Path) -> None:
     assert "The venue reference says how its store reads who set it." in identity
     assert "gh api --paginate repos/<owner>/<repo>/issues/<n>/events" in github
     assert "the `actor` of the last `labeled` event whose label is `auto`" in github
-    assert "either an `auto` label that counts or an author with write access" in github
+    assert "the `auto` label and the author's write access" in github
+    assert "either granted, written by an author with write access" in states(root)
     assert (
         "A line arriving from another branch or an unmerged contribution grants nothing"
         in files
@@ -1384,10 +1443,10 @@ def test_an_orchestrators_pause_is_one_record_per_cause(root: Path) -> None:
     assert "Where two carry the same marker, cause included" in github
     assert "deleted when the pause lifts" not in github
     assert "one `Paused:` line per cause naming the orchestrator's ID" in files
-    assert (
-        "An effort carries one orchestrator's pause per cause, and stays paused while any "
-        "stands." in pauses
+    assert "**paused by an orchestrator** while any orchestrator's pause stands, one per cause" in (
+        states(root)
     )
+    assert "the effort stays paused while any other stands" in move_row(root, "Lift a pause")
 
 
 # Adoption was keyed to the run's timeout, four hours from its start, while a ready pull request held
@@ -1405,19 +1464,15 @@ def test_a_held_ticket_is_adopted_only_once_its_holder_stops_checking_in(
     checkin = flat(section(orchestrate_text(root), "Check in"))
     sort = flat(section(orchestrate_text(root), "Start"))
     autonomous = flat(orchestrate_text(root, "AUTONOMOUS.md"))
-    assert "That timeout stands for the holder's absence, not the run's age" in record
-    assert (
-        "rewrites the start time in its run facts at a check-in once half the timeout has "
-        "passed since it" in record
-    )
+    hold = move_row(root, "Hold a ready mark")
+    assert "That timeout stands for the holder's absence, not the run's age" in hold
+    assert "at a check-in once half the timeout has passed since the start time" in hold
     assert (
         "On each Ticket you hold ready to land, Auto or not, refresh the start time"
         in checkin
     )
-    assert (
-        "one still checking in refreshes the start time on a Ticket it holds ready to land"
-        in sort
-    )
+    assert "until row *Take over* lets you take its Ticket" in sort
+    assert "whose timeout has passed" in move_row(root, "Take over")
     assert (
         "lands at a later orchestrator's landing turn once the person approves"
         not in (autonomous)
@@ -1435,13 +1490,14 @@ def test_a_held_ticket_is_adopted_only_once_its_holder_stops_checking_in(
 @pytest.mark.parametrize("root", [SOURCE_SKILLS, DIST_SKILLS], ids=["source", "codex"])
 def test_an_adoption_keeps_the_landing_repair_row(root: Path) -> None:
     record = flat(section(automation_text(root), "The attempt record"))
+    adopt = move_row(root, "Adopt a ready mark")
+    assert "(*Transitions*, row *Adopt a ready mark*)" in record
     assert (
         "keeps the head and base commits the mark names, the launch count and whether the "
-        "last launch repaired a landing, and starts no run" in record
+        "last launch repaired a landing, and starts no run" in adopt
     )
-    assert (
-        "An adoption is not a launch: the launch count still reads the last launch."
-        in (record)
+    assert "An adoption is not a launch: the launch count still reads the last launch" in (
+        adopt
     )
 
 
@@ -1473,3 +1529,133 @@ def test_a_reused_custom_reference_gains_the_rows_it_lacks(root: Path) -> None:
         "ask what supplies it and add that row before any unattended work on the store"
         in (config)
     )
+
+
+# --- The Ticket protocol's moves have one owner ---------------------------------------------
+#
+# PR #430's audits of these skills found 29 bugs, most of one shape: a fix changed a rule in one
+# file while another file still stated the old one; who an Auto grant counts by was stated three
+# ways, with three conditions. AUTOMATED_EXECUTION.md → *Transitions* now states every state of a
+# Ticket and its effort, every move between them and who may make it, and every other file names
+# the row it relies on. The tests below read the rows from that table, so a row added there is held
+# with no edit here.
+
+TRANSITIONS = "Transitions"
+MOVE_ROW = re.compile(r"^\| \*\*(?P<move>[^*]+)\*\* \| (?P<cells>.+) \|$")
+ACTOR = re.compile(r"^- \*\*(?P<actor>[^*]+)\*\* —", re.MULTILINE)
+ROW_POINTER = re.compile(r"\*Transitions\*, rows? (?P<names>\*[^*]+\*(?:(?:,| and| or) \*[^*]+\*)*)")
+WORD = re.compile(r"[a-z0-9]+(?:['’-][a-z0-9]+)*")
+# A run of this many words from a row's cells, found in another file, is a restatement. Shorter
+# runs are the protocol's shared vocabulary — "held by a person", "the run facts name" — which
+# every file needs to name a state.
+SHINGLE = 8
+
+
+def transitions(root: Path) -> str:
+    return section(automation_text(root), TRANSITIONS)
+
+
+def move_rows(root: Path) -> dict[str, list[str]]:
+    rows: dict[str, list[str]] = {}
+    for line in transitions(root).splitlines():
+        if match := MOVE_ROW.match(line):
+            rows[match["move"]] = [cell.strip() for cell in match["cells"].split(" | ")]
+    return rows
+
+
+def protocol_readers(root: Path) -> dict[str, str]:
+    """Every other shipped file: the plugin's skills, AUTOMATED_EXECUTION.md without the owner."""
+    readers = {
+        "ticket-up/references/AUTOMATED_EXECUTION.md outside *Transitions*": automation_text(
+            root
+        ).replace(transitions(root), "")
+    }
+    for path in sorted(root.rglob("*.md")):
+        name = path.relative_to(root).as_posix()
+        if name != "ticket-up/references/AUTOMATED_EXECUTION.md":
+            readers[name] = path.read_text(encoding="utf-8")
+    return readers
+
+
+def word_runs(text: str) -> set[tuple[str, ...]]:
+    words = WORD.findall(text.lower().replace("`", ""))
+    return {tuple(words[i : i + SHINGLE]) for i in range(len(words) - SHINGLE + 1)}
+
+
+@pytest.mark.parametrize("root", [SOURCE_SKILLS, DIST_SKILLS], ids=["source", "codex"])
+def test_every_move_names_its_states_and_who_may_make_it(root: Path) -> None:
+    rows = move_rows(root)
+    assert len(rows) >= 20, "the *Transitions* table was not found"
+    actors = [name.split()[-1].lower() for name in ACTOR.findall(transitions(root))]
+    assert {"person", "picker", "orchestrator", "run", "environment"} <= set(actors)
+    for move, cells in rows.items():
+        assert len(cells) == 3 and all(cells), f"{move}: a row needs From, Who and Then"
+        who = cells[1].lower()
+        assert any(
+            re.search(rf"\b{actor}s?\b", who) for actor in actors
+        ), f"{move}: who may make it names no actor *Transitions* defines: {cells[1]!r}"
+
+
+@pytest.mark.parametrize("root", [SOURCE_SKILLS, DIST_SKILLS], ids=["source", "codex"])
+def test_no_other_file_restates_a_move(root: Path) -> None:
+    """A move's condition stated twice drifts; every other file names the row instead."""
+    owned = {
+        run: move
+        for move, cells in move_rows(root).items()
+        for run in word_runs(" ".join(cells))
+    }
+    restated = []
+    for name, text in protocol_readers(root).items():
+        found: dict[str, list[str]] = {}
+        for run in sorted(word_runs(text) & owned.keys()):
+            found.setdefault(owned[run], []).append(" ".join(run))
+        for move, runs in found.items():
+            restated.append(f"{name} restates row *{move}*: {runs[0]!r}")
+        # The trust rule's own section is the one place its wordings belong.
+        trust = section(automation_text(root), "The automation identity")
+        for phrase in MOVE_RESTATEMENTS:
+            if phrase.lower() in flat(text.replace(trust, "")).lower():
+                restated.append(f"{name} restates: {phrase!r}")
+    assert not restated, "\n".join(restated)
+
+
+@pytest.mark.parametrize("root", [SOURCE_SKILLS, DIST_SKILLS], ids=["source", "codex"])
+def test_every_row_a_file_names_exists(root: Path) -> None:
+    """A row renamed in the table leaves its pointers naming nothing."""
+    rows = move_rows(root)
+    dangling = []
+    for name, text in {
+        "ticket-up/references/AUTOMATED_EXECUTION.md": automation_text(root),
+        **protocol_readers(root),
+    }.items():
+        for match in ROW_POINTER.finditer(flat(text)):
+            for row in re.findall(r"\*([^*]+)\*", match["names"]):
+                if row not in rows:
+                    dangling.append(f"{name} names row *{row}*, which *Transitions* lacks")
+    assert not dangling, "\n".join(dangling)
+
+
+@pytest.mark.parametrize("root", [SOURCE_SKILLS, DIST_SKILLS], ids=["source", "codex"])
+def test_each_protocol_file_points_to_the_moves_it_relies_on(root: Path) -> None:
+    readers = protocol_readers(root)
+    for name in PROTOCOL_FILES:
+        assert ROW_POINTER.search(flat(readers[name])), f"{name} names no *Transitions* row"
+
+
+# The protocol files a Ticket run reads, each of which relies on some move.
+PROTOCOL_FILES = (
+    "ticket-up/references/AUTOMATED_EXECUTION.md outside *Transitions*",
+    "ticket-up/references/TICKET_CONVENTION.md",
+    "ticket-up/references/GITHUB_STORE.md",
+    "ticket-up/references/FILE_STORE.md",
+    "ticket-up/SKILL.md",
+    "orchestrate/SKILL.md",
+    "orchestrate/references/AUTONOMOUS.md",
+    "orchestrate/references/PROPOSE_AND_WAIT.md",
+    "orchestrate/references/STATUS_PAGE.md",
+    "run-ticket/SKILL.md",
+    "next-ticket/SKILL.md",
+)
+
+# Wordings PR #430 found stating a move a second way, each of which drifted from the first.
+MOVE_RESTATEMENTS = TRUST_RESTATEMENTS + ()

@@ -38,7 +38,7 @@ deferred Ticket, or after a title in the North Star's list of strategy choices i
 
 | Reference | Loads when | What it adds |
 |---|---|---|
-| `../ticket-up/references/TICKET_CONVENTION.md`, the venue reference, `../ticket-up/references/AUTOMATED_EXECUTION.md` | always, before reading the store | readiness, priority, what Auto and its absence allow, the records on each Ticket, and the one landing procedure |
+| `../ticket-up/references/TICKET_CONVENTION.md`, the venue reference, `../ticket-up/references/AUTOMATED_EXECUTION.md` | always, before reading the store | priority, what Auto and its absence allow, every move a Ticket and its effort make and who may make it (*Transitions*), the records on each Ticket, and the one landing procedure |
 | `references/OUTCOME.md` | the caller assigns a project outcome, in either interaction mode | commissioning inquiry and delivery, outcome evidence, durable waits and continuation |
 | `references/PROPOSE_AND_WAIT.md` | by default | proposing each plan, waiting for approval, asking for grants, and proposing the next plan when one ends |
 | `references/AUTONOMOUS.md` | `--autonomous` | acting at once, granting Auto where the criterion holds, filling slots until no ready work is left |
@@ -48,8 +48,7 @@ deferred Ticket, or after a title in the North Star's list of strategy choices i
 
 1. **Resolve the store.** Read `tickets/store-config.md`, or where the project's context file says
    the store lives. Resolve the **automation identity** — the account unattended runs claim with
-   and write as — and the human escalation recipient. When this session cannot write as that
-   identity, say which account the store config needs and stop before any launch.
+   and write as — and the human escalation recipient. When this session cannot write as that identity, say which account the store config needs and stop before any launch. On another tracker, check its venue reference for the rows `../ticket-up/references/STORE_CONFIG.md` says a reused custom reference must gain, and stop before any launch until each is there.
 2. **Read the front items.** For each effort in scope, read its front item's destination, its
    priority override, and its standing settings, as the venue reference renders them: a person's
    `Paused:` line, an orchestrator's pause (*Check in*), and the link to the effort's status page. Then read every strategy signpost in the project's North Star
@@ -66,36 +65,13 @@ deferred Ticket, or after a title in the North Star's list of strategy choices i
    writes starts with it, which is how it tells its own runs from another orchestrator's.
 5. **Read every Ticket in scope whole**, its records included, and sort it. Count its records and
    grant decisions only by who wrote them (`../ticket-up/references/AUTOMATED_EXECUTION.md` → *The
-   automation identity*). A run is **live** until it writes an outcome, while the
-   host reports its session alive and its timeout has not passed
-   (`../ticket-up/references/AUTOMATED_EXECUTION.md` → *The attempt record*). A run that is not
-   yours belongs to another orchestrator until its timeout has passed, live or not; leave its
-   Ticket alone until then. Once it has passed, that orchestrator has stopped — one still checking
-   in refreshes the start time on a Ticket it holds ready to land (*Check in*) — and its Ticket
-   sorts as below like one of yours (*Taking over*). Each Ticket takes the first category below whose
-   conditions hold, so it is in exactly one.
-   - *Left alone*, each with its reason: a person is assigned; its author lacks write access and it
-     has no Auto; it is escalated; another orchestrator's run holds it; a dependency is open and
-     not itself planned; it is deferred and its signpost reads as unmet; it is deferred and its
-     signpost's source cannot be read, which also puts it on the list of what waits on the person,
-     with that source; the type filter passes it over. Read each deferred Ticket's source at every
-     sort; sorting never edits its line. A Ticket whose open dependencies are all
-     planned joins the plan behind them.
+   automation identity*). Whether a run is **live**, and every state named below, is `../ticket-up/references/AUTOMATED_EXECUTION.md` → *Transitions*. A run that is not yours belongs to another orchestrator until row *Take over* lets you take its Ticket; leave it alone until then, and from then on it sorts as below like one of yours (*Taking over*). Each Ticket takes the first category below whose conditions hold, so it is in exactly one.
+   - *Left alone*, each with its reason: the state *Dispatchable* or row *Launch* asks for that it lacks, or the type filter. A deferred Ticket whose source cannot be read also goes on the list of what waits on the person, with that source. Sorting never edits a `Revisit when` line. A Ticket whose open dependencies are all planned joins the plan behind them.
    - *Running*: its run facts name a live run.
-   - *To land*: its record is marked ready to land by a run of yours, or by another orchestrator's
-     run whose timeout has passed, which you adopt before its landing turn (*Taking over*); no run
-     is live; and the Ticket was not reopened after its pull request merged. With Auto it waits for a
-     landing turn; without Auto it waits on the person.
-   - *Answered*: its record holds a drafted answer, no trusted revision is pending and no run is live. It waits on the person to
-     accept it, and is never launched again meanwhile.
-   - *To recover*: the automation identity holds its claim, no run is live, and its last run
-     wrote no outcome (*The attempt record* lists them) — a failed launch — or wrote an escalation
-     whose mark is now gone, or marked ready a pull request that merged before the Ticket was
-     reopened, or closed the Ticket, which was then reopened, or a trusted revision request is
-     pending.
-   - *Ready*: open, unclaimed, every dependency closed, no escalation mark, its signpost read as
-     met at its source when it is deferred, matching any type filter, and either granted Auto or, without it, allowed under the convention's *The Auto
-     grant*.
+   - *To land*: ready to land and not reopened after its merge, under a run of yours or one you adopt before its landing turn (row *Adopt a ready mark*). Granted, it waits for a landing turn; ungranted, it waits on the person (row *Land*).
+   - *Answered*: an answer drafted, no trusted revision pending and no live run. It waits on the person (rows *Accept an answer* and *Request revision*), and is never launched again meanwhile.
+   - *To recover*: the state of that name.
+   - *Ready*: dispatchable, and matching any type filter.
 
    Venue items that are not Tickets are never touched as executable work. Read designated
    source messages as observations only. When nothing is running, to land, to recover or ready,
@@ -124,10 +100,7 @@ deferred Ticket, or after a title in the North Star's list of strategy choices i
 
 For each free slot, take the next Ticket in the plan:
 
-1. **Re-read that one Ticket.** Skip it when it is closed, a person holds it, it carries the
-   escalation mark, a dependency is open, it is deferred and its source no longer shows its signpost met, or its run facts name another orchestrator's run whose
-   timeout has not passed. When its Auto grant was withdrawn, it is a Ticket without Auto from then
-   on.
+1. **Re-read that one Ticket**, and skip it unless `../ticket-up/references/AUTOMATED_EXECUTION.md` → *Transitions*, row *Launch*, still lets you launch it. When its Auto grant was withdrawn, it is a Ticket without Auto from then on.
 2. **Claim it and write the launch facts** as the automation identity, in place of the launch facts
    the record held, leaving the base commit and ready mark for the run to read: a new run ID, the
    start time, the session where the host names it before the run starts and none otherwise,
@@ -140,26 +113,13 @@ For each free slot, take the next Ticket in the plan:
 4. **Start a new agent session** in this project, by whatever means the host offers for starting
    one, with `Invoke the run-ticket skill with: "<canonical Ticket reference> --run <run ID>"`.
    Where the host names the session only after it starts, leave it to the run, which records its
-   own session on its first write. Where the host cannot start
-   another session, run a batch of one instead: invoke `run-ticket` with that same line in this
-   session, and check in when it returns.
+   own session on its first write. Where the host cannot start another session, run a batch of one instead: first refresh the start time on every Ticket you hold ready to land (row *Hold a ready mark*), since you check in again only once the batch returns, then invoke `run-ticket` with that same line in this session, and check in when it returns.
 
-A launch fails when the host cannot start its session — that failure counts at once — or when
-the session ends or passes its timeout before the run writes an outcome. Stop a run's session where
-the host allows once its timeout passes. Launch a failed Ticket again. When the third launch in a
-row fails, or a landing repair would take the launch count past three, the Ticket goes to a
-person instead: write the escalation record with the run IDs and sessions and what kept each from
-an outcome or a landing, apply the escalation mark, and release the claim.
+A launch fails as `../ticket-up/references/AUTOMATED_EXECUTION.md` → *Transitions*, row *Fail a launch*, says; a host that cannot start the session fails it at once. Stop a run's session where the host allows once its timeout passes. Launch a failed Ticket again, until that row sends it to a person: then escalate it (row *Escalate*), with the run IDs and sessions and what kept each from an outcome or a landing in the escalation record.
 
 ### Taking over
 
-A Ticket whose run facts name another orchestrator's run, once that run's timeout has passed,
-belongs to an orchestrator that has stopped. Take it over by writing a run ID of your own into its
-run facts, and treat it as yours from then on: a Ticket to recover through its launch, and a Ticket
-to land by adopting its ready mark (`../ticket-up/references/AUTOMATED_EXECUTION.md` → *The attempt
-record*), which starts no run. Re-read the Ticket after an adoption, as *Launch* step 3 says. A
-takeover writes a fresh start time, so its timeout runs from the takeover and another orchestrator
-does not take the Ticket straight back.
+A Ticket whose run facts name another orchestrator's run belongs to an orchestrator that has stopped once `../ticket-up/references/AUTOMATED_EXECUTION.md` → *Transitions*, row *Take over*, lets you take it. Take it over as that row says, and treat it as yours from then on: a Ticket to recover through its launch, and a Ticket to land by adopting its ready mark (row *Adopt a ready mark*). Re-read the Ticket after an adoption, as *Launch* step 3 says.
 
 ## Check in
 
@@ -167,29 +127,11 @@ Check in whenever a run or a landing turn ends, and otherwise every ten minutes 
 a Ticket in scope waits for a landing turn, or an effort in scope carries an orchestrator's pause,
 waiting in whatever way the host allows. At each check-in:
 
-1. **Re-read every Ticket in scope.** For an outcome assignment, also recover its compact coordination record and changed designated evidence as `references/OUTCOME.md` says. On each Ticket you hold ready to land, Auto or not, refresh the start time as `../ticket-up/references/AUTOMATED_EXECUTION.md` → *The attempt record* says, so no other orchestrator adopts it while you check in.
-2. **Honor the pauses.** A person pauses an effort with a `Paused:` line on its front item. An
-   orchestrator pauses it with an **orchestrator's pause**: a record naming the cause, the
-   orchestrator that wrote it and any repair Ticket, kept where the venue reference puts it, apart
-   from what a person writes, so no write of an orchestrator's replaces a person's line.
-   - **Hold.** While an effort is paused, start nothing in it — no launch, no landing turn — and let
-     live runs finish. The one exception is the repair Ticket an orchestrator's pause names, and
-     only while no person's `Paused:` line holds and no orchestrator's pause stands for a cause no
-     code change can fix: either stops it like the rest. A
-     person's pause holds until a person removes it: once no run is live there, stop working the
-     effort and say so.
-   - **Pause.** When Tickets in an effort fail on a cause outside them — one is enough for a
-     required check that fails the same way on the base, and two or more for another cause, such
-     as a CI or venue that is down — whether a live run records it or a landing finds it, pause
-     instead of escalating or repairing each Ticket on its own: write an orchestrator's pause
-     naming the cause and this orchestrator's ID, unless one already names that cause. An effort
-     carries one orchestrator's pause per cause, and stays paused while any stands. A cause no
-     code change can fix, such as that outage, waits for the person: raise one item naming it on
-     the list of what waits on the person.
-   - **Repair.** A base check that a code change can fix gets one repair Ticket instead. Whenever an
-     orchestrator's pause names no open repair Ticket for such a cause while that check still
-     fails the same way on the base, write one through `ticket-up` in that effort, scoped to making
-     that check pass on the base, in either mode; `ticket-up` reuses an open Ticket that already
+1. **Re-read every Ticket in scope.** For an outcome assignment, also recover its compact coordination record and changed designated evidence as `references/OUTCOME.md` says. On each Ticket you hold ready to land, Auto or not, refresh the start time as `../ticket-up/references/AUTOMATED_EXECUTION.md` → *Transitions*, row *Hold a ready mark*, says.
+2. **Honor the pauses** (`../ticket-up/references/AUTOMATED_EXECUTION.md` → *Transitions*, rows *Pause by a person* to *Lift a pause*). A person pauses an effort with a `Paused:` line on its front item. An orchestrator pauses it with an **orchestrator's pause**: a record naming the cause by its cause key, the orchestrator that wrote it and any repair Ticket, kept where the venue reference puts it, apart from what a person writes, so no write of an orchestrator's replaces a person's line.
+   - **Hold** a paused effort as row *Hold a paused effort* says, letting through only what row *Launch a repair Ticket* lets through. When a person's pause stops you working the effort, say so.
+   - **Pause** where row *Pause by an orchestrator* applies, instead of escalating or repairing each Ticket on its own, such as for a CI or venue that is down. A cause that is not code-fixable, such as that outage, waits for the person: raise one item naming it on the list of what waits on the person.
+   - **Repair.** A code-fixable cause gets one repair Ticket instead. Where row *Write a repair Ticket* applies, write one through `ticket-up` in that effort, scoped to making that check pass on the base, in either mode; `ticket-up` reuses an open Ticket that already
      covers it. Then name it in that pause and re-read it. When the pause names another open repair
      Ticket, or is gone, close the Ticket `ticket-up` created in this check-in as a duplicate
      instead; leave a reused one as it was. The repair Ticket goes to the mode's grant step like any
@@ -197,9 +139,7 @@ waiting in whatever way the host allows. At each check-in:
      on the person, with its grant recommendation, and joins the current plan once the person
      approves it; `--autonomous` launches it at its next free slot, and without Auto its run stops
      at a ready pull request for the person. It lands under that mode's rules.
-   - **Lift.** An orchestrator's pause keeps the check-ins going: at each, check its cause, and once
-     the cause is fixed any orchestrator removes that pause. A person's `Paused:` line is theirs to
-     remove.
+   - **Lift.** An orchestrator's pause keeps the check-ins going: at each, check its cause, and lift it as row *Lift a pause* says.
 
    Re-read an orchestrator's pause just before each edit and change nothing else in it.
 3. **Give out one landing turn at a time** across the scope, to the Auto Ticket ready to land whose
@@ -207,9 +147,7 @@ waiting in whatever way the host allows. At each check-in:
    the Ticket before each merge, close or mark change. When the base has moved, launch the run again
    to merge the base in and re-run the gates *Landing* step 3 names; it keeps the turn meanwhile,
    and a launch that fails counts like any other. Every other way a landing cannot merge sends the
-   Ticket where *Landing* step 4 says and passes the turn on. A Ticket without Auto is never landed
-   here. When a person has merged its pull request, that merge is its landing unless the Ticket was
-   reopened after it: record the landing reference and close the Ticket.
+   Ticket where *Landing* step 4 says and passes the turn on. Row *Land* says which Tickets are landed here. When a person has merged a Ticket's pull request, record the landing reference and close the Ticket as row *Merge by a person* says.
 4. **Gather the debt** — what a run found and could not fix on its pull request, which its completion record lists — of
    each Ticket that landed and whose completion record has no line saying its debt was gathered,
    when this orchestrator recorded its landing, or when its landing reference is older than the run
@@ -217,10 +155,7 @@ waiting in whatever way the host allows. At each check-in:
    still stands by area, skip what an open Ticket already covers, and write the rest as Tickets
    through `ticket-up`, each linked to its source. Then add the gathered line. Every Ticket an agent
    wrote — one the automation identity authored, or a follow-up linked to the Ticket whose run found
-   it — that no grant decision covers yet goes to the mode's grant step. A grant decision is a
-   grant or a recorded decision to withhold one, as the venue renders it — a person being asked is
-   recorded as a withhold naming them — and where a Ticket carries two,
-   `../ticket-up/references/AUTOMATED_EXECUTION.md` → *The attempt record* says which decides.
+   it — that is not judged goes to the mode's grant step (`../ticket-up/references/AUTOMATED_EXECUTION.md` → *Transitions*, rows *Grant* and *Withhold*). Where a Ticket carries two grant decisions, `../ticket-up/references/AUTOMATED_EXECUTION.md` → *The attempt record* says which decides.
 5. **Name a debt hotspot.** When debt in one area has come from three or more runs — count the
    source Tickets that area's debt Tickets link to — propose a structural refactor of that area to
    the person, with the count, unless the current assignment and delegation cover that
@@ -251,17 +186,13 @@ and the items still waiting.
 Answers count by where they come from.
 
 - **In this conversation.** Write the answer back to the Ticket it concerns as an answer record
-  (`../ticket-up/references/AUTOMATED_EXECUTION.md` → *The attempt record*), naming the person. On
-  their explicit answer to an escalation, record the continuation and clear the escalation mark;
-  clearing the mark also clears any automation claim, so the Ticket is ready again. A directive that
+  (`../ticket-up/references/AUTOMATED_EXECUTION.md` → *The attempt record*), naming the person. On their explicit answer to an escalation, record the continuation and clear the escalation mark (`../ticket-up/references/AUTOMATED_EXECUTION.md` → *Transitions*, row *Clear the mark*). A directive that
   bears on Tickets in scope — "none of these may add a dependency" — goes on each of those Tickets
   as an answer record, so every run reads it rather than it being held only in this conversation,
-  and no write of yours replaces text a person put in a Ticket's body. A grant ("grant
-  Auto to #12") goes through `ticket-up` as the person's grant, under its criterion. Their
+  and no write of yours replaces text a person put in a Ticket's body. A grant ("grant Auto to #12") goes through `ticket-up` as the person's grant (row *Grant*). Their
   revision request follows `../ticket-up/references/AUTOMATED_EXECUTION.md` → *Waiting and
   acceptance*: record it on the same Ticket, preserve the prior draft, and make its continuation
-  recoverable without granting Auto. Their acceptance of a drafted answer is recorded with the accepted answer/version, and the Ticket
-  closes. Record retained artifact acceptance against its exact version too; material changes
+  recoverable without granting Auto. Their acceptance of a drafted answer closes the Ticket (row *Accept an answer*). Record retained artifact acceptance against its exact version too; material changes
   need renewed acceptance. A response narrows or extends only the authority it actually states.
 - **On the venue.** What a write on a Ticket counts for, a person's grant decision included, is
   `../ticket-up/references/AUTOMATED_EXECUTION.md` → *The automation identity*. For a merge, a

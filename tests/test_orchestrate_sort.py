@@ -6,7 +6,8 @@ claim that can break. A state that fits no category is a Ticket no orchestrator 
 lands again, and nothing tells the person: a ready pull request whose orchestrator stopped was
 stranded that way.
 
-`CATEGORIES` transcribes each category's conditions, quoting the sentences it encodes; the quote
+`CATEGORIES` transcribes each category's conditions, quoting the sentences it encodes — in the
+sort and in `AUTOMATED_EXECUTION.md` → *Transitions*, which owns each state it names; the quote
 check fails when one of them leaves the skill, so the transcription changes with the prose. The
 totality check then enumerates every consistent abstract state of an open Ticket and fails on any
 that fits no category, printing the states.
@@ -19,9 +20,9 @@ from collections.abc import Callable
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-ORCHESTRATE = (
-    ROOT / "claude-plugins" / "manifest-dev" / "skills" / "orchestrate" / "SKILL.md"
-)
+SKILLS = ROOT / "claude-plugins" / "manifest-dev" / "skills"
+ORCHESTRATE = SKILLS / "orchestrate" / "SKILL.md"
+AUTOMATED_EXECUTION = SKILLS / "ticket-up" / "references" / "AUTOMATED_EXECUTION.md"
 
 State = dict[str, object]
 
@@ -103,19 +104,23 @@ def ready(s: State) -> bool:
     return s["assignee"] == "none" and bool(s["auto"] or s["author_write"])
 
 
-# Each category, in the skill's order, with the sentences its conditions encode.
+# Each category, in the skill's order, with the sentences its conditions encode: the sort's own,
+# and the states and rows of AUTOMATED_EXECUTION.md → *Transitions* it names.
 CATEGORIES: list[tuple[str, Callable[[State], bool], list[str]]] = [
     (
         "left alone",
         left_alone,
         [
-            "*Left alone*, each with its reason: a person is assigned; its author lacks write "
-            "access and it has no Auto; it is escalated; another orchestrator's run holds it; a "
-            "dependency is open and not itself planned; it is deferred and its signpost reads as "
-            "unmet; it is deferred and its signpost's source cannot be read",
-            "the type filter passes it over",
-            "A run that is not yours belongs to another orchestrator until its timeout has "
-            "passed, live or not; leave its Ticket alone until then.",
+            "*Left alone*, each with its reason: the state *Dispatchable* or row *Launch* asks "
+            "for that it lacks, or the type filter.",
+            "**Ready**: open, unclaimed, every Ticket it depends on closed, and, when it is "
+            "deferred, its `Revisit when` condition read as met at the source it names",
+            "**Dispatchable**: ready, not escalated, and either granted, written by an author "
+            "with write access to the repository",
+            "A run that is not yours belongs to another orchestrator until row *Take over* lets "
+            "you take its Ticket; leave it alone until then",
+            "| **Take over** | The run facts name another orchestrator's run whose timeout has "
+            "passed |",
         ],
     ),
     ("running", running, ["*Running*: its run facts name a live run."]),
@@ -123,38 +128,33 @@ CATEGORIES: list[tuple[str, Callable[[State], bool], list[str]]] = [
         "to land",
         to_land,
         [
-            "*To land*: its record is marked ready to land by a run of yours, or by another "
-            "orchestrator's run whose timeout has passed, which you adopt before its landing "
-            "turn (*Taking over*); no run is live; and the Ticket was not reopened after its "
-            "pull request merged.",
+            "*To land*: ready to land and not reopened after its merge, under a run of yours or "
+            "one you adopt before its landing turn (row *Adopt a ready mark*).",
+            "| **Adopt a ready mark** | Ready to land, the timeout of the run that wrote the mark "
+            "passed, and no live run |",
         ],
     ),
     (
         "answered",
         answered,
-        [
-            "*Answered*: its record holds a drafted answer, no trusted revision is pending and "
-            "no run is live.",
-        ],
+        ["*Answered*: an answer drafted, no trusted revision pending and no live run."],
     ),
     (
         "to recover",
         to_recover,
         [
-            "*To recover*: the automation identity holds its claim, no run is live, and its "
-            "last run wrote no outcome",
-            "or wrote an escalation whose mark is now gone, or marked ready a pull request that "
-            "merged before the Ticket was reopened, or closed the Ticket, which was then "
-            "reopened, or a trusted revision request is pending.",
+            "*To recover*: the state of that name.",
+            "**To recover**: held by automation, no live run, and the last run wrote no "
+            "outcome, wrote an escalation whose mark is now gone, marked ready a pull request "
+            "that merged before the Ticket was reopened, or closed the Ticket, which was then "
+            "reopened; or a trusted revision request is pending.",
         ],
     ),
     (
         "ready",
         ready,
         [
-            "*Ready*: open, unclaimed, every dependency closed, no escalation mark",
-            "and either granted Auto or, without it, allowed under the convention's *The Auto "
-            "grant*.",
+            "*Ready*: dispatchable, and matching any type filter.",
             "A Ticket whose open dependencies are all planned joins the plan behind them.",
         ],
     ),
@@ -180,6 +180,7 @@ def flat(text: str) -> str:
 def test_each_category_transcribes_sentences_that_still_stand() -> None:
     skill = flat(ORCHESTRATE.read_text(encoding="utf-8"))
     assert "Each Ticket takes the first category below whose conditions hold" in skill
+    skill += " " + flat(AUTOMATED_EXECUTION.read_text(encoding="utf-8"))
     missing = [
         f"{name}: {quote}"
         for name, _, quotes in CATEGORIES

@@ -11,16 +11,13 @@ Show the plan, and ask in the same message for every decision that would change 
 
 - **Grants.** For each Ticket an agent wrote that no grant decision covers yet — the debt
   Tickets this orchestrator wrote and the follow-ups runs wrote — say whether it meets the
-  convention's grant criterion, and recommend a grant or not. Before asking, record on the Ticket
-  a withhold naming the person as asked, as the venue renders one, so an autonomous orchestrator
-  leaves the grant to them. Never grant on your own in this mode.
+  convention's grant criterion, and recommend a grant or not. Before asking, record the withhold `../../ticket-up/references/AUTOMATED_EXECUTION.md` → *Transitions*, row *Withhold*, names, naming the person as asked, so an autonomous orchestrator leaves the grant to them. Never grant on your own in this mode.
 - **Tickets left alone because their author lacks write access.** The person may include one in
   the plan; it then runs to a ready pull request and waits on them.
 - **Planning start lines and refactor proposals** waiting on the person.
 
 Then wait. Whatever the person grants, through `ticket-up` with them named as grantor, or
-approves joins the plan. A grant they decline is recorded as withheld, naming them, so it is not
-asked again, and any grant the Ticket already carries is removed, so no unattended run lands it.
+approves joins the plan. A grant they decline is recorded as row *Decline or withdraw* says, so it is not asked again and no unattended run lands it.
 An approved plan may include Tickets without Auto: each runs to a ready pull request with its
 evidence and waits for the person. Approving a plan is not an Auto grant.
 
