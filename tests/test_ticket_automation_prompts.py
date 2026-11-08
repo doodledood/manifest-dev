@@ -42,18 +42,35 @@ def section(text: str, heading: str) -> str:
     return text[start : end if end != -1 else len(text)]
 
 
+TRANSITIONS = "Transitions"
+MOVE_ROW = re.compile(r"^\| \*\*(?P<move>[^*]+)\*\* \| (?P<cells>.+) \|$")
+
+
+def transitions(root: Path) -> str:
+    """AUTOMATED_EXECUTION.md → *Transitions*: the one statement of every move."""
+    return section(automation_text(root), TRANSITIONS)
+
+
+def move_rows(root: Path) -> dict[str, list[str]]:
+    """Each row of the table: its move, then its From, Who and Then cells."""
+    rows: dict[str, list[str]] = {}
+    for line in transitions(root).splitlines():
+        if match := MOVE_ROW.match(line):
+            rows[match["move"]] = [cell.strip() for cell in match["cells"].split(" | ")]
+    return rows
+
+
 def move_row(root: Path, move: str) -> str:
-    """One row of AUTOMATED_EXECUTION.md → *Transitions*, flattened: where a move's condition lives."""
-    for line in section(automation_text(root), "Transitions").splitlines():
-        if line.startswith(f"| **{move}** |"):
-            return flat(line)
-    raise AssertionError(f"*Transitions* has no row *{move}*")
+    """One row, flattened: where a move's condition lives."""
+    cells = move_rows(root).get(move)
+    assert cells is not None, f"*{TRANSITIONS}* has no row *{move}*"
+    return flat(f"| **{move}** | " + " | ".join(cells) + " |")
 
 
 def states(root: Path) -> str:
-    """The *Transitions* section above its table: the states every row names."""
-    text = section(automation_text(root), "Transitions")
-    return flat(text[: text.index("| Move |")])
+    """The *States* list above the table: the states every row names."""
+    text = transitions(root)
+    return flat(text[text.index("**States.**") : text.index("| Move |")])
 
 
 # Holds the decision in docs/adr/20260812-run-ticket-owns-attempt-not-dispatch.md.
@@ -132,8 +149,9 @@ def test_the_one_landing_procedure_refreshes_checks_the_base_and_closes_after_me
         "**Checks authority**: who may land this Ticket, as *Transitions*, row *Land*, says."
         in (landing)
     )
-    assert "on an unattended landing, also granted and not escalated" in move_row(
-        SOURCE_SKILLS, "Land"
+    assert (
+        "on an unattended landing, also granted; row *Stand down* covers the escalation mark"
+        in move_row(SOURCE_SKILLS, "Land")
     )
     assert "Its head must be the head commit the record names" in landing
     assert "When the base has moved since the base commit the record names" in landing
@@ -178,8 +196,9 @@ def test_the_one_landing_procedure_refreshes_checks_the_base_and_closes_after_me
     assert "on an unattended run or landing, when the Ticket is escalated" in move_row(
         SOURCE_SKILLS, "Stand down"
     )
-    assert "on an unattended landing, also granted and not escalated" in move_row(
-        SOURCE_SKILLS, "Land"
+    assert (
+        "on an unattended landing, also granted; row *Stand down* covers the escalation mark"
+        in move_row(SOURCE_SKILLS, "Land")
     )
     assert "observes the merged state" in landing
     assert "A Ticket closes only after its landing is observed" in landing
@@ -425,10 +444,7 @@ def test_orchestrate_selects_recovers_first_and_leaves_paused_work_alone() -> No
     assert "A Ticket with no type never matches." in text
     assert "- *To recover*: the state of that name." in text
     assert "**To recover**: held by automation, no live run" in states(SOURCE_SKILLS)
-    assert (
-        "*Left alone*, each with its reason: the state *Dispatchable* or row *Launch* asks "
-        "for that it lacks" in text
-    )
+    assert "*Left alone*, each with its reason: held by a person; escalated;" in text
     assert (
         "Venue items that are not Tickets are never touched as executable work." in text
     )
@@ -498,10 +514,12 @@ def test_orchestrate_names_its_failure_and_host_paths() -> None:
     record = flat(section(automation_text(SOURCE_SKILLS), "The attempt record"))
 
     assert "Launch a failed Ticket again, until that row sends it to a person" in text
+    assert "The third failed launch in a row goes to *Escalate* instead" in move_row(
+        SOURCE_SKILLS, "Fail a launch"
+    )
     assert (
-        "The third failed launch in a row, or a landing repair that would take the launch "
-        "count past three, goes to *Escalate* instead"
-        in move_row(SOURCE_SKILLS, "Fail a launch")
+        "A landing repair that would take the launch count past three goes to *Escalate* instead"
+        in move_row(SOURCE_SKILLS, "Launch")
     )
     assert "without one it is four hours from the run's start" in record
     assert "A file store gets no parallel runs" in text
@@ -664,7 +682,12 @@ def test_orchestrate_excludes_escalated_tickets_where_it_decides() -> None:
         "skip it unless `../ticket-up/references/AUTOMATED_EXECUTION.md` → *Transitions*, row *Launch*, still lets you launch it"
         in (text)
     )
-    assert move_row(SOURCE_SKILLS, "Launch").startswith("| **Launch** | Dispatchable;")
+    # Every way into a launch excludes the mark, the recover path included.
+    assert move_row(SOURCE_SKILLS, "Launch").startswith(
+        "| **Launch** | Open, not escalated, no person holding the claim, every Ticket it "
+        "depends on closed and any deferred condition read as met; and dispatchable, to "
+        "recover, or ready to land"
+    )
 
 
 # Holds the decision in docs/adr/20260825-escalation-clears-the-claim-and-carries-its-own-mark.md.
@@ -1287,7 +1310,7 @@ def test_a_persons_claim_is_never_written_as_the_automation_identity(
     assert "Write the claim as *Transitions*, row *Pick*, says" in picker
     assert "Where the row leaves the Ticket unclaimed, say why." in picker
     assert (
-        "a picker never writes the claim as the automation identity, and where it writes as "
+        "a picker never writes the claim as the automation identity, and where its session's account is "
         "that identity it assigns the person where the venue can name them, and otherwise "
         "leaves the Ticket unclaimed" in move_row(root, "Pick")
     )
@@ -1313,6 +1336,11 @@ def test_a_hand_run_works_on_under_the_claim_of_the_person_who_started_it(
     assert "row *Hand run* for a hand run. Any other claim stops the attempt" in run
     assert "It stands down as *Transitions*, row *Stand down*, says" in landing
     hand_run = move_row(root, "Hand run")
+    # A hand run picks up an interrupted unattended attempt rather than stopping on its claim.
+    assert (
+        "unclaimed, held by automation, or held by the account the run writes as"
+        in hand_run
+    )
     assert (
         "held by the account the run writes as or by the person who started it"
         in hand_run
@@ -1593,40 +1621,27 @@ def test_a_reused_custom_reference_gains_the_rows_it_lacks(root: Path) -> None:
 # with no edit here.
 
 # Holds docs/adr/20261108-the-ticket-protocols-moves-have-one-owning-table.md.
-TRANSITIONS = "Transitions"
-MOVE_ROW = re.compile(r"^\| \*\*(?P<move>[^*]+)\*\* \| (?P<cells>.+) \|$")
 ACTOR = re.compile(r"^- \*\*(?P<actor>[^*]+)\*\* —", re.MULTILINE)
+# A pointer to a row, with the file and section it lives in.
 ROW_POINTER = re.compile(
     r"\*Transitions\*, rows? (?P<names>\*[^*]+\*(?:(?:,| and| or) \*[^*]+\*)*)"
 )
+# Any row name a file cites, a bare `row *Land*` or a range `rows *A* to *B*` included.
+ROW_NAMES = re.compile(
+    r"\b[Rr]ows? (?P<names>\*[^*]+\*(?:(?:,| and| or| to|, and|, or) \*[^*]+\*)*)"
+)
+OUTSIDE = "ticket-up/references/AUTOMATED_EXECUTION.md outside *Transitions*"
 WORD = re.compile(r"[a-z0-9]+(?:['’-][a-z0-9]+)*")
-# A run of this many words from a row's cells, found in another file, is a restatement. Shorter
+# A run of this many words from a row's cells or the *States* list, found in another file, is a
+# restatement. Shorter
 # runs are the protocol's shared vocabulary — "held by a person", "the run facts name" — which
 # every file needs to name a state.
 SHINGLE = 8
 
 
-def transitions(root: Path) -> str:
-    return section(automation_text(root), TRANSITIONS)
-
-
-def move_rows(root: Path) -> dict[str, list[str]]:
-    rows: dict[str, list[str]] = {}
-    for line in transitions(root).splitlines():
-        if match := MOVE_ROW.match(line):
-            rows[match["move"]] = [cell.strip() for cell in match["cells"].split(" | ")]
-    return rows
-
-
 def protocol_readers(root: Path) -> dict[str, str]:
     """Every other shipped file: the plugin's skills, AUTOMATED_EXECUTION.md without the owner."""
-    readers = {
-        "ticket-up/references/AUTOMATED_EXECUTION.md outside *Transitions*": automation_text(
-            root
-        ).replace(
-            transitions(root), ""
-        )
-    }
+    readers = {OUTSIDE: automation_text(root).replace(transitions(root), "")}
     for path in sorted(root.rglob("*.md")):
         name = path.relative_to(root).as_posix()
         if name != "ticket-up/references/AUTOMATED_EXECUTION.md":
@@ -1637,6 +1652,38 @@ def protocol_readers(root: Path) -> dict[str, str]:
 def word_runs(text: str) -> set[tuple[str, ...]]:
     words = WORD.findall(text.lower().replace("`", ""))
     return {tuple(words[i : i + SHINGLE]) for i in range(len(words) - SHINGLE + 1)}
+
+
+# The protocol files a Ticket run reads, each of which relies on some move.
+PROTOCOL_FILES = (
+    OUTSIDE,
+    "ticket-up/references/TICKET_CONVENTION.md",
+    "ticket-up/references/GITHUB_STORE.md",
+    "ticket-up/references/FILE_STORE.md",
+    "ticket-up/SKILL.md",
+    "orchestrate/SKILL.md",
+    "orchestrate/references/AUTONOMOUS.md",
+    "orchestrate/references/PROPOSE_AND_WAIT.md",
+    "orchestrate/references/STATUS_PAGE.md",
+    "run-ticket/SKILL.md",
+    "next-ticket/SKILL.md",
+)
+
+# Wordings that once stated a move a second way, each of which drifted from the first: the shingle
+# check misses a paraphrase that shares fewer than SHINGLE words with its row.
+MOVE_RESTATEMENTS = TRUST_RESTATEMENTS + (
+    # The Hold rule let the repair Ticket run under a person's pause.
+    "except the repair Ticket an orchestrator's pause names",
+    # The GitHub Ready row counted the label whoever set it.
+    "either the `auto` label or an author with write access",
+    # The convention left out the plan a person with write access approved.
+    "Unattended work takes it up only when its author has write access",
+    # run-ticket stopped a hand run on the claim of the person who started it.
+    "a person other than the identity it writes as is assigned",
+    "A conflicting human claim stops the attempt",
+    # next-ticket and the convention disagreed on who releases a stale claim.
+    "leave the reassignment to a person",
+)
 
 
 @pytest.mark.parametrize("root", [SOURCE_SKILLS, DIST_SKILLS], ids=["source", "codex"])
@@ -1657,10 +1704,11 @@ def test_every_move_names_its_states_and_who_may_make_it(root: Path) -> None:
 def test_no_other_file_restates_a_move(root: Path) -> None:
     """A move's condition stated twice drifts; every other file names the row instead."""
     owned = {
-        run: move
+        run: f"row *{move}*"
         for move, cells in move_rows(root).items()
         for run in word_runs(" ".join(cells))
     }
+    owned.update(dict.fromkeys(word_runs(states(root)), "*States*"))
     # The trust rule's own section is the one place its wordings belong.
     trust = section(automation_text(root), "The automation identity")
     restated = []
@@ -1668,8 +1716,8 @@ def test_no_other_file_restates_a_move(root: Path) -> None:
         found: dict[str, list[str]] = {}
         for run in sorted(word_runs(text) & owned.keys()):
             found.setdefault(owned[run], []).append(" ".join(run))
-        for move, runs in found.items():
-            restated.append(f"{name} restates row *{move}*: {runs[0]!r}")
+        for owner, runs in found.items():
+            restated.append(f"{name} restates {owner}: {runs[0]!r}")
         for phrase in MOVE_RESTATEMENTS:
             if phrase.lower() in flat(text.replace(trust, "")).lower():
                 restated.append(f"{name} restates: {phrase!r}")
@@ -1685,7 +1733,7 @@ def test_every_row_a_file_names_exists(root: Path) -> None:
         "ticket-up/references/AUTOMATED_EXECUTION.md": automation_text(root),
         **protocol_readers(root),
     }.items():
-        for match in ROW_POINTER.finditer(flat(text)):
+        for match in ROW_NAMES.finditer(flat(text)):
             for row in re.findall(r"\*([^*]+)\*", match["names"]):
                 if row not in rows:
                     dangling.append(
@@ -1701,38 +1749,6 @@ def test_each_protocol_file_points_to_the_moves_it_relies_on(root: Path) -> None
         assert ROW_POINTER.search(
             flat(readers[name])
         ), f"{name} names no *Transitions* row"
-
-
-# The protocol files a Ticket run reads, each of which relies on some move.
-PROTOCOL_FILES = (
-    "ticket-up/references/AUTOMATED_EXECUTION.md outside *Transitions*",
-    "ticket-up/references/TICKET_CONVENTION.md",
-    "ticket-up/references/GITHUB_STORE.md",
-    "ticket-up/references/FILE_STORE.md",
-    "ticket-up/SKILL.md",
-    "orchestrate/SKILL.md",
-    "orchestrate/references/AUTONOMOUS.md",
-    "orchestrate/references/PROPOSE_AND_WAIT.md",
-    "orchestrate/references/STATUS_PAGE.md",
-    "run-ticket/SKILL.md",
-    "next-ticket/SKILL.md",
-)
-
-# Wordings that once stated a move a second way, each of which drifted from the first: the shingle
-# check misses a paraphrase that shares fewer than SHINGLE words with its row.
-MOVE_RESTATEMENTS = TRUST_RESTATEMENTS + (
-    # The Hold rule let the repair Ticket run under a person's pause.
-    "except the repair Ticket an orchestrator's pause names",
-    # The GitHub Ready row counted the label whoever set it.
-    "either the `auto` label or an author with write access",
-    # orchestrate's Left alone dropped the plan a person with write access approved.
-    "its author lacks write access and it has no Auto",
-    # run-ticket stopped a hand run on the claim of the person who started it.
-    "a person other than the identity it writes as is assigned",
-    "A conflicting human claim stops the attempt",
-    # next-ticket and the convention disagreed on who releases a stale claim.
-    "leave the reassignment to a person",
-)
 
 
 # The four PR #430 findings ticket #431 fixed. Each assertion fails when its fix is reverted.
@@ -1796,3 +1812,30 @@ def test_every_venue_names_a_pause_by_one_cause_key(root: Path) -> None:
         in flat(ticket_ref(root, "FILE_STORE.md"))
     )
     assert "such as the failing check's name or the service that is down" not in github
+
+
+# The convention said anyone can tidy, while next-ticket left a stale claim's release to a person.
+# The table settles it: a person, or a session tidying for one, releases; a picker only names it.
+@pytest.mark.parametrize("root", [SOURCE_SKILLS, DIST_SKILLS], ids=["source", "codex"])
+def test_a_picker_names_a_stale_claim_and_a_person_releases_it(root: Path) -> None:
+    release = move_row(root, "Release a stale claim")
+    assert (
+        "A person, or a session tidying the store for one; a picker only names it and leaves "
+        "its release to a person" in release
+    )
+    assert "row *Release a stale claim*" in flat(skill_text(root, "next-ticket"))
+
+
+@pytest.mark.parametrize("root", [SOURCE_SKILLS, DIST_SKILLS], ids=["source", "codex"])
+def test_no_two_rows_state_one_condition(root: Path) -> None:
+    """A condition in two rows drifts the same way a condition in two files does."""
+    owners: dict[tuple[str, ...], set[str]] = {}
+    for move, cells in move_rows(root).items():
+        for run in word_runs(" ".join(cells)):
+            owners.setdefault(run, set()).add(move)
+    shared = [
+        f"rows {sorted(moves)} share: {' '.join(run)!r}"
+        for run, moves in sorted(owners.items())
+        if len(moves) > 1
+    ]
+    assert not shared, "\n".join(shared)

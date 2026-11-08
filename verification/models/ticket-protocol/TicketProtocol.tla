@@ -139,14 +139,14 @@ Init ==
 \* Quote orchestrate/SKILL.md: "A run that is not yours belongs to another orchestrator until row *Take over* lets you take its Ticket; leave it alone until then"
 \* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "| **Take over** | The run facts name another orchestrator's run whose timeout has passed |"
 \* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "when it is deferred, its `Revisit when` condition read as met at the source it names"
-\* Quote orchestrate/SKILL.md: "*Left alone*, each with its reason: the state *Dispatchable* or row *Launch* asks for that it lacks"
+\* Quote orchestrate/SKILL.md: "*Left alone*, each with its reason: held by a person; escalated"
 LeftAlone(o) ==
   \/ closed \/ mark \/ claim = "person"
   \/ HasRec /\ ~Owner(o) /\ ~TheRec.timedOut
   \* Pre-fix: the launcher does not read the signpost.
   \/ ~Old("deferred") /\ Signpost # "none" /\ CondReads # "met"
-  \* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "either granted, written by an author with write access to the repository"
-  \/ claim = "none" /\ ~Counts /\ ~Writer
+  \* Quote orchestrate/SKILL.md: "ungranted, its author without write access"
+  \/ ~Counts /\ ~Writer
 
 \* Quote orchestrate/SKILL.md: "*Running*: its run facts name a live run."
 Running == NamedLive
@@ -155,7 +155,7 @@ Running == NamedLive
 \* Pre-fix: a ready mark another orchestrator's run left fits no category.
 ToLand(o) == ReadyValid /\ ~Reopened /\ (Owner(o) \/ ~Old("stranded"))
 
-\* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "**To recover**: held by automation, no live run, and the last run wrote no outcome"
+\* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "**To recover**: held by automation, no live run, and either the last run wrote no outcome"
 \* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "marked ready a pull request that merged before the Ticket was reopened"
 ToRecover == claim = "auto" /\ (~HasRec \/ ~ReadyValid \/ Reopened)
 
@@ -212,9 +212,10 @@ OClaim(o) ==
 
 \* Quote orchestrate/SKILL.md: "Re-read the Ticket after writing"
 \* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "A writer whose comment is not the first removes its own and stands down"
+\* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "An orchestrator, re-reading the Ticket before it writes and after"
 OVerify(o) ==
   /\ opc[o] = "verify"
-  /\ IF Named(o) /\ ~closed /\ ~mark /\ claim # "person"
+  /\ IF Named(o) /\ ~closed /\ ~mark /\ claim # "person" /\ ~Held
      THEN /\ opc' = [opc EXCEPT ![o] = "launch"] /\ UNCHANGED recs
      ELSE /\ recs' = IF HasRec /\ TheRec.run = RunOf(o) THEN recs
                      ELSE SelectSeq(recs, LAMBDA x : x.run # RunOf(o))
@@ -470,7 +471,7 @@ WCond == /\ Event("cond") /\ Signpost \in {"unmet", "unreadable"}
 
 \* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "Not escalated, and any automation claim cleared too"
 \* Quote ticket-up/references/GITHUB_STORE.md: "removes the `escalated` label and any automation assignee"
-WAnswer == /\ mark /\ mark' = FALSE /\ prOpen' = (prOpen \/ ~merged) /\ claim' = "none"
+WAnswer == /\ mark /\ mark' = FALSE /\ prOpen' = (prOpen \/ ~merged) /\ claim' = (IF claim = "auto" THEN "none" ELSE claim)
            /\ UNCHANGED <<recs, closed, autoClosed, landedNow, merged, red, review, branch, base, nextC,
                           used, opc, saw, lview, n, rpc, rbase, rlocal, rmerged, bad, evars>>
 
@@ -622,7 +623,8 @@ HandRunKeepsItsStartersClaim == [][(LiveRun(Hand) /\ rpc'[Hand] = "stopped") => 
 \* Property: nothing starts in a paused effort but the repair Ticket an orchestrator's pause names,
 \* and that only while every pause is for a code-fixable cause and no person's line stands.
 \* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "Nothing starts in it — no launch, no landing turn — and live runs finish"
-NothingStartsWhilePaused == [][\A o \in Orchs : (opc[o] = "read" /\ opc'[o] \in {"claim", "adopt", "land"}) =>
+NothingStartsWhilePaused == [][\A o \in Orchs : ((opc[o] = "read" /\ opc'[o] \in {"claim", "adopt", "land"})
+                                              \/ (opc[o] = "verify" /\ opc'[o] = "launch")) =>
     (~Paused \/ (Repair /\ "check" \in opause /\ opause \subseteq CodeFixable /\ ~ppause))]_vars
 
 \* Property: an effort stays paused while a cause an orchestrator paused it for still fails.
@@ -634,4 +636,9 @@ PausedWhileACauseFails == noted \cap failing # {} => opause # {}
 \* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "*Launch* and *Land* apply to it as though the effort were not paused"
 RepairLifts == []("check" \in opause /\ ~ppause /\ "outage" \notin failing =>
     <>("check" \notin opause \/ ppause \/ "outage" \in failing))
+\* Property: a merge a person made is recorded: the orchestrator closes the Ticket, whether or not
+\* its grant counts, unless a person or a pause holds it.
+\* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "an orchestrator's check-in, or the next hand run, records it and closes the Ticket"
+PersonMergeIsRecorded == [](merged /\ landedNow /\ ReadyValid /\ ~closed =>
+    <>(closed \/ claim = "person" \/ mark \/ Held))
 =============================================================================

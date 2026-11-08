@@ -65,12 +65,14 @@ Proves: an orchestrator launches an unclaimed Ticket only when its grant counts 
 write access, and lands only a Ticket whose grant counts by who set it — a person with authority
 to grant, or the automation identity with a grant decided — through a withdrawal, a grant state
 someone without authority set, and one the automation identity set with no grant decided; an
-ungranted ready pull request waits for a person, whose merge the orchestrator then records.
+ungranted ready pull request waits for a person, whose merge the orchestrator then records and
+closes.
 
 ### pause
 Run: `verification/models/ticket-protocol/check.sh pause && verification/models/ticket-protocol/check.sh repair`
 Proves: while a person's `Paused:` line or an orchestrator's pause stands, nothing starts in the
-effort — no launch, no adoption, no landing turn — except the repair Ticket an orchestrator's pause
+effort — no launch, at the sort or at the re-read after writing; no adoption, with a second
+orchestrator that may stop; no landing turn — except the repair Ticket an orchestrator's pause
 names, and that only while every pause is for a code-fixable cause and no person's line stands; the
 effort stays paused while any cause an orchestrator paused it for still fails, one pause per cause;
 and once only code-fixable pauses hold it, the repair Ticket lands and its pause lifts.
@@ -78,11 +80,12 @@ and once only code-fixable pauses hold it, the repair Ticket lands and its pause
 ### handoff
 Run: `verification/models/ticket-protocol/check.sh handoff`
 Proves: once a person picks a Ticket, no orchestrator launches, adopts or lands it, even after the
-hand run they start under their claim dies and its timeout passes; that hand run never stands down
+hand run they start under their claim dies and its timeout passes, or after the person marks it
+escalated and answers, which clears only an automation claim; that hand run never stands down
 on its starter's claim.
 
 ### prefix
-Run: `for c in record stall escalated deferred stranded grant dispatch pick handrun repair cause; do verification/models/ticket-protocol/check.sh --expect-violation prefix-$c || exit 1; done`
+Run: `f=0; for c in record stall escalated deferred stranded grant dispatch pick handrun repair percause; do verification/models/ticket-protocol/check.sh --expect-violation prefix-$c || f=1; done; exit $f`
 Proves: the check can fail. Each prefix configuration restores one old behavior, a rule as it stood
 before a fix, and TLC reports, with its trace: a second attempt record; a landing that stalls; a
 landing of a Ticket a person marked escalated; a claim of a Ticket whose signpost reads as unmet; a
@@ -107,7 +110,12 @@ reported.
   orchestrator's own grant, a stale claim's release, or a person's pause ending the orchestrator's
   work on the effort, which the model treats as the orchestrator starting nothing there.
 - A grant withdrawn between the landing's authority check and its merge is not caught: the model
-  takes the merge as the next call, as the prose does.
+  takes the merge as the next call, as the prose does. Likewise a pause that arrives during a
+  landing turn already begun lets that turn finish.
+- *Dispatchable*'s third branch, a plan a person with write access approved, is not modelled: the
+  model's orchestrator plans for itself, so `LaunchesOnlyDispatchable` checks a grant that counts or
+  an author with write access. Nor is a hand run told to land: the model's hand run stops at its
+  ready mark.
   A stall that needs more than that is not checked here, nor is the launch count's escalation after
   three failed launches or landing repairs.
 - `PreFix` names the old behaviors a configuration restores; passing configurations set it to

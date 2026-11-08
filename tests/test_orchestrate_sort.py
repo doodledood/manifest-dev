@@ -111,12 +111,11 @@ CATEGORIES: list[tuple[str, Callable[[State], bool], list[str]]] = [
         "left alone",
         left_alone,
         [
-            "*Left alone*, each with its reason: the state *Dispatchable* or row *Launch* asks "
-            "for that it lacks, or the type filter.",
-            "**Ready**: open, unclaimed, every Ticket it depends on closed, and, when it is "
-            "deferred, its `Revisit when` condition read as met at the source it names",
-            "**Dispatchable**: ready, not escalated, and either granted, written by an author "
-            "with write access to the repository",
+            "*Left alone*, each with its reason: held by a person; escalated; its run facts "
+            "name another orchestrator's run that row *Take over* does not yet let you take; a "
+            "dependency open and not itself planned; deferred, its condition unmet or its source "
+            "unreadable; ungranted, its author without write access; or passed over by the type "
+            "filter.",
             "A run that is not yours belongs to another orchestrator until row *Take over* lets "
             "you take its Ticket; leave it alone until then",
             "| **Take over** | The run facts name another orchestrator's run whose timeout has "
@@ -144,10 +143,10 @@ CATEGORIES: list[tuple[str, Callable[[State], bool], list[str]]] = [
         to_recover,
         [
             "*To recover*: the state of that name.",
-            "**To recover**: held by automation, no live run, and the last run wrote no "
+            "**To recover**: held by automation, no live run, and either the last run wrote no "
             "outcome, wrote an escalation whose mark is now gone, marked ready a pull request "
             "that merged before the Ticket was reopened, or closed the Ticket, which was then "
-            "reopened; or a trusted revision request is pending.",
+            "reopened, or a trusted revision request is pending.",
         ],
     ),
     (

@@ -59,7 +59,10 @@ acceptance* here, and `orchestrate`'s sort and check-in.
 
 - **A person** — someone acting for themselves on the venue. A row may narrow it: a person with
   authority to grant (*The automation identity*), or a person with write access to the repository.
-- **A picker** — a session choosing a Ticket for a person, writing in that person's name.
+  An orchestrator makes a person's move for them when it records that person's explicit answer
+  from its conversation, in rows *Clear the mark*, *Grant*, *Decline or withdraw*, *Request
+  revision* and *Accept an answer*.
+- **A picker** — a session choosing a Ticket for a person and claiming it in their name.
 - **An orchestrator** — `orchestrate`, writing as the automation identity; at a landing turn it is
   the lander.
 - **The run** — the `run-ticket` run the run facts name. An unattended run writes as the automation
@@ -88,10 +91,9 @@ acceptance* here, and `orchestrate`'s sort and check-in.
   source.
 - **Dispatchable**: ready, not escalated, and either granted, written by an author with write
   access to the repository, or included in a plan a person with write access approved.
-- **To recover**: held by automation, no live run, and the last run wrote no outcome, wrote an
+- **To recover**: held by automation, no live run, and either the last run wrote no outcome, wrote an
   escalation whose mark is now gone, marked ready a pull request that merged before the Ticket
-  was reopened, or closed the Ticket, which was then reopened; or a trusted revision request is
-  pending.
+  was reopened, or closed the Ticket, which was then reopened, or a trusted revision request is pending.
 - The effort: **paused by a person** while a person's `Paused:` line stands on its front item;
   **paused by an orchestrator** while any orchestrator's pause stands, one per cause. A cause is
   named by its **cause key**: the name of a required check as the venue reports it, or the host
@@ -100,20 +102,20 @@ acceptance* here, and `orchestrate`'s sort and check-in.
 
 | Move | From | Who may make it | Then |
 |---|---|---|---|
-| **Pick** | Ready | A person, or a picker in their name; a picker never writes the claim as the automation identity, and where it writes as that identity it assigns the person where the venue can name them, and otherwise leaves the Ticket unclaimed | Held by that person |
+| **Pick** | Ready | A person, or a picker in their name; a picker never writes the claim as the automation identity, and where its session's account is that identity it assigns the person where the venue can name them, and otherwise leaves the Ticket unclaimed | Held by that person |
 | **Release a stale claim** | A claim that looks abandoned | A person, or a session tidying the store for one; a picker only names it and leaves its release to a person | Unclaimed |
 | **Hand run** | Open, whatever its grant or escalation mark; no live run of another named, unless the person says that run is gone; unclaimed, held by automation, or held by the account the run writes as or by the person who started it | A person, by starting the run | The run claims, leaving a claim the person who started it holds in their name, writes its launch facts and is live |
-| **Launch** | Dispatchable; to recover; or ready to land and sent back by *Landing* steps 3 or 4. No live run, no run facts naming another orchestrator's run whose timeout has not passed, and the effort not paused unless *Launch a repair Ticket* applies | An orchestrator, re-reading the Ticket before it writes and after | Held by automation; the run facts name the new run, which is live, and carry the launch count *The attempt record* defines |
-| **Fail a launch** | A live run | The environment: the host cannot start the session, or the session ends or passes its timeout before the run writes an outcome | A failed launch, so to recover. The third failed launch in a row, or a landing repair that would take the launch count past three, goes to *Escalate* instead |
+| **Launch** | Open, not escalated, no person holding the claim, every Ticket it depends on closed and any deferred condition read as met; and dispatchable, to recover, or ready to land and sent back by *Landing* steps 3 or 4. No live run, no run facts naming another orchestrator's run whose timeout has not passed, and the effort not paused unless *Launch a repair Ticket* applies | An orchestrator, re-reading the Ticket before it writes and after | Held by automation; the run facts name the new run, which is live, and carry the launch count *The attempt record* defines. A landing repair that would take the launch count past three goes to *Escalate* instead |
+| **Fail a launch** | A live run | The environment: the host cannot start the session, or the session ends or passes its timeout before the run writes an outcome | A failed launch, so to recover. The third failed launch in a row goes to *Escalate* instead |
 | **Take over** | The run facts name another orchestrator's run whose timeout has passed | An orchestrator | The run facts name a run of its own with a fresh start time, so its timeout runs from the takeover; it then launches the Ticket to recover it or adopts its ready mark |
 | **Adopt a ready mark** | Ready to land, the timeout of the run that wrote the mark passed, and no live run | An orchestrator | The run facts and the mark name a run of its own; it keeps the head and base commits the mark names, the launch count and whether the last launch repaired a landing, and starts no run. An adoption is not a launch: the launch count still reads the last launch |
 | **Hold a ready mark** | Ready to land, held by the orchestrator that launched or adopted it: at a check-in once half the timeout has passed since the start time, and at its last check-in before it stops or before it runs a batch in its own session, whenever the start time was written | That orchestrator | The start time rewritten. That timeout stands for the holder's absence, not the run's age, so no other orchestrator adopts the mark while its holder checks in |
 | **Write an outcome** | A live run | The run, re-reading the record first; row *Stand down* says when it stops instead | Ready to land, an answer drafted, escalated, or closed |
 | **Stand down** | A live run, or a landing turn, when the run ID in the record is not its own; when the Ticket is closed; when a person holds the claim other than the identity it writes as or, on a hand run, the person who started it; or, on an unattended run or landing, when the Ticket is escalated | The run, or an orchestrator at its landing turn | It stops without writing |
-| **Land** | Ready to land, the mark naming the run the run facts name, the run facts written by the automation identity and naming the lander's own run (one it launched or took over, or itself on a hand run); not reopened after its merge; on an unattended landing, also granted and not escalated | An orchestrator at its landing turn, or a hand run whose prompt says to land; never an orchestrator on an ungranted Ticket, which only a person lands | Closed once the merge is observed, then the automation claim released. *Landing* is the procedure |
+| **Land** | Ready to land, the mark naming the run the run facts name, the run facts written by the automation identity and naming the lander's own run (one it launched or took over, or itself on a hand run); not reopened after its merge; on an unattended landing, also granted; row *Stand down* covers the escalation mark | An orchestrator at its landing turn, or a hand run whose prompt says to land; never an orchestrator on an ungranted Ticket, which only a person lands | Closed once the merge is observed, then the automation claim released. *Landing* is the procedure |
 | **Merge by a person** | An open pull request | A person with write access | A landing, unless the Ticket is reopened after it; an orchestrator's check-in, or the next hand run, records it and closes the Ticket |
 | **Escalate** | A live run meets a blocker only a person can clear; a launch goes here from *Fail a launch*; or a landing *Landing* steps 2 and 4 send to a person | The run; an orchestrator launching or landing it | Escalated: the escalation record and mark first, then the automation claim released. It stays open, and keeps Auto when granted |
-| **Clear the mark** | Escalated | A person, after recording the continuation context; or an orchestrator recording that person's explicit answer from its conversation | Not escalated, and any automation claim cleared too, so it can be dispatchable again |
+| **Clear the mark** | Escalated | A person, after recording the continuation context; or an orchestrator for them (*Who acts*) | Not escalated, and any automation claim cleared too, so it can be dispatchable again |
 | **Close** | Open | The run or an orchestrator, once a landing is observed or, for a granted Question Ticket, its answer is recorded; or a person | Closed, then the automation claim released |
 | **Reopen** | Closed | A person | Open. Reopened after its merge, it is new work its next launch starts |
 | **Grant** | Ungranted, with the convention's *The Auto grant* criterion holding. A follow-up a run found is granted only this way, at its own `ticket-up` boundary, whatever its source carries; a person invoking `run-ticket` on the source grants it nothing | A person with authority to grant, through `ticket-up`; or an orchestrator running `--autonomous`, through `ticket-up`, on an agent-written Ticket not yet judged. Never the run that found the work | Granted and judged, naming its grantor |
@@ -123,7 +125,7 @@ acceptance* here, and `orchestrate`'s sort and check-in.
 | **Accept an answer** | An answer drafted | A person | Closed, with the accepted answer and its version recorded |
 | **Pause by a person** | An effort | A person, adding a `Paused:` line | Paused by a person, until a person removes the line |
 | **Pause by an orchestrator** | An effort whose Tickets fail on a cause outside them — one Ticket for a required check that fails the same way on the base, two or more for another cause — with no orchestrator's pause naming that cause | An orchestrator, whether a live run records the cause or a landing finds it | Paused by an orchestrator for that cause, naming the cause and the orchestrator |
-| **Hold a paused effort** | Paused by a person or by an orchestrator | Every orchestrator | Nothing starts in it — no launch, no landing turn — and live runs finish. Under a person's pause, once no run is live, the orchestrator stops working the effort |
+| **Hold a paused effort** | Paused by a person or by an orchestrator | Every orchestrator | Nothing starts in it — no launch, no landing turn — and live runs finish, except as row *Launch a repair Ticket* allows. Under a person's pause, once no run is live, the orchestrator stops working the effort |
 | **Write a repair Ticket** | Paused by an orchestrator for a code-fixable cause whose pause names no open repair Ticket, while that check still fails the same way on the base | An orchestrator, through `ticket-up` | The repair Ticket named in that pause |
 | **Launch a repair Ticket** | Paused only by orchestrator's pauses, each for a code-fixable cause, with no person's `Paused:` line; the Ticket is the repair Ticket a pause names | An orchestrator | *Launch* and *Land* apply to it as though the effort were not paused |
 | **Lift a pause** | An orchestrator's pause whose cause is fixed | Any orchestrator | That pause removed; the effort stays paused while any other stands. Only a person removes a person's line |
