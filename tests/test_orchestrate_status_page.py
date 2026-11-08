@@ -340,9 +340,9 @@ def test_a_persons_pause_stops_the_repair_ticket_on_the_page() -> None:
     assert "row *Launch a repair Ticket*, lets it through" in row.group(1)
     assert "Otherwise it stops like the rest, so leave it out" in row.group(1)
     automation = " ".join(
-        (
-            SKILL.parent / "ticket-up" / "references" / "AUTOMATED_EXECUTION.md"
-        ).read_text(encoding="utf-8").split()
+        (SKILL.parent / "ticket-up" / "references" / "AUTOMATED_EXECUTION.md")
+        .read_text(encoding="utf-8")
+        .split()
     )
     assert (
         "| **Launch a repair Ticket** | Paused only by orchestrator's pauses, each for a "
