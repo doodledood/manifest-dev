@@ -35,8 +35,8 @@ The subject sits inside the North Star's Purpose: unattended work a person can d
   How to carry a move out stays with its procedure: *The attempt record*, *Landing* and *Waiting
   and acceptance*, and `orchestrate`'s sort and check-in. A venue reference says only how its store
   keeps each fact.
-- The test reads a restatement as any run of eight words from a row's cells found in another
-  shipped file, plus a list of wordings that once stated a move a second way. Shorter runs are the
+- The test reads a restatement as any run of eight words from a row's cells or the *States* list
+  found in another shipped file, plus a list of wordings that once stated a move a second way. Shorter runs are the
   protocol's shared vocabulary, which every file needs to name a state.
 - The TLA+ model of the protocol covers grant provenance, a person's pick and the hand run started
   under it, and an effort paused by a person or by an orchestrator for each cause, with the repair
@@ -73,12 +73,14 @@ The subject sits inside the North Star's Purpose: unattended work a person can d
 
 ## Enforced by
 partly — `tests/test_ticket_automation_prompts.py`: `test_no_other_file_restates_a_move` fails, on
-the source and the Codex copy, when another shipped file shares eight words with a row or carries a
-listed old wording; `test_every_row_a_file_names_exists` fails when a pointer names a row the table
-lacks; `test_each_protocol_file_points_to_the_moves_it_relies_on` fails when a protocol file names
-no row; `test_every_move_names_its_states_and_who_may_make_it` fails when a row lacks a cell or names
-no defined actor. `verification/recipes/ticket-protocol-model.md` → `grant`, `pause`, `handoff` and
-`prefix` model-check the new areas. A paraphrase sharing fewer than eight words stays judgment.
+the source and the Codex copy, when another shipped file shares eight words with a row or with the
+*States* list, or carries a listed old wording; `test_no_two_rows_state_one_condition` fails when
+two rows share eight words; `test_every_row_a_file_names_exists` fails when any pointer, bare
+`row *X*` or prefixed, names a row the table lacks; `test_each_protocol_file_points_to_the_moves_it_relies_on`
+fails when a protocol file names no row; `test_every_move_names_its_states_and_who_may_make_it`
+fails when a row lacks a cell or names no defined actor. `verification/recipes/ticket-protocol-model.md`
+→ `grant`, `pause`, `handoff` and `prefix` model-check the new areas. A paraphrase sharing fewer
+than eight words stays judgment.
 
 ## Source
 - Session: Ticket doodledood/manifest-dev#431
