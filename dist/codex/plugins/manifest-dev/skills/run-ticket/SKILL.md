@@ -198,11 +198,13 @@ continues from it. The handoff record contains:
 - a mention of the person needed next, resolved from the Ticket, project escalation contact, or initiating human;
 - the run's material decisions, each reopened decision record first, then the user's calls, each with the alternative not taken and what decided it.
 
-Then escalate as `../ticket-up/references/AUTOMATED_EXECUTION.md` → *Transitions*, row *Escalate*, says — the mark first, then the automation claim, never a person's. Released before the mark lands, the
-claim leaves an escalated Ticket looking like ordinary ready work, and the next unattended dispatch
-— an orchestrator's next check-in — starts the attempt this one just ended. A later escalation
-replaces that handoff record and its mark rather than adding a second. The mark is cleared as row *Clear the mark* says. Escalation ends this attempt, not the work. Never close the
-source or create a replacement Ticket for its unfinished obligation.
+Escalate as `../ticket-up/references/AUTOMATED_EXECUTION.md` → *Transitions*, row *Escalate*,
+says: the mark lands before the automation claim is released, and a person's claim is never
+released. A claim released first leaves an escalated Ticket looking like ordinary ready work, and
+the next unattended dispatch — an orchestrator's next check-in — starts the attempt this one just
+ended. A later escalation replaces that handoff record and its mark rather than adding a second.
+The mark is cleared as row *Clear the mark* says. Escalation ends this attempt, not the work. Never
+close the source or create a replacement Ticket for its unfinished obligation.
 
 A runner that disappears before writing an outcome (`../ticket-up/references/AUTOMATED_EXECUTION.md`
 → *The attempt record*) is a failed launch, not an outcome: its launcher counts it and starts the

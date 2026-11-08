@@ -607,8 +607,8 @@ def test_run_ticket_escalation_releases_the_claim_and_marks_the_ticket() -> None
 
     assert "<!-- manifest-dev-run-ticket-escalated -->" in text
     assert "apply the venue's escalation mark" in flat(text)
-    assert "row *Escalate*, says — the mark first, then the automation claim" in flat(text)
-    assert "never a person's" in flat(text)
+    assert "the mark lands before the automation claim is released" in flat(text)
+    assert "a person's claim is never released" in flat(text)
     assert "The mark is cleared as row *Clear the mark* says." in flat(text)
     assert "Not escalated, and any automation claim cleared too, so it can be dispatchable again" in (
         move_row(SOURCE_SKILLS, "Clear the mark")
@@ -1540,6 +1540,7 @@ def test_a_reused_custom_reference_gains_the_rows_it_lacks(root: Path) -> None:
 # the row it relies on. The tests below read the rows from that table, so a row added there is held
 # with no edit here.
 
+# Holds docs/adr/20261108-the-ticket-protocols-moves-have-one-owning-table.md.
 TRANSITIONS = "Transitions"
 MOVE_ROW = re.compile(r"^\| \*\*(?P<move>[^*]+)\*\* \| (?P<cells>.+) \|$")
 ACTOR = re.compile(r"^- \*\*(?P<actor>[^*]+)\*\* —", re.MULTILINE)
@@ -1604,6 +1605,8 @@ def test_no_other_file_restates_a_move(root: Path) -> None:
         for move, cells in move_rows(root).items()
         for run in word_runs(" ".join(cells))
     }
+    # The trust rule's own section is the one place its wordings belong.
+    trust = section(automation_text(root), "The automation identity")
     restated = []
     for name, text in protocol_readers(root).items():
         found: dict[str, list[str]] = {}
@@ -1611,8 +1614,6 @@ def test_no_other_file_restates_a_move(root: Path) -> None:
             found.setdefault(owned[run], []).append(" ".join(run))
         for move, runs in found.items():
             restated.append(f"{name} restates row *{move}*: {runs[0]!r}")
-        # The trust rule's own section is the one place its wordings belong.
-        trust = section(automation_text(root), "The automation identity")
         for phrase in MOVE_RESTATEMENTS:
             if phrase.lower() in flat(text.replace(trust, "")).lower():
                 restated.append(f"{name} restates: {phrase!r}")
@@ -1657,5 +1658,18 @@ PROTOCOL_FILES = (
     "next-ticket/SKILL.md",
 )
 
-# Wordings PR #430 found stating a move a second way, each of which drifted from the first.
-MOVE_RESTATEMENTS = TRUST_RESTATEMENTS + ()
+# Wordings that once stated a move a second way, each of which drifted from the first: the shingle
+# check misses a paraphrase that shares fewer than SHINGLE words with its row.
+MOVE_RESTATEMENTS = TRUST_RESTATEMENTS + (
+    # The Hold rule let the repair Ticket run under a person's pause.
+    "except the repair Ticket an orchestrator's pause names",
+    # The GitHub Ready row counted the label whoever set it.
+    "either the `auto` label or an author with write access",
+    # orchestrate's Left alone dropped the plan a person with write access approved.
+    "its author lacks write access and it has no Auto",
+    # run-ticket stopped a hand run on the claim of the person who started it.
+    "a person other than the identity it writes as is assigned",
+    "A conflicting human claim stops the attempt",
+    # next-ticket and the convention disagreed on who releases a stale claim.
+    "leave the reassignment to a person",
+)

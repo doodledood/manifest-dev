@@ -600,6 +600,7 @@ AdoptsOnlyFromAStoppedHolder == [][\A o \in Orchs : (opc[o] = "adopt" /\ opc'[o]
 HeldNotRedispatched == [][\A o \in Orchs : (opc[o] = "read" /\ opc'[o] = "claim") =>
     ~(ReadyValid /\ review /\ ~red /\ prOpen /\ ~merged /\ branch = TheRec.head /\ TheRec.base = base)]_vars
 
+\* Holds docs/adr/20261108-the-ticket-protocols-moves-have-one-owning-table.md for the areas below.
 \* Property: an orchestrator lands a Ticket only when its grant counts by who set the grant state.
 \* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "never an orchestrator on an ungranted Ticket, which only a person lands"
 LandsOnlyGranted == [][\A o \in Orchs : (opc[o] = "land" /\ opc'[o] = "merge") => Granted]_vars
