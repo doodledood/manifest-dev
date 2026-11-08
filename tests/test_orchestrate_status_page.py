@@ -337,13 +337,16 @@ def test_the_repair_ticket_never_shows_as_paused(status: str) -> None:
 def test_a_persons_pause_stops_the_repair_ticket_on_the_page() -> None:
     row = re.search(r"^\| `repair` \| (.*?)$", reference(), re.M)
     assert row, "STATUS_PAGE.md no longer documents `repair`"
-    assert "while no person's `Paused:` line holds the effort" in row.group(1)
-    assert (
-        "no orchestrator's pause stands for a cause no code change can fix"
-        in row.group(1)
+    assert "row *Launch a repair Ticket*, lets it through" in row.group(1)
+    assert "Otherwise it stops like the rest, so leave it out" in row.group(1)
+    automation = " ".join(
+        (SKILL.parent / "ticket-up" / "references" / "AUTOMATED_EXECUTION.md")
+        .read_text(encoding="utf-8")
+        .split()
     )
-    assert "Under either of those it stops like the rest, so leave it out" in row.group(
-        1
+    assert (
+        "| **Launch a repair Ticket** | Paused only by orchestrator's pauses, each for a "
+        "code-fixable cause, with no person's `Paused:` line;" in automation
     )
     # Both kinds of pause present: the snapshot carries no `repair`, and the page shows Paused.
     ticket = {"id": "#9", "title": "Make the base check pass", "status": "queued"}

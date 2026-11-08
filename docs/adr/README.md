@@ -278,3 +278,4 @@
 | 2026-11-07 | [Only setup-project writes the surfaces version; figure-out records a declined offer apart](20261107-only-setup-project-writes-the-surfaces-version.md) | Accepted | Project context |
 | 2026-11-07 | [Review rebuilds and checks the whole state machine a change touches](20261107-review-checks-the-whole-state-machine-a-change-touches.md) | Accepted | Code review |
 | 2026-11-07 | [The tending identity can answer a review body](20261107-the-tending-identity-can-answer-a-review-body.md) | Accepted | PR lifecycle |
+| 2026-11-08 | [The Ticket protocol's moves have one owning table, kept single by a test](20261108-the-ticket-protocols-moves-have-one-owning-table.md) | Accepted | Ticketing |
