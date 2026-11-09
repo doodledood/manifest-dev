@@ -26,6 +26,9 @@ USER_INVOCABLE = {
         # An optional extra the workflow never depends on; review reaches the same check through
         # code-bugs. See docs/adr/20261107-a-figure-out-wrapper-sweeps-existing-code-for-state-machines.md.
         "audit-state-machines",
+        # An optional extra over figure-out that creates or refreshes one area's principles skill.
+        # See docs/adr/20261109-area-principles-live-in-project-skills.md.
+        "create-principles-skill",
         "manifest-dev-help",
         "next-ticket",
         "review-code",

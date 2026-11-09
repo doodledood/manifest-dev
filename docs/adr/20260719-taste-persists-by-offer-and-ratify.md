@@ -1,7 +1,7 @@
 # ADR: Taste persists by offer-and-ratify, never by silent inference
 
 ## Status
-Accepted — eligibility narrowed by 20260810-universal-discipline-belongs-in-the-prompt; amended by 20261012-taste-is-checked-per-call-and-captured-from-explained-reversals: a single reversal the user explains now qualifies, and entries are checked at each user's call and followed only where they bear rather than held passively; amended by 20261102-taste-stays-a-section-of-the-memory-file: the dedicated-file alternative is weighed again on host residency and stays rejected until a named condition holds
+Accepted — eligibility narrowed by 20260810-universal-discipline-belongs-in-the-prompt; amended by 20261012-taste-is-checked-per-call-and-captured-from-explained-reversals: a single reversal the user explains now qualifies, and entries are checked at each user's call and followed only where they bear rather than held passively; amended by 20261102-taste-stays-a-section-of-the-memory-file: the dedicated-file alternative is weighed again on host residency and stays rejected until a named condition holds; amended by 20261109-area-principles-live-in-project-skills: a project-level entry for one area is written to that area's principles skill
 
 ## Area
 figure-out

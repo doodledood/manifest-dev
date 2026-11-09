@@ -1,7 +1,7 @@
 # ADR: Taste stays a section of the memory file until it outgrows one
 
 ## Status
-Accepted
+Accepted — narrowed by 20261109-area-principles-live-in-project-skills: a project-level entry that guides only one area's work moves to that area's principles skill
 
 ## Area
 figure-out

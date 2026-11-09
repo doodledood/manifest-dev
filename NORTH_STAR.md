@@ -108,10 +108,11 @@ recognition is welcome as a consequence, never a target traded against those end
 - **Each piece stands alone.** Nothing has to be adopted whole to be useful. A person can use
   one skill, define finite work, share project records, track jobs in a store, or assign outcome
   coordination. Those are adoption choices, not a required pipeline or a project-wide Manifest.
-  Shared additions remain plain files and instructions, so colleagues who do not use
-  manifest-dev keep working as before. Delegation applies only inside assigned work.
+  Shared additions remain plain files and instructions that help colleagues who do not use
+  manifest-dev, and their agents, and never stop them working as before. Delegation applies only
+  inside assigned work.
 
-  — ruled: 2026-10-23. Records: Projects advance toward assigned outcomes within delegated authority; Assignment bounds delegated decisions and retained acceptance.
+  — ruled: 2026-11-09 by the owner. Records: Projects advance toward assigned outcomes within delegated authority; Assignment bounds delegated decisions and retained acceptance; Shared additions help colleagues who do not use manifest-dev, not only stay out of their way.
 
 - **Claim only what holds.** No hype register and no superlative promising what models cannot
   reliably do, on any surface we write; no commentary on this repository's own adoption or

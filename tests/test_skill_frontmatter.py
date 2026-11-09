@@ -715,6 +715,10 @@ HOST_TOOL_NAMES = re.compile(
 CONTEXT_FILE_NAME = "CLAUDE.md"
 OTHER_CONTEXT_FILE_NAME = "AGENTS.md"
 LAUNCH_VERB = re.compile(r"\bsub-?agents?\b", re.IGNORECASE)
+# Words this repository uses to reason about its prompts; they mean nothing to a user.
+MAINTAINER_VOCABULARY = re.compile(
+    r"\b(?:Spines?|Altitudes?|Re-host(?:ed|ing)?|Doors?|House)\b"
+)
 # A delegation site: prose telling the reader to run work in another execution
 # context. Each must carry, in the same paragraph, what to do on a host without one.
 DELEGATION = re.compile(
@@ -797,6 +801,18 @@ def test_shipped_text_never_names_a_subagent() -> None:
         text = path.read_text(encoding="utf-8")
         for number in line_hits(text, LAUNCH_VERB):
             problems.append(f"{path.relative_to(ROOT)}:{number}: names a subagent")
+    assert not problems, "\n".join(problems)
+
+
+# Maintainer vocabulary stays out of what ships, while the workflow's own terms travel with it:
+# the maintainer words reason about prompts and mean nothing to a user. This check is the rule's
+# home, so no principles skill restates it.
+def test_shipped_text_speaks_no_maintainer_vocabulary() -> None:
+    problems = []
+    for path in shipped_markdown():
+        text = path.read_text(encoding="utf-8")
+        for number in line_hits(text, MAINTAINER_VOCABULARY):
+            problems.append(f"{path.relative_to(ROOT)}:{number}: maintainer vocabulary")
     assert not problems, "\n".join(problems)
 
 

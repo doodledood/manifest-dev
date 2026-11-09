@@ -1,6 +1,6 @@
 # figure-out: docs mode
 
-The loading layer activates this reference only after the investigation is relevant to the active project or one of its mapped contexts. It adds these behaviors from that point: **bootstrap** (load the project's conventions; initialize CONTEXT.md if missing), **inline glossary captures** (write project vocabulary as terms surface), **ADR offers** (record decisions worth keeping), **North Star updates** (keep the project's standing strategy surface current, under its update asymmetry), the **update offer** for an older setup, and a **drift marker** on a recipe found drifting.
+The loading layer activates this reference only after the investigation is relevant to the active project or one of its mapped contexts. It adds these behaviors from that point: **bootstrap** (load the project's conventions; initialize CONTEXT.md if missing), **inline glossary captures** (write project vocabulary as terms surface), **ADR offers** (record decisions worth keeping), **North Star updates** (keep the project's standing strategy surface current, under its update asymmetry), the **update offer** for an older setup, a **drift marker** on a recipe found drifting, and **principles skills** — creating, growing and pruning a project skill that holds one area's principles.
 
 ## Override: these writes ARE the action
 
@@ -8,7 +8,9 @@ The loading layer activates this reference only after the investigation is relev
 
 When project docs are active, that rule has four explicit exceptions. **Glossary captures, ADR offers, North Star updates, and the drift marker on a verification recipe are not deferred work — they are the action of this mode.** Execute them inline as they trigger. Do not batch to the end of the session. Do not wait for the user to ask. The writes are the deliverable; the deferred-action posture does not apply to them. For the North Star the carve-out covers exactly what its asymmetry permits: a status change on evidence executes inline, and a position rewrite executes inline only under an authorized ruling, including an applicable explicit delegation.
 
-(The default figure-out posture still applies to everything else — design documents written into the project, code edits, plan synthesis. Only these four carve out, plus recording a declined update offer, below.)
+A write to a principles skill that the user accepted is the action too, executed when the yes lands.
+
+(The default figure-out posture still applies to everything else — design documents written into the project, code edits, plan synthesis. Only these carve out, plus recording a declined update offer, below.)
 
 ## Bootstrap (when project relevance exists)
 
@@ -35,6 +37,30 @@ Then resolve the active context file and load it if it exists:
 ## Drift marker on a verification recipe (inline, no offer)
 
 When the read finds a recipe drifting from what it describes, and the work this read implies will not touch it, add one line to that recipe naming what differs — `Drift (YYYY-MM-DD): <what differs>` — and change nothing else in it or anywhere in the project, so the next run that reads the recipe meets it. The next run that touches the recipe repairs it and removes the line. A recipe the work does touch is the work's to repair, so the read states that repair instead of marking it.
+
+## Principles skills (offered, written on a yes)
+
+A principles skill is a project skill named `<area>-principles` holding how the project's people
+want one area's work done; `../../setup-project/references/PRINCIPLES_SKILLS.md` is the method, and
+every step below follows it. Load it when one of these fires:
+
+- **Asked** — the user asks to create or refresh one, directly or through the
+  `create-principles-skill` skill.
+- **A stated reason in one area** — a correction `TASTE.md` would offer as a project-level entry,
+  whose reason guides only one area's work, is offered once, as that file says, in the line form for
+  that area's skill, creating the skill and its pointer line on a yes when none exists. Its gate and
+  timing are `TASTE.md`'s. A personal lean still goes to Taste, and a rule nearly every session needs
+  still goes to the project context file.
+- **A principle steered against** — the user steers against a principle this session loaded:
+  ask, as the method says, whether it moved or this is an exception, before the next question.
+- **A failing line met** — a principles skill this session loaded holds a line failing the
+  method's test: offer, once, to move it to its home or remove it.
+- **Session end** — `TASTE.md`'s session-end sweep gathers this session's area candidates too;
+  batch them per area as the method says, beside the ADR sweep, and offer each area that clears its
+  bar.
+
+With the user's yes, write as the method says. A session with no person present writes none and
+names the candidates in the read.
 
 ## Glossary captures (per-turn, inline, no offer)
 

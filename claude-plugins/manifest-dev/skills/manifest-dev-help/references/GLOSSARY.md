@@ -160,14 +160,28 @@ does not give an incomplete result to the next phase.
 A User's Call is a decision where careful people with the same evidence could disagree in a way that matters to you. Confidence does not decide who has authority. The run honors Retained Decisions and applicable Delegation, then weighs relevant Taste entries. It reports material choices with their alternatives and reasons.
 
 ### Taste
-<!-- context: fff430ea986a -->
+<!-- context: 8142b93b6630 -->
 A Taste entry is a personal preference that you approved, kept in a memory file of your host. It has
 three parts: the preference, the reason, and when it does not apply.
 
 A skill offers an entry when you state a preference that you want to keep. It also offers one when
 you give the same correction again, or reverse one of its decisions and give a reason. It writes the
 entry only when you say yes to that text. It exists so that a skill can apply your preference when
-you are not present, but only a preference that you approved.
+you are not present, but only a preference that you approved. A project preference for one area of
+work, such as design, goes to that area's Principles Skill.
+
+### Principles Skill
+<!-- context: d93ded95bf78 -->
+A Principles Skill is a project skill with the name `<area>-principles`. It holds how the people of a
+project want one area of work done, for example design or prompts. Each line is a principle, with its
+reason and when it does not apply. Lines come from what those people said, from a failure in that
+work, or from a default that a person chose to change or keep. A line is written only when a person
+says yes to it.
+
+A line in the Project Context File tells each agent when to load the skill. This is true also for
+an agent that does not use manifest-dev. The skill exists so that work in an area such as design
+starts from what the team wants, and the Project Context File stays short. A decision goes to a
+Decision Record, not to the skill.
 
 ### Skill
 <!-- context: f891c4003d65 -->
@@ -240,11 +254,11 @@ The skills find it by detection, not by a fixed name. It connects each session t
 Surfaces.
 
 ### Project Surfaces
-<!-- context: dd25da0ae56a -->
+<!-- context: 36d9a6c174be -->
 The Project Surfaces are the files that a project keeps for each session and each contributor. They
 are its North Star, its Glossary and its Decision Records with their ADR Conventions. A project can
-also select a Verification Harness. A section of the Project Context File points each session to them and records
-the Surfaces Version. `/setup-project` installs them, and normal runs keep them current. They exist
+also select a Verification Harness and keep Principles Skills. A section of the Project Context File
+points each session to them and records the Surfaces Version. `/setup-project` installs them, and normal runs keep them current. They exist
 so that the direction, the words and the decisions of the project live in the repository, not in the
 memory of one person.
 

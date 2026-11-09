@@ -7,7 +7,8 @@ requirements while revising working interpretations on evidence. Read it cold, t
 Check it against two things, both handed to you:
 
 - **The rules it was written under** — `/define`'s `SKILL.md`, the schema, the task files the
-  session loaded, the project context file and any Taste entries. Read them first and check
+  session loaded, the project context file, the area principles handed to you, and any Taste
+  entries. Read them first and check
   against what they say, exceptions included; they are the standard, not this brief. Weigh most
   the rules a Manifest's own author misses on a reread — the `SKILL.md` bullets that open *Write
   the current state*, *Every specific in a gate or Deliverable has a source*, *A rough aim stays

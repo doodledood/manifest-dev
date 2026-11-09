@@ -14,7 +14,7 @@ Turns shared understanding into a Manifest — Outcome, Problem, Appetite, Deliv
 - Phrases its description matches: "plan", "spec out", "make a manifest", "break down a task".
 - `auto` (with `--autonomous`); `do` to amend; `babysit-pr` with `--babysit`; figure-out's offer at the end of a read.
 - `--babysit <pr-url>` synthesizes a lifecycle-only Manifest from a pull request — the `check-pr` gate and the gate that the pull request shows the change working; `--autonomous` skips the approval wait and records decisions as `(auto)` assumptions.
-- It reads earlier work on the repository before encoding.
+- It reads earlier work on the repository before encoding, and loads the principles skills the project context file points to for the areas the work touches.
 - A disposable draft made only to get a person's reaction loads no task file; its Deliverable owes only that the draft reaches that person.
 - A feature with a runnable surface a person uses gets the *Journeys driven as the person* gate: the evaluator derives that person's journeys and drives the built feature through them. A library, an API change or internal work nobody meets gets none.
 - Coding gates do not prescribe when the executor runs its advisory review. PR defaults permit reasoned declines of correct but optional bot suggestions; the independent proof gate remains.
@@ -43,6 +43,11 @@ complexity. This drive does not grade that encoding; figure-out's revised
 ### feature-defaults
 Run: `scripts/drive-skill.sh define verification/prompts/define-feature-defaults.md --scaffold claude-plugins/manifest-dev/evals/45-current-setup-offers-nothing`
 Proves: for a feature whose installs upgrade on different days, the Manifest keeps old and new versions working side by side on shared data.
+Check: read
+
+### principles-in-place
+Run: `scripts/drive-skill.sh define verification/prompts/define-principles-in-place.md --scaffold verification/scaffolds/principles-in-place`
+Proves: graders, applied to `./manifest.md`: (1) the Manifest honors the design principles the request runs into — the live view gets its own page rather than a pop-up panel, and the leading option is not coloured while the poll is open — or records each departure as a user's call naming the principle; (2) at least one gate binds a principle the result must not depart from and cites `design-principles` as its source; (3) nothing in it treats the pop-up panel or the green highlight as settled without naming the principle. PASS when all three hold.
 Check: read
 
 ### bounded-growth

@@ -221,7 +221,7 @@ its overrides.
 | `references/LOG.md` | by default; `--no-log` suppresses | the investigation log's entry shape and append discipline, and where a model the session builds is saved |
 | `references/RECALL.md` | once the investigation concerns work in the active repository — a bug, change, design, or decision; a general or quick question that repository's history cannot bear on loads nothing | what earlier sessions, tickets, and pull requests left on this repository: dated leads, the debt on this topic's path, hotspots |
 | `references/TASTE.md` | by default; `--autonomous` or `--team` suppresses | offer-and-ratify capture of durable personal steering preferences into harness memory |
-| `references/WITH_DOCS.md` | by default, but only once the investigation is relevant to the active project or a mapped context; `--no-docs` or `--team` suppresses | glossary captures, ADR offers, North Star updates, map awareness, the update offer for an older setup, a drift marker on a recipe found drifting — and it loads the project's ADR conventions, or the shipped default beside it |
+| `references/WITH_DOCS.md` | by default, but only once the investigation is relevant to the active project or a mapped context; `--no-docs` or `--team` suppresses | glossary captures, ADR offers, North Star updates, principles skills, map awareness, the update offer for an older setup, a drift marker on a recipe found drifting — and it loads the project's ADR conventions, or the shipped default beside it |
 | `references/autonomous.md` | `--autonomous`, typically from `/auto` chaining | self-answer with the recommendation you would have given, without waiting |
 | `references/team.md` | `--team`, typically from the `figure-out-team` wrapper | the counterparty becomes a Slack channel or thread, with the operator in the local session; owns team mode's own read-only project-context behavior |
 
@@ -259,6 +259,11 @@ Nothing fits → probe generally. The probes are opinionated starting points: a 
 the user states, in the session or a context file, or a convention the project states or documents,
 wins where it conflicts, and the context file's outcome rules — naming, structure,
 architecture — constrain the shape being designed, not only which probes apply.
+
+Where the project context file points to a principles skill for an area the topic touches — a
+project skill holding how the project's people want that area's work done — load it beside the
+task files. Its principles outrank the probes' starting points, and departing from one is the
+user's call (`../setup-project/references/PRINCIPLES_SKILLS.md` → *Using one*).
 
 When the investigation turns prompt-shaped — prompts, system prompts, skills,
 agents, or a prompt-driven failure — invoke the prompt-engineering skill for its

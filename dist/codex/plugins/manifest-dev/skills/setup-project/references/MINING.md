@@ -56,6 +56,8 @@ A Taste entry is a ratified personal steering preference that later sessions wei
 
 **Few, and stated as principles.** Offer at most five, ranked by how many later calls each would steer. Draft each in the boundary form `../../figure-out/references/TASTE.md` → *Drafting (boundary form)* gives — a preference that carries to calls never discussed, not the details of the case that prompted it — and propose its write target as *Scope and write target* there says.
 
+**One area's preferences go to its principles skill.** A candidate that guides only one area's work, such as design or prompts, is offered as a line for that area's principles skill instead, per `PRINCIPLES_SKILLS.md` beside this file, and does not count toward the five.
+
 **Ratify, don't write.** Present the candidates as one batch, each with the source it came from. Write only what the user accepts, into the `## Taste` section of the memory file they pick, changing nothing outside it. With no user available to ratify, write nothing — report the candidates instead.
 
 ## Reporting

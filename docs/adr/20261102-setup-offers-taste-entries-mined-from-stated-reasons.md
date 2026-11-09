@@ -1,7 +1,7 @@
 # ADR: setup-project offers a project, once, a few Taste entries mined from reasons the owner already stated
 
 ## Status
-Accepted
+Accepted — amended by 20261109-area-principles-live-in-project-skills: a candidate that guides one area's work is offered for that area's principles skill and does not count toward the five
 
 ## Area
 Project context

@@ -13,6 +13,7 @@ Reviews a change along exactly one quality dimension and returns PASS, FAIL or B
 - `/review-code <dimension> [scope]`. The dimension is one of: change-intent, code-bugs, code-design, code-simplicity, code-maintainability, code-testability, test-quality, type-safety, contracts, operational-readiness, docs, prose-value, defect-class, context-file-adherence. The scope is a supplied range, or the diff against the remote default branch.
 - Phrases its description matches: "review this diff for bugs", "audit the change for type safety".
 - define's coding gates (run under `/do`); review-pr's reviewer fleet.
+- In a project, it loads the principles skills the project context file points to for the areas the change touches, and applies them beside its dimension.
 
 ## Scenarios
 
@@ -24,6 +25,11 @@ Check: read
 ### project-rule
 Run: `scripts/drive-skill.sh review-code verification/prompts/review-code-project-rule.md`
 Proves: with a context file naming a convention a dimension would flag (a shared module-level instance) and a change following it, there is no finding on the convention; the report names the rule applied.
+Check: read
+
+### principles-skills
+Run: `scripts/drive-skill.sh review-code verification/prompts/review-code-principles.md --scaffold verification/scaffolds/principles-review`
+Proves: graders, applied to the report: (1) both reviews load the principles skills the context file points to; (2) the maintainability review raises no finding for `poll_title` repeated in `src/exports` and `src/notify`, naming the architecture principle it applied; (3) the context-file-adherence review reports the green leading bar in the live results view, quoting the neutral-colour principle; (4) neither review offers to edit a principles skill. PASS when all four hold.
 Check: read
 
 ### project-rule-critical

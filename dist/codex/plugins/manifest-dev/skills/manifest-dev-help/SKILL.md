@@ -113,6 +113,7 @@ For example, delegate visual direction but retain acceptance of the rendered res
 | `/figure-out-team` | Do the work of `/figure-out` with a team in a Slack channel or thread. |
 | `/review-code` | Review a change for one quality dimension. Manifest gates use it. |
 | `/audit-state-machines` | Find each state machine in a codebase, check each one with a model, and get the bugs it finds. It does not change code. |
+| `/create-principles-skill` | Make or refresh a project skill that holds how your team wants one area of work done, such as design. It uses what the team already said. |
 | `/review-writing` | Review text against its style standards. |
 | `/design` | Get design direction for a page, app, document or other visual work. |
 | `/review-design` | Review a design in the medium that it is for. |

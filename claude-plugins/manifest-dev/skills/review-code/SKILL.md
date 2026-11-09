@@ -14,7 +14,7 @@ Audit a change along **one** review dimension and report findings. Load only tha
 
 ## Dimensions and thresholds
 
-Load `references/<dimension>.md` for the requested dimension and follow it. Its standards are opinionated defaults: where a rule the user stated, in the session or a context file, or a convention the project states or documents (not a pattern its code merely repeats) differs, that rule governs, a change following it raises no finding, and the report names the rule applied — except a Critical finding on the ladder below, which is still reported, naming the rule that produced it. Classify findings by consequence; the caller chooses the acceptance threshold and handling policy.
+Before reviewing a change in a project, read the project context file's pointers to principles skills — project skills named `<area>-principles` holding how the project's people want one area's work done — and load each one for an area the change touches (`../setup-project/references/PRINCIPLES_SKILLS.md` → *Using one*). Load `references/<dimension>.md` for the requested dimension and follow it. Its standards are opinionated defaults: where a rule the user stated, in the session or a context file, a principle in a loaded principles skill, or a convention the project states or documents (not a pattern its code merely repeats) differs, that rule governs, a change following it raises no finding, and the report names the rule applied — except a Critical finding on the ladder below, which is still reported, naming the rule that produced it. Classify findings by consequence; the caller chooses the acceptance threshold and handling policy.
 
 | Dimension | Reference | Role |
 |-----------|-----------|------|

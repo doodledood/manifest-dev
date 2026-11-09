@@ -14,7 +14,7 @@ Presses on a topic with the user until both understand it, and ends with a named
 - Phrases its description matches: "think through a decision", "dig deeper", "investigate why something is happening".
 - `auto` when shared understanding is missing; `define` when the transcript has none; `figure-out-team` with `--team`.
 - On a project, docs mode keeps the glossary, decision-record offers, North Star updates, the setup offer and recipe drift markers current; `--no-docs` and `--no-log` turn the docs and the log off.
-- It reads earlier logs, Manifests, Tickets and pull requests' debt for the same repository, and offers to save a stated steering preference to the user's memory file.
+- It reads earlier logs, Manifests, Tickets and pull requests' debt for the same repository, and offers to save a stated steering preference to the user's memory file, or, where it guides only one area's work, as a line for that area's principles skill; it asks whether a principle the user steers against has moved, and sweeps the session's area corrections before it ends.
 - It offers a disposable draft and calls design for its look. A draft is shown within minutes and never verified, tested, reviewed or gated; the user's reaction is its only check. Autonomous runs show it to an owner they can reach, and record an assumption only where none can be reached.
 - A user's call about what a person sees or does goes to the user as concrete options or draft variants. A steer or correction, with a reason or without one, is read for the reason behind it: an unstated reason is named, asked about at most once and only when two readings would change the rest in opposite ways, and the next recommendation is reasoned from it. A reason the session named for several corrections, and the user never confirmed, is offered for keeping as Taste; a single unexplained correction is not.
 - Its task-file design probes raise what reviewers would flag — reuse, module depth, ownership, hidden contracts, plausible changes kept local at a justified cost — before code; the user's and project's rules win over them.
@@ -29,8 +29,18 @@ Proves: the reply says the setup is current, lists nothing the project lacks, do
 Check: read
 
 ### one-version-behind
-Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/53-update-offer-from-v13/prompt.md --scaffold claude-plugins/manifest-dev/evals/53-update-offer-from-v13`
-Proves: the reply offers only the v14 changes — the ADR-conventions rule that deleting or retargeting a draft record gives back the Status it changed and the check it moved, and the tool update that keeps the summary of the run that finished last — and offers nothing from v13 or earlier as new.
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/53-update-offer-from-v14/prompt.md --scaffold claude-plugins/manifest-dev/evals/53-update-offer-from-v14`
+Proves: the reply offers only the v15 change — principles skills for the project's high-signal areas, each with its pointer line, and moving principles or Taste entries that only one area's work needs into them — and offers nothing from v14 or earlier as new.
+Check: read
+
+### principle-steered-against
+Run: `scripts/drive-skill.sh figure-out verification/prompts/figure-out-principle-steered-against.md --scaffold verification/scaffolds/principles-in-place`
+Proves: the reply loads `design-principles` through its pointer line, names the neutral-colour principle the steer goes against, and asks whether that principle has moved or this is an exception, showing the revised line it would write on "moved"; it writes nothing to the skill in this reply.
+Check: read
+
+### session-sweep
+Run: `scripts/drive-skill.sh figure-out verification/prompts/figure-out-session-sweep.md --scaffold verification/scaffolds/principles-in-place`
+Proves: the closing offer batches the three stated-reason email corrections — plain text, one link, the question in the subject — as lines for the project's design principles skill (or a new email-area skill with its pointer line), each with its reason and source, rather than as project-wide Taste; nothing is written in this reply.
 Check: read
 
 ### from-v1

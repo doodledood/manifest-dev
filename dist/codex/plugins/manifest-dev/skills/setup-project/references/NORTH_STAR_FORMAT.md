@@ -263,7 +263,7 @@ the entry itself does not explain.
 ```markdown
 ## Project surfaces
 
-<!-- setup-project surfaces v14 -->
+<!-- setup-project surfaces v15 -->
 
 This project keeps its direction, vocabulary, and decision memory in the repo — shared
 ground for every contributor and agent, regardless of tooling. Read `NORTH_STAR.md` and
@@ -285,6 +285,9 @@ ground for every contributor and agent, regardless of tooling. Read `NORTH_STAR.
   they do not start work. Personal restrictions stay in the existing private instructions.
 - **CONTEXT.md** — what words mean here. Read it before naming things; add a term when
   the project settles one.
+<For each principles skill the project keeps — one area's principles, such as design or
+prompts — emit its pointer line as `PRINCIPLES_SKILLS.md` beside this file gives; omit when it
+keeps none.>
 - **docs/adr/** — why decisions went the way they did. Open `docs/adr/README.md` before
   deciding a question a record may already cover, and when a change contradicts or narrows
   one. A record gives grounds, not a veto: follow it where its reasons still hold, and reopen

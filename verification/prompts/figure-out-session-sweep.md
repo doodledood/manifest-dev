@@ -1,0 +1,3 @@
+use the figure-out skill for this. the project is this repo.
+
+we're designing the reminder email members get the day before a poll closes. things i already know i want, so take them as given: keep it plain text, no images — half the club reads mail on old phones that block images and then show a blank box. one link only, straight to the vote — last year's email had three links and people clicked the results one and thought they'd voted. put the poll's question in the subject line, not "reminder" — members get several club emails a week and skim subjects. dont stop to offer saving any of that as we go; give me your read in this one reply, and at the very end tell me anything you'd offer to save for later sessions, and where.

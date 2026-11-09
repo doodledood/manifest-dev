@@ -23,7 +23,7 @@ Choose what you need; there is no required sequence:
 
 - **Understand a question** — `/figure-out` investigates and recommends. It does not start implementation. Product questions can explore what people are trying to accomplish, what they use today, and what would make them try or keep using a solution.
 - **Finish defined work** — `/define` makes a Manifest, a finite contract stating the work and its acceptance checks; `/do` executes it. `/auto` combines understanding, definition, and execution when that is the assignment.
-- **Prepare a project** — `/setup-project` connects its existing direction, words, decisions, and checks. It resolves coordination settings only when you want them, and starts no work.
+- **Prepare a project** — `/setup-project` connects its existing direction, words, decisions, and checks, and offers principles skills for its high-signal areas. It resolves coordination settings only when you want them, and starts no work.
 - **Track or work one job** — `/ticket-up` writes a Question Ticket for inquiry or a Shaped Ticket ready for delivery; `/next-ticket` selects one; `/run-ticket` works that exact Ticket. An inquiry can go directly from `/figure-out` to `/ticket-up` without a Manifest.
 - **Coordinate work** — `/orchestrate` proposes a queue plan or pursues an explicitly assigned outcome. `--autonomous` acts within that assignment and its limits.
 
@@ -57,7 +57,7 @@ One skill sets the project up:
 
 | Skill | What it does |
 |-------|--------------|
-| `/setup-project` | Gives the project a North Star — what it is for and for whom, how it measures progress, and what it never does — plus a glossary, decision-record conventions, and one command that checks the project still works, with the wiring that makes every session read them. It seeds them from the project's history where there is any. Run again on a set-up project, it audits the whole setup and offers each gap. `/figure-out` offers it when the setup is behind, so you rarely type it. |
+| `/setup-project` | Gives the project a North Star — what it is for and for whom, how it measures progress, and what it never does — plus a glossary, decision-record conventions, principles skills for its high-signal areas, and one command that checks the project still works, with the wiring that makes every session read them. It seeds them from the project's history where there is any. Run again on a set-up project, it audits the whole setup and offers each gap. `/figure-out` offers it when the setup is behind, so you rarely type it. |
 
 The check command is recommended, not required. A project that verifies its own way opts out, and runs then use the project's own tests and scripts and never add the command. Where it is kept, it reads one recipe — a short file saying how to exercise one thing — per feature, skill, document, eval suite, and the checks run across the whole tree. A check that costs money, quota, or effects outside the repository asks first.
 
@@ -114,6 +114,7 @@ Manifest criteria call these; you can also invoke them directly:
 | `/review-design` | Reviews artifacts using the delivered medium, applicable access and fidelity standards, bounded machine checks, and exercised behavior. Reports findings and unavailable verification; style defaults alone are not failures. Manifest criteria call it for design gates. |
 | `/check-pr` | Inspects a pull request's state and reports whether it's ready. Read-only; never merges. |
 | `/audit-state-machines` | Finds every state machine in a codebase — a status, or flags that act as states, explicit or implicit — rebuilds each from all its writers, checks every state against every event, and reports each bug it confirms on the real code, with the fix. Changes no code, and offers to turn the findings into Tickets. `/review-code`'s code-bugs dimension applies the same check to a change. |
+| `/create-principles-skill` | Creates or refreshes one area's principles skill — a project skill, such as `design-principles`, holding how the project's people want that area's work done, each line a principle with its reason and when it yields — from what they already said, writing a line only on a person's yes. With no area named, it offers the areas worth one. |
 
 ## First-principles design
 
