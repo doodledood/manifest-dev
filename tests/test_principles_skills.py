@@ -135,7 +135,11 @@ def test_a_principle_holds_unless_the_person_chose_the_departure() -> None:
 
     Holds docs/adr/20261109-an-unattended-run-keeps-to-a-principle-over-a-conflicting-request.md.
     """
-    for path in (METHOD, SKILLS / "figure-out" / "SKILL.md", SKILLS / "define" / "SKILL.md"):
+    for path in (
+        METHOD,
+        SKILLS / "figure-out" / "SKILL.md",
+        SKILLS / "define" / "SKILL.md",
+    ):
         text = " ".join(path.read_text(encoding="utf-8").split())
         where = path.relative_to(ROOT)
         assert "the principle holds unless the" in text, where

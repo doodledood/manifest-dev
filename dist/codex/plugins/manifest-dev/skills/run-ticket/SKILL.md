@@ -164,7 +164,9 @@ Ticket, the claim, the authority, the pull-request head and the base before it m
 the Ticket only after the merge is observed. Row *Land* says who may land.
 
 **On a hand run not told to land,** tell the person the pull request is ready to merge, and that
-once it is merged, running this skill on the Ticket again records the landing and closes it.
+once they merge it, the next session that reads the Ticket records the landing and closes it, as
+`../ticket-up/references/AUTOMATED_EXECUTION.md` → *Transitions*, row *Merge by a person*, says,
+with nothing more asked of them.
 
 ## The user's calls
 

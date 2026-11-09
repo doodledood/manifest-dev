@@ -259,4 +259,5 @@ where `<name>` is the Manifest's filename without extension and `<hash>` the fir
 hex characters of SHA-256 over its absolute path, so every launch on this Manifest reopens
 the same log — where a caller supplied a journal, by the pointer `references/LOG.md` → *Path*
 leaves at that path. Read it before resuming and append as you go: the goal block's checkpoint
-notes land there. `references/LOG.md` holds what a resumed run needs from it.
+notes land there. Unless `--no-log`, read `references/LOG.md` before the log's first entry and
+before resuming: it says how the log is kept and what a resumed run needs recorded.

@@ -1,5 +1,10 @@
 # figure-out eval suite
 
+**Principles-audit change, 2026-11-09: every measurement remains stale.** figure-out's draft
+mechanics moved to `references/DRAFT.md`, team mode's poll gained an exit on silence, and a
+request that conflicts with a project principle now keeps to the principle unless the person
+chose the departure. No suite has run for this change.
+
 **Contract change, 2026-11-05: all earlier measurements are stale.** The shared workflow now
 preserves hard requirements separately from revisable working claims and assesses Outcome
 directly. The affected define rubrics and seeded Manifests use that distinction; no full suite

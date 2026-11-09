@@ -19,7 +19,7 @@ under the conventions item 1 changes:
    writing, superseding or retiring one rebuilds the list in the same act.
 2. **The North Star conventions** — where the project keeps a North Star conventions file, the
    spans its v7 copy lacks, offered section by section per *Compare, then offer* in
-   `../../SKILL.md`: the opening that says the document holds what decisions are judged against,
+   `../UPDATE.md`: the opening that says the document holds what decisions are judged against,
    *What a line may be*, *The sections*, *What it anchors*, the provenance note without history,
    the skeleton, and *Produce it honestly*.
 3. **The North Star line of the project-surfaces section** — its newest wording from
@@ -27,6 +27,5 @@ under the conventions item 1 changes:
    holds and says the choices made along the way live in the decision records. Show it before and
    after.
 4. **The North Star reshape** — the project's own `NORTH_STAR.md` moved into the six sections,
-   per `RESHAPE_NORTH_STAR.md` beside this file: every line sorted by the line test, each given a
-   destination, and nothing written until the owner has ruled on each line. A run with no person
-   present to rule flags the reshape in its report and changes nothing in the North Star.
+   per `RESHAPE_NORTH_STAR.md` beside this file: every line sorted by the line test and each given a
+   destination, written as that file says.

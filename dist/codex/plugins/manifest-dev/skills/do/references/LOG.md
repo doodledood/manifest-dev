@@ -48,8 +48,8 @@ Record what the finished state will not reconstruct on its own:
   what each continued evaluation must check.
 - **Amendments** — what changed, the source authority, why a working revision better served the unchanged Outcome and hard requirements, and which evidence it invalidated.
 - **Met on the way** — each pre-existing issue and below-bar finding met, where it came from, and
-  whether it was fixed, applied, dismissed with the reason, or left from a continued look; each gigantic issue with why it is a
-  project of its own; and a gate bar the run read as suspect with how that settled.
+  whether it was fixed, applied, dismissed with the reason, or left from a continued look; and each gigantic issue with why it is a
+  project of its own.
 - **Operational steps** — retriggers, waits and environment actions.
 
 ## A changed Manifest

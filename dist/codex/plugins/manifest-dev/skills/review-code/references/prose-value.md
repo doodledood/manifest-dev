@@ -4,7 +4,7 @@ Flag prose in code comments and repo doc files that doesn't earn its place — t
 
 **The question for every comment and doc paragraph: "What does a future reader lose if this is removed?"** If the answer is nothing, it's bloat.
 
-Prose value is a judgmental axis, so the high-confidence bar matters more here than anywhere else: "this comment might be redundant" is not enough; "this comment restates the function name in English and removing it would lose nothing" is required.
+Prose value is a judgmental axis, so a finding must say what the prose is and why removing it loses nothing: "this comment might be redundant" is not enough; "this comment restates the function name in English and removing it would lose nothing" is required.
 
 ## Audit targets
 
@@ -114,7 +114,5 @@ Focus on WHICH comment or paragraph fails the bar and WHY, with the specific tel
 - **Prose**: the exact quoted prose
 - **Why this fails the bar**: specific reason — e.g., "comment says 'increment counter by 1' on a line that reads `counter += 1`. Removing the comment loses no information."
 - **What's needed**: delete the comment, OR replace with a load-bearing-WHY note about <specific reasoning>, OR rephrase without the tell
-
-For clean files, list them concisely: `[CLEAN] <filepath> — N comments / M doc paragraphs reviewed, no findings`.
 
 If no findings, confirm prose appears load-bearing with a summary of what was verified (which surfaces, how many comments / doc paragraphs reviewed).

@@ -37,8 +37,7 @@ against active work and the source/case references already handled. Several mess
 case or cause can belong to one job. Internal reasoning and routine coordination need no Tickets.
 
 Commission a Question Ticket through `run-ticket` for focused inquiry; its answer returns to the
-same Ticket. Use figure-out's PRODUCT probes when customer progress, adoption or use is at issue,
-and DECISION when the inquiry includes a consequential choice. Shaped work may go through a
+same Ticket. Shaped work may go through a
 finite Manifest or another explicitly assigned delivery route; no mandatory chain follows from
 coordination. Preserve the inquiry's rationale and evidence through delivery and later learning.
 
@@ -69,8 +68,8 @@ cursors or the last relevant observation. Where a source offers no incremental a
 bounded relevant window or summarize it into the existing project record before continuing.
 Retain links to handled cases and completed jobs where the venue already archives them; do not
 copy their full history into the active record. Replace the current summary in place, close
-completed work through the normal lifecycle, and retire superseded candidates in the existing
-tidy pass. Reopening a case needs changed evidence, feedback or authority, not another check-in.
+completed work through the normal lifecycle, and name superseded candidates, dispatching none, as your
+sort meets them (`../../ticket-up/references/TICKET_CONVENTION.md` → *Tidy pass*). Reopening a case needs changed evidence, feedback or authority, not another check-in.
 
 ## The coordination record
 

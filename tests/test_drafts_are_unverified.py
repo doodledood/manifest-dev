@@ -78,7 +78,9 @@ def test_the_draft_bullet_bounds_the_time_and_says_what_to_cut() -> None:
     assert "Before making the first draft, read `references/DRAFT.md`" in draft
     # Choosing a variant is choosing the direction, so no line may read as refining it after.
     mechanics = _flat(DRAFT)
-    assert "the variant the user chooses is the direction, so drop the rest" in mechanics
+    assert (
+        "the variant the user chooses is the direction, so drop the rest" in mechanics
+    )
     assert "continue with one" not in mechanics
 
 

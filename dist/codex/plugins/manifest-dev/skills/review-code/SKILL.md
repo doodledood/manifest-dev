@@ -10,9 +10,9 @@ Audit a change along **one** review dimension and report findings. Load only tha
 
 ## Input
 
-`$ARGUMENTS` carries the **dimension** plus optional scope, e.g. `dimension=code-bugs` or `code-bugs src/foo.ts`. A caller requesting a gate verdict also supplies the claims to assess and any deliberately required severity, category or approval policy. A Manifest gate carries its claim and source authority; its Evidence names the dimension. If no dimension is given, list the available dimensions and ask which one — one invocation, one dimension.
+`$ARGUMENTS` carries the **dimension** plus optional scope, e.g. `dimension=code-bugs` or `code-bugs src/foo.ts`. A caller requesting a gate verdict also supplies the claims to assess and any deliberately required severity, category or approval policy. A Manifest gate carries its claim and source authority; its Evidence names the dimension. If no dimension is given, list the available dimensions and ask which one — one invocation, one dimension. With no one to ask, report BLOCKED: no dimension was named, and naming one settles it.
 
-## Dimensions and thresholds
+## Dimensions
 
 Before reviewing a change in a project, read the project context file's pointers to principles skills — project skills named `<area>-principles` holding how the project's people want one area's work done — and load each one for an area the change touches (`../setup-project/references/PRINCIPLES_SKILLS.md` → *Using one*). Load `references/<dimension>.md` for the requested dimension and follow it. Its standards are opinionated defaults: where a rule the user stated, in the session or a context file, a principle in a loaded principles skill, or a convention the project states or documents (not a pattern its code merely repeats) differs, that rule governs, a change following it raises no finding, and the report names the rule applied — except a Critical finding on the ladder below, which is still reported, naming the rule that produced it. Classify findings by consequence; the caller chooses the acceptance threshold and handling policy.
 
@@ -53,8 +53,8 @@ evidence can. Assess its support independently rather than requiring agreement w
 For a fresh review — including a new standalone review when an earlier report exists — resolve its scope as follows:
 
 1. **Caller specifies files/paths** → review exactly those.
-2. **Otherwise** → review the complete change. Resolve the comparison base from the PR target or the repository's remote default branch; ask only if neither can be established. Inspect committed changes with `git diff <base>...HEAD`, staged changes with `git diff --cached`, unstaged changes with `git diff`, and relevant new files from `git ls-files --others --exclude-standard`. Read each new file's contents; a path listing alone is not its diff.
-3. **Empty / non-reviewable diff** → ask the caller to clarify scope.
+2. **Otherwise** → review the complete change. Resolve the comparison base from the PR target or the repository's remote default branch; ask only if neither can be established, and with no one to ask report BLOCKED naming the base that could not be established. Inspect committed changes with `git diff <base>...HEAD`, staged changes with `git diff --cached`, unstaged changes with `git diff`, and relevant new files from `git ls-files --others --exclude-standard`. Read each new file's contents; a path listing alone is not its diff.
+3. **Empty / non-reviewable diff** → ask the caller to clarify scope. With no one to ask, report BLOCKED: the resolved scope holds no reviewable change, and a scope that holds one settles it.
 
 Stay within scope — never audit the whole project unless explicitly asked. Skip generated copies, lock files, vendored dependencies and binaries. Establish which files are generated from the repository's ownership or build rules; a directory named `dist/` or `build/` may also contain source-owned files that need review.
 
@@ -62,7 +62,7 @@ Stay within scope — never audit the whole project unless explicitly asked. Ski
 
 **The Pre-existing list, only when asked.** When the caller asks for it on a fresh full look, add a `## Pre-existing` section: issues the loaded dimension owns that you noticed in code you read for the change, that the change neither introduced nor exposed, and that would clear its actionability criteria other than scope: a stated trigger on a defect-finder and a stated cost for a Medium on an advisory dimension. Honor the caller's requested severities and categories; the caller decides how to handle this list. They are not findings: they never count toward the verdict or summary counts. Leave the section out unless asked, and on every follow-up even when asked: a follow-up's scope stays outstanding findings and what the intervening changes introduced or exposed.
 
-This skill is **read-only**: never modify repository files; write only to `/tmp/` for analysis artifacts. The author implements fixes from your report.
+This skill is **read-only**: never modify repository files; write analysis artifacts only outside the repository, in the host's temporary location. The author implements fixes from your report.
 
 ## Severity ladder (shared)
 
@@ -87,9 +87,11 @@ caller's Low-inclusive gate and pass a different caller's Medium+ gate without c
 Choosing to address a Low does not raise its severity. Report classifications without a verdict
 when no gate is requested. If a verdict is requested without an acceptance policy recoverable
 from claims or explicit handling instructions, ask for it or report BLOCKED; do not invent a
-threshold. Batching, repair scope and final finding dispositions belong to the caller. Its
-reasoned rejection is not a claim amendment; evidence that the current claim is wrong calls for
-amendment, while a real failure or necessary missing evidence remains unresolved.
+threshold. Batching, repair scope and final finding dispositions belong to the caller. A caller's
+reasoned rejection does not change the claim you assess; on a follow-up it is a supported
+disposition unless new evidence reopens it. Evidence that the claim itself is wrong is reported
+for the caller, who owns the claim, to change; a real failure or necessary missing evidence
+remains unresolved.
 
 ## Report format (shared)
 

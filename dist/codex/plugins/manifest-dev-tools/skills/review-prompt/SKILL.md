@@ -16,11 +16,9 @@ failure; state the conflicting instruction, missing context or concrete behavior
 cost. Required evidence that is missing leaves the assessment unresolved. Otherwise report the
 findings and assessment without inventing a severity threshold.
 
-**Input**: if no prompt is given (file path or inline text), ask before analyzing — don't assume.
+**Input**: if no prompt is given (file path or inline text), ask before analyzing — don't assume. With no one to answer, report BLOCKED, naming the missing input.
 
 Report format:
-
-## Assessment: {Excellent | Good with Minor Issues | Needs Work}
 
 **Strengths** — what's working, what the author should preserve.
 
@@ -37,4 +35,4 @@ Report format:
 - **Medium** — a concrete quality gap materially impairs the prompt's use. Examples: an ambiguous directive produces inconsistent behavior; duplicated or historical instructions obscure which rule applies; an arbitrary number forces the wrong decision; a host-specific primitive excludes a supported context. Name that cost rather than grading a category of wording automatically.
 - **Low** — polish or a nit of any kind: style, naming, structure, or otherwise. Example: duplication that adds reading load without changing behavior or the underlying promise.
 
-Only flag high-confidence issues. Low-confidence findings are noise — skip style preferences, minor wording, and unverified hunches.
+Report a finding only when you can point to the text and name its concrete cost; an unverified hunch is not a finding. Style preferences and minor wording land at Low.

@@ -430,7 +430,8 @@ def test_orchestrate_proposes_and_waits_by_default() -> None:
     assert "Granted Tickets run end to end and land." in autonomous
     assert "fill useful authorized slots" in autonomous
     assert (
-        "For a queue assignment, stop when no ready work in scope can start" in autonomous
+        "For a queue assignment, stop when no ready work in scope can start"
+        in autonomous
     )
     # A pause only the person can clear no longer keeps an autonomous run checking in.
     # Holds docs/adr/20261109-a-pause-only-a-person-can-clear-ends-the-check-ins.md.
@@ -1015,7 +1016,10 @@ def test_the_pause_line_is_never_erased_and_one_cause_pauses_once() -> None:
     assert "An orchestrator's pause keeps the check-ins going" in orchestrate
     # Only while its cause can clear without the person; then the orchestrator stops and the
     # next one lifts it (docs/adr/20261109-a-pause-only-a-person-can-clear-ends-the-check-ins.md).
-    assert "keeps the check-ins going while its cause can clear without the person" in orchestrate
+    assert (
+        "keeps the check-ins going while its cause can clear without the person"
+        in orchestrate
+    )
     assert (
         "leave those pauses standing: the next orchestrator checks their causes when it starts"
         in orchestrate
@@ -1156,8 +1160,14 @@ def test_each_item_waiting_on_the_person_can_be_decided_from_the_list() -> None:
     )
     # Unchanged waiting items stay on the page and are not reposted; new asks come first.
     # Holds docs/adr/20261109-a-check-in-posts-only-what-changed-and-puts-new-asks-first.md.
-    assert "put first what newly waits on the person, then what else changed since the last check-in" in orchestrate
-    assert "an item still waiting unchanged stays on the page and is not posted again" in orchestrate
+    assert (
+        "put first what newly waits on the person, then what else changed since the last check-in"
+        in orchestrate
+    )
+    assert (
+        "an item still waiting unchanged stays on the page and is not posted again"
+        in orchestrate
+    )
     for field in ("`pick`", "`risk`", "`evidence`"):
         assert field in status_page, f"STATUS_PAGE.md lost the {field} field"
 
@@ -1845,17 +1855,24 @@ def test_a_picker_names_a_stale_claim_and_a_person_releases_it(root: Path) -> No
 @pytest.mark.parametrize("root", [SOURCE_SKILLS, DIST_SKILLS], ids=["source", "codex"])
 def test_whoever_reads_the_store_records_a_persons_merge(root: Path) -> None:
     merge = move_row(root, "Merge by a person")
-    assert "whichever session meets that landing first, whoever holds the claim" in merge
-    assert "a picker or a session tidying the store, once it observes a landing" in move_row(
-        root, "Close"
+    assert (
+        "whichever session meets that landing first, whoever holds the claim" in merge
+    )
+    assert (
+        "a picker or a session tidying the store, once it observes a landing"
+        in move_row(root, "Close")
     )
     convention = flat(convention_text(root))
     assert "Occasionally" not in convention
     assert "Whoever reads every open ticket in a scope" in convention
-    assert "An open ticket whose pull request merged is the one it acts on" in convention
+    assert (
+        "An open ticket whose pull request merged is the one it acts on" in convention
+    )
     assert "*Tidy pass*" in flat(skill_text(root, "next-ticket"))
     assert "whoever holds its claim" in flat(orchestrate_text(root))
-    assert "running this skill on the Ticket again" not in flat(skill_text(root, "run-ticket"))
+    assert "running this skill on the Ticket again" not in flat(
+        skill_text(root, "run-ticket")
+    )
 
 
 @pytest.mark.parametrize("root", [SOURCE_SKILLS, DIST_SKILLS], ids=["source", "codex"])
