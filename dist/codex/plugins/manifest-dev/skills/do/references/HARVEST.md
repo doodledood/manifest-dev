@@ -31,6 +31,11 @@ mistake fails for every later contributor, with or without this workflow.
   command or a `logs:` command, or the same in its own scripts — or, where that is gigantic, name
   the gap as debt. A slow check is sped up, or, where that is gigantic, named in the report with
   where its time goes; it is never debt.
+- **Principles skills:** a correction that is a principle no check can hold, guiding only one
+  area's work, is drafted as a line for that area's principles skill, as `../SKILL.md` → *Taste on
+  reversal* says; a principles skill this run loaded that holds a line failing the test in
+  `../../setup-project/references/PRINCIPLES_SKILLS.md` gets one offer in the report to move or
+  remove it. Neither is written without the person's yes.
 - **Suppressions:** a new suppression of a lock carries its reason on the suppressing line and is
   reported as debt. It needs no approval to land.
 

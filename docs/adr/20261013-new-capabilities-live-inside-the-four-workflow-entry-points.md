@@ -1,7 +1,7 @@
 # ADR: New capabilities live inside figure-out, define, do, and auto, and maintain themselves during normal runs
 
 ## Status
-Accepted
+Accepted — amended by 20261109-area-principles-live-in-project-skills: one more optional wrapper, `create-principles-skill`, over figure-out
 
 ## Area
 Positioning

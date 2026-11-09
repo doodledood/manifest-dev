@@ -8,7 +8,7 @@ Command-line tool that tracks books a reading club has borrowed.
 
 ## Project surfaces
 
-<!-- setup-project surfaces v13 -->
+<!-- setup-project surfaces v14 -->
 
 This project keeps its direction, vocabulary, and decision memory in the repo. Read
 `NORTH_STAR.md` and `CONTEXT.md` at the start of every session.
@@ -295,7 +295,7 @@ d=.runs/$VERIFY_RUN_ID; test -f "$d/pid" || { echo "no instance for run $VERIFY_
 kill "$(cat "$d/pid")" && rm -f "$d/pid"
 EOF
 chmod +x scripts/serve.sh scripts/stop.sh
-cat > scripts/verify <<'VERIFY_TOOL_V13_EOF'
+cat > scripts/verify <<'VERIFY_TOOL_V14_EOF'
 #!/bin/sh
 # Starts this project's verification tool, verify.mts beside this file: TypeScript that Node
 # 22.18 or newer (23.6 or newer on Node 23) runs directly. `verify --help` says everything else.
@@ -308,9 +308,9 @@ if [ "$major" -lt 22 ] || { [ "$major" -eq 22 ] && [ "$minor" -lt 18 ]; } || { [
   exit 3
 fi
 exec node "$(dirname "$0")/verify.mts" "$@"
-VERIFY_TOOL_V13_EOF
+VERIFY_TOOL_V14_EOF
 chmod +x scripts/verify
-cat > scripts/verify.mts <<'VERIFY_TOOL_V13_EOF'
+cat > scripts/verify.mts <<'VERIFY_TOOL_V14_EOF'
 // verify — this project's one verification harness.
 //
 // Run `verify --help` for everything: what can be checked, how, which checks a change touches,
@@ -582,6 +582,7 @@ interface Summary {
   outcome: string;
   machine: string;
   duration: number | undefined; // seconds
+  ended: number; // when the run finished: the summary's write time, in ms
 }
 
 /** A file's text, or undefined when a run beside this one removed it while this one listed it. */
@@ -614,6 +615,8 @@ function readSummary(path: string): Summary | undefined {
   const head = at < 0 ? text : text.slice(0, at);
   const field = (name: string): string => new RegExp(`^- \\*\\*${name}:\\*\\* (.+)$`, "m").exec(head)?.[1]?.trim() ?? "";
   const duration = /^(\d+(?:\.\d+)?) s$/.exec(field("Duration"))?.[1];
+  const ended = statSync(path, { throwIfNoEntry: false })?.mtimeMs;
+  if (ended === undefined) return undefined;
   return {
     path,
     when: stamp[1],
@@ -622,10 +625,17 @@ function readSummary(path: string): Summary | undefined {
     outcome: /^\w+/.exec(field("Outcome"))?.[0] ?? "",
     machine: field("Machine"),
     duration: duration === undefined ? undefined : Number(duration),
+    ended,
   };
 }
 
 const older = (a: Summary, b: Summary): number => a.when.localeCompare(b.when) || a.order - b.order;
+
+/**
+ * Orders summaries by when their runs finished, the path breaking a tie, so runs that overlapped
+ * agree on which one is latest: a run started first may finish last.
+ */
+const finishedBefore = (a: Summary, b: Summary): number => a.ended - b.ended || a.path.localeCompare(b.path);
 
 /** The summaries this machine keeps for a recipe, oldest first. */
 function summariesFor(recipe: Recipe): Summary[] {
@@ -635,9 +645,12 @@ function summariesFor(recipe: Recipe): Summary[] {
     .sort(older);
 }
 
-/** The latest run of a scenario on this machine, or undefined when it has not run here. */
+/** The scenario's run that finished last on this machine, or undefined when it has not run here. */
 function latestRun(recipe: Recipe, scenario: string): Summary | undefined {
-  return summariesFor(recipe).filter((s) => s.scenario === scenario).at(-1);
+  return summariesFor(recipe)
+    .filter((s) => s.scenario === scenario)
+    .sort(finishedBefore)
+    .at(-1);
 }
 
 /**
@@ -947,10 +960,13 @@ function plantedDuration(): number | undefined {
   return Number(planted);
 }
 
-/** Remove the scenario's summaries older than the one just written, so this machine keeps one. */
+/**
+ * Remove the scenario's summaries of runs that finished before the one just written, so this
+ * machine keeps one — the run that finished last, however the runs overlapped.
+ */
 function replaceOlder(recipe: Recipe, scenario: string, kept: Summary): void {
   for (const item of summariesFor(recipe)) {
-    if (item.path !== kept.path && item.scenario === scenario && older(item, kept) < 0) rmSync(item.path, { force: true });
+    if (item.path !== kept.path && item.scenario === scenario && finishedBefore(item, kept) < 0) rmSync(item.path, { force: true });
   }
 }
 
@@ -1374,7 +1390,7 @@ main(process.argv.slice(2)).then(
     process.exitCode = 1;
   },
 );
-VERIFY_TOOL_V13_EOF
+VERIFY_TOOL_V14_EOF
 cat > verification/harness.md <<'EOF'
 ---
 ask-first: ask

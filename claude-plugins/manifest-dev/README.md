@@ -114,6 +114,7 @@ Manifest criteria call these; you can also invoke them directly:
 | `/review-design` | Reviews artifacts using the delivered medium, applicable access and fidelity standards, bounded machine checks, and exercised behavior. Reports findings and unavailable verification; style defaults alone are not failures. Manifest criteria call it for design gates. |
 | `/check-pr` | Inspects a pull request's state and reports whether it's ready. Read-only; never merges. |
 | `/audit-state-machines` | Finds every state machine in a codebase — a status, or flags that act as states, explicit or implicit — rebuilds each from all its writers, checks every state against every event, and reports each bug it confirms on the real code, with the fix. Changes no code, and offers to turn the findings into Tickets. `/review-code`'s code-bugs dimension applies the same check to a change. |
+| `/create-principles-skill` | Creates or refreshes one area's principles skill — a project skill, such as `design-principles`, holding how the project's people want that area's work done, each line a principle with its reason and when it yields — from what they already said, writing a line only on a person's yes. With no area named, it offers the areas worth one. |
 
 ## First-principles design
 

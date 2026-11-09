@@ -244,7 +244,13 @@ changed in a `PG-*` is adjusting it — and each adjusted or omitted one is name
 with why: the rule that overrides it, or what makes it clearly inapplicable. A reader can then
 tell a Default set aside on purpose from one lost. The context file's outcome rules —
 naming, structure, architecture — also constrain the shape the Manifest specifies,
-not only which Defaults it drops. Taste entries stay weighed per call, as above. Per-repo for
+not only which Defaults it drops. Where the project context file points to a principles skill
+for an area the work touches — a project skill holding how the project's people want that area's
+work done — load it: its principles constrain that shape too and outrank a conflicting Default, a
+principle the result must not depart from becomes a gate citing the skill as its source, and a
+departure is a user's call that names the principle
+(`../setup-project/references/PRINCIPLES_SKILLS.md` → *Using one*). Taste entries stay weighed
+per call, as above. Per-repo for
 multi-repo manifests. State what must be true for the artifact's actual users, operators,
 readers and maintainers over its useful life. Keep the task files' applicable review coverage;
 several concerns may share a claim and its Evidence when they judge the same result. A review
@@ -381,7 +387,8 @@ as it meant them, which is how an invented number, a dropped point, two gates
 that cannot both hold, or a note an amendment left behind survive the reread
 above. Hand a fresh context the paths of `references/REVIEW.md` — its brief —
 this file, `references/SCHEMA.md`, the task files this session loaded, the
-project context file and any loaded memory file holding Taste entries, and the
+project context file, any principles skills this session loaded, and any loaded memory file
+holding Taste entries, and the
 Manifest; the session record — the path of the figure-out log when one exists,
 and of the transcript where the host keeps one the fresh context can read, else
 the conversation itself, passed verbatim; and any model of the design built
