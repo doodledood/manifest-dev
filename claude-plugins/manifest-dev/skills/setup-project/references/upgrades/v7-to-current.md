@@ -27,6 +27,5 @@ under the conventions item 1 changes:
    holds and says the choices made along the way live in the decision records. Show it before and
    after.
 4. **The North Star reshape** — the project's own `NORTH_STAR.md` moved into the six sections,
-   per `RESHAPE_NORTH_STAR.md` beside this file: every line sorted by the line test, each given a
-   destination, and nothing written until the owner has ruled on each line. A run with no person
-   present to rule flags the reshape in its report and changes nothing in the North Star.
+   per `RESHAPE_NORTH_STAR.md` beside this file: every line sorted by the line test and each given a
+   destination, written as that file says.

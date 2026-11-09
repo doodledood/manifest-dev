@@ -84,7 +84,7 @@ The recorded version also decides which differences in a copy the project owns a
 
 ### The update pass
 
-When the context file records a surfaces version, or any surface this skill installs already exists (`docs/adr/CONVENTIONS.md`, `docs/NORTH_STAR_CONVENTIONS.md`, `NORTH_STAR.md`, or a project-surfaces section in the context file), the run is an update: read `references/UPDATE.md` before offering or writing anything. It says what the update covers, how each gap is offered and reported, and how a copy the project owns is compared. Which upgrade guides it adds up depends on the version the project records:
+When the context file records a surfaces version, or the project already has `docs/adr/CONVENTIONS.md`, `docs/NORTH_STAR_CONVENTIONS.md`, `NORTH_STAR.md` or a project-surfaces section in the context file, the run is an update: read `references/UPDATE.md` before offering or writing anything. It says what the update covers, how each gap is offered and reported, and how a copy the project owns is compared. Which upgrade guides it adds up depends on the version the project records:
 
 | Recorded version | Loads |
 |---|---|
