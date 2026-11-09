@@ -55,7 +55,7 @@ High-churn files deserve extra scrutiny since issues there have outsized impact.
 
 ## Actionability filter
 
-Before reporting an issue, it must pass ALL of these. **If a finding fails ANY criterion, drop it entirely.** Only report issues you are CERTAIN about — "this might be a problem" is not sufficient; "this WILL cause X problem because Y" is required.
+Before reporting an issue, it must pass ALL of these. **If a finding fails ANY criterion, drop it entirely.** A finding names the problem and its cause: "this might be a problem" is not sufficient; "this WILL cause X problem because Y" is required.
 
 1. **In scope** — Two modes:
    - **Diff-based review** (default, no paths specified): ONLY report issues introduced or meaningfully worsened by this change. "Meaningfully worsened" means the change added significant new duplication to a pre-existing issue, added a new instance of an already-problematic pattern (e.g., third copy of duplicate code), or changed a single-file fix into a multi-file change. Also include an existing obligation this change newly relies on or extends when its concrete future-change burden is evidenced. Unrelated pre-existing debt stays out of scope.
@@ -103,114 +103,64 @@ Use the shared report format. In addition, this dimension expects:
 
 ### Worked finding examples
 
-```
-#### [MEDIUM] Duplicate validation logic
-**Category**: DRY
-**Location**: `src/handlers/order.ts:45-52`, `src/handlers/payment.ts:38-45`
-**Description**: Nearly identical input validation for user IDs exists in both handlers
-**Evidence**:
-```typescript
-// order.ts:45-52
-if (!userId || typeof userId !== 'string' || userId.length < 5) {
-  throw new ValidationError('Invalid user ID');
-}
+Each example fills the shared report format and adds this dimension's **Category** and **Effort**.
 
-// payment.ts:38-45
-if (!userId || typeof userId !== 'string' || userId.length < 5) {
-  throw new ValidationError('Invalid userId');
-}
-```
-**Impact**: Bug fixes or validation changes must be applied in multiple places; easy to miss one
-**Effort**: Quick win
-**Suggested Fix**: Parse the ID once where the request enters, as `parseUserId(raw: unknown): UserId`, returning a branded `UserId` or throwing `ValidationError`, and take `UserId` in both handlers, so a value that skipped the check cannot reach them
-```
-
-```
-#### [MEDIUM] Analytics calls embedded in individual processors
-**Category**: Extensibility Risk
-**Location**: `src/processors/OrderProcessor.ts:89`, `src/processors/RefundProcessor.ts:67`, `src/processors/ReturnProcessor.ts:73`
-**Description**: Each processor manually fires analytics events. Adding a new processor requires remembering to add the analytics call—nothing enforces it.
-**Evidence**:
-```typescript
-// OrderProcessor.ts:89
-class OrderProcessor {
-  process(order: Order) {
-    // ... business logic ...
-    analytics.track('order_processed', { orderId: order.id });
+````
+### Finding #1: Duplicate validation logic
+- **Location**: `src/handlers/order.ts:45-52`, `src/handlers/payment.ts:38-45`
+- **Severity**: Medium
+- **Category**: DRY
+- **Description**: Nearly identical input validation for user IDs exists in both handlers:
+  ```typescript
+  // order.ts:45-52
+  if (!userId || typeof userId !== 'string' || userId.length < 5) {
+    throw new ValidationError('Invalid user ID');
   }
-}
 
-// RefundProcessor.ts:67 - same pattern
-// ReturnProcessor.ts:73 - same pattern
-```
-**Impact**: New processors will silently lack analytics unless developers remember to add them. Already have 3 processors with manual calls—pattern will continue.
-**Effort**: Moderate refactor
-**Suggested Fix**: Move analytics to the orchestration layer (e.g., `ProcessorRunner`) or use a decorator/wrapper:
-```typescript
-class ProcessorRunner {
-  run(processor: Processor, input: Input) {
-    const result = processor.process(input);
-    analytics.track(`${processor.name}_processed`, { id: input.id });
-    return result;
+  // payment.ts:38-45
+  if (!userId || typeof userId !== 'string' || userId.length < 5) {
+    throw new ValidationError('Invalid userId');
   }
-}
-```
-```
+  ```
+- **Acceptance basis**: Concrete quality cost: one validation rule is kept in two places.
+- **Impact**: Bug fixes or validation changes must be applied in multiple places; easy to miss one
+- **Effort**: Quick win
+- **Recommended fix**: Parse the ID once where the request enters, as `parseUserId(raw: unknown): UserId`, returning a branded `UserId` or throwing `ValidationError`, and take `UserId` in both handlers, so a value that skipped the check cannot reach them
+````
 
-```
-#### [HIGH] Function name doesn't match behavior
-**Category**: Cohesion
-**Location**: `src/services/user.ts:145`
-**Description**: `getUser()` creates a user if not found, but the name implies read-only retrieval. Callers expecting idempotent read behavior will cause unintended user creation.
-**Evidence**:
-```typescript
-async function getUser(email: string): Promise<User> {
-  const existing = await db.users.findByEmail(email);
-  if (existing) return existing;
-  // Surprise! This "get" function creates users
-  return await db.users.create({ email, createdAt: new Date() });
-}
-```
-**Impact**: Callers will misuse this function. Someone checking "does user exist?" by calling getUser will accidentally create users. The name lies about the contract.
-**Effort**: Quick win
-**Suggested Fix**: Either rename to `getOrCreateUser()` or split into `getUser()` (returns null if not found) and `ensureUser()` (creates if needed).
-```
+````
+### Finding #2: Analytics calls embedded in individual processors
+- **Location**: `src/processors/OrderProcessor.ts:89`, `src/processors/RefundProcessor.ts:67`, `src/processors/ReturnProcessor.ts:73`
+- **Severity**: Medium
+- **Category**: Extensibility Risk
+- **Description**: Each processor manually fires analytics events. Adding a new processor requires remembering to add the analytics call—nothing enforces it.
+  ```typescript
+  // OrderProcessor.ts:89
+  class OrderProcessor {
+    process(order: Order) {
+      // ... business logic ...
+      analytics.track('order_processed', { orderId: order.id });
+    }
+  }
 
-```
-#### [MEDIUM] Type accumulates unrelated concerns
-**Category**: Cohesion
-**Location**: `src/types/User.ts:1-45`
-**Description**: `User` type has grown to include authentication, profile, preferences, billing, and audit fields—5 distinct concerns in one type.
-**Evidence**:
-```typescript
-interface User {
-  // Identity (ok)
-  id: string;
-  email: string;
-  // Auth (separate concern)
-  passwordHash: string;
-  mfaSecret: string;
-  sessions: Session[];
-  // Profile (separate concern)
-  displayName: string;
-  avatarUrl: string;
-  bio: string;
-  // Preferences (separate concern)
-  theme: 'light' | 'dark';
-  notifications: NotificationSettings;
-  // Billing (separate concern)
-  stripeCustomerId: string;
-  subscriptionTier: string;
-  // Audit (separate concern)
-  createdAt: Date;
-  lastLoginAt: Date;
-}
-```
-**Impact**: Every feature touching any user aspect must load/pass the entire User. Changes to billing affect auth code. Type is hard to understand and evolve.
-**Effort**: Moderate refactor
-**Suggested Fix**: Decompose into focused types: `UserIdentity`, `UserAuth`, `UserProfile`, `UserPreferences`, `UserBilling`. Core `User` composes or references these.
-```
+  // RefundProcessor.ts:67 - same pattern
+  // ReturnProcessor.ts:73 - same pattern
+  ```
+- **Acceptance basis**: Concrete quality cost: every new processor must repeat a call nothing enforces.
+- **Impact**: New processors will silently lack analytics unless developers remember to add them. Already have 3 processors with manual calls—pattern will continue.
+- **Effort**: Moderate refactor
+- **Recommended fix**: Move analytics to the orchestration layer (e.g., `ProcessorRunner`) or use a decorator/wrapper:
+  ```typescript
+  class ProcessorRunner {
+    run(processor: Processor, input: Input) {
+      const result = processor.process(input);
+      analytics.track(`${processor.name}_processed`, { id: input.id });
+      return result;
+    }
+  }
+  ```
+````
 
 ## Pre-output checklist
 
-Before delivering: scope was clearly established (asked if unclear); every issue has an actionable fix suggestion; no duplicate issues reported under different names; summary statistics match the detailed findings.
+Before delivering: scope was clearly established (asked if unclear, or reported BLOCKED with no one to ask); every issue has an actionable fix suggestion; no duplicate issues reported under different names; summary statistics match the detailed findings.

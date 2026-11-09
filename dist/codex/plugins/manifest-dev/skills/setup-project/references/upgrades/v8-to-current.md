@@ -12,7 +12,7 @@ Offer each item on its own. Items 1 to 3 go first, because items 4 and 5 write u
 conventions items 1 and 2 change:
 
 1. **The ADR conventions** — the spans of `../../../figure-out/references/ADR_FORMAT.md` the
-   project's copy lacks, offered section by section per *Compare, then offer* in `../../SKILL.md`:
+   project's copy lacks, offered section by section per *Compare, then offer* in `../UPDATE.md`:
    - the `Revisit when` section of the template, and the paragraph explaining it;
    - `Revisit when` among the fields editable in place;
    - the *Strategy* paragraph's list, derived with signposts;

@@ -1,7 +1,7 @@
 # ADR: One cause failing several runs pauses the effort once
 
 ## Status
-Accepted — amended by 20261102-a-landing-fixes-what-it-meets: a base check a code change can fix gets one repair Ticket, which alone may launch and land during the pause; amended by 20261107-automation-writes-beside-what-a-person-wrote-never-over-it: an orchestrator's pause and the status-page link are records kept apart from a person's `Paused:` line, not lines written after a re-read
+Accepted — amended by 20261102-a-landing-fixes-what-it-meets: a base check a code change can fix gets one repair Ticket, which alone may launch and land during the pause; amended by 20261107-automation-writes-beside-what-a-person-wrote-never-over-it: an orchestrator's pause and the status-page link are records kept apart from a person's `Paused:` line, not lines written after a re-read; narrowed by 20261109-a-pause-only-a-person-can-clear-ends-the-check-ins: a pause keeps the check-ins going only while its cause can clear without the person, and otherwise stays standing for the next orchestrator to lift
 
 ## Area
 Ticketing
@@ -50,7 +50,8 @@ partly — `tests/test_ticket_automation_prompts.py` — `test_the_pause_line_is
 fails if the common-cause pause or the rule that any orchestrator lifts an orchestrator's pause
 and only a person removes a person's is dropped, and
 `test_no_automation_write_replaces_a_persons_pause` fails if a write of automation's moves back
-onto the text a person edits (20261107-automation-writes-beside-what-a-person-wrote-never-over-it);
+onto the text a person edits (20261107-automation-writes-beside-what-a-person-wrote-never-over-it),
+and the same test pins the narrowing of the check-ins (20261109-a-pause-only-a-person-can-clear-ends-the-check-ins);
 deciding that failures share a cause stays judgment.
 
 ## Source

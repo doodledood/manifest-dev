@@ -13,8 +13,6 @@ A finding from either mode passes through the same Actionability Filter below.
 
 ## State machines
 
-<!-- One statement of the method, used by review and by the audit-state-machines skill; see docs/adr/20261107-review-checks-the-whole-state-machine-a-change-touches.md. -->
-
 A state machine is a value whose changes follow a lifecycle: a set of states and the events that move it between them. It is **explicit** when the code names it — a status type with a transition table, or one function that owns every change. It is **implicit** when nothing does — a status set by branches in several files, or flags whose combinations act as states (`loading` and `failed` both true). Its bugs live between its sites: each site looks correct alone.
 
 When the scope writes a state machine, or reads one to decide what happens next (a scope that only displays a state needs only a check that the displayed states exist):

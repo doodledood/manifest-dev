@@ -79,7 +79,7 @@ node scripts/design-tools.mjs image screenshot.png --artifacts views --output im
 
 Descriptors use supplied image pixels, composited over white and downsampled with Pillow LANCZOS to a maximum edge of 512. Reports record decoder/version/resampling; compare matched crops, content and analysis parameters. EXIF orientation is applied; embedded ICC profiles are not transformed. GIF uses the first frame, not temporal behavior. SVG rasterization belongs to acquisition: supply a raster image.
 
-`--artifacts` writes an edge-map SVG plus grayscale, blur and thumbnail PNGs for native images. These are transforms of supplied pixels, not new captures or eyesight simulations. Map colors normalize within each image; numeric magnitudes are needed for comparisons across maps. `--edge-threshold` (0.08) and `--tile-size` (16 analysis pixels) are descriptor parameters, not quality thresholds. No OCR, gaze, congestion or learned importance predictor is included.
+`--artifacts` writes an edge-map SVG plus grayscale, blur and thumbnail PNGs for native images. These are transforms of supplied pixels, not new captures or eyesight simulations. Map colors normalize within each image; numeric magnitudes are needed for comparisons across maps. `--edge-threshold` (0.08) and `--tile-size` (16 analysis pixels) are descriptor parameters, not quality thresholds.
 
 A decoder-free input is `{"width":2,"height":2,"data":[...16 integer RGBA bytes...]}`. Dimensions must be positive and maximum edge 512; alpha is composited over white. The supplied resolution is retained. No original size, frame or resampling provenance is inferred. RGBA analysis can emit the edge map; other views require a native image.
 

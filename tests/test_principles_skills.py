@@ -127,3 +127,22 @@ def test_this_repositorys_principles_skills_keep_the_shape() -> None:
         assert pointer_line(name, str(skill.relative_to(ROOT))).search(
             context
         ), f"CLAUDE.md must carry the method's pointer line for {name} and its path"
+
+
+def test_a_principle_holds_unless_the_person_chose_the_departure() -> None:
+    """The method, figure-out and define each say what happens when a request conflicts with a
+    principle: figure-out and define run without the method loaded, so each carries the rule.
+
+    Holds docs/adr/20261109-an-unattended-run-keeps-to-a-principle-over-a-conflicting-request.md.
+    """
+    for path in (
+        METHOD,
+        SKILLS / "figure-out" / "SKILL.md",
+        SKILLS / "define" / "SKILL.md",
+    ):
+        text = " ".join(path.read_text(encoding="utf-8").split())
+        where = path.relative_to(ROOT)
+        assert "the principle holds unless the" in text, where
+        assert "chose the departure" in text, where
+        assert "the one change that restores what was asked" in text, where
+        assert "whether the principle has moved or this is an exception" in text, where

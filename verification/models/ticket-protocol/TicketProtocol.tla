@@ -12,7 +12,9 @@
    branch, claim, pick, close or reopen the Ticket, close or approve the pull request, apply the
    escalation mark, answer an escalation, withdraw the Auto grant, and add or remove a `Paused:`
    line; a hand run the person who picked the Ticket starts, writing as the automation identity,
-   never told to land; an orchestrator that stops for good, after which its run's timeout passes;
+   never told to land; an orchestrator that stops for good, after which its run's timeout passes,
+   or that stops because every pause left waits on the person, with a later orchestrator that may
+   start after it; a picker or tidying session that reads the store once;
    a base branch that moves at most once; each world event at most once. Liveness holds within
    that bound. The three-failed-launches escalation is outside it: one crash at most.
 
@@ -38,8 +40,10 @@
    orchestrator's run left fits no category, so nobody adopts it; "grant", the grant state counts
    whoever set it; "pick", a picker writes its claim as the automation identity; "handrun", a hand
    run stands down on any person's claim, its starter's included; "repair", the repair Ticket runs
-   under a person's pause too; and "percause", an effort carries one orchestrator's pause, so a
-   second cause's pause is never recorded. Each prefix configuration restores one, and the
+   under a person's pause too; "percause", an effort carries one orchestrator's pause, so a
+   second cause's pause is never recorded; "handclose", a person's merge is recorded only at an
+   orchestrator's landing turn, which a person's claim keeps it from, and no picker records it;
+   and "checkins", an orchestrator keeps checking in on a pause only the person can clear. Each prefix configuration restores one, and the
    `prefix` scenario of verification/recipes/ticket-protocol-model.md expects TLC to report the
    violation each causes. *)
 EXTENDS Integers, Sequences
@@ -119,6 +123,12 @@ Paused == ppause \/ opause # {}
 RepairLets == Repair /\ "check" \in opause /\ opause \subseteq CodeFixable /\ (~ppause \/ Old("repair"))
 \* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "Nothing starts in it — no launch, no landing turn — and live runs finish"
 Held == Paused /\ ~RepairLets
+\* Every orchestrator's pause still standing is for a code-fixable cause that still fails, and its
+\* repair Ticket waits on the person: escalated, claimed by them, held for their review, or ungranted.
+WaitsOnPerson == opause # {} /\ opause \subseteq failing /\ Repair /\ opause \subseteq CodeFixable
+                 /\ (mark \/ claim = "person" \/ review \/ ~Counts)
+\* The orchestrator a configuration with "ostart" starts later.
+Late == CHOOSE o \in Orchs : TRUE
 
 Init ==
   /\ label = Grant /\ picked = FALSE /\ ppause = FALSE /\ opause = {}
@@ -126,7 +136,7 @@ Init ==
   /\ recs = << >> /\ claim = "none" /\ closed = FALSE /\ autoClosed = FALSE /\ landedNow = FALSE
   /\ mark = FALSE /\ prOpen = TRUE /\ merged = FALSE /\ red = FALSE /\ review = FALSE
   /\ branch = 0 /\ base = 0 /\ nextC = 1 /\ used = {}
-  /\ opc = [o \in Orchs |-> "read"] /\ saw = [o \in Orchs |-> FALSE] /\ lview = [o \in Orchs |-> 0]
+  /\ opc = [o \in Orchs |-> IF "ostart" \in Env /\ o = Late THEN "idle" ELSE "read"] /\ saw = [o \in Orchs |-> FALSE] /\ lview = [o \in Orchs |-> 0]
   /\ n = [r \in Runners |-> 0]
   /\ rpc = [r \in Runners |-> "none"] /\ rbase = [r \in Runners |-> 0] /\ rlocal = [r \in Runners |-> 0]
   /\ rmerged = [r \in Runners |-> 0] /\ bad = FALSE
@@ -168,8 +178,9 @@ Ready == claim = "none"
 \* Quote orchestrate/SKILL.md: "from then on it sorts as below like one of yours (*Taking over*)"
 \* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "so no other orchestrator adopts the mark while its holder checks in"
 \* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "the effort not paused unless *Launch a repair Ticket* applies"
+\* Pre-fix: an orchestrator goes on giving turns while every pause left waits on the person.
 ORead(o) ==
-  /\ opc[o] = "read" /\ ~LeftAlone(o) /\ ~Running /\ ~Held
+  /\ opc[o] = "read" /\ ~LeftAlone(o) /\ ~Running /\ ~Held /\ (~WaitsOnPerson \/ Old("checkins"))
   /\ \/ ToLand(o) /\ Owner(o) /\ opc' = [opc EXCEPT ![o] = "land"] /\ UNCHANGED saw
      \/ ToLand(o) /\ ~Owner(o) /\ n[o] < MaxRuns /\ opc' = [opc EXCEPT ![o] = "adopt"] /\ UNCHANGED saw
      \/ ~ToLand(o) /\ (ToRecover \/ Ready) /\ n[o] < MaxRuns
@@ -310,13 +321,33 @@ OPause(o) ==
                  label, picked, ppause, failing>>
 
 \* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "That pause removed; the effort stays paused while any other stands"
-\* Quote orchestrate/SKILL.md: "An orchestrator's pause keeps the check-ins going: at each, check its cause, and lift it as row *Lift a pause* says."
+\* Quote orchestrate/SKILL.md: "At each check-in, and when you start, check each pause's cause, and lift it as row *Lift a pause* says."
 OLift(o) ==
   /\ opc[o] = "read"
   /\ \E c \in opause \ failing : opause' = opause \ {c}
   /\ UNCHANGED <<recs, claim, closed, autoClosed, landedNow, mark, prOpen, merged, red, review,
                  branch, base, nextC, used, opc, saw, lview, n, rpc, rbase, rlocal, rmerged, bad,
                  label, picked, ppause, failing, noted>>
+
+\* Quote orchestrate/SKILL.md: "An orchestrator's pause keeps the check-ins going while its cause can clear without the person: an outage that may end on its own, or a code-fixable cause whose repair Ticket this orchestrator can still launch, run or land."
+\* Quote orchestrate/SKILL.md: "stop as the mode's reference says and leave those pauses standing: the next orchestrator checks their causes when it starts and lifts each one that is fixed."
+\* Quote orchestrate/references/AUTONOMOUS.md: "held by pauses none of which keeps the check-ins going"
+\* Pre-fix: the orchestrator never stops for a pause only the person can clear.
+OStopForPerson(o) ==
+  /\ opc[o] = "read" /\ WaitsOnPerson /\ ~NamedLive /\ ~Old("checkins")
+  /\ opc' = [opc EXCEPT ![o] = "gone"]
+  /\ UNCHANGED <<recs, claim, closed, autoClosed, landedNow, mark, prOpen, merged, red, review,
+                 branch, base, nextC, used, saw, lview, n, rpc, rbase, rlocal, rmerged, bad, evars>>
+
+\* A person's merge recorded at a check-in, whoever holds the claim; the pause holds no close.
+\* Quote orchestrate/SKILL.md: "When a person has merged a Ticket's pull request, record the landing reference and close the Ticket as row *Merge by a person* says, whoever holds its claim."
+\* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "On a Ticket not escalated, whichever session meets that landing first, whoever holds the claim"
+\* Pre-fix: a person's claim keeps the orchestrator from recording it.
+ORecordMerge(o) ==
+  /\ opc[o] = "read" /\ merged /\ landedNow /\ ~closed /\ ~mark /\ (claim # "person" \/ ~Old("handclose"))
+  /\ closed' = TRUE /\ autoClosed' = TRUE /\ claim' = "none"
+  /\ UNCHANGED <<recs, landedNow, mark, prOpen, merged, red, review, branch, base, nextC, used, opc,
+                 saw, lview, n, rpc, rbase, rlocal, rmerged, bad, evars>>
 
 ---------------------------------------------------------------------------------------------
 (* The current run of runner r — an orchestrator's, or the hand run — whose run ID is RunOf(r) *)
@@ -334,16 +365,20 @@ Stops(r) == ~Named(r) \/ closed \/
 \* RWork abstracts successful verification and settlement of mandatory work. Evidence validity
 \* under a changed criterion or receiver is outside this concurrency model; the acceptance-recovery
 \* native scenario exercises that decision, not this check.
+\* Quote run-ticket/SKILL.md: "A merged pull request with a completion record but an open Ticket needs the landing reference and the close, not a replacement branch; that merge is the observed landing, whoever made it"
 RStart(o) ==
   /\ rpc[o] = "start"
-  /\ IF Stops(o) THEN /\ rpc' = [rpc EXCEPT ![o] = "stopped"] /\ UNCHANGED <<rbase, rlocal, rmerged>>
+  /\ IF Stops(o) THEN /\ rpc' = [rpc EXCEPT ![o] = "stopped"] /\ UNCHANGED <<rbase, rlocal, rmerged, closed, autoClosed, claim>>
+     ELSE IF merged /\ landedNow /\ TheRec.ready # None
+     THEN /\ rpc' = [rpc EXCEPT ![o] = "done"] /\ closed' = TRUE /\ autoClosed' = TRUE /\ claim' = "none"
+          /\ UNCHANGED <<rbase, rlocal, rmerged>>
      ELSE IF TheRec.ready # None /\ branch = TheRec.head /\ TheRec.base = base
              /\ prOpen /\ ~merged /\ ~red /\ ~review
      THEN /\ rpc' = [rpc EXCEPT ![o] = "prewrite"] /\ rlocal' = [rlocal EXCEPT ![o] = branch]
-          /\ rmerged' = [rmerged EXCEPT ![o] = base] /\ UNCHANGED rbase
+          /\ rmerged' = [rmerged EXCEPT ![o] = base] /\ UNCHANGED <<rbase, closed, autoClosed, claim>>
      ELSE /\ rpc' = [rpc EXCEPT ![o] = "work"] /\ rbase' = [rbase EXCEPT ![o] = branch]
-          /\ UNCHANGED <<rlocal, rmerged>>
-  /\ UNCHANGED <<recs, claim, closed, autoClosed, landedNow, mark, prOpen, merged, red, review,
+          /\ UNCHANGED <<rlocal, rmerged, closed, autoClosed, claim>>
+  /\ UNCHANGED <<recs, landedNow, mark, prOpen, merged, red, review,
                  branch, base, nextC, used, opc, saw, lview, n, bad, evars>>
 
 \* Quote run-ticket/SKILL.md: "Before each checkpoint, merge the target base in when it has moved"
@@ -451,7 +486,7 @@ WCrash == /\ Event("crash") /\ \E r \in Runners : LiveRun(r) /\ rpc' = [rpc EXCE
 \* time at each check-in. Nobody holds a hand run's ready mark, and no orchestrator stops a hand run.
 \* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "That timeout stands for the holder's absence, not the run's age"
 \* Quote orchestrate/SKILL.md: "On each Ticket you hold ready to land, Auto or not, refresh the start time"
-WTimeout == /\ Event("timeout") /\ HasRec /\ ("ostop" \in Env => "ostop" \in used)
+WTimeout == /\ Event("timeout") /\ HasRec /\ ({"ostop", "ostart"} \cap Env # {} => \E o \in Orchs : opc[o] = "gone")
             /\ ~(ReadyValid /\ TheRec.run[1] \in Orchs /\ opc[TheRec.run[1]] # "gone")
             /\ recs' = [recs EXCEPT ![1].timedOut = TRUE]
             /\ rpc' = [r \in Runners |-> IF r \in Orchs /\ Named(r) /\ LiveRun(r) THEN "dead" ELSE rpc[r]]
@@ -534,24 +569,43 @@ HStart == /\ picked /\ rpc[Hand] = "none" /\ ~closed /\ ~NamedLive
           /\ UNCHANGED <<closed, autoClosed, landedNow, mark, prOpen, merged, red, review, branch,
                          base, nextC, used, opc, saw, lview, rbase, rlocal, rmerged, bad, evars>>
 
+\* World: a person reads the store through a picker, or asks a session to tidy it, once. It
+\* closes in the person's name; autoClosed marks a close no person decided.
+\* Quote ticket-up/references/TICKET_CONVENTION.md: "An open ticket whose pull request merged is the one it acts on: it records that landing and closes the ticket"
+\* Quote next-ticket/SKILL.md: "record and close each Ticket whose pull request merged as it says"
+\* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "a picker or a session tidying the store, once it observes a landing row *Merge by a person* made"
+\* Pre-fix: no picker records it.
+PSort == /\ ~Old("handclose") /\ merged /\ landedNow /\ ~closed /\ ~mark /\ Event("sort")
+         /\ closed' = TRUE /\ autoClosed' = TRUE /\ claim' = "none"
+         /\ UNCHANGED <<recs, landedNow, mark, prOpen, merged, red, review, branch, base, nextC, opc,
+                        saw, lview, n, rpc, rbase, rlocal, rmerged, bad, evars>>
+
+\* World: a scheduler or a person starts the next orchestrator once another has stopped.
+WOStart == /\ Event("ostart") /\ opc[Late] = "idle" /\ \E o \in Orchs : opc[o] = "gone"
+           /\ opc' = [opc EXCEPT ![Late] = "read"]
+           /\ UNCHANGED <<recs, claim, closed, autoClosed, landedNow, mark, prOpen, merged, red, review,
+                          branch, base, nextC, saw, lview, n, rpc, rbase, rlocal, rmerged, bad, evars>>
+
 Next ==
   \/ \E o \in Orchs : ORead(o) \/ OAdopt(o) \/ OClaim(o) \/ OVerify(o) \/ OLaunch(o) \/ OWait(o) \/ OLand(o) \/ OMerge(o)
-  \/ \E o \in Orchs : OPause(o) \/ OLift(o)
+  \/ \E o \in Orchs : OPause(o) \/ OLift(o) \/ OStopForPerson(o) \/ ORecordMerge(o)
   \/ \E r \in Runners : RStart(r) \/ RWork(r) \/ RPrePush(r) \/ RPush(r) \/ RWriteReady(r)
   \/ WPush \/ WBase \/ WRed \/ WReview \/ WApprove \/ WMark \/ WPrClose \/ WMerge \/ WClaim \/ WClose
   \/ WReopen \/ WCrash
   \/ WTimeout \/ WAnswer \/ WCond \/ WOStop
   \/ WPPause \/ WPUnpause \/ WOutage \/ WUp \/ WForge \/ WWithdraw \/ PPick \/ HStart
+  \/ PSort \/ WOStart
 
 Fair == /\ \A o \in Orchs :
              /\ WF_vars(ORead(o)) /\ WF_vars(OAdopt(o)) /\ WF_vars(OClaim(o)) /\ WF_vars(OVerify(o)) /\ WF_vars(OLaunch(o))
              /\ WF_vars(OWait(o)) /\ WF_vars(OLand(o)) /\ WF_vars(OMerge(o)) /\ WF_vars(OPause(o)) /\ WF_vars(OLift(o))
+             /\ WF_vars(OStopForPerson(o)) /\ WF_vars(ORecordMerge(o))
         /\ \A r \in Runners :
              /\ WF_vars(RStart(r)) /\ WF_vars(RWork(r)) /\ WF_vars(RPrePush(r)) /\ WF_vars(RPush(r))
              /\ WF_vars(RWriteReady(r))
 
 \* World: time passes, so once an orchestrator has stopped, its run's timeout passes.
-Spec == Init /\ [][Next]_vars /\ Fair /\ WF_vars(WTimeout /\ "ostop" \in used)
+Spec == Init /\ [][Next]_vars /\ Fair /\ WF_vars(WTimeout /\ \E o \in Orchs : opc[o] = "gone")
 
 ---------------------------------------------------------------------------------------------
 (* Properties *)
@@ -636,9 +690,18 @@ PausedWhileACauseFails == noted \cap failing # {} => opause # {}
 \* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "*Launch* and *Land* apply to it as though the effort were not paused"
 RepairLifts == []("check" \in opause /\ ~ppause /\ "outage" \notin failing =>
     <>("check" \notin opause \/ ppause \/ "outage" \in failing))
-\* Property: a merge a person made is recorded: the orchestrator closes the Ticket, whether or not
-\* its grant counts, unless a person or a pause holds it.
-\* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "an orchestrator's check-in, or the next hand run, records it and closes the Ticket"
-PersonMergeIsRecorded == [](merged /\ landedNow /\ ReadyValid /\ ~closed =>
-    <>(closed \/ claim = "person" \/ mark \/ Held))
+\* Property: a person's merge of a pull request marked ready is recorded: the orchestrator closes
+\* the Ticket, whether or not its grant counts, whoever holds the claim and under a pause too,
+\* unless it is escalated.
+\* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "records it and closes the Ticket"
+PersonMergeIsRecorded == [](merged /\ landedNow /\ ReadyValid /\ ~closed => <>(closed \/ mark))
+
+\* Property: an orchestrator whose every pause waits on the person stops checking in.
+\* Quote orchestrate/SKILL.md: "Once every pause still standing waits on the person instead"
+CheckInsEnd == \A o \in Orchs : [](opc[o] = "read" /\ WaitsOnPerson => <>(opc[o] = "gone" \/ ~WaitsOnPerson))
+
+\* Property: a pause left standing is lifted once its cause is fixed and an orchestrator checks in.
+\* Quote orchestrate/SKILL.md: "the next orchestrator checks their causes when it starts and lifts each one that is fixed"
+LiftedOnceFixed == []((opause \ failing # {} /\ \E o \in Orchs : opc[o] \notin {"gone", "idle"}) =>
+    <>(opause \subseteq failing))
 =============================================================================

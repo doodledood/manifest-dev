@@ -2,11 +2,11 @@
 
 Canonical reference for tasks whose changeset spans multiple repositories.
 
-A shared canonical manifest is the default: one manifest captures shared intent, every deliverable tagged with its repo, shared invariants. Splitting per repo is a legitimate user choice when work is loosely coupled — that case is just N independent single-repo manifests with no special rules. The manifest is **internal** (a working document for user and agent); PR descriptions stay summary-only. It lives at the durable manifests home `/define` chose at synthesis (emitted in the `Manifest complete:` line) with no primary repo owning it; if the file is ever lost, re-run /define against the same task and in-flight PRs continue under the new path. Multi-repo amendments use the single shared manifest — last-writer-wins on concurrent edits; collision rate is low, recovery is the writer noticing missing content and re-triggering. No file locking. /do reads `Repos:` and uses absolute paths when working in a non-cwd repo; user invokes /do once globally (agent navigates between repos) within one conversational session.
+A shared canonical manifest is the default: one manifest captures shared intent, every deliverable tagged with its repo, shared invariants. Splitting per repo is a legitimate user choice when work is loosely coupled — that case is just N independent single-repo manifests with no special rules. The manifest is **internal** (a working document for user and agent); PR descriptions do not reproduce it: each describes its own change and, where `PR_LIFECYCLE.md` composes, shows that change working. It lives at the durable manifests home `/define` chose at synthesis (emitted in the `Manifest complete:` line) with no primary repo owning it; if the file is ever lost, re-run /define against the same task and in-flight PRs continue under the new path. Multi-repo amendments use the single shared manifest — last-writer-wins on concurrent edits; collision rate is low, recovery is the writer noticing missing content and re-triggering. No file locking.
 
 ## Schema Additions
 
-Multi-repo manifests extend the standard schema with two optional fields. Single-repo manifests omit both.
+Multi-repo manifests extend the standard schema with two optional fields and one Process Guidance entry. Single-repo manifests omit all three.
 
 **Intent** adds:
 
@@ -32,6 +32,12 @@ Multi-repo manifests extend the standard schema with two optional fields. Single
 ```
 
 `Repos:` and `Repo:` are documentation for human and agent readers — they don't gate /do.
+
+**Process Guidance** adds one entry. The executor reads only the Manifest, so the Manifest itself tells it how to use the map:
+
+```markdown
+- [PG-N] One run covers every repo in `Repos:`. Reach each repo by its absolute path from that map, whichever directory the run starts in, while working and while judging any gate, and give those paths to whatever evaluates a gate.
+```
 
 Worked example:
 
@@ -59,22 +65,12 @@ session cookie set.
 Deterministic gate.
 ```
 
-## Cross-repo gates and BLOCKED state
+## Cross-repo gates
 
-Cross-repo verification often depends on prerequisites the user controls ("all PRs deployed to staging"). The selected evaluator for such an AC returns **BLOCKED** with a note describing what's pending, and /do routes the BLOCKED via /escalate so the user can take the action. After the user signals readiness ("deployed", "go ahead"), re-invoke /do to re-evaluate the criterion.
+Cross-repo verification often depends on prerequisites the user controls ("all PRs deployed to staging"). Such a criterion stays an AC, as `SCHEMA.md` → *Verdicts* says of every criterion that waits on outside action, and its Evidence names the prerequisite, so an evaluation that cannot reach it can report the wait and what is pending.
 
-When the manifest declares `Repos:`, `/do` keeps the cross-repo path map in view while it works and while it judges each gate, so every repo's path is reachable:
+The path map lives in `Repos:` and is put to use by the Process Guidance entry above. It is never part of a gate's own text, and changes no gate's threshold.
 
-```
-Available repos: backend=/home/user/projects/api, frontend=/home/user/projects/web
-```
+## Lifecycle criteria
 
-The map is wrapper context, never part of a gate's own text, and changes no gate's threshold.
-
-## /done and /auto for multi-repo
-
-/done fires **once per manifest**, including for multi-repo. No per-repo /done independence. The Outcome and every AC + Global Invariant across every repo's deliverables must have fresh PASS evidence (with no BLOCKED pending) before /done is called. The cross-repo wrapper above is what makes a single /done reachable: every evaluator has all repo paths, so cross-repo behavior is checkable during normal /do flow. Multi-repo /done summary lists which repos' deliverables were verified.
-
-/auto's chain (figure-out → define → do) covers the whole multi-repo implementation phase in one invocation, navigating between repos as deliverables require. Lifecycle tending is part of /do's execution when the manifest carries lifecycle ACs whose Evidence activates the `check-pr` skill (PR_LIFECYCLE.md auto-templates one per repo). `--babysit <pr-url>` is single-PR by construction; for multi-repo lifecycle tending, declare `Repos:` in the manifest and let /define template the per-repo ACs.
-
-The user is the coordinator: invoke /do (or /auto), manage each repo's PR with whatever workflow they prefer, signal readiness in chat when cross-repo prerequisites land (BLOCKED criteria re-evaluate on the next /do invocation). The system supports this workflow but does not automate it.
+Where `../tasks/PR_LIFECYCLE.md` composes, its criteria are written once per repo in `Repos:`. `--babysit <pr-url>` is single-PR by construction; for multi-repo lifecycle tending, declare `Repos:` in the manifest and write the per-repo ACs.

@@ -18,27 +18,29 @@ gate names the register and its caller-chosen acceptance policy.
 
 With no argument, review the most recently modified prose file in the working tree and say which
 one you picked. If that is ambiguous or nothing prose-shaped has changed, ask what to review
-rather than guessing.
+rather than guessing. With no one to ask, review the candidate the evidence best supports and name
+that assumption first in the report; with no candidate at all, report BLOCKED naming what is
+missing.
 
-## Registers and thresholds
+## Registers and grading
 
 Two registers, each with its own rules. Classify findings by consequence; the caller supplies any acceptance policy:
 
 | Register | What it covers | Rules |
 |----------|----------------|-------|
-| `docs` | Specs, proposals, reports, formal and technical documentation, READMEs, reference material, API docs | `../define/references/DOCS-STYLE-REFERENCE.md` |
-| `voice` | Articles, blog posts, marketing and social copy, newsletters, narrative, creative writing | `../define/references/WRITING-REFERENCE.md` |
+| `docs` | Specs, proposals, reports, formal and technical documentation, READMEs, reference material, API docs | `references/DOCS-STYLE-REFERENCE.md` |
+| `voice` | Articles, blog posts, marketing and social copy, newsletters, narrative, creative writing | `references/WRITING-REFERENCE.md` |
 
-Each register brings the shared floor with it: `../define/references/PROSE-FLOOR-REFERENCE.md`
+Each register brings the shared floor with it: `references/PROSE-FLOOR-REFERENCE.md`
 holds the rules common to both, including the accessibility and inclusive-language floors, and a
 finding from the floor is graded and reported on the same footing as one from the register. There
 is no separate floor-only invocation.
 
-Both registers grade by consequence: High covers wrong meaning or a broken promise, Medium
-covers a clear quality gap that must be fixed before shipping, and Low is polish or a nit
-of any kind: style, naming, structure, or otherwise. The loaded register anchors name its concrete
-audience costs. An explicit requirement remains binding; a correctness or safety failure or broken
-binding promise received as Low is regraded from evidence before applying the caller's policy.
+Grade each finding on the loaded register's severity scale. Both scales grade by consequence, and
+on both Low is polish or a nit of any kind: style, naming, structure, or otherwise. The loaded
+register anchors name its concrete audience costs. An explicit requirement remains binding; a
+correctness or safety failure or broken binding promise received as Low is regraded from evidence
+before applying the caller's policy.
 
 The caller supplies the acceptance claims and any deliberately required severity or category
 policy. For a claim-based gate, connect each alleged failure to the intended reader, meaning or
@@ -51,11 +53,6 @@ necessary evidence remains unresolved, and an empty findings list alone does not
 files for one text — their rules contradict each other by design, and a finding drawn from the
 wrong one is noise.
 
-The paths above are where these files sit when the whole plugin is installed. Where they are
-absent — a single-skill install, or a host that lays skills out differently — search for them by
-name before giving up, and where they genuinely cannot be found, say so and report only the
-findings you can support without them rather than reviewing against remembered rules.
-
 ### Detecting the register
 
 Read enough of the text to judge what it is for. Documentation instructs or specifies: it tells a
@@ -67,7 +64,8 @@ Where a text genuinely mixes both — a tutorial opening with a story, a launch 
 reference material — take the register of its dominant body, say which you took and why in one
 line, and note that the other register's rules were not applied.
 
-Where detection is genuinely balanced, say so and ask, rather than picking silently. An explicit
+Where detection is genuinely balanced, say so and ask, rather than picking silently. With no one
+to ask, take the closer register and name that assumption first in the report. An explicit
 `register=` argument always wins and needs no explanation.
 
 ## Precedence
@@ -99,14 +97,9 @@ grading it as a defect.
 
 ## Scope, and what this is not
 
-This skill reviews **prose the user points it at**, on request, in any register.
-
-It does not overlap the `prose-value` dimension of `review-code`, which asks a
-different question on a different surface: whether prose *inside a code change* — code comments
-and repo doc files in a diff — earns its place at all. That dimension is diff-scoped and runs as
-part of a code review; this skill reads a whole text on demand and judges it against a style
-standard. Reviewing a README before publishing it is this skill; catching a comment that restates
-the line below it during a code review is that dimension.
+This skill reviews **prose the user points it at**, on request, in any register: it reads a whole
+text and judges it against a style standard. Whether a comment or doc paragraph in a code change
+earns its place at all is a different question, and this skill does not answer it.
 
 If the user asks for the fixes to be applied after seeing the report, that is a separate request
 and ordinary editing.

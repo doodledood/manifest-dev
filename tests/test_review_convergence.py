@@ -110,8 +110,8 @@ def test_nit_classification_does_not_encode_caller_optionality(
     plugins: Path,
 ) -> None:
     for name, reference in [
-        ("define", "references/DOCS-STYLE-REFERENCE.md"),
-        ("define", "references/WRITING-REFERENCE.md"),
+        ("review-writing", "references/DOCS-STYLE-REFERENCE.md"),
+        ("review-writing", "references/WRITING-REFERENCE.md"),
         ("review-writing", "SKILL.md"),
         ("review-design", "SKILL.md"),
     ]:
@@ -122,7 +122,7 @@ def test_nit_classification_does_not_encode_caller_optionality(
         assert "style, naming, structure, or otherwise" in normalized
         assert "presentation-only" not in normalized
         assert "without cost to comprehension" not in text
-    docs = skill(plugins, "define", "references/DOCS-STYLE-REFERENCE.md")
+    docs = skill(plugins, "review-writing", "references/DOCS-STYLE-REFERENCE.md")
     low_row = next(line for line in docs.splitlines() if line.startswith("| **LOW**"))
     assert "serial commas" in low_row
     executor = " ".join(skill(plugins, "do").split())
@@ -220,9 +220,14 @@ def test_recovery_and_exports_keep_acceptance_meaning(plugins: Path) -> None:
 
 def test_amendment_repairs_the_fault_in_claim_or_evidence(plugins: Path) -> None:
     builder = " ".join(skill(plugins, "define").split())
-    assert "inadequate evidence method or an evaluation that missed evidence" in builder
-    assert "add a criterion only for an uncovered result" in builder
-    assert "An amendment that changes a decision produces a gate" not in builder
+    amendment = " ".join(skill(plugins, "define", "references/AMENDMENT.md").split())
+    assert "means amend: read `references/AMENDMENT.md`" in builder
+    assert (
+        "inadequate evidence method or an evaluation that missed evidence" in amendment
+    )
+    assert "add a criterion only for an uncovered result" in amendment
+    for text in (builder, amendment):
+        assert "An amendment that changes a decision produces a gate" not in text
     research = skill(plugins, "define", "tasks/research/RESEARCH.md")
     assert "source-specific fact may rest on one authoritative source" in research
     assert "initially sound result need not produce findings" in research

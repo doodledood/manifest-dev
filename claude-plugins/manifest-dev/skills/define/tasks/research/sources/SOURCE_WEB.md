@@ -23,21 +23,15 @@ Instantiates RESEARCH.md's abstract source rigor gates for web sources:
 |--------|-----------|
 | Phase-matched strategy | Broader queries during exploration (maximize recall), narrower during focused investigation (maximize precision) |
 
-## Risks
-
-- **Search result bias** — SEO manipulation and algorithmic ranking treated as a proxy for source authority; probe: are we relying on search rank position to determine quality?
-- **AI-content pollution** — Lateral reading or cross-referencing undermined when corroborating sources are themselves AI-generated; probe: are corroborating sources genuinely independent human-authored content?
-- **Authority inflation (web)** — Blog cited like peer review, vendor marketing cited like independent analysis, social media engagement conflated with credibility; probe: is each source's authority level honestly assessed against the web hierarchy?
-- **Circular citation (web)** — Multiple web sources appearing independent but tracing to a single press release, blog post, or upstream report, creating false corroboration; probe: do corroborating sources have genuinely independent upstream origins?
-
-## Trade-offs
-
-- Search depth vs execution cost — deeper search (more reformulations, vocabulary expansion) improves recall but costs more tokens and time; match depth to claim importance
-- Recency vs permanence — web sources are volatile (pages move, content updates); prefer archived/stable sources for claims that need to hold
-
 ## Defaults
 
 *Domain best practices for web research.*
 
 - **Iterative reformulation** — Terminology from found sources seeds follow-up searches (pearl growing)
 - **Vocabulary expansion** — Synonym variants, alternative phrasings, and domain-specific terminology to overcome vocabulary mismatch barriers
+- **Rank is not authority** — Judge a source's quality against the web hierarchy, never by its position in search results; SEO manipulation and algorithmic ranking are no proxy for authority
+- **Corroboration from independent human-authored sources** — Before counting a source as corroboration, check that it is independent, human-authored content; lateral reading and cross-referencing are undermined when the corroborating sources are themselves AI-generated
+- **Assess authority at its real level** — Place each source honestly in the web hierarchy: a blog is not peer review, vendor marketing is not independent analysis, and social media engagement is not credibility
+- **Trace corroboration upstream** — Follow corroborating web sources to their origins; several that trace to one press release, blog post, or upstream report count as one source
+- **Search depth follows claim importance** — Deeper search (more reformulations, vocabulary expansion) improves recall but costs more tokens and time; spend it on the claims the conclusions rest on
+- **Stable sources for claims that need to hold** — Web sources are volatile (pages move, content updates); prefer archived or stable sources for claims that need to hold

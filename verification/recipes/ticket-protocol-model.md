@@ -1,6 +1,6 @@
 ---
 kind: feature
-covers: verification/models, claude-plugins/manifest-dev/skills/ticket-up/references/AUTOMATED_EXECUTION.md, claude-plugins/manifest-dev/skills/ticket-up/references/GITHUB_STORE.md, claude-plugins/manifest-dev/skills/ticket-up/references/FILE_STORE.md, claude-plugins/manifest-dev/skills/ticket-up/references/TICKET_CONVENTION.md, claude-plugins/manifest-dev/skills/orchestrate/SKILL.md, claude-plugins/manifest-dev/skills/run-ticket/SKILL.md, claude-plugins/manifest-dev/skills/next-ticket/SKILL.md
+covers: verification/models, claude-plugins/manifest-dev/skills/ticket-up/references/AUTOMATED_EXECUTION.md, claude-plugins/manifest-dev/skills/ticket-up/references/GITHUB_STORE.md, claude-plugins/manifest-dev/skills/ticket-up/references/FILE_STORE.md, claude-plugins/manifest-dev/skills/ticket-up/references/TICKET_CONVENTION.md, claude-plugins/manifest-dev/skills/orchestrate/SKILL.md, claude-plugins/manifest-dev/skills/orchestrate/references/AUTONOMOUS.md, claude-plugins/manifest-dev/skills/run-ticket/SKILL.md, claude-plugins/manifest-dev/skills/next-ticket/SKILL.md
 ---
 # ticket-protocol-model
 
@@ -69,31 +69,37 @@ ungranted ready pull request waits for a person, whose merge the orchestrator th
 closes.
 
 ### pause
-Run: `verification/models/ticket-protocol/check.sh pause && verification/models/ticket-protocol/check.sh repair`
+Run: `verification/models/ticket-protocol/check.sh pause && verification/models/ticket-protocol/check.sh repair && verification/models/ticket-protocol/check.sh pause-person`
 Proves: while a person's `Paused:` line or an orchestrator's pause stands, nothing starts in the
 effort — no launch, at the sort or at the re-read after writing; no adoption, with a second
 orchestrator that may stop; no landing turn — except the repair Ticket an orchestrator's pause
 names, and that only while every pause is for a code-fixable cause and no person's line stands; the
 effort stays paused while any cause an orchestrator paused it for still fails, one pause per cause;
-and once only code-fixable pauses hold it, the repair Ticket lands and its pause lifts.
+and once only code-fixable pauses hold it, the repair Ticket lands and its pause lifts. When the
+repair Ticket waits on a review only a person gives, the orchestrator stops checking in and leaves
+the pause standing, and a later orchestrator lifts it once the repair lands.
 
 ### handoff
 Run: `verification/models/ticket-protocol/check.sh handoff`
 Proves: once a person picks a Ticket, no orchestrator launches, adopts or lands it, even after the
 hand run they start under their claim dies and its timeout passes, or after the person marks it
 escalated and answers, which clears only an automation claim; that hand run never stands down
-on its starter's claim.
+on its starter's claim; and once the person merges a pull request marked ready, the orchestrator, a
+picker reading the store or a run that starts on it records the landing and closes the Ticket,
+whoever holds its claim.
 
 ### prefix
-Run: `f=0; for c in record stall escalated deferred stranded grant dispatch pick handrun repair percause; do verification/models/ticket-protocol/check.sh --expect-violation prefix-$c || f=1; done; exit $f`
+Run: `f=0; for c in record stall escalated deferred stranded grant dispatch pick handrun repair percause handclose checkins; do verification/models/ticket-protocol/check.sh --expect-violation prefix-$c || f=1; done; exit $f`
 Proves: the check can fail. Each prefix configuration restores one old behavior, a rule as it stood
 before a fix, and TLC reports, with its trace: a second attempt record; a landing that stalls; a
 landing of a Ticket a person marked escalated; a claim of a Ticket whose signpost reads as unmet; a
 ready Ticket stranded once its orchestrator stopped; a landing, and a launch, on a grant state set
 by someone without authority; an orchestrator recovering a Ticket a person picked, once the picker
 wrote its claim as the automation identity; a hand run standing down on its starter's claim; the
-repair Ticket starting under a person's `Paused:` line; and an effort unpaused while an outage
-persists, once it carried one pause rather than one per cause. The scenario fails when any is not
+repair Ticket starting under a person's `Paused:` line; an effort unpaused while an outage
+persists, once it carried one pause rather than one per cause; a person's merge left unrecorded
+while they hold the claim; and an orchestrator checking in without end on a pause only the person
+can clear. The scenario fails when any is not
 reported.
 
 ## Gotchas
@@ -121,8 +127,11 @@ reported.
 - `PreFix` names the old behaviors a configuration restores; passing configurations set it to
   `{}`. A new prefix configuration restores one behavior, so another cannot hide its violation.
 - An orchestrator stops at most once, and only in `stopped` and `prefix-stranded`, where the run's
-  timeout then passes; elsewhere orchestrators never stop, so a takeover after a timeout is checked
-  for safety there, and no liveness property needs one.
+  timeout then passes, and in `pause-person`, where it stops because every pause left waits on the
+  person and a later orchestrator may start after it; elsewhere orchestrators never stop, so a
+  takeover after a timeout is checked for safety there, and no liveness property needs one.
+  `pause-person` checks no `ReadyResolves`: once every orchestrator has stopped, a ready mark waits
+  for the next one, as the prose intends.
 - A run's re-read and the write after it are taken as one step, since they are adjacent calls. The
   launcher's earlier read and its write are separate steps: that window is the race the first
   created comment settles.

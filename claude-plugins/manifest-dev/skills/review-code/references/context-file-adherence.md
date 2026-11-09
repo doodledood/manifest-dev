@@ -2,7 +2,7 @@
 
 Audit the change for violations of project-specific instructions defined in context files (CLAUDE.md / AGENTS.md) and project standards, reporting only verifiable violations with exact rule citations.
 
-**The bar for every finding: "I am confident this IS a violation and can quote the exact rule being broken."** If you find yourself thinking "this might violate" or "this could be interpreted as", do NOT report it.
+**The bar for every finding: it quotes the exact rule being broken and names the changed text that breaks it.** A finding that can only say "this might violate" or "this could be interpreted as" is not reportable.
 
 ## Discover and load the context files at review time
 
@@ -12,7 +12,7 @@ These files may already be loaded into your context by the parent framework. Che
 
 ### Detecting the CLI
 
-Use the active host's identity, loaded instructions, and configuration to establish which context files govern this invocation. An installed tool directory proves availability, not which host is running. Use the known host's resolution rules below; for another host, inspect its configured context-file discovery. If identity or configuration cannot be established, ask the caller rather than defaulting to a different host.
+Use the active host's identity, loaded instructions, and configuration to establish which context files govern this invocation. An installed tool directory proves availability, not which host is running. Use the known host's resolution rules below; for another host, inspect its configured context-file discovery. If identity or configuration cannot be established, ask the caller rather than defaulting to a different host. With no one to ask, report BLOCKED: which context files govern could not be established, and naming the host settles it.
 
 ### Where to look (priority order per detected CLI)
 
@@ -49,7 +49,6 @@ Before reporting a violation, it must pass ALL of:
 3. **Explicitly specified** — The naming convention, pattern, or documentation requirement is EXPLICITLY stated in a context file. General best practices belong to other dimensions, not here.
 4. **Introduced by this change** — Flag violations in changed code, not pre-existing violations the change didn't introduce.
 5. **Authorized exception** — A suppression or documented trade-off excuses a violation only when the rule's authority permits that exception. An implementation comment alone cannot waive a project obligation.
-6. **High confidence** — Only certain violations.
 
 ## Out of scope (belongs to a sibling dimension)
 

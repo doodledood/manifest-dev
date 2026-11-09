@@ -307,7 +307,10 @@ def test_setup_project_follows_every_guide_from_the_recorded_version_on() -> Non
         "`references/upgrades/vN-to-current.md`, then each later `vM-to-current.md`"
         in skill
     )
-    assert "an item a later version replaces is not offered" in skill
+    update = re.sub(
+        r"\s+", " ", (SKILLS / "setup-project/references/UPDATE.md").read_text("utf-8")
+    )
+    assert "an item a later version replaces is not offered" in update
 
 
 # A project whose ADR conventions never had the draft rule had nowhere to put v14's

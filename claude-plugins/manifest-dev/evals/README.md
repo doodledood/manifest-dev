@@ -1,5 +1,10 @@
 # figure-out eval suite
 
+**Principles-audit change, 2026-11-09: every measurement remains stale.** figure-out's draft
+mechanics moved to `references/DRAFT.md`, team mode's poll gained an exit on silence, and a
+request that conflicts with a project principle now keeps to the principle unless the person
+chose the departure. No suite has run for this change.
+
 **Contract change, 2026-11-05: all earlier measurements are stale.** The shared workflow now
 preserves hard requirements separately from revisable working claims and assesses Outcome
 directly. The affected define rubrics and seeded Manifests use that distinction; no full suite
@@ -896,6 +901,7 @@ file. The row is never deleted while the probe stays.
 | `references/TASTE.md` | (whole file) | `27-taste-offers/offers-entry-for-the-stated-preference`, `27-taste-offers/offers-entry-for-the-reversal`, `28-universal-not-taste/no-offer-for-a-universal-rule`, `29-ratified-entry-lands/entry-inside-taste-section`, `105-taste-yardstick-offered/offers-the-yardstick` (drives only), `107-steer-without-reason/reads-the-reason` (drives only) |
 | `references/WITH_DOCS.md` | (whole file) | `23-term-and-record/term-captured`, `23-term-and-record/record-written`, `24-ruled-position-holds/position-text-unchanged`, `30-update-offer-for-older-setup/offers-only-whats-new`, `36-marks-drift-it-wont-fix/export-entry-marked-stale`, `45-current-setup-offers-nothing/offers-no-setup-update`, `53-update-offer-from-v14/offers-only-whats-new-since-v14`, `84-chosen-option-goes-to-a-record/ruling-recorded`, `84-chosen-option-goes-to-a-record/north-star-unchanged`, `85-evidence-against-a-bet/bet-challenged`, `85-evidence-against-a-bet/bet-text-kept` |
 | `references/ADR_FORMAT.md` | (whole file) | `23-term-and-record/old-record-restatused`, `23-term-and-record/index-rebuilt`, `24-ruled-position-holds/unattended-record-marked`, `23-term-and-record/record-carries-enforced-by` |
+| `references/DRAFT.md` | (whole file) | Reason: making a draft after the offer is accepted (iterating it, switching between variants, the hand-off to the design skill) needs opt-in to publishing and several turns, which no case reaches |
 | `references/autonomous.md` | (whole file) | `25-users-call-and-taste/flags-the-users-calls`, `25-users-call-and-taste/no-taste-offer`, `24-ruled-position-holds/unattended-record-marked`; not graded: never self-accepting an offer that hands off to setup-project or ticket-up, or that workflow's inner owner-judgment offers, which needs those skills reachable from the session |
 | `references/team.md` | (whole file) | Reason: team mode runs in a Slack channel, a service the suite cannot reach from its sandbox |
 | `references/slack-mrkdwn.md` | (whole file) | Reason: Slack formatting for team mode, a service the suite cannot reach from its sandbox |

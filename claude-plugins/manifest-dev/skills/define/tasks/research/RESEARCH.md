@@ -4,13 +4,13 @@ Investigations, analyses, comparisons, technology evaluations. Default posture: 
 
 ## Data Sources
 
-Research tasks may span multiple data sources. Each source type has its own credibility model, failure modes, and retrieval techniques. Probe for which sources are relevant; load source-specific guidance files when available.
+Research tasks may span multiple data sources. Each source type has its own credibility model, failure modes, and retrieval techniques. Load the source file for each source type the task draws on, where one exists.
 
-| Source Type | Indicators | Source File | Probe |
-|-------------|------------|-------------|-------|
-| **Web** | Public information, published sources, external research | `sources/SOURCE_WEB.md` | Does this task require searching the public web, published articles, documentation, or external sources? |
+| Source Type | Indicators | Source File | Loads when |
+|-------------|------------|-------------|------------|
+| **Web** | Public information, published sources, external research | `sources/SOURCE_WEB.md` | The task draws on the public web, published articles, documentation, or other external sources |
 
-When no source file exists for a relevant source type, the general quality gates below still apply — the LLM probes source-specific failure cases adaptively using the abstract principles.
+When no source file exists for a source type the task draws on, the general quality gates below still apply, read against that source type's own failure cases.
 
 **Source file note**: Quality gates below reference abstract principles (credibility, cross-referencing, fabrication, etc.). Source files instantiate these for their source type with specific hierarchies, techniques, and rates.
 

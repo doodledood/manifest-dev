@@ -16,6 +16,7 @@ SKILLS = (
     / "skills"
 )
 SETUP = SKILLS / "setup-project" / "SKILL.md"
+UPDATE = SKILLS / "setup-project" / "references" / "UPDATE.md"
 AUTONOMOUS = SKILLS / "figure-out" / "references" / "autonomous.md"
 
 
@@ -30,8 +31,10 @@ def test_setup_treats_absence_as_not_an_answer() -> None:
         "Inference from existing instructions does not make an optional item wanted "
         "when no person is present" in text
     )
-    assert "Absence is not an answer" in text
-    assert "the version line waits" in text
+    # The update pass, read on every run over a project that already carries surfaces.
+    update = _flat(UPDATE)
+    assert "Absence is not an answer" in update
+    assert "the version line waits" in update
     assert "which owner-judgment items were flagged unanswered" in text
 
 

@@ -88,4 +88,4 @@ Beyond the shared report skeleton, each finding for this dimension should make t
 - **Impact**: who/what is affected
 - **Recommended fix**: the specific mitigation
 
-If no risks pass the filter, the PASS report should briefly state which operational surfaces were checked.
+If no risks pass the filter, the report should say so and briefly state which operational surfaces were checked.

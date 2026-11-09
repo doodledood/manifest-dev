@@ -532,7 +532,10 @@ def test_executor_amendments_preserve_verification() -> None:
     """Prospective scope authority must reach the author and invalidate evidence."""
     base = ROOT / "claude-plugins/manifest-dev/skills"
     executor = (base / "do/SKILL.md").read_text(encoding="utf-8")
-    author = (base / "define/SKILL.md").read_text(encoding="utf-8")
+    # The amendment rules load from their own reference when a manifest path is passed.
+    builder = " ".join((base / "define/SKILL.md").read_text(encoding="utf-8").split())
+    assert "means amend: read `references/AMENDMENT.md`" in builder
+    author = (base / "define/references/AMENDMENT.md").read_text(encoding="utf-8")
     executor = " ".join(executor.split())
     author = " ".join(author.split())
     assert "Invoke `define` with the Manifest path" in executor
@@ -868,11 +871,11 @@ def test_operational_guidance_has_no_stale_per_gate_topology() -> None:
         ROOT / "README.md",
         ROOT / "claude-plugins/manifest-dev-tools/README.md",
         ROOT
-        / "claude-plugins/manifest-dev/skills/define/references/WRITING-REFERENCE.md",
+        / "claude-plugins/manifest-dev/skills/review-writing/references/WRITING-REFERENCE.md",
         ROOT / "claude-plugins/manifest-dev/skills/define/references/BABYSIT_MODE.md",
         ROOT / "claude-plugins/manifest-dev/skills/review-code/SKILL.md",
         DIST
-        / "codex/plugins/manifest-dev/skills/define/references/WRITING-REFERENCE.md",
+        / "codex/plugins/manifest-dev/skills/review-writing/references/WRITING-REFERENCE.md",
         DIST / "codex/plugins/manifest-dev/skills/define/references/BABYSIT_MODE.md",
         DIST / "codex/plugins/manifest-dev/skills/review-code/SKILL.md",
     ]

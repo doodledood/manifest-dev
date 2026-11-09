@@ -3,8 +3,7 @@
 A project recording v4 already has a verification harness. v5 makes the harness optional, so the
 project may keep it or set it aside for its own way of verifying; set aside, its files stay or go
 as the user says, since the own-way bullet, not the files, records the choice. A kept harness
-controls what it checks, holds check run time against creep, finds what a diff touches, and
-narrows the ask-first mark to cost.
+controls what it checks, finds what a diff touches, and narrows the ask-first mark to cost.
 
 Offer, each as its own item and as a default the project may adapt or decline where its own way
 already does the job. The harness is recommended, but the project may opt out of it whole and keep

@@ -1,5 +1,10 @@
 # define eval suite
 
+**Principles-audit change, 2026-11-09: every measurement remains stale.** define's Amendment and
+Taste-on-reversal text moved to references, its digest opens with what needs the person, several
+task files changed, and a request that conflicts with a project principle now keeps to the
+principle unless the person chose the departure. No suite has run for this change.
+
 **Review-acceptance change, 2026-11-06: all earlier measurements remain stale.** Default review
 claims now concern the supported result and useful life; reviewer grades are evidence unless
 an authorized source deliberately requires a threshold. The shared `no-invented-thresholds`

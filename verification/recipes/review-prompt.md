@@ -13,13 +13,13 @@ Reviews a prompt against the prompt-engineering principles and reports findings 
 - `/review-prompt <file or prompt>`.
 - Phrases its description matches: "review this prompt", "audit this system prompt".
 - define's prompting gate (run under `/do`); review-pr for diffs that touch prompts.
-- The assessment is Excellent, Good with Minor Issues, or Needs Work, with findings led by where each line came from.
+- The report gives strengths and graded findings, led by where each line came from, with no overall rating.
 
 ## Scenarios
 
 ### review
 Run: `scripts/drive-skill.sh review-prompt verification/prompts/review-prompt-review.md --tools`
-Proves: a report with an assessment and findings, each with a fix. The file is unchanged.
+Proves: a report with strengths and findings, each with a fix. The file is unchanged.
 Check: read
 
 ### team-rule-goal-missing

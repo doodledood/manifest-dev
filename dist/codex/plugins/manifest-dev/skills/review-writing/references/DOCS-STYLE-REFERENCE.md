@@ -6,15 +6,14 @@ evaluators.
 
 **Register scope.** Every rule in this file binds documentation-register prose only. Human-voiced
 prose — marketing copy, social posts, narrative, creative writing, and blog posts — is governed
-by `WRITING-REFERENCE.md` instead, whose rules on rhythm, tonal texture, and deliberate
-imperfection do not apply here and are not defects when absent here. Rules that hold in both
+by `WRITING-REFERENCE.md` instead, whose probes on voice, rhythm, tone, and emotional
+effect do not apply here and are not defects when absent here. Rules that hold in both
 registers live in `PROSE-FLOOR-REFERENCE.md` and are not repeated in this file.
 
 **Precedence.** A project's own style sheet or `AUTHOR_VOICE.md` outranks this reference; the
 `review-writing` skill applies that rule and is its one home.
 
-**Not loaded by `/define`** — the `review-writing` skill applies this file for `register=docs`,
-which the style gate in `../tasks/DOCUMENT.md` activates.
+The `review-writing` skill applies this file for `register=docs`.
 
 ---
 

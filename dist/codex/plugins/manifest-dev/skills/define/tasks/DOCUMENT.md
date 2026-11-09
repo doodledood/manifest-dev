@@ -5,8 +5,8 @@ Documentation register: specs, proposals, reports, formal documentation. Compose
 
 **Register.** These gates judge whether prose is clear, consistent, and usable instruction. They
 replace the human-voice register rather than adding to it — a deliverable under this task type is
-not judged on rhythm variation, tonal shifts, humor, or deliberate imperfection, and their absence
-is never a finding here.
+not judged on rhythm, emotional effect, tonal shifts, or humor, and their absence is never a
+finding here.
 
 ## Quality Gates
 

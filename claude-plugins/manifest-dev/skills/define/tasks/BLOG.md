@@ -9,8 +9,8 @@ Blog posts, articles, tutorials, newsletters. Composes onto `WRITING.md`, and th
 |--------|-----------|
 | Opening hook | Reader has reason to continue after first paragraph |
 | Content momentum | Each section earns the next; no mid-piece drop-off |
-| CTA | Clear next step at end |
+| CTA | Clear next step at end (conditional: if the piece asks the reader to act) |
 | SEO | Title, meta, keywords, headings optimized (conditional: if SEO matters) |
 | Title-content alignment | Title promises match content delivery |
-| Visual structure | Headers, whitespace, formatting for scannability; no walls of text |
+| Visual structure | Headers, whitespace and formatting fit how the reader reads the piece: scannable where they scan, such as a tutorial, and continuous where they read through, such as an essay |
 | Clear takeaway | Reader finishes with one memorable thing |

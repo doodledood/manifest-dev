@@ -12,11 +12,10 @@ Canonical form: `https://github.com/<owner>/<repo>/pull/<N>`. Also accepted: `gh
 
 Halt on failure with an actionable error:
 
-1. **GitHub backend reachable.** GitHub MCP tools loaded OR `gh` CLI authenticated. Reject naming what was tried.
-2. **PR accessible.** Query the PR. Not found / not visible / auth errors → halt naming the URL and failure mode.
-3. **PR not already terminal.** Closed/merged at synthesis → halt: `Cannot babysit: PR #<N> is already <state>. Babysit is for active PRs; closed/merged PRs need no further tending.`
-4. **Fork convention.** When `headRepository` differs from `baseRepository` (cross-repo PR from a fork), babysit targets the **upstream** repo where the PR lives — the `baseRepository`'s owner/repo, not the fork. The verifier invocation uses that canonical URL. Log fork detection. *Consequence:* a code-fix the verifier suggests targets the PR's head branch, which lives on the fork — /do may not have push access. The verifier's hint flags this as unrecoverable from within /do (caller should escalate to a human), deferring to the contributor.
-5. **Repo identity confirmation.** When `cwd` is a git checkout AND `origin` differs from the PR's base repo → note it (no halt): *"Babysit target (`<pr-owner/repo>`) differs from cwd `origin` (`<cwd-owner/repo>`). Continuing — babysit doesn't require a local checkout."*
+1. **PR readable.** Read the PR through whatever GitHub access the session has. Not found / not visible / auth errors / no working GitHub access → halt naming the URL, the failure mode and what was tried.
+2. **PR not already terminal.** Closed/merged at synthesis → halt: `Cannot babysit: PR #<N> is already <state>. Babysit is for active PRs; closed/merged PRs need no further tending.`
+3. **Fork convention.** When `headRepository` differs from `baseRepository` (cross-repo PR from a fork), babysit targets the **upstream** repo where the PR lives — the `baseRepository`'s owner/repo, not the fork. The verifier invocation uses that canonical URL. Log fork detection. *Consequence:* a code-fix the verifier suggests targets the PR's head branch, which lives on the fork — /do may not have push access. The verifier's hint flags this as unrecoverable from within /do (caller should escalate to a human), deferring to the contributor.
+4. **Repo identity confirmation.** When `cwd` is a git checkout AND `origin` differs from the PR's base repo → note it (no halt): *"Babysit target (`<pr-owner/repo>`) differs from cwd `origin` (`<cwd-owner/repo>`). Continuing — babysit doesn't require a local checkout."*
 
 ## PR grounding
 

@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
 # A small tool's README whose opening paragraph is wordy; nothing about it raises the stakes.
 set -euo pipefail
-cp "$DRIVE_CHECKOUT/verification/fixtures/climb-short-text/files/"* .
+# Copy the fixture tree, minus bytecode a local test run may have left in it.
+cp -R "$DRIVE_CHECKOUT/verification/fixtures/climb-short-text/files/." .
+find . -name __pycache__ -type d -prune -exec rm -rf {} +

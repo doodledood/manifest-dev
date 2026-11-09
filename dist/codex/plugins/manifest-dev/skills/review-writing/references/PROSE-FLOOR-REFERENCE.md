@@ -5,14 +5,13 @@ for gate evaluators.
 
 **Register scope.** Nothing in this file is register-specific — that is what qualifies it for the
 floor. Documentation-register mechanics live in `DOCS-STYLE-REFERENCE.md`; human-voice register
-rules on rhythm, texture, and craft live in `WRITING-REFERENCE.md`. Neither set is repeated here,
+rules on rhythm, tone, and craft live in `WRITING-REFERENCE.md`. Neither set is repeated here,
 and a rule in this file is never contradicted by either.
 
 **Precedence.** A project's own style sheet or `AUTHOR_VOICE.md` outranks this reference; the
 `review-writing` skill applies that rule and is its one home.
 
-**Not loaded by `/define`** — the `review-writing` skill applies this file under either register;
-`../tasks/PROSE_FLOOR.md` gates only what a style reviewer cannot settle.
+The `review-writing` skill applies this file under either register.
 
 ---
 

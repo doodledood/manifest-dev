@@ -23,8 +23,9 @@ here becomes a candidate for useful work inside the assignment, not an obligatio
 
 ## Stop
 
-For a queue assignment, stop when no ready work is left in scope, nothing waits for a landing turn but a pull request held
+For a queue assignment, stop when no ready work in scope can start, because none is left or what is left sits in an effort
+held by pauses none of which keeps the check-ins going (`../SKILL.md` → *Check in*, *Lift*), nothing waits for a landing turn but a pull request held
 for a person's review, and no run is live.
-Check in a last time, which refreshes the start time on every Ticket you hold ready to land (row *Hold a ready mark*), then report what landed, what waits on the person in its order, and the page's link. Say that a pull request held for review, once approved, lands only when the person
+Check in a last time, which refreshes the start time on every Ticket you hold ready to land (row *Hold a ready mark*), then report what landed, what waits on the person in its order, each pause left standing with what it waits on, and the page's link. Say that a pull request held for review, once approved, lands only when the person
 merges it or an orchestrator works the effort again, and that a new one adopts it no sooner than a
 run timeout after this check-in (`../SKILL.md` → *Taking over*). For an outcome assignment, use `OUTCOME.md` to continue, wait, finish or report an operating limit; queue exhaustion alone does not finish that assignment.

@@ -83,7 +83,7 @@ Before reporting a divergence, it must pass ALL of these criteria. **If it fails
 2. **Verifiable against code** — You must trace the specific code path that produces the divergent behavior.
 3. **Intent is reconstructable** — If you cannot determine what the change intends from any source (ambiguous purpose, no context), you cannot claim divergence. State that intent is unclear rather than guessing: report "Intent unclear — cannot perform divergence analysis" and suggest the author add context (commit message, comments, or PR description).
 4. **Accepted behavior** — Judge against the accepted promise. An explicit accepted behavior or trade-off can rule out a divergence; a deliberate implementation or repair choice in code, comments or commit prose cannot waive that promise.
-5. **Author would recognize it** — Would the author say "yes, that's not what I meant to happen" or "no, that's actually what I wanted"? Only report findings where the former is likely.
+5. **Sourced intent** — Name the intent source that shows the behavior the code departs from (the accepted contract, a commit message, a test expectation, a comment); an imagined author's reaction is not evidence.
 
 ## Out of scope
 
@@ -95,7 +95,7 @@ This dimension owns the question of whether the **logic achieves the change's go
 - **Code organization** (DRY, coupling, consistency patterns) → belongs to the code-maintainability dimension
 - **Over-engineering / complexity** → belongs to the code-simplicity dimension
 - **Design fitness** (wrong approach, reinvented wheels, under-engineering) → belongs to the code-design dimension
-- **Prompt structure quality** (clarity, anti-patterns, information density) → belongs to the prose-value dimension
+- **Prompt structure quality** (clarity, anti-patterns, information density) → no dimension of this skill owns it; where one is seen, say in the report that it is not assessed here
 - **Test coverage gaps** (missing tests) → belongs to the test-quality dimension
 - **Testability design** (hard to test, mock friction) → belongs to the code-testability dimension
 - **Documentation accuracy** (stale docs) → belongs to the docs dimension
@@ -105,7 +105,6 @@ This dimension owns the question of whether the **logic achieves the change's go
 - The **code-bugs** dimension asks: "Does this code have mechanical defects?" (race conditions, resource leaks, edge case crashes). This dimension asks: "Does this code do what the author intended?"
 - The **contracts** dimension asks: "Are API calls correct per their documentation?" This dimension asks: "Does the overall logic achieve its goal?"
 - The **code-design** dimension asks: "Is this the right approach?" This dimension asks: "Does THIS approach work for what it's trying to do?"
-- The **prose-value** (prompt) dimension asks: "Is this prompt well-structured?" This dimension asks: "Will this prompt produce the behavior the author expects?"
 
 **Rule of thumb:** If the issue is about a **known defect pattern** (null deref, race condition, leak), it's the code-bugs dimension. If it's about **API-specific correctness**, it's the contracts dimension. If the issue is about whether the **logic achieves the change's goal**, it's this dimension.
 

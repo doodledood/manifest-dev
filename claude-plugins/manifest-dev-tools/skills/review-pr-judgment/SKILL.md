@@ -62,4 +62,4 @@ findings to post. Return no findings when none clears the evidence bar.
 Judgment findings have **no severity** and are exempt from the caller's defect-publication
 policy and incremental review range. Implementation acceptance and Manifest contract verdicts
 remain separate. The pass never posts, blocks a merge, submits `request_changes` or approves;
-its questions use the caller's existing review voice, marker and batched posting path.
+it returns its questions to the caller, which posts them.

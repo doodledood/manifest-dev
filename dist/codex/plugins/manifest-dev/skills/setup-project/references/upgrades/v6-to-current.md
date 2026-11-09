@@ -26,9 +26,8 @@ removed, since the evidence is where the lines are read from:
    carries one, say there were none to move.
 2. **The tool update** — the shipped `../harness/verify.mts` (and `verify` entry) shown as a
    difference from the project's own copy, keeping its path lines and its customizations, per
-   `../VERIFICATION_HARNESS.md` → *The parts*: it reads lines from recipes and writes them only
-   through `verify line`, `raise` and `freeze`, keeps no status (`judge` goes), and has git ignore
-   the evidence directory. A ported tool gets the same behavior in its own language.
+   `../VERIFICATION_HARNESS.md` → *The parts*: it keeps no status (`judge` goes) and has git
+   ignore the evidence directory. A ported tool gets the same behavior in its own language.
 3. **Committed evidence removed** — after item 1, every file git tracks under the evidence
    directory is removed from the repository (`git rm -r --cached` leaves this machine's copies in
    place), and the directory is ignored: the updated tool writes its own ignore file there on its

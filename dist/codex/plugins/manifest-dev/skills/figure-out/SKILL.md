@@ -175,34 +175,17 @@ short messages do not require permission to do the next piece of research.
   Before the first draft, settle what that person came to do and what we want
   from the artifact, asking only what the conversation has not answered; leave
   feeling to the draft rather than asking for it in the abstract.
-  Show the draft as soon as the current idea can be judged; let the user's
-  reaction choose what changes in the next iteration. Leave details until a
-  direction is chosen, unless the user asks to explore them now. Once the user
+  Once the user
   picks a direction or agrees in general, the draft is done: details and later
   decisions go to the read, decision records or the Ticket the work is tracked
   on, not back into the draft, which changes again only when the user asks.
   A visual draft whose direction is still open opens with two or three
   variants, each a different answer to the open choice: how it should feel and
   how strongly, the visual idea, or, for an open experience choice, where things
-  live, how the person moves through it, or what each step asks. Keep any variants, these or ones the user
-  asks for, together with a way to switch between them and compare the same
-  content or scenario, so the differences inform the choice; the variant the
-  user chooses is the direction, so drop the rest. Yield to another form when the user requests it
-  or the medium needs it. Make the question being judged concrete and leave
-  other details visibly rough or assumed, including seams that do not bear on
-  it.
-  Keep the draft outside the real project's files; run disposable interaction or
-  playback when that is what the user must judge, with simulated effects where
-  real actions need authority.
-  For a draft rendered as a page, invoke the design skill for its visual
-  direction, passing along that person, their moment, and our goal; any feeling
-  or strength the user named; for each variant, the difference it explores;
-  this iteration's question and rough fidelity; and that it is a draft no
-  review loop runs on — no review skill, none of the design skill's optional measuring instruments, no second pass. Design
-  guidance shapes the draft for the next reaction. Where
-  that skill is unavailable, write down the loop the reader repeats and what
-  has to stay visible together during it, arrange the page to that, pick the
-  genre's register, and keep the judged surface legible by hand.
+  live, how the person moves through it, or what each step asks.
+  Before making the first draft, read `references/DRAFT.md`: how to iterate,
+  compare variants, keep the draft out of the project, and hand a page draft to
+  the design skill.
 - Where the read is load-bearing and nobody will audit it before it is relied
   on, re-derive it independently first: hand the question and the gathered
   evidence, your conclusion stripped, to a fresh context and let it reach its
@@ -222,6 +205,7 @@ its overrides.
 | `references/RECALL.md` | once the investigation concerns work in the active repository — a bug, change, design, or decision; a general or quick question that repository's history cannot bear on loads nothing | what earlier sessions, tickets, and pull requests left on this repository: dated leads, the debt on this topic's path, hotspots |
 | `references/TASTE.md` | by default; `--autonomous` or `--team` suppresses | offer-and-ratify capture of durable personal steering preferences into harness memory |
 | `references/WITH_DOCS.md` | by default, but only once the investigation is relevant to the active project or a mapped context; `--no-docs` or `--team` suppresses | glossary captures, ADR offers, North Star updates, principles skills, map awareness, the update offer for an older setup, a drift marker on a recipe found drifting — and it loads the project's ADR conventions, or the shipped default beside it |
+| `references/DRAFT.md` | once a draft offer is accepted, before the first draft | how to iterate a draft, compare its variants, keep it out of the project, and hand a page draft to the design skill |
 | `references/autonomous.md` | `--autonomous`, typically from `/auto` chaining | self-answer with the recommendation you would have given, without waiting |
 | `references/team.md` | `--team`, typically from the `figure-out-team` wrapper | the counterparty becomes a Slack channel or thread, with the operator in the local session; owns team mode's own read-only project-context behavior |
 
@@ -262,8 +246,13 @@ architecture — constrain the shape being designed, not only which probes apply
 
 Where the project context file points to a principles skill for an area the topic touches — a
 project skill holding how the project's people want that area's work done — load it beside the
-task files. Its principles outrank the probes' starting points, and departing from one is the
-user's call (`../setup-project/references/PRINCIPLES_SKILLS.md` → *Using one*).
+task files. Its principles outrank the probes' starting points. Where what was asked conflicts
+with one and that line's own yield does not cover the case, the principle holds unless the user
+chose the departure: they named the principle or said to set it aside, or a decision record or a
+delegation that names the departure covers it. With the user present, ask whether the principle has moved or this is an
+exception. With no person answering, keep to the principle and open the read with the conflict:
+what was asked, the principle, what the read takes instead, and the one change that restores what
+was asked (`../setup-project/references/PRINCIPLES_SKILLS.md` → *Using one*).
 
 When the investigation turns prompt-shaped — prompts, system prompts, skills,
 agents, or a prompt-driven failure — invoke the prompt-engineering skill for its
