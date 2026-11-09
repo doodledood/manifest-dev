@@ -173,8 +173,8 @@ whose cause can clear without the person (*Lift*, below), waiting in whatever wa
 Keep **one list of what waits on the person**, ordered by what waiting costs: held pull requests
 and drafted answers, escalations, retained decisions, Tickets awaiting a grant, Tickets left alone because their author
 lacks write access, deferred Tickets whose signpost's source cannot be read, strategy signposts
-that read as met or whose source cannot be read, a common cause that paused an effort, planning
-start lines, refactor proposals, and the next plan. Give each item its own bullet, never a count standing in for items,
+that read as met or whose source cannot be read, a common cause that paused an effort, what the
+tidy pass names, planning start lines, refactor proposals, and the next plan. Give each item its own bullet, never a count standing in for items,
 with what the person is asked, the answer you recommend, the risk of taking it, and the evidence
 it rests on — the gates that passed and what they did not check, the failing check, the blocker —
 so the person can decide it without opening the pull request or the Ticket. Show the whole list on

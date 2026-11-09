@@ -1,7 +1,7 @@
 # ADR: Each item waiting on the person carries its recommendation, risk and evidence
 
 ## Status
-Accepted
+Accepted — narrowed by 20261109-a-check-in-posts-only-what-changed-and-puts-new-asks-first: the conversation puts what newly waits on the person first and no longer reposts unchanged items, which stay on the page
 
 ## Area
 Ticketing
@@ -42,7 +42,7 @@ partly — `tests/test_orchestrate_status_page.py` fails if the page's data chec
 an item's recommendation, risk and evidence or accepts them as anything but text, and
 `tests/test_ticket_automation_prompts.py` — `test_each_item_waiting_on_the_person_can_be_decided_from_the_list`
 fails if `orchestrate` or the page reference drops an item's fields or lets a count stand in for
-items; whether a recommendation is sound stays judgment.
+items, or if a check-in reposts unchanged items (20261109-a-check-in-posts-only-what-changed-and-puts-new-asks-first); whether a recommendation is sound stays judgment.
 
 ## Source
 - Session: figure-out and define reviewing manifest-dev's verification practice (2026-10-19).
