@@ -15,34 +15,10 @@ deliberately required policy, as `SKILL.md` → *Specialized gates activate a sk
 grades inform those judgments. Both are Judgment Gates, assessed from findings and evidence
 rather than a command outcome.
 
-When review-prompt is unavailable, use these concerns to assess the quality claim:
-
-| Gate | Threshold |
-|------|-----------|
-| Clarity | Goal, binding requirements, and consequential choices are unambiguous; implementation choices may remain with the run |
-| No conflicts | No contradictory rules, no priority collisions, edge cases covered |
-| Structure | Critical rules surfaced prominently, clear hierarchy, no unintentional redundancy |
-| Information density | Every word earns its place |
-| No anti-patterns | Required mechanisms and limits carry a user ruling, external constraint, or observed failure; incidental HOW stays with the run |
-| Invocation fit | Prompt's trigger, caller identity, and output consumer match deployment context |
-| Domain context | Domain terms, conventions, and constraints captured—not guessed |
-| Complexity fit | Prompt complexity matches the task—not over-engineered, not under-specified |
-| Memento (if multi-phase) | Multi-step prompts externalize state correctly |
-| Description (if skill/agent) | Description is natural-language activation prose: what it does, when to use it, and phrases users actually say |
-| Edge case coverage | Required boundary behavior is reachable and consistent with the goal and caller; no speculative procedure is added merely for completeness |
-| Model-prompt fit | Stays within model capabilities—doesn't assume unreliable behaviors |
-| Guardrail calibration | Safety boundaries neither too loose nor too tight |
-| Output calibration | Output format, length, and detail level match the use case and consumer |
-| Emotional tone | Low arousal—no urgency language, excessive praise, or pressure framing; "trusted advisor" tone; failure normalized in iterative prompts |
-
-When the task involves creating or updating a skill, also apply:
-
-| Gate | Threshold |
-|------|-----------|
-| Folder architecture | Skill is a directory with SKILL.md + appropriate companions (references, assets, scripts) — not a standalone file |
-| Progressive disclosure | Domain knowledge and reference data in companion files, not front-loaded into SKILL.md |
-| Description as activation prose | Description field naturally explains what the skill does and when it should activate; no appended keyword lists |
-| Provenance | Every line traces to a user ruling, to knowledge outside what the run will read, or to an observed model default it counteracts — not to the author's own reading of material the run also gets |
+When `review-prompt` is unavailable, assess the quality claim yourself: the prompt states its
+goal, each line carries a user ruling, knowledge outside the run's reach or a model default it
+counteracts, no two rules conflict, and each line holds at the edges of the prompt's actual
+inputs, caller and output consumer.
 
 ## Defaults
 

@@ -29,8 +29,7 @@ followed, or that no entry applied.
 A false hard premise outside the caller's amendment authority can arrive here
 even when its gate passed. Quote the report or name what execution showed in place
 of attempts a passing gate does not have. A costly bar alone is not a blocker
-while repairs remain viable; it is reported as a concern, never lowered by this
-skill.
+while repairs remain viable, and this skill never lowers a bar.
 
 A BLOCKED verifier verdict is not sufficient on its own: the executor first
 investigates what it can recover and completes useful independent work. Quote the

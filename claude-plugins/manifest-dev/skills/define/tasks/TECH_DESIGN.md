@@ -19,4 +19,5 @@ apply. The gates below are what a design document needs beyond that.
 *Domain best practices for this task type.*
 
 - **Verify generated image labels** — Open each generated image after creation; regenerate or repair images with misspellings, hallucinated labels, or unreadable text before treating them as done
-- **No estimates by assumption** — Effort and timeline numbers go in the doc only where the source records or the request call for them; don't assume numeric estimates are wanted
+- **A doc with assets gets its own directory** — A design doc that carries assets lives in its own directory with an assets path, not as a loose markdown file
+- **No ownership or estimates by assumption** — Owner areas, rollout responsibility, effort and timeline numbers go in the doc only where the source records or the request call for them; don't assume numeric estimates are wanted

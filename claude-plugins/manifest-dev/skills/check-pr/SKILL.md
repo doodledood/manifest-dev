@@ -95,7 +95,7 @@ Example terminal-condition FAIL (surfaced as a prose finding — no workflow tok
 Breakdown:
 - PR exists: FAIL
   Reason: PR was closed externally by @bob at 2026-05-17T14:32Z.
-  Suggested: Unrecoverable from automated inspection — caller should hand off to a human; reopening from the agent's path is forbidden.
+  Suggested: Unrecoverable from automated inspection; whether to reopen the PR is a person's decision.
   Context: GraphQL state `CLOSED`, last commit on head matches the diff at close time.
 ```
 
@@ -177,7 +177,7 @@ Example prose-finding FAIL (situation doesn't fit the vocabulary cleanly):
 Breakdown:
 - CI green: FAIL
   Reason: Required check `integration-suite` failed with an error fingerprint that doesn't match prior flake patterns for this check, and the PR diff doesn't touch the failing module.
-  Suggested: Worth a one-shot retrigger to rule out a transient infra issue; if it fails again with the same fingerprint, the situation is novel and the caller should route to a human — the failure looks deeper than this PR.
+  Suggested: Worth a one-shot retrigger to rule out a transient infra issue; if it fails again with the same fingerprint, the situation is novel: the failure looks deeper than this PR.
   Context: failure log excerpt — "ECONNREFUSED on integration-test-runner-3 after 14 successful tests"; the diff does not touch the failing module.
 ```
 
@@ -193,7 +193,7 @@ Wait-shaped failures (reviewer pending, CI in flight, bot scanner scheduled) emi
 | Reviewer pending | ~600s |
 | Bot scanner pending | ~120s |
 
-**No nudging by default.** When a gate waits on a human (reviewer pending, comment pending, approver pending), do not propose outreach — no "ping @reviewer", no "DM the team", no "comment on the PR to nudge". `Suggested:` describes the wait state and offers options like "keep waiting" or "hand off to a human" only. Operators authorize nudging via steering; silent steering means no nudge.
+**No nudging by default.** When a gate waits on a human (reviewer pending, comment pending, approver pending), do not propose outreach — no "ping @reviewer", no "DM the team", no "comment on the PR to nudge". `Suggested:` carries the wait and describes the wait state only. Operators authorize nudging via steering; silent steering means no nudge.
 
 **Steering customization** — users override per-gate wait durations via the `Steering:` overlay, parsed with judgment (no schema). Example:
 

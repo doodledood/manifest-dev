@@ -12,7 +12,7 @@ instead, which judges whether its readers can find, understand and use the infor
 | Aspect | Skill | Threshold |
 |--------|-------|-----------|
 | Human-voice quality | `review-writing`, `register=voice` | Voice and craft serve the author's point, intended audience and chosen effect |
-| Readability | — | Accessible to the target audience, scannable structure |
+| Readability | — | Accessible to the target audience; structured for scanning where that reader scans rather than reads through |
 
 The style claim names the audience and effect it serves. Evidence activates `review-writing`
 with `register=voice`, that claim and any deliberately required policy, as `SKILL.md` →
