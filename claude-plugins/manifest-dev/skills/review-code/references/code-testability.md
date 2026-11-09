@@ -58,7 +58,6 @@ Before reporting an issue, it must pass ALL criteria. **If it fails ANY, drop it
 2. **Significant friction** — Not just normal orchestration-level mocking.
 3. **Important logic** — Business rules that matter if they break (pricing, auth, validation).
 4. **Concrete benefit** — You can articulate exactly how testing becomes easier.
-5. **High confidence** — You are CERTAIN this is a testability issue, not a guess.
 
 ## Out of scope (orthogonality boundaries)
 
@@ -82,24 +81,25 @@ Use the shared ladder. Test setup or hidden dependencies that impose a concrete 
 Beyond the shared report format, each finding should carry:
 - **Test friction**: number of mocks required and what they are.
 - **Logic at risk**: what business rules/behavior is hard to test.
-- **Why this matters**: concrete explanation of the testing difficulty and its consequence for THIS code.
-- **Suggestion**: how to reduce test friction. **Prefer extracting pure functions where the risk lives in the rule** — the discount stacking, the eligibility check, the pricing logic. There a pure function takes the data it needs as parameters and can be tested exhaustively with simple inputs while a thin shell fetches data and calls it. **Where the risk lives in the wiring instead** — which value, from where, at what freshness — extraction moves the easy part somewhere testable and leaves the failure in an untested shell, while adding a call site per shell for the mistake to be made at; prefer concentrating that wiring behind one interface and testing through it. Other alternatives: passing dependencies as parameters, leveraging the project's DI patterns, or accepting the friction with rationale if the tradeoff is reasonable.
+- In the shared **Impact**: concrete explanation of the testing difficulty and its consequence for THIS code.
+- In the shared **Recommended fix**: how to reduce test friction. **Prefer extracting pure functions where the risk lives in the rule** — the discount stacking, the eligibility check, the pricing logic. There a pure function takes the data it needs as parameters and can be tested exhaustively with simple inputs while a thin shell fetches data and calls it. **Where the risk lives in the wiring instead** — which value, from where, at what freshness — extraction moves the easy part somewhere testable and leaves the failure in an untested shell, while adding a call site per shell for the mistake to be made at; prefer concentrating that wiring behind one interface and testing through it. Other alternatives: passing dependencies as parameters, leveraging the project's DI patterns, or accepting the friction with rationale if the tradeoff is reasonable.
 
 Example finding:
 
 ```
-#### [MEDIUM] Discount calculation requires many mocks to test
-**Location**: `src/services/order-service.ts:45-78`
-**Test friction**: 3 mocks (db.orders, db.customers, db.promotions)
-**Logic at risk**: Discount stacking rules (premium tier + promo + bulk discount)
-
-**Why this matters**: Discount edge cases (premium customer with promo code on large order)
-are important to verify but require setting up all 3 mocks correctly for each test case.
-This makes thorough testing tedious, so edge cases likely won't be covered.
-
-**Suggestion**: Extract the discount calculation into a pure function that takes the
-data it needs as parameters. The pure function can be tested exhaustively with simple
-inputs. The shell function fetches data and calls the pure function.
+### Finding #1: Discount calculation requires many mocks to test
+- **Location**: `src/services/order-service.ts:45-78`
+- **Severity**: Medium
+- **Description**: The discount calculation runs inside the function that loads its data, so no test can reach the rule without the database.
+- **Test friction**: 3 mocks (db.orders, db.customers, db.promotions)
+- **Logic at risk**: Discount stacking rules (premium tier + promo + bulk discount)
+- **Acceptance basis**: Concrete quality cost: each discount case needs all 3 mocks set up before it can be checked.
+- **Impact**: Discount edge cases (premium customer with promo code on large order)
+  are important to verify but require setting up all 3 mocks correctly for each test case.
+  This makes thorough testing tedious, so edge cases likely won't be covered.
+- **Recommended fix**: Extract the discount calculation into a pure function that takes the
+  data it needs as parameters. The pure function can be tested exhaustively with simple
+  inputs. The shell function fetches data and calls the pure function.
 ```
 
 When no issues clear the bar, the code in scope has acceptable testability: business logic is already testable in isolation, or test friction is proportionate to complexity.
@@ -109,7 +109,7 @@ When no issues clear the bar, the code in scope has acceptable testability: busi
 - **Ground issues in impact**: explain WHY the friction matters for THIS code.
 - **Suggest, don't mandate**: offer ways to improve; acknowledge when tradeoffs are acceptable.
 - **Adapt to the codebase**: what's excessive in one project may be normal in another. Calibrate to local norms.
-- **Shell code gets a pass on doing IO**: controller/orchestration code is expected to do it — focus on whether important logic is extractable. The pass covers the IO, not the wiring: where the risk is in which value the shell assembles, from where, at what freshness, that is the wiring case under **Suggestion** above and stays in scope.
+- **Shell code gets a pass on doing IO**: controller/orchestration code is expected to do it — focus on whether important logic is extractable. The pass covers the IO, not the wiring: where the risk is in which value the shell assembles, from where, at what freshness, that is the wiring case under **Recommended fix** above and stays in scope.
 - **Every Critical/High issue must explain why the logic is important to test.**
 - Statistics must match detailed findings.
 

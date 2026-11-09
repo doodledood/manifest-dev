@@ -69,7 +69,7 @@ Derive the scenarios that SHOULD exist from the code's logic, then judge whether
 
 ## Actionability filter
 
-Before reporting any finding, it must pass ALL criteria. **If it fails ANY criterion, drop it entirely.** Only report findings you are CERTAIN about — "this could use more tests" or "this might be tautological" is not sufficient.
+Before reporting any finding, it must pass ALL criteria. **If it fails ANY criterion, drop it entirely.** A finding names the untested scenario, or the behavior an existing test fails to verify: "this could use more tests" or "this might be tautological" is not sufficient.
 
 1. **In scope** — In diff-based review (default), ONLY report gaps for code introduced by this change; pre-existing untested or tautological tests are out of scope. In explicit path review (caller specified paths), audit everything in scope and pre-existing gaps are valid findings.
 2. **Worth testing** — Trivial code (simple getters, pass-through functions, obvious delegations) may not need tests. Focus on logic that can break.
@@ -77,7 +77,7 @@ Before reporting any finding, it must pass ALL criteria. **If it fails ANY crite
 4. **Risk-proportional** — High-risk code deserves more scrutiny than low-risk utilities.
 5. **Reachable evidence** — Identify the behavior and missing observation. When a missing seam prevents necessary proof, report that limit with the code-testability dependency; do not pretend coverage is adequate or prescribe an unrelated test-infrastructure project.
 
-**Tautology-specific bar**: A tautology finding must name (a) the missing assertion or (b) the specific behavior the test fails to verify, with a concrete contradictory implementation that would still pass. If you can't name what's not being verified, drop the finding — the bar is "I am certain this test does not validate scenario X", not "this test feels weak."
+**Tautology-specific bar**: A tautology finding must name (a) the missing assertion or (b) the specific behavior the test fails to verify, with a concrete contradictory implementation that would still pass. If you can't name what's not being verified, drop the finding: "this test does not validate scenario X, because implementation Y would still pass" clears the bar; "this test feels weak" does not.
 
 ## Special cases
 

@@ -265,7 +265,7 @@ project skill holding how the project's people want that area's work done — lo
 task files. Its principles outrank the probes' starting points. Where what was asked conflicts
 with one and that line's own yield does not cover the case, the principle holds unless the user
 chose the departure: they named the principle or said to set it aside, or a decision record or a
-delegation covers it. With the user present, ask whether the principle has moved or this is an
+delegation that names the departure covers it. With the user present, ask whether the principle has moved or this is an
 exception. With no person answering, keep to the principle and open the read with the conflict:
 what was asked, the principle, what the read takes instead, and the one change that restores what
 was asked (`../setup-project/references/PRINCIPLES_SKILLS.md` → *Using one*).

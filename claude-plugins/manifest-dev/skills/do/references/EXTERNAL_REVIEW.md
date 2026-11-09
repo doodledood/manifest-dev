@@ -26,7 +26,8 @@ repeated searches do not discard independent evidence.
 Substantive disposition and remote state are separate. An already-rejected claim under a new
 thread ID may still need a reply. Handle the current required replies, resolutions, checks, and
 approvals within communication and merge authority; leave human-authored threads open for their
-authors. A local rejection neither clears remote state nor grants permission to post or merge.
+authors, and resolve any other thread only on evidence that its concern is addressed, leaving it
+open where that is unclear. A local rejection neither clears remote state nor grants permission to post or merge.
 Where substantive uncertainty needs a person's judgment, surface the evidence and decision
 needed under the existing blocker rule. If a required reviewer or check still refuses an evidenced
 rejection, report that external blocker and the intervention needed. Do not waive the requirement,

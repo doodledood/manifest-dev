@@ -92,23 +92,24 @@ Follow the shared report format. In addition, for this dimension:
 ### Example finding
 
 ```
-#### [HIGH] Stringly-typed order status enables typos
-**Category**: Invalid States Representable
-**Location**: `src/orders/processor.ts:45-52`
-**Description**: Order status uses raw strings, allowing typos to compile.
-**Evidence**:
-// Current: typos compile fine
-function updateStatus(orderId: string, status: string) {
-  if (status === 'pendng') { // typo undetected
-    // ...
-  }
-}
-**Trigger**: any caller of `updateStatus` passing a misspelled literal — `updateStatus(id, 'pendng')` in `src/orders/api.ts:88` compiles and silently matches no branch.
-**Impact**: Status typos cause silent failures; adding new statuses doesn't trigger compile errors.
-**Effort**: Quick win
-**Suggested Fix**:
-type OrderStatus = 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled'
-function updateStatus(orderId: OrderId, status: OrderStatus) { ... }
+### Finding #1: Stringly-typed order status enables typos
+- **Location**: `src/orders/processor.ts:45-52`
+- **Severity**: High
+- **Category**: Invalid States
+- **Description**: Order status uses raw strings, allowing typos to compile.
+    // Current: typos compile fine
+    function updateStatus(orderId: string, status: string) {
+      if (status === 'pendng') { // typo undetected
+        // ...
+      }
+    }
+- **Acceptance basis**: The guarantee lost: a status outside the set the code handles cannot be told from a valid one at compile time.
+- **Trigger**: any caller of `updateStatus` passing a misspelled literal — `updateStatus(id, 'pendng')` in `src/orders/api.ts:88` compiles and silently matches no branch.
+- **Impact**: Status typos cause silent failures; adding new statuses doesn't trigger compile errors.
+- **Effort**: Quick win
+- **Recommended fix**:
+    type OrderStatus = 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled'
+    function updateStatus(orderId: OrderId, status: OrderStatus) { ... }
 ```
 
 ## Guidelines

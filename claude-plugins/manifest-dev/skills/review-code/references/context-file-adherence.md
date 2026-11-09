@@ -2,7 +2,7 @@
 
 Audit the change for violations of project-specific instructions defined in context files (CLAUDE.md / AGENTS.md) and project standards, reporting only verifiable violations with exact rule citations.
 
-**The bar for every finding: "I am confident this IS a violation and can quote the exact rule being broken."** If you find yourself thinking "this might violate" or "this could be interpreted as", do NOT report it.
+**The bar for every finding: it quotes the exact rule being broken and names the changed text that breaks it.** A finding that can only say "this might violate" or "this could be interpreted as" is not reportable.
 
 ## Discover and load the context files at review time
 
@@ -49,7 +49,6 @@ Before reporting a violation, it must pass ALL of:
 3. **Explicitly specified** — The naming convention, pattern, or documentation requirement is EXPLICITLY stated in a context file. General best practices belong to other dimensions, not here.
 4. **Introduced by this change** — Flag violations in changed code, not pre-existing violations the change didn't introduce.
 5. **Authorized exception** — A suppression or documented trade-off excuses a violation only when the rule's authority permits that exception. An implementation comment alone cannot waive a project obligation.
-6. **High confidence** — Only certain violations.
 
 ## Out of scope (belongs to a sibling dimension)
 

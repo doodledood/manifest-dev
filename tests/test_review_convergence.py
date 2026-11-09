@@ -220,9 +220,14 @@ def test_recovery_and_exports_keep_acceptance_meaning(plugins: Path) -> None:
 
 def test_amendment_repairs_the_fault_in_claim_or_evidence(plugins: Path) -> None:
     builder = " ".join(skill(plugins, "define").split())
-    assert "inadequate evidence method or an evaluation that missed evidence" in builder
-    assert "add a criterion only for an uncovered result" in builder
-    assert "An amendment that changes a decision produces a gate" not in builder
+    amendment = " ".join(skill(plugins, "define", "references/AMENDMENT.md").split())
+    assert "means amend: read `references/AMENDMENT.md`" in builder
+    assert (
+        "inadequate evidence method or an evaluation that missed evidence" in amendment
+    )
+    assert "add a criterion only for an uncovered result" in amendment
+    for text in (builder, amendment):
+        assert "An amendment that changes a decision produces a gate" not in text
     research = skill(plugins, "define", "tasks/research/RESEARCH.md")
     assert "source-specific fact may rest on one authoritative source" in research
     assert "initially sound result need not produce findings" in research

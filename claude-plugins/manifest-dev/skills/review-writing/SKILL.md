@@ -97,14 +97,9 @@ grading it as a defect.
 
 ## Scope, and what this is not
 
-This skill reviews **prose the user points it at**, on request, in any register.
-
-It does not overlap the `prose-value` dimension of `review-code`, which asks a
-different question on a different surface: whether prose *inside a code change* — code comments
-and repo doc files in a diff — earns its place at all. That dimension is diff-scoped and runs as
-part of a code review; this skill reads a whole text on demand and judges it against a style
-standard. Reviewing a README before publishing it is this skill; catching a comment that restates
-the line below it during a code review is that dimension.
+This skill reviews **prose the user points it at**, on request, in any register: it reads a whole
+text and judges it against a style standard. Whether a comment or doc paragraph in a code change
+earns its place at all is a different question, and this skill does not answer it.
 
 If the user asks for the fixes to be applied after seeing the report, that is a separate request
 and ordinary editing.

@@ -14,7 +14,7 @@ These examples are guidance, not exhaustive. If you identify a documentation acc
 
 ## Actionability filter
 
-Before reporting a documentation issue, it must pass ALL of these criteria. **If a finding fails ANY criterion, drop it entirely** — criteria 3 and 4 distinguish substantive gaps from polish or nits of any kind using the shared ladder.
+Before reporting a documentation issue, check it against these criteria. **A finding that fails criterion 1, 2, 5 or 6 is dropped entirely.** Criteria 3 and 4 grade the ones that remain: they distinguish substantive gaps from polish or nits of any kind using the shared ladder, and a nit lands at Low.
 
 1. **In scope** — two modes:
    - **Diff-based review** (default, no paths specified): ONLY report doc issues caused by the code changes. Pre-existing doc problems are strictly out of scope as findings — even if you notice them, do not report them as findings (a caller may ask for them in a separate list; `SKILL.md` → *The Pre-existing list, only when asked*). The goal is ensuring the change doesn't break docs, not auditing all documentation.
@@ -23,7 +23,7 @@ Before reporting a documentation issue, it must pass ALL of these criteria. **If
 3. **User would be blocked or confused** — name the failing instruction, incorrect claim or concrete missing explanation. A workaround does not lower a broken promise to Low.
 4. **Not merely a nit** — classify style, naming, structure and wording nits as Low; the caller decides which findings to address. A violation of a binding documentation requirement is substantive even when it concerns those areas.
 5. **Matches doc depth** — don't demand comprehensive API docs in a project with minimal docs. Match the existing documentation style and depth.
-6. **High confidence** — you must be certain the documentation is incorrect. "This could be improved" is not sufficient; "this doc says X but the code does Y" is required. If uncertain, don't flag it.
+6. **Stated discrepancy** — "This could be improved" is not sufficient; "this doc says X but the code does Y" is required.
 
 ## Out of scope (belongs to a sibling dimension)
 

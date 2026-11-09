@@ -24,7 +24,8 @@ person.
 ## Decision
 Where what was asked conflicts with a principle and the line's own yield does not cover the case,
 the principle holds unless the person chose the departure: they named the principle or said to set
-it aside, or a decision record or a delegation covers it.
+it aside, or a decision record or a delegation that names the departure
+covers it. A run's general permission to decide is not such a delegation.
 
 - With the person present, the session asks whether the principle has moved or this is an
   exception.

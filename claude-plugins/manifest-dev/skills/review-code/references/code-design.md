@@ -118,7 +118,7 @@ Note: This category requires understanding the change as a whole, not just indiv
 
 ## Actionability filter
 
-Before reporting a design issue, it must pass ALL of these. **If a finding fails ANY criterion, drop it entirely.** Only report issues you are CERTAIN about — "this approach might be wrong" is not sufficient; "this approach IS wrong because X already provides this / Y should own this / Z exposes a changing implementation detail to every caller" is required.
+Before reporting a design issue, it must pass ALL of these. **If a finding fails ANY criterion, drop it entirely.** A finding names what makes the approach wrong: "this approach might be wrong" is not sufficient; "this approach IS wrong because X already provides this / Y should own this / Z exposes a changing implementation detail to every caller" is required.
 
 1. **In scope** — Two modes:
    - **Diff-based review** (default): Report design issues introduced, worsened, or exposed by a dependency this change adds or extends. Name the changed dependency and concrete burden; unrelated pre-existing debt is out of scope.
@@ -126,8 +126,8 @@ Before reporting a design issue, it must pass ALL of these. **If a finding fails
 2. **Concrete better alternative exists** — You must identify the specific framework feature, existing utility, configuration system, owning layer/system, or interface shape that would be better. "This feels wrong" without a concrete alternative is not actionable.
 3. **Matches codebase context** — If the codebase has no configuration system, don't demand one. If the framework version doesn't support the suggested feature, it's not reinventing. Account for project maturity, team size, and domain.
 4. **Substantiated choice** — Evaluate the author's rationale against the demonstrated cost and alternative. Deliberateness alone does not settle design fitness; explicit owner requirements remain authoritative.
-5. **Worth the change** — The design improvement must justify the refactoring cost. A slightly suboptimal approach in non-critical code isn't worth flagging.
-6. **Author would accept** — Would a reasonable author say "good catch, I didn't know that existed / that should be in config / I need to handle that case" or "that's a reasonable approach for our context"? Report only where the former is likely.
+5. **Worth the change** — The recommended alternative must justify its refactoring cost. A slightly suboptimal approach in non-critical code is a nit and lands at Low; it is not dropped for being small.
+6. **Concrete benefit** — Name the burden the current design imposes and how the alternative removes it; an imagined author's willingness to accept the change is not evidence.
 
 ## Severity calibration
 
