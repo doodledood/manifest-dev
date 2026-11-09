@@ -52,7 +52,8 @@ Before flagging issues, observe existing project patterns:
 
 ## Actionability filter
 
-Before reporting an issue, it must pass ALL criteria. **If it fails ANY, drop it entirely.**
+Before reporting an issue, it must pass criteria 1 and 4; **if it fails either, drop it.**
+Criteria 2 and 3 set its grade: a finding that fails either is a nit and lands at Low.
 
 1. **In scope** — Only report issues in changed/specified code. (Note: tests are expected to have mocks — skip test files.)
 2. **Significant friction** — Not just normal orchestration-level mocking.
