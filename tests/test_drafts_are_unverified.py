@@ -26,6 +26,7 @@ SKILLS = (
 )
 FIGURE_OUT = SKILLS / "figure-out" / "SKILL.md"
 AUTONOMOUS = SKILLS / "figure-out" / "references" / "autonomous.md"
+DRAFT = SKILLS / "figure-out" / "references" / "DRAFT.md"
 DEFINE = SKILLS / "define" / "SKILL.md"
 TASTE = SKILLS / "figure-out" / "references" / "TASTE.md"
 DO = SKILLS / "do" / "SKILL.md"
@@ -73,15 +74,16 @@ def test_the_draft_bullet_bounds_the_time_and_says_what_to_cut() -> None:
     assert "one standalone throwaway file with fake data" in draft
     assert "the draft is done" in draft
     assert "changes again only when the user asks" in draft
+    # The draft bullet sends a run to the draft mechanics before the first draft.
+    assert "Before making the first draft, read `references/DRAFT.md`" in draft
     # Choosing a variant is choosing the direction, so no line may read as refining it after.
-    assert "the variant the user chooses is the direction, so drop the rest" in draft
-    assert "continue with one" not in draft
+    mechanics = _flat(DRAFT)
+    assert "the variant the user chooses is the direction, so drop the rest" in mechanics
+    assert "continue with one" not in mechanics
 
 
 def test_the_design_step_runs_no_review_loop_on_a_draft() -> None:
-    draft = _bullet(
-        _flat(FIGURE_OUT), "When the read implies making something, also offer"
-    )
+    draft = _flat(DRAFT)
     assert (
         "that it is a draft no review loop runs on — no review skill, none of the design "
         "skill's optional measuring instruments, no second pass" in draft

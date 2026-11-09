@@ -20,8 +20,6 @@ findings and assessment without inventing a severity threshold.
 
 Report format:
 
-## Assessment: {Excellent | Good with Minor Issues | Needs Work}
-
 **Strengths** — what's working, what the author should preserve.
 
 **Issues**:

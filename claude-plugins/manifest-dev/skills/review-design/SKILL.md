@@ -72,4 +72,4 @@ Order findings by severity, then by position. A clean artifact is a real result:
 
 ## Scope, and what this is not
 
-This skill evaluates finished or in-progress artifacts on request or under a manifest gate. The `design` skill supplies design guidance. It does not review prose style — a document's writing quality is the `review-writing` skill; this skill judges the same document's layout, hierarchy, typography, and reading structure.
+This skill evaluates finished or in-progress artifacts on request or under a manifest gate; it gives no design guidance. It does not review prose style: on a document it judges layout, hierarchy, typography, and reading structure, not writing quality.
