@@ -68,7 +68,7 @@ Read before building plugins:
 
 ## Project Surfaces
 
-<!-- setup-project surfaces v14 -->
+<!-- setup-project surfaces v15 -->
 
 This project keeps its direction, vocabulary, and decision memory in the repo — shared ground for every contributor and agent, regardless of tooling.
 
@@ -80,7 +80,10 @@ This project keeps its direction, vocabulary, and decision memory in the repo �
 
 **Writing a decision record is one act, not three** — the record, the restatus, and the index, in one change. Step two is the one that gets dropped, and dropping any of them leaves the corpus asserting something untrue. Open `docs/adr/CONVENTIONS.md` before you start: it carries the bar, the template, and what each step actually requires.
 
-**Verification — `scripts/verify`: how this project checks that its work still does its job.** Run it before saying a change works, when reproducing a reported problem, and when a change touches something one of its recipes covers (`scripts/verify list` shows them); a change that needs a check no recipe has adds one. Every check this project keeps is a recipe, its lint, types and tests among them: call their commands directly while iterating, and drive the recipe for the evidence a change rests on. Recipes without the ask-first mark are free: run them as often as they help — `property-suite` after every change. Recipes marked ask-first cost money, quota, load on shared systems or effects outside the repository: run those only when a person runs them or has agreed — ask first, naming the recipe and why. Driving the behavior cases a prompt change touches is already agreed, as the *Check prompt wording by its behavior* Taste entry says; a whole eval suite is not. `scripts/verify --help` gives the rest. The behavior suites its `eval` recipes start cover `figure-out` and `define` only, on purpose; a change to a prompt that a case covers updates that case where the change affects what it tests, and marks it stale or, with the owner's agreement, runs it, as `claude-plugins/manifest-dev/evals/README.md` describes. `scripts/design-evals/` is the harness for the code instruments the `design` skill ships; its README says how to run it and what it does not measure.
+**Verification — `scripts/verify`: how this project checks that its work still does its job.** Run it before saying a change works, when reproducing a reported problem, and when a change touches something one of its recipes covers (`scripts/verify list` shows them); a change that needs a check no recipe has adds one. Every check this project keeps is a recipe, its lint, types and tests among them: call their commands directly while iterating, and drive the recipe for the evidence a change rests on. Recipes without the ask-first mark are free: run them as often as they help — `property-suite` after every change. Recipes marked ask-first cost money, quota, load on shared systems or effects outside the repository: run those only when a person runs them or has agreed — ask first, naming the recipe and why. Driving the behavior cases a prompt change touches is already agreed, as `prompt-principles` says; a whole eval suite is not. `scripts/verify --help` gives the rest. The behavior suites its `eval` recipes start cover `figure-out` and `define` only, on purpose; a change to a prompt that a case covers updates that case where the change affects what it tests, and marks it stale or, with the owner's agreement, runs it, as `claude-plugins/manifest-dev/evals/README.md` describes. `scripts/design-evals/` is the harness for the code instruments the `design` skill ships; its README says how to run it and what it does not measure.
+
+- **Prompt work** — load the `prompt-principles` skill (`.claude/skills/prompt-principles/SKILL.md`) before planning, writing, reviewing or verifying a change to a prompt, a skill or an agent.
+- **Product work** — load the `product-principles` skill (`.claude/skills/product-principles/SKILL.md`) before planning, designing, building or reviewing behavior manifest-dev ships.
 
 ## Repository Structure
 
@@ -96,118 +99,12 @@ This project keeps its direction, vocabulary, and decision memory in the repo �
 
 `tests/test_skill_frontmatter.py` fails any shipped `SKILL.md` — and any Pi prompt template, which loads through the same parser — carrying one of these. It enforces the convention rather than the YAML spec: a validly indented continuation and a block scalar both parse everywhere and are still refused, because one physical line is the rule. It also takes a closed key vocabulary — `name`, `description`, `user-invocable`, `argument-hint`, `metadata` — since an unrecognised key at column 0 is nearly always a wrapped value; adding a frontmatter key a CLI supports means adding it to `KNOWN_KEYS` in the same change.
 
-**A flag or a mode means progressive disclosure.** When a skill grows a flag or a mode, what every invocation needs stays inline in `SKILL.md`, and that mode's mechanics move to a companion file under `references/` loaded only when the mode resolves. Otherwise the default invocation — the one nobody passes a flag for, and the one most sessions run — carries the whole file to use a fraction of it.
-
-The trigger stays in the loading layer. `SKILL.md` says which mode applies and what that mode loads; the deferred file never carries its own trigger, since it can only be read after the load the trigger was meant to gate. State it where a reader already looks for it — a `Modes` or `What loads` table beside the flags, the way `figure-out/SKILL.md` does.
-
-Extraction is for bulk, not tidiness. A mode whose mechanics run to a paragraph stays inline: an indirection costs a load and a reader's place, and it can strand a trigger too subtle to survive the hop. Extract when a default invocation would otherwise carry substantial content it never reads — and when the alternative is restating one rule in two files that drift, prefer the restatement only where the files genuinely cannot reach each other. See `docs/adr/20260703-progressive-disclosure-triggers-live-in-loading-layer.md`.
-
-**A shipped skill stands alone — `CONTEXT.md` is not loaded where it runs.** The glossary is resident in *this* repo's sessions because the context file imports it. A skill installed in someone else's project has none of that: it gets its own `SKILL.md`, whatever references its loading layer names, and nothing else. So every term a skill's behavior depends on is defined where the skill first uses it, and no shipped file defers a definition to the glossary, to another skill, or to a section a reader may never reach. `figure-out`'s canonicalization of *fog* at first use is the pattern; a forward reference inside one always-loaded file is the mild version of the same fault and still worth a gloss.
-
-Keep the two vocabularies apart. The workflow's own terms — Manifest, Deliverable, Acceptance Criterion, Global Invariant, Ticket — are the product's language and travel with it, defined at use wherever the exact meaning binds. The words this repo uses to *reason about* its prompts — Spine, Altitude, Re-host, Door, House — are maintainer vocabulary: they belong in `CONTEXT.md`, ADRs, and this file, not in anything under `claude-plugins/` or `dist/`. A skill neither speaks them nor defines them.
-
-None of this touches the user's own context file. Reading it, seeding it, and capturing into it are real skill behaviors — `setup-project` installs one and `figure-out`'s docs mode writes to it. Those name *the project context file* resolved by detection, never a fixed filename, and the file they mean is the user's, never this repo's.
-
-## ADR Convention Ownership
-
-`docs/adr/CONVENTIONS.md` is this project's ADR convention and governs here — the bar, the template and its `Area` field, naming, lifecycle, immutability, cross-references, and the index rebuild rules. Edit that file when the practice should change.
-
-`claude-plugins/manifest-dev/skills/figure-out/references/ADR_FORMAT.md` is the plugin's shipped default, carrying the same content for projects that have no conventions file of their own; it also states the precedence rule. The two are kept in step — change one, change the other. figure-out's `WITH_DOCS.md` owns only *cadence*: when a session offers to record a decision. A project's conventions file has no say in cadence, and the plugin has no say in a project's conventions.
-
-The same split holds for the North Star: `docs/NORTH_STAR_CONVENTIONS.md` is this project's convention and governs; `claude-plugins/manifest-dev/skills/setup-project/references/NORTH_STAR_FORMAT.md` is the plugin's shipped default carrying the same content plus the installer-facing emission templates, and states the precedence rule. The two are kept in step — change one, change the other. Cadence (when a session offers a North Star update) stays with figure-out's docs mode.
-
-Distributed skill files stay repo-agnostic — maintainer/governance notes like this one belong here, not in skill references or in `docs/adr/CONVENTIONS.md` or `docs/NORTH_STAR_CONVENTIONS.md`, which setup-project emits into other people's repositories.
-
-## Setup-Project Surfaces Version
-
-**Changing a file setup-project emits** — `figure-out/references/ADR_FORMAT.md`, `setup-project/references/NORTH_STAR_FORMAT.md`, or anything under `setup-project/references/harness/`, which this repository's `scripts/verify` copies: load the `bump-surfaces-version` skill first. It carries the version, changes, eval-case and upgrade-guide steps; `tests/test_setup_project_versions.py` and `tests/test_verify.py` fail when one is missed.
-
-## Red-Flag Mirror Pairs
-
-**Editing a task file under `figure-out/tasks/` or `define/tasks/`**: load the `mirror-pairs` skill. A red-flag list both skills need lives in both files, so a change to one side changes the other.
-
-## Slicing Discipline Ownership
-
-The rule that a slice must be exercisable end-to-end on its own — put in front of its real use rather than inspected as present — lives in two shipped skills: `/define`'s Deliverable cutting and `ticket-up`'s Ticket cutting (stated in both its `SKILL.md` and `references/TICKET_CONVENTION.md`). The duplication is deliberate: a shipped skill stands alone, and `ticket-up` authors Tickets from direct requests and figure-out handoffs that never pass through `/define`, so it cannot defer the rule there. Change one, change the others — a sharpening that lands in only one home leaves the other paths cutting by layer, which is the defect the rule exists to prevent. What the rule governs is where a cut falls, never how many Deliverables or Tickets come out; count stays with each skill's own unit test.
-
-## manifest-dev-help Glossary Ownership
-
-`manifest-dev-help/references/GLOSSARY.md` restates `CONTEXT.md`'s product terms for users, close to ASD-STE100 (about 90% of it) and with the why behind each, because no installed skill can read this repository's glossary. Every change to a `CONTEXT.md` entry rereads its manifest-dev-help entry in the same change: each manifest-dev-help entry records the fingerprint of the `CONTEXT.md` entry it was written from, and `tests/test_manifest_dev_help_skill.py` fails — printing the new fingerprint — when the two differ, when a term is added or removed on one side only, or when manifest-dev-help breaks STE's counted limits. A term only maintainers use goes in that test's `MAINTAINER_TERMS` instead. See `docs/adr/20261015-manifest-dev-help-answers-questions-about-manifest-dev-in-simplified-english.md`.
-
-## Project Definition Ownership
-
-What counts as a project — a repository or working folder holding, or about to hold, work later sessions will change, with a new one counting — and what does not (a chat with no workspace, a home or scratch folder, a folder holding one finished artifact, a question that does not concern the folder the session runs in) is stated in four shipped skills: `figure-out/SKILL.md` (*Modes and what loads*), `define/SKILL.md`, `do/SKILL.md` and `setup-project/SKILL.md`. The first three also say that one-off work inside a project is still project work, so it keeps its recipe gates. The duplication is deliberate: a shipped skill stands alone, and each of the four decides on its own whether to offer, build, read for or gate on a project surface. Change one, change the others; `tests/test_projectless.py` fails when a copy loses a shared clause. See `docs/adr/20261014-project-surfaces-follow-the-context.md`.
-
-## Versioning
-
-When updating plugin files, bump that plugin's `.claude-plugin/plugin.json`:
-- **Patch** (0.0.x): Bug fixes, typos
-- **Minor** (0.x.0): New features, new skills/agents
-- **Major** (x.0.0): Breaking changes
-
-Pi has its own source-owned package version in the repo-root `package.json` (`@doodledood/manifest-dev-pi`). Bump it when changing Pi package metadata, the prompt templates under `dist/pi/`, or the skill directories it points at (including adding or removing a skill). The Codex plugin manifests under `dist/codex/plugins/*/.codex-plugin/plugin.json` carry the same version as their source plugin, and `dist/opencode/plugin/package.json` carries `manifest-dev`'s. Each Cursor manifest, `claude-plugins/*/.cursor-plugin/plugin.json`, carries its plugin's version too.
-
-README-only changes don't require version bumps.
-
-## Adding New Components
-
-When adding agents or skills:
-1. Create the component file in the appropriate directory
-2. Bump plugin version (minor for new features)
-3. Update affected plugin's `README.md` and repo root `README.md`
-4. Update the plugin's `.claude-plugin/plugin.json` and `.cursor-plugin/plugin.json` description/keywords if the new component adds significant capability
-
-**README sync checklist** (when adding/renaming/removing components):
-- `README.md` (root) - Available Plugins section, directory structure
-- `claude-plugins/README.md` - Plugin table
-- `claude-plugins/<plugin>/README.md` - Component lists
-
-**README Guidelines**: Keep READMEs high-level (overview, what it does, how to use). Avoid implementation details that require frequent updates -- readers can explore code for specifics.
-
-### Task Files
-
-Task files provide domain-specific hints, kept as **two parallel sets** with different consumers:
-
-- **`/define`'s task files** (`skills/define/tasks/`) carry **Quality Gates** (auto-encoded as INV-G*/AC-*) and **Defaults** (auto-encoded as PG-*, except one whose violation would be unsafe or irreversible, which routes to a Global Invariant) — encoder data for the manifest.
-- **figure-out's task files** (`skills/figure-out/tasks/`) carry **probing fuel** — non-natural angles (`## Blind-spot probes`, `## Forced trade-offs`) that figure-out surfaces during understanding.
-
-Each skill carries its own task-type detection index inline in its `SKILL.md` (not a separate `tasks/README.md`) and loads its own set. The two are deliberately decoupled so figure-out runs standalone — figure-out never reads define's task files, and vice versa.
-
-**Composition** (within each set): base files provide domain-common content (e.g., `CODING.md` for code); overlay files add content-type specificity (`FEATURE` / `BUG` / `REFACTOR` compose onto `CODING`; `PERF` and `HILLCLIMB` compose onto `MEASURE`, and `HILLCLIMB` onto the artifact's own file too; in /define's set, `BLOG` / `DOCUMENT` compose onto `WRITING`, and Research composes `research/RESEARCH.md` with `research/sources/`).
-
-**/define content types**:
-- *Quality gates* (tables naming the aspect and threshold, plus a skill or reference only when the evaluation needs one) — auto-included as INV-G*/AC-* by `/define`. Omitted with logged reasoning if clearly inapplicable, or — advisory-tier gates only — on `/define`'s bearer test (the dimension's findings would have no bearer on the manifest's surface; the reasoning names the missing bearer as a fact). User reviews manifest.
-- *Defaults* (`## Defaults` section) — included in the manifest as PG-* without probing; user reviews. A Default whose violation would be unsafe or irreversible routes to a Global Invariant instead, so it binds.
-- *Reference files* (`references/*.md`) — lookup data for gate evaluators. Not loaded during `/define`.
-
-A define task-file item belongs in exactly one type: if you can verify it from the output, it's a Quality Gate; if it's a non-verifiable process practice, it's a Default. A safety rule whose violation would be unsafe or irreversible is a Default even when it is verifiable — a Quality Gate ships the gate text the task file authors, written with no sight of the repo, the branch, or the run, while a Default routed by `/define` gets its invariant written with that context. Don't prescribe manifest encoding (PG vs INV vs AC) in task files — that's `/define`'s job.
-
-**figure-out probe content**: angles to check, not instructions for how to do the work — each phrased as the question that opens a branch. **Non-natural only**: include a probe only if the model skips it by default (don't restate what a capable model raises unprompted). Keep files terse so they read as awareness, not an agenda to complete.
-
-**When creating/modifying task files**:
-1. Read existing files for structural patterns — define's set (gates + Defaults) and figure-out's set (Blind-spot probes + Forced trade-offs) differ.
-2. Update the relevant skill's own inline index in its `SKILL.md` (`define/SKILL.md` and/or `figure-out/SKILL.md`).
-3. If creating a base file, update overlay files to remove content that moved to the base.
-4. Bump plugin version, update READMEs per sync checklist.
-5. For a figure-out probe, trade-off line or reference file added, renamed or removed, update its row in the eval README's *Coverage* table — graders in a case, or the reason the suite cannot reach it; `tests/test_figure_out_coverage.py` fails until the row matches.
-
-## File Operations
-
-Prefer `cp` and `mv` bash commands over the Write tool when duplicating or moving files. Much faster for large files. Use Edit after `cp`/`mv` if changes are needed.
-
-## Before PR
-
-Run `scripts/verify drive property-suite` and show its output in the PR. Bump plugin version if plugin files changed.
-
 ## Taste
 
 Ratified steering preferences for this repo. Each states the preference, why it holds, and when it should yield — weigh them rather than obey them.
 
 - **Default manifests here to no `check-pr` lifecycle gate.** Pull requests in this repo run no CI and have a single maintainer as the only reviewer, so CI, review-thread and mergeability criteria spend verification effort on nothing. The gate that the pull request shows the change working still applies: the maintainer reads it before merging. Include the lifecycle gate once a pull request carries required status checks, or a reviewer whose approval gates the merge.
 - **Prototype renderings ship as Artifacts where the harness offers them.** When a session renders a disposable draft for reaction — figure-out's prototyping, or any render-to-react flow — publish it as an Artifact page rather than loose .md/.html files: in remote and web sessions loose files are hard to open, and a page the user can actually look at is the whole point of rendering. Yield to a plain file when the session has no Artifact capability, or when the user asks for the file itself.
-- **Check prompt wording by its behavior, not by the maintainer's reading.** When a change rewords a prompt, a skill or an agent, show the wording working by driving the behavior cases it touches, new or existing eval cases, through `scripts/verify drive`, instead of asking the maintainer to judge the words. The maintainer judges a prompt change by what it makes a run do, not by its wording, so a drive is the evidence they rely on. Run a whole eval suite only when they ask, because each run is many paid sessions. Yield when the text must be approved as written, such as a public post, or when no case can reach the behavior; then say so.
-- **Settle a prompt change on one run per arm, and accept the noise.** When the evidence for a prompt or skill change is a before-and-after drive of the behavior cases it touches, run each case once on the skills before the change and once after, and add runs only where that pair does not settle it — both arms pass, both fail, or a verdict is borderline. The maintainer's reason: every run is a paid model session and more runs get expensive, while one pair is good enough once its noise is accepted. Yield when the decision would be costly to reverse and rests on one borderline pair, or when the maintainer asks for a fuller measurement.
-- When a call shapes behaviour manifest-dev ships — a skill step, a mode, a default, an offer — prefer a sensible default every user gets with no setup, changeable through channels people already use (their stated rules, their context file, their project's own copy of a convention), and word it to hold across the many kinds of project the plugin runs in rather than one project, host or case. The maintainer's reason: "have defaults baked in with options to change and override, and keep things general when possible, since the product here applies to many, many use cases." Yield when no single default fits a known group of users: let the default follow what the session can see, rather than adding a setting or a question. Yield when generalizing would widen the work beyond the job at hand: generalize the wording, not the machinery.
 
 ## Coding Conventions
 
