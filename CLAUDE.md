@@ -84,6 +84,8 @@ This project keeps its direction, vocabulary, and decision memory in the repo �
 
 - **Prompt work** — load the `prompt-principles` skill (`.claude/skills/prompt-principles/SKILL.md`) before planning, writing, reviewing or verifying a change to a prompt, a skill or an agent.
 - **Product work** — load the `product-principles` skill (`.claude/skills/product-principles/SKILL.md`) before planning, designing, building or reviewing behavior manifest-dev ships.
+- **Architecture work** — load the `architecture-principles` skill (`.claude/skills/architecture-principles/SKILL.md`) before planning, designing, building or reviewing how skills, wrappers, state and the workflow are structured.
+- **Design work** — load the `design-principles` skill (`.claude/skills/design-principles/SKILL.md`) before planning, writing, building or reviewing the design guidance manifest-dev ships or a surface a skill renders for a person.
 
 ## Repository Structure
 

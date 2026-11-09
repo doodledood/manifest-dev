@@ -804,8 +804,9 @@ def test_shipped_text_never_names_a_subagent() -> None:
     assert not problems, "\n".join(problems)
 
 
-# Holds the hard limit in .claude/skills/prompt-principles/SKILL.md: maintainer vocabulary stays
-# out of what ships, while the workflow's own terms travel with it.
+# Maintainer vocabulary stays out of what ships, while the workflow's own terms travel with it:
+# the maintainer words reason about prompts and mean nothing to a user. This check is the rule's
+# home, so no principles skill restates it.
 def test_shipped_text_speaks_no_maintainer_vocabulary() -> None:
     problems = []
     for path in shipped_markdown():
