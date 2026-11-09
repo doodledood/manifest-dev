@@ -46,16 +46,18 @@ every step below follows it. Load it when one of these fires:
 
 - **Asked** — the user asks to create or refresh one, directly or through the
   `create-principles-skill` skill.
-- **A stated reason in one area** — the user turns down or corrects a call and says why, and the
-  reason guides only one area's work: offer the line for that area's skill, creating the skill and
-  its pointer line on a yes when none exists. A personal lean still goes to Taste, and a rule nearly
-  every session needs still goes to the project context file.
+- **A stated reason in one area** — a correction `TASTE.md` would offer as a project-level entry,
+  whose reason guides only one area's work, is offered once, as that file says, in the line form for
+  that area's skill, creating the skill and its pointer line on a yes when none exists. Its gate and
+  timing are `TASTE.md`'s. A personal lean still goes to Taste, and a rule nearly every session needs
+  still goes to the project context file.
 - **A principle steered against** — the user steers against a principle this session loaded:
   ask, as the method says, whether it moved or this is an exception, before the next question.
 - **A failing line met** — a principles skill this session loaded holds a line failing the
   method's test: offer, once, to move it to its home or remove it.
-- **Session end** — before naming the read, beside the ADR sweep, gather this session's area
-  corrections as the method says and make the batched offer for each area that clears its bar.
+- **Session end** — `TASTE.md`'s session-end sweep gathers this session's area candidates too;
+  batch them per area as the method says, beside the ADR sweep, and offer each area that clears its
+  bar.
 
 With the user's yes, write as the method says. A session with no person present writes none and
 names the candidates in the read.

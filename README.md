@@ -91,7 +91,7 @@ Choose what you need; there is no required sequence:
 
 - **Understand a question** — `/figure-out` investigates and recommends. It does not start implementation. Product questions can explore what people are trying to accomplish, what they use today, and what would make them try or keep using a solution.
 - **Finish defined work** — `/define` makes a finite Manifest; `/do` executes it. `/auto` combines understanding, definition, and execution when that is the assignment.
-- **Prepare a project** — `/setup-project` connects its existing direction, words, decisions, and checks, and offers a principles skill for each area where the team has said how it wants the work done; `/create-principles-skill` adds or refreshes one later. It resolves coordination settings only when you want them, and starts no work.
+- **Prepare a project** — `/setup-project` connects its existing direction, words, decisions, and checks, and offers a principles skill for each area where the team has repeatedly said how it wants the work done; `/create-principles-skill` adds or refreshes one later. It resolves coordination settings only when you want them, and starts no work.
 - **Track or work one job** — `/ticket-up` writes a Question Ticket for inquiry or a Shaped Ticket ready for delivery; `/next-ticket` selects one; `/run-ticket` works that exact Ticket. An inquiry can go directly from `/figure-out` to `/ticket-up` without a Manifest.
 - **Coordinate work** — `/orchestrate` proposes a queue plan or pursues an explicitly assigned outcome. `--autonomous` acts within that assignment and its limits.
 

@@ -171,15 +171,16 @@ you are not present, but only a preference that you approved. A project preferen
 work, such as design, goes to that area's Principles Skill.
 
 ### Principles Skill
-<!-- context: 201e046b0747 -->
+<!-- context: d93ded95bf78 -->
 A Principles Skill is a project skill with the name `<area>-principles`. It holds how the people of a
-project want one area of work done, for example design, product or prompts. Each line is a
-principle, with its reason and when it does not apply. Lines come only from what those people said,
-and a line is written only when a person says yes to it.
+project want one area of work done, for example design or prompts. Each line is a principle, with its
+reason and when it does not apply. Lines come from what those people said, from a failure in that
+work, or from a default that a person chose to change or keep. A line is written only when a person
+says yes to it.
 
 A line in the Project Context File tells each agent when to load the skill. This is true also for
-an agent that does not use manifest-dev. The skill exists so that design, product and architecture
-work starts from what the team wants, and the Project Context File stays short. A decision goes to a
+an agent that does not use manifest-dev. The skill exists so that work in an area such as design
+starts from what the team wants, and the Project Context File stays short. A decision goes to a
 Decision Record, not to the skill.
 
 ### Skill
@@ -253,11 +254,11 @@ The skills find it by detection, not by a fixed name. It connects each session t
 Surfaces.
 
 ### Project Surfaces
-<!-- context: 9bced93ce0d1 -->
+<!-- context: 36d9a6c174be -->
 The Project Surfaces are the files that a project keeps for each session and each contributor. They
 are its North Star, its Glossary and its Decision Records with their ADR Conventions. A project can
-also select a Verification Harness and keep Principles Skills. A section of the Project Context File points each session to them and records
-the Surfaces Version. `/setup-project` installs them, and normal runs keep them current. They exist
+also select a Verification Harness and keep Principles Skills. A section of the Project Context File
+points each session to them and records the Surfaces Version. `/setup-project` installs them, and normal runs keep them current. They exist
 so that the direction, the words and the decisions of the project live in the repository, not in the
 memory of one person.
 

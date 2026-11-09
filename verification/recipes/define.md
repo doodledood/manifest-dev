@@ -14,7 +14,7 @@ Turns shared understanding into a Manifest — Outcome, Problem, Appetite, Deliv
 - Phrases its description matches: "plan", "spec out", "make a manifest", "break down a task".
 - `auto` (with `--autonomous`); `do` to amend; `babysit-pr` with `--babysit`; figure-out's offer at the end of a read.
 - `--babysit <pr-url>` synthesizes a lifecycle-only Manifest from a pull request — the `check-pr` gate and the gate that the pull request shows the change working; `--autonomous` skips the approval wait and records decisions as `(auto)` assumptions.
-- It reads earlier work on the repository before encoding.
+- It reads earlier work on the repository before encoding, and loads the principles skills the project context file points to for the areas the work touches.
 - A disposable draft made only to get a person's reaction loads no task file; its Deliverable owes only that the draft reaches that person.
 - A feature with a runnable surface a person uses gets the *Journeys driven as the person* gate: the evaluator derives that person's journeys and drives the built feature through them. A library, an API change or internal work nobody meets gets none.
 - Coding gates do not prescribe when the executor runs its advisory review. PR defaults permit reasoned declines of correct but optional bot suggestions; the independent proof gate remains.

@@ -153,6 +153,12 @@ Where a decision sits outside the North Star Purpose, say so in Context.
 A met `Revisit when` condition is one reason to look again, not the only one. On a `Strategy`
 record a met signpost still goes to its owner unless the reader's assignment and explicit
 authority cover reopening it.
+
+A record still on its own open branch is a draft: edit or delete it in place. Deleting a draft, or
+changing which records it supersedes, narrows or amends, takes back what its restatus did: each
+record it no longer changes gets back its Status and `Enforced by` line, the check that restatus
+retargeted or retired holds that record's decision again, and the index and the North Star's
+strategy list are rebuilt in the same change.
 EOF
 cat > docs/adr/README.md <<'EOF'
 # Architecture Decision Records

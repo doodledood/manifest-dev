@@ -6,8 +6,9 @@ separately, showing the lines verbatim with their sources, and write only what t
 1. **Principles skills for high-signal areas:** for each area the method counts as high signal in
    this project, offer creating its `<area>-principles` skill from the stated reasons found, with
    the count and the sources. Offer at most three areas, and say so when none qualifies.
-2. **Moves out of the context file:** sort each section and Taste entry of the project context file
-   as the method's *Where content goes* says. Offer each principle or Taste entry that only one
+2. **Moves out of the context file:** sort each principle and Taste entry of the project context
+   file as the method's *Where content goes* says, and leave everything else in the file as it is —
+   commands, checklists, ownership notes and operating rules are not principles and do not move. Offer each principle or Taste entry that only one
    area's work needs as a move into that area's skill, in the skill's line form, removing it from
    the context file on acceptance; where that area has no skill yet, the move creates it and joins
    item 1's offer for that area. Report the sort, with the items that stay and why. An item that

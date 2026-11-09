@@ -14,8 +14,8 @@ When the maintainer steps out of the loop, design, product, prompt and architect
 as "not what they'd pick": it follows the visible rules, but among good options it picks one the
 project's people would not. What those people hold lives in their heads, in review threads, or as
 project-level Taste in the always-loaded context file, which every session pays for whatever its
-work. Nothing gave each area a home of its own, nothing kept decisions and calls a run made by
-itself out of such a home, and define's review never read one.
+work. Nothing gave each area a home of its own, nothing kept decisions, or calls a run made
+on its own, out of such a home, and define's review never read one.
 
 The North Star's *Each piece stands alone* says shared additions help colleagues who do not use
 manifest-dev, and their agents (`20261109-shared-additions-help-colleagues-who-do-not-use-manifest-dev`).
@@ -32,11 +32,11 @@ line; an unattended run reports candidates. One line in the project context file
 each skill, so any agent finds it. The method lives in one shipped file,
 `setup-project/references/PRINCIPLES_SKILLS.md`.
 
-setup-project offers skills for high-signal areas and moves principles and Taste entries that only
-one area's work needs out of the context file into them, from surfaces v15. A thin wrapper,
+setup-project offers skills for high-signal areas and offers to move principles and Taste entries
+that only one area's work needs out of the context file into them, from surfaces v15. A thin wrapper,
 `create-principles-skill`, creates or refreshes one on demand through figure-out; asking figure-out
 directly works too. figure-out, define and define's review load the skills the pointer lines name
-before execution. A project-level Taste entry that guides one area becomes a line in that area's
+before execution, and review-code loads them for the areas a change touches. A project-level Taste entry that guides one area becomes a line in that area's
 skill instead.
 
 ## Alternatives Considered
@@ -77,4 +77,4 @@ and their pointer lines. That only a person's yes writes a line is held by the p
 
 ## Source
 - Session: a figure-out session, 2026-11-09 (log kept locally).
-- Related: narrows 20261102-taste-stays-a-section-of-the-memory-file; amends 20260719-taste-persists-by-offer-and-ratify and 20261102-setup-offers-taste-entries-mined-from-stated-reasons; extends 20261013-new-capabilities-live-inside-the-four-workflow-entry-points with one optional wrapper; see also 20261109-shared-additions-help-colleagues-who-do-not-use-manifest-dev
+- Related: narrows 20261102-taste-stays-a-section-of-the-memory-file; amends 20260719-taste-persists-by-offer-and-ratify and 20261102-setup-offers-taste-entries-mined-from-stated-reasons; amends 20261013-new-capabilities-live-inside-the-four-workflow-entry-points with one optional wrapper; see also 20261109-shared-additions-help-colleagues-who-do-not-use-manifest-dev

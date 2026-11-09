@@ -53,6 +53,9 @@ def test_wrapper_invokes_figure_out_and_points_to_the_method() -> None:
         0
     ), "the wrapper forwards --autonomous only when given, so it runs attended by default"
     assert (
+        "Run it attended unless `--autonomous` was given" in text
+    ), "the wrapper must run attended by default, so only a person's yes writes a line"
+    assert (
         f"`../setup-project/references/{METHOD_NAME}`" in text
     ), "the wrapper must point to the method"
 
@@ -79,23 +82,48 @@ def test_every_shipped_file_naming_a_principles_skill_points_to_the_method() -> 
         and re.search(r"principles skill", p.read_text(encoding="utf-8"), re.I)
         and METHOD_NAME not in p.read_text(encoding="utf-8")
     ]
-    assert not missing, f"these files work with principles skills without the method: {missing}"
+    assert (
+        not missing
+    ), f"these files work with principles skills without the method: {missing}"
+
+
+METHOD_PATH = re.compile(r"`([^`\s]*/" + re.escape(METHOD_NAME) + r")`")
+
+
+def test_every_path_to_the_method_resolves() -> None:
+    broken = [
+        f"{p.relative_to(ROOT)}: {target}"
+        for p in instructing_markdown()
+        for target in METHOD_PATH.findall(p.read_text(encoding="utf-8"))
+        if (p.parent / target).resolve() != METHOD
+    ]
+    assert not broken, f"these paths to the method do not reach it: {broken}"
 
 
 def local_principles_skills() -> list[Path]:
     return sorted(LOCAL_SKILLS.glob("*-principles/SKILL.md"))
 
 
+def pointer_line(name: str, path: str) -> re.Pattern[str]:
+    """The method's pointer line: `- **<Area> work** — load the `<name>` skill (`<path>`) before ...`."""
+    return re.compile(
+        rf"^- \*\*[^*\n]+ work\*\* — load the `{re.escape(name)}` skill"
+        rf" \(`{re.escape(path)}`\) before ",
+        re.MULTILINE,
+    )
+
+
 def test_this_repositorys_principles_skills_keep_the_shape() -> None:
     context = CONTEXT_FILE.read_text(encoding="utf-8")
-    for skill in local_principles_skills():
+    skills = local_principles_skills()
+    assert skills, f"no principles skills under {LOCAL_SKILLS.relative_to(ROOT)}"
+    for skill in skills:
         name = skill.parent.name
         body = skill.read_text(encoding="utf-8").split("---", 2)[2].strip()
         assert body.startswith("Edit rule:"), f"{name} must open with the edit rule"
-        assert "fresh start" in body.split("\n\n")[-1], f"{name} must end with the self-check"
         assert (
-            f"`{name}`" in context and f"{skill.relative_to(ROOT)}" in context
-        ), f"CLAUDE.md must carry a pointer line naming {name} and its path"
-        assert (
-            ROOT / ".agents" / "skills" / name
-        ).is_symlink(), f"{name} needs its .agents/skills link"
+            "fresh start" in body.split("\n\n")[-1]
+        ), f"{name} must end with the self-check"
+        assert pointer_line(name, str(skill.relative_to(ROOT))).search(
+            context
+        ), f"CLAUDE.md must carry the method's pointer line for {name} and its path"

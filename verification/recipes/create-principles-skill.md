@@ -10,7 +10,7 @@ Creates or refreshes one area's principles skill — a project skill named `<are
 
 ## How a user reaches it
 
-- `/create-principles-skill [area] [--autonomous]`; with no area it offers the high-signal areas.
+- `/create-principles-skill [area] [--autonomous] [--no-log]`; with no area it offers the high-signal areas.
 - Phrases its description matches: "create a principles skill", "capture how we do design here", "refresh the design principles".
 - figure-out's docs mode reaches the same method when a person states why they want one area's work done differently, and setup-project offers it for high-signal areas.
 

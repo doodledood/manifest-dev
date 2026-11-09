@@ -49,8 +49,9 @@ yes, after sharpening an existing line is ruled out.
 - <principle> — <why>. Yields when <condition>.
 
 Before calling <area> work done, check it against these principles from a fresh start — a new
-session, or a reviewer who did not do the work — fix what departs, and repeat until nothing does.
-Name any departure you keep, with the principle and why.
+session, or a reviewer who did not do the work. Fix what departs unless the person chose the
+departure, and check again only after a fix, until a check finds none. Name each departure kept,
+with the principle and why.
 ```
 
 Keep the description on one physical line. The file lives where the detected host loads project
@@ -58,7 +59,8 @@ skills — `.claude/skills/<area>-principles/SKILL.md` on Claude Code, `.agents/
 and OpenCode — and where a project serves several hosts, one copy with a link from each other
 folder, never two copies. Use no term of this workflow that the skill does not explain.
 
-**The pointer line** goes in the project context file's project-surfaces section, one per skill,
+**The pointer line** goes in the project context file's project-surfaces section — at the file's
+end where it has no such section, creating the file where the project has none — one per skill,
 saying only when to load it and where it is:
 
 `- **<Area> work** — load the \`<area>-principles\` skill (\`<path to its SKILL.md>\`) before planning, designing, building or reviewing it.`
@@ -70,6 +72,9 @@ Sort by how often the work it guides happens:
 - A principle nearly every session in the project needs stays in the project context file.
 - A principle that only one area's work needs goes to that area's skill.
 - How one person likes to work, wherever they work, goes to that person's own memory file.
+
+Only principles and Taste entries sort. Everything else in the context file — commands, checklists,
+ownership notes, operating rules, conventions a check holds — stays where it is, untouched.
 
 A project's Taste entries — steering preferences in a `## Taste` section of the project context
 file — sort the same way. One that only one area's work needs moves to that area's skill, its
@@ -89,7 +94,9 @@ Offer a skill only for a high-signal area:
   lines.
 
 One stray comment in an area is not signal. Offer at most three areas at a time, each with its
-count and sources, and let the person accept them in one batch.
+count and sources, and let the person accept them in one batch. This bar governs the offers nobody
+prompted — from history, at setup, or in a session's closing sweep. A person who states why they
+want one area's work done differently has given the signal themselves: *Grow* offers that line.
 
 ## Writing, growing and pruning
 
