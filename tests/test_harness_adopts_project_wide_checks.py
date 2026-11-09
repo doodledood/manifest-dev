@@ -17,7 +17,8 @@ REFERENCES = (
     Path(__file__).resolve().parent.parent
     / "claude-plugins/manifest-dev/skills/setup-project/references"
 )
-SETUP = REFERENCES.parent / "SKILL.md"
+# The update pass, which audits a harness that exists.
+UPDATE = REFERENCES / "UPDATE.md"
 # The guides whose step builds a harness (v3: the move into one) or adds the whole-tree recipe
 # (v5); each guide offers only what the next version gives (test_setup_project_versions.py).
 GUIDES = [REFERENCES / "upgrades" / f"v{n}-to-current.md" for n in (3, 5)]
@@ -28,7 +29,7 @@ ADOPTION = {
     / "VERIFICATION_HARNESS.md": (
         "adopted on every path that builds or audits a harness"
     ),
-    SETUP: "a recipe for the checks the project runs across the whole tree",
+    UPDATE: "a recipe for the checks the project runs across the whole tree",
     REFERENCES
     / "upgrades/MOVE_TO_HARNESS.md": (
         "The checks the project runs across the whole tree get a recipe too"
@@ -56,7 +57,7 @@ def test_every_path_that_builds_or_audits_a_harness_adopts_whole_tree_checks(
 def test_the_audit_counts_a_second_way_in_as_a_gap() -> None:
     assert (
         "each verification command the context file names that no recipe runs"
-        in _text(SETUP)
+        in _text(UPDATE)
     )
 
 

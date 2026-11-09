@@ -73,7 +73,7 @@ deferred Ticket, or after a title in the North Star's list of strategy choices i
    - *To recover*: the state of that name.
    - *Ready*: dispatchable, and matching any type filter.
 
-   Venue items that are not Tickets are never touched as executable work. Read designated
+   As you sort, put what `../ticket-up/references/TICKET_CONVENTION.md` → *Tidy pass* says a reader names on the list of what waits on the person, and record and close each merged Ticket as it says. Venue items that are not Tickets are never touched as executable work. Read designated
    source messages as observations only. When nothing is running, to land, to recover or ready,
    a queue assignment reports what waits or was left alone and stops. An outcome assignment
    takes the continue/wait/finish decision in `references/OUTCOME.md` instead.
@@ -124,13 +124,13 @@ A Ticket whose run facts name another orchestrator's run belongs to an orchestra
 ## Check in
 
 Check in whenever a run or a landing turn ends, and otherwise every ten minutes while a run is live,
-a Ticket in scope waits for a landing turn, or an effort in scope carries an orchestrator's pause,
-waiting in whatever way the host allows. At each check-in:
+a Ticket in scope waits for a landing turn, or an effort in scope carries an orchestrator's pause
+whose cause can clear without the person (*Lift*, below), waiting in whatever way the host allows. At each check-in:
 
 1. **Re-read every Ticket in scope.** For an outcome assignment, also recover its compact coordination record and changed designated evidence as `references/OUTCOME.md` says. On each Ticket you hold ready to land, Auto or not, refresh the start time as `../ticket-up/references/AUTOMATED_EXECUTION.md` → *Transitions*, row *Hold a ready mark*, says.
 2. **Honor the pauses** (`../ticket-up/references/AUTOMATED_EXECUTION.md` → *Transitions*, rows *Pause by a person* to *Lift a pause*). A person pauses an effort with a `Paused:` line on its front item. An orchestrator pauses it with an **orchestrator's pause**: a record naming the cause by its cause key, the orchestrator that wrote it and any repair Ticket, kept where the venue reference puts it, apart from what a person writes, so no write of an orchestrator's replaces a person's line.
    - **Hold** a paused effort as row *Hold a paused effort* says, letting through only what row *Launch a repair Ticket* lets through. When a person's pause stops you working the effort, say so.
-   - **Pause** where row *Pause by an orchestrator* applies, instead of escalating or repairing each Ticket on its own, such as for a CI or venue that is down. A cause that is not code-fixable, such as that outage, waits for the person: raise one item naming it on the list of what waits on the person.
+   - **Pause** where row *Pause by an orchestrator* applies, instead of escalating or repairing each Ticket on its own, such as for a CI or venue that is down. A cause that is not code-fixable, such as that outage, gets no repair Ticket: raise one item naming it on the list of what waits on the person.
    - **Repair.** A code-fixable cause gets one repair Ticket instead. Where row *Write a repair Ticket* applies, write one through `ticket-up` in that effort, scoped to making that check pass on the base, in either mode; `ticket-up` reuses an open Ticket that already
      covers it. Then name it in that pause and re-read it. When the pause names another open repair
      Ticket, or is gone, close the Ticket `ticket-up` created in this check-in as a duplicate
@@ -139,7 +139,7 @@ waiting in whatever way the host allows. At each check-in:
      on the person, with its grant recommendation, and joins the current plan once the person
      approves it; `--autonomous` launches it at its next free slot, and without Auto its run stops
      at a ready pull request for the person. It lands under that mode's rules.
-   - **Lift.** An orchestrator's pause keeps the check-ins going: at each, check its cause, and lift it as row *Lift a pause* says.
+   - **Lift.** An orchestrator's pause keeps the check-ins going while its cause can clear without the person: an outage that may end on its own, or a code-fixable cause whose repair Ticket this orchestrator can still launch, run or land. At each check-in, and when you start, check each pause's cause, and lift it as row *Lift a pause* says. Once every pause still standing waits on the person instead (its repair Ticket awaits their grant, approval or review, or is escalated, or what you read shows only a person can fix its cause) and nothing else keeps the check-ins going, stop as the mode's reference says and leave those pauses standing: the next orchestrator checks their causes when it starts and lifts each one that is fixed.
 
    Re-read an orchestrator's pause just before each edit and change nothing else in it.
 3. **Give out one landing turn at a time** across the scope, to the Auto Ticket ready to land whose
@@ -147,7 +147,7 @@ waiting in whatever way the host allows. At each check-in:
    the Ticket before each merge, close or mark change. When the base has moved, launch the run again
    to merge the base in and re-run the gates *Landing* step 3 names; it keeps the turn meanwhile,
    and a launch that fails counts like any other. Every other way a landing cannot merge sends the
-   Ticket where *Landing* step 4 says and passes the turn on. Row *Land* says which Tickets are landed here. When a person has merged a Ticket's pull request, record the landing reference and close the Ticket as row *Merge by a person* says.
+   Ticket where *Landing* step 4 says and passes the turn on. Row *Land* says which Tickets are landed here. When a person has merged a Ticket's pull request, record the landing reference and close the Ticket as row *Merge by a person* says, whoever holds its claim.
 4. **Gather the debt** — what a run found and could not fix on its pull request, which its completion record lists — of
    each Ticket that landed and whose completion record has no line saying its debt was gathered,
    when this orchestrator recorded its landing, or when its landing reference is older than the run
@@ -178,8 +178,9 @@ start lines, refactor proposals, and the next plan. Give each item its own bulle
 with what the person is asked, the answer you recommend, the risk of taking it, and the evidence
 it rests on — the gates that passed and what they did not check, the failing check, the blocker —
 so the person can decide it without opening the pull request or the Ticket. Show the whole list on
-the page at every check-in; in the conversation, report only what changed since the last check-in
-and the items still waiting.
+the page at every check-in. In the conversation, put first what newly waits on the person, then
+what else changed since the last check-in; an item still waiting unchanged stays on the page and is
+not posted again.
 
 ## The person's answers
 
