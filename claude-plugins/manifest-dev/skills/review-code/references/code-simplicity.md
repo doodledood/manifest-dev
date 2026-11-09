@@ -102,4 +102,4 @@ Beyond the shared report skeleton, each finding for this dimension should make t
 
 The Summary for this dimension answers: **Is the code complexity proportional to the problem complexity?**
 
-If no issues pass the filter, the PASS report should state which files/changes were reviewed and affirm that solutions match the problems they solve.
+If no issues pass the filter, the report should say so, state which files/changes were reviewed and affirm that solutions match the problems they solve.

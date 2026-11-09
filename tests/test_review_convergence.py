@@ -110,8 +110,8 @@ def test_nit_classification_does_not_encode_caller_optionality(
     plugins: Path,
 ) -> None:
     for name, reference in [
-        ("define", "references/DOCS-STYLE-REFERENCE.md"),
-        ("define", "references/WRITING-REFERENCE.md"),
+        ("review-writing", "references/DOCS-STYLE-REFERENCE.md"),
+        ("review-writing", "references/WRITING-REFERENCE.md"),
         ("review-writing", "SKILL.md"),
         ("review-design", "SKILL.md"),
     ]:
@@ -122,7 +122,7 @@ def test_nit_classification_does_not_encode_caller_optionality(
         assert "style, naming, structure, or otherwise" in normalized
         assert "presentation-only" not in normalized
         assert "without cost to comprehension" not in text
-    docs = skill(plugins, "define", "references/DOCS-STYLE-REFERENCE.md")
+    docs = skill(plugins, "review-writing", "references/DOCS-STYLE-REFERENCE.md")
     low_row = next(line for line in docs.splitlines() if line.startswith("| **LOW**"))
     assert "serial commas" in low_row
     executor = " ".join(skill(plugins, "do").split())

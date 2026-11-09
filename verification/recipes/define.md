@@ -47,7 +47,12 @@ Check: read
 
 ### principles-in-place
 Run: `scripts/drive-skill.sh define verification/prompts/define-principles-in-place.md --scaffold verification/scaffolds/principles-in-place`
-Proves: graders, applied to `./manifest.md`: (1) the Manifest honors the design principles the request runs into — the live view gets its own page rather than a pop-up panel, and the leading option is not coloured while the poll is open — or records each departure as a user's call naming the principle; (2) at least one gate binds a principle the result must not depart from and cites `design-principles` as its source; (3) nothing in it treats the pop-up panel or the green highlight as settled without naming the principle. PASS when all three hold.
+Proves: graders, applied to `./manifest.md` and the reply, for a request made with nobody to ask that conflicts with two design principles without mentioning them: (1) the Manifest builds to the principles — the live view gets its own page rather than a pop-up panel, and the leading option is not coloured while the poll is open; (2) the reply opens with the conflict, before anything else it reports: what was asked, each principle, what the Manifest specifies instead, and the change that restores what was asked; (3) at least one gate binds a principle the result must not depart from and cites `design-principles` as its source; (4) the Manifest records each set-aside request detail in a Known Assumption. PASS when all four hold. A Manifest that keeps the pop-up panel or the green highlight fails.
+Check: read
+
+### principles-overridden
+Run: `scripts/drive-skill.sh define verification/prompts/define-principles-overridden.md --scaffold verification/scaffolds/principles-in-place`
+Proves: the conflict rule does not fire on a departure the person chose. Graders, applied to `./manifest.md` and the reply, for the same request where the requester names both principles and says to set them aside for this view: (1) the Manifest specifies the pop-up panel and the green highlight as asked; (2) it names each departure with its principle and the reason given; (3) the reply does not replace either choice with the principled one or ask the requester to decide again. PASS when all three hold.
 Check: read
 
 ### bounded-growth

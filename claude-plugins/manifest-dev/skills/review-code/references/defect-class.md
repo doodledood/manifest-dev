@@ -7,8 +7,8 @@ repair needs a substantiated reason, even when all current callers have been pat
 
 ## Input and scope
 
-Run only when the reviewed range fixes a defect; otherwise PASS with a line saying no
-repair was found. On incremental review, the input is a repair in that range or a prior
+Run only when the reviewed range fixes a defect; otherwise report in one line that no
+repair was found in scope. On incremental review, the input is a repair in that range or a prior
 finding being rechecked, not an old repair beside an unrelated change.
 
 Derive the mechanism from the code: the invalid state or operation, where it is allowed,

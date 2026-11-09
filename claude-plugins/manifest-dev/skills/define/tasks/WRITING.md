@@ -3,9 +3,9 @@
 Human-voice register: articles, marketing and social copy, newsletters, narrative, and creative
 writing. Composes onto `PROSE_FLOOR.md`.
 
-**Register.** These gates judge whether prose reads as authentically human-voiced. They do not
-apply to documentation — a spec or a formal report takes `DOCUMENT.md` instead, where rhythm
-variation and deliberate imperfection are defects rather than virtues.
+**Register.** These gates judge whether voice and craft serve the author's point, audience and
+chosen effect. They do not apply to documentation — a spec or a formal report takes `DOCUMENT.md`
+instead, which judges whether its readers can find, understand and use the information.
 
 ## Quality Gates
 
@@ -19,8 +19,8 @@ with `register=voice`, that claim and any deliberately required policy, as `SKIL
 *Specialized gates activate a skill* says. Reviewer standards and the shared prose floor stay
 with the skill; findings supply evidence for the claim. It is a Judgment Gate.
 
-Structure, tone, rhetoric, craft, negative space, statistical variation, and kill-list vocabulary
-all fall inside that one gate; they do not need gates of their own.
+Structure, perspective, specificity, rhythm, emotional effect, omission, tone, insight, word
+choice and punctuation all fall inside that one gate; they do not need gates of their own.
 
 ## Defaults
 

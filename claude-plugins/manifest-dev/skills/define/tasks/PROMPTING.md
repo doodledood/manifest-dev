@@ -50,8 +50,8 @@ When the task involves creating or updating a skill, also apply:
 
 - **Assess config needs** — If a skill requires configuration (IDs, names, preferences), persist it at a fixed path in the project rather than inside the skill directory, and read it instead of re-asking each session
 - **High-signal changes only** (updates) — Every change must address a real failure mode or materially improve clarity. Don't change for the sake of change. Don't overcorrect — one edge case doesn't warrant restructuring
-- **Probe for memento needs** — Multi-phase prompts that accumulate findings need externalized state; probe: does this prompt span multiple steps?
-- **Define empty input behavior** — What happens when the prompt receives no arguments; probe: should it ask, error, or use defaults?
+- **Externalize state in multi-phase prompts** — Where the prompt spans several steps and accumulates findings, have it write that state out as it goes rather than carry it in context
+- **Define empty input behavior** — State in the prompt what it does when it receives no arguments: ask, error, or use a default
 - **Calibrate emotional tone** — Keep arousal low (avoid urgency language, excessive praise, pressure framing). Target "trusted advisor" tone. Normalize failure in iterative prompts. Opening framing propagates into response planning
 - **Blind behavior checks** — Behavior cases keep their own wording and rubric out of what the prompt under test sees, and grade what the run actually did — the files it opened and wrote — rather than its account of what it did
 - **Model a shared protocol before shipping it** — Where the prompt sets rules that several runs, agents or people follow on the same state (claims, handoffs, retries, who writes what), weigh a throwaway model of those rules, checked in scratch with whatever tool fits (such as TLA+ or Alloy) and only as deep as the risk warrants; turn what it finds into design decisions and gates, and keep the model as a check only where the protocol will keep changing

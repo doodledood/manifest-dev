@@ -246,11 +246,17 @@ tell a Default set aside on purpose from one lost. The context file's outcome ru
 naming, structure, architecture — also constrain the shape the Manifest specifies,
 not only which Defaults it drops. Where the project context file points to a principles skill
 for an area the work touches — a project skill holding how the project's people want that area's
-work done — load it: its principles constrain that shape too and outrank a conflicting Default, a
-principle the result must not depart from becomes a gate citing the skill as its source, and a
-departure is a user's call that names the principle
-(`../setup-project/references/PRINCIPLES_SKILLS.md` → *Using one*). Taste entries stay weighed
-per call, as above. Per-repo for
+work done — load it: its principles constrain that shape too and outrank a conflicting Default, and a
+principle the result must not depart from becomes a gate citing the skill as its source. Where
+what was asked conflicts with a principle and that line's own yield does not cover the case, the
+principle holds unless the user chose the departure: they named the principle or said to set it
+aside, or a decision record or a delegation covers it. With the user present, ask whether the
+principle has moved or this is an exception. For an unattended caller, encode the principle's
+side, record what was asked in an `(auto)` `ASM-*`, and open the digest with the conflict: what
+was asked, the principle, what the Manifest specifies instead, and the one change that restores
+what was asked. A departure the user chose is encoded as asked, and its `ASM-*` names the
+principle and why (`../setup-project/references/PRINCIPLES_SKILLS.md` → *Using one*). Taste
+entries stay weighed per call, as above. Per-repo for
 multi-repo manifests. State what must be true for the artifact's actual users, operators,
 readers and maintainers over its useful life. Keep the task files' applicable review coverage;
 several concerns may share a claim and its Evidence when they judge the same result. A review
@@ -310,7 +316,13 @@ what goes unreviewed. Weigh surface
 and stakes together, never size alone: a one-line change on a payment path keeps
 the full sweep. The full set is the default and doubt includes. Never eligible:
 defect-finding dimensions, deterministic project gates, safety-critical Global
-Invariants, and the ceiling.
+Invariants, and the ceiling. Where a task file splits its Quality Gates into
+**Baselines** and **Selectable Gates**, encode both; the labels say only how far
+this valve reaches. A baseline holds for every task of that type and is omitted
+only where the thing it judges is absent from this work. A selectable gate is a
+degree of rigor some tasks of that type do not call for, so it may also be
+omitted, with that reasoning stated, where this task's question and stakes
+clearly do not call for it.
 
 **Specialized gates activate a skill.** Put the substantive quality claim in the body and
 the assessment in Evidence: activate the named skill with the claim, relevant source obligations

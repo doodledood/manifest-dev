@@ -71,4 +71,4 @@ Beyond the shared report skeleton, each finding should make the discrepancy conc
 - **Code actually does**: what the implementation does
 - **Suggested update**: the specific text/change needed, or "Remove comment"
 
-Separate documentation-file findings from code-comment findings if both exist, and list any new features/changes with no documentation at all under a missing-documentation grouping. If no issues pass the filter, the PASS report should briefly state what was checked and why docs are up to date.
+Separate documentation-file findings from code-comment findings if both exist, and list any new features/changes with no documentation at all under a missing-documentation grouping. If no issues pass the filter, the report should say so and briefly state what was checked and why docs are up to date.

@@ -10,7 +10,7 @@ Audit a change along **one** review dimension and report findings. Load only tha
 
 ## Input
 
-`$ARGUMENTS` carries the **dimension** plus optional scope, e.g. `dimension=code-bugs` or `code-bugs src/foo.ts`. A caller requesting a gate verdict also supplies the claims to assess and any deliberately required severity, category or approval policy. A Manifest gate carries its claim and source authority; its Evidence names the dimension. If no dimension is given, list the available dimensions and ask which one — one invocation, one dimension.
+`$ARGUMENTS` carries the **dimension** plus optional scope, e.g. `dimension=code-bugs` or `code-bugs src/foo.ts`. A caller requesting a gate verdict also supplies the claims to assess and any deliberately required severity, category or approval policy. A Manifest gate carries its claim and source authority; its Evidence names the dimension. If no dimension is given, list the available dimensions and ask which one — one invocation, one dimension. With no one to ask, report BLOCKED: no dimension was named, and naming one settles it.
 
 ## Dimensions and thresholds
 
@@ -53,8 +53,8 @@ evidence can. Assess its support independently rather than requiring agreement w
 For a fresh review — including a new standalone review when an earlier report exists — resolve its scope as follows:
 
 1. **Caller specifies files/paths** → review exactly those.
-2. **Otherwise** → review the complete change. Resolve the comparison base from the PR target or the repository's remote default branch; ask only if neither can be established. Inspect committed changes with `git diff <base>...HEAD`, staged changes with `git diff --cached`, unstaged changes with `git diff`, and relevant new files from `git ls-files --others --exclude-standard`. Read each new file's contents; a path listing alone is not its diff.
-3. **Empty / non-reviewable diff** → ask the caller to clarify scope.
+2. **Otherwise** → review the complete change. Resolve the comparison base from the PR target or the repository's remote default branch; ask only if neither can be established, and with no one to ask report BLOCKED naming the base that could not be established. Inspect committed changes with `git diff <base>...HEAD`, staged changes with `git diff --cached`, unstaged changes with `git diff`, and relevant new files from `git ls-files --others --exclude-standard`. Read each new file's contents; a path listing alone is not its diff.
+3. **Empty / non-reviewable diff** → ask the caller to clarify scope. With no one to ask, report BLOCKED: the resolved scope holds no reviewable change, and a scope that holds one settles it.
 
 Stay within scope — never audit the whole project unless explicitly asked. Skip generated copies, lock files, vendored dependencies and binaries. Establish which files are generated from the repository's ownership or build rules; a directory named `dist/` or `build/` may also contain source-owned files that need review.
 

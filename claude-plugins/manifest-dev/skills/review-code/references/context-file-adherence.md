@@ -12,7 +12,7 @@ These files may already be loaded into your context by the parent framework. Che
 
 ### Detecting the CLI
 
-Use the active host's identity, loaded instructions, and configuration to establish which context files govern this invocation. An installed tool directory proves availability, not which host is running. Use the known host's resolution rules below; for another host, inspect its configured context-file discovery. If identity or configuration cannot be established, ask the caller rather than defaulting to a different host.
+Use the active host's identity, loaded instructions, and configuration to establish which context files govern this invocation. An installed tool directory proves availability, not which host is running. Use the known host's resolution rules below; for another host, inspect its configured context-file discovery. If identity or configuration cannot be established, ask the caller rather than defaulting to a different host. With no one to ask, report BLOCKED: which context files govern could not be established, and naming the host settles it.
 
 ### Where to look (priority order per detected CLI)
 

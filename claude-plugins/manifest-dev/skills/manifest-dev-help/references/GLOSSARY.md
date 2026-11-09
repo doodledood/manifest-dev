@@ -400,8 +400,8 @@ only said.
 <!-- context: dcbbcddc356f -->
 Ask-first is the mark on a Recipe whose run has a cost that a person must accept. The cost is money
 or quota, load on shared systems, or effects outside the repository. Run time alone is not a cost.
-By default, the harness runs such a recipe only with `--yes`, after a person runs it or agrees. This
-is why `/do` can ask you before a run.
+By default, the harness runs such a recipe only with `--yes`, after a person runs it or agrees. If
+you approve a Manifest with a gate that runs the recipe, you agree to that run.
 
 When nobody can agree, for example in an unattended run, the run leaves the recipe unrun. It names
 the run that it owes in its report. The project can change this rule.

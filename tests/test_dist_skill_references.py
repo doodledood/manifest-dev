@@ -868,11 +868,11 @@ def test_operational_guidance_has_no_stale_per_gate_topology() -> None:
         ROOT / "README.md",
         ROOT / "claude-plugins/manifest-dev-tools/README.md",
         ROOT
-        / "claude-plugins/manifest-dev/skills/define/references/WRITING-REFERENCE.md",
+        / "claude-plugins/manifest-dev/skills/review-writing/references/WRITING-REFERENCE.md",
         ROOT / "claude-plugins/manifest-dev/skills/define/references/BABYSIT_MODE.md",
         ROOT / "claude-plugins/manifest-dev/skills/review-code/SKILL.md",
         DIST
-        / "codex/plugins/manifest-dev/skills/define/references/WRITING-REFERENCE.md",
+        / "codex/plugins/manifest-dev/skills/review-writing/references/WRITING-REFERENCE.md",
         DIST / "codex/plugins/manifest-dev/skills/define/references/BABYSIT_MODE.md",
         DIST / "codex/plugins/manifest-dev/skills/review-code/SKILL.md",
     ]

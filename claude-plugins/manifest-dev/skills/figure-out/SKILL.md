@@ -262,8 +262,13 @@ architecture — constrain the shape being designed, not only which probes apply
 
 Where the project context file points to a principles skill for an area the topic touches — a
 project skill holding how the project's people want that area's work done — load it beside the
-task files. Its principles outrank the probes' starting points, and departing from one is the
-user's call (`../setup-project/references/PRINCIPLES_SKILLS.md` → *Using one*).
+task files. Its principles outrank the probes' starting points. Where what was asked conflicts
+with one and that line's own yield does not cover the case, the principle holds unless the user
+chose the departure: they named the principle or said to set it aside, or a decision record or a
+delegation covers it. With the user present, ask whether the principle has moved or this is an
+exception. With no person answering, keep to the principle and open the read with the conflict:
+what was asked, the principle, what the read takes instead, and the one change that restores what
+was asked (`../setup-project/references/PRINCIPLES_SKILLS.md` → *Using one*).
 
 When the investigation turns prompt-shaped — prompts, system prompts, skills,
 agents, or a prompt-driven failure — invoke the prompt-engineering skill for its

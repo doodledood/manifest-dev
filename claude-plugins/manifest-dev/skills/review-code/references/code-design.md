@@ -139,7 +139,7 @@ Use the shared ladder. Rework, coupling or an incomplete migration earns Medium 
 - **Tag each finding with its category**: Use Existing | Config Boundary | Responsibility Ownership | Under-engineering | Interface Foresight | Concept Purity | PR Coherence.
 - **Show the alternative.** Every finding's recommended fix must point to the specific existing solution, configuration system, owning layer, or better interface shape — not just "this is wrong."
 - **Include evidence.** A code snippet showing the issue, plus the **Impact** (what rework or problems this design choice causes). Every Critical/High finding needs a concrete fix.
-- **Sound design passes.** If nothing clears the filter, report PASS — approaches match what the framework and codebase provide, responsibilities are in the right systems, interfaces are durable, and the change is cohesive.
+- **Sound design raises no finding.** If nothing clears the filter, report that nothing did and what you checked: that approaches match what the framework and codebase provide, responsibilities are in the right systems, interfaces are durable, and the change is cohesive.
 
 ## Gotchas
 

@@ -40,7 +40,10 @@ A Ticket is a contract with a stranger who may not have manifest-dev. Rewrite th
 
 For Manifest input, translate the full coherent Outcome into one Ticket. Outcome and Problem
 become Why; Appetite and Out of bounds become Scope. Carry hard obligations with their actual
-sources into Rules that must hold. Carry working acceptance claims and evidence methods into
+sources into Rules that must hold. The one exception, with or without a split, is the Manifest's
+ceiling invariant: the Global Invariant every Manifest carries that stops the change at what that
+Manifest authorized. Never emit it as a rule, because the Ticket's Scope already carries its
+substance. Carry working acceptance claims and evidence methods into
 the Definition of done with their authority to change on evidence while preserving the requested
 result and hard requirements. Keep deliberately required proof, review policies and retained
 acceptance; evaluator instructions are omitted only where they are incidental machinery.
@@ -49,9 +52,13 @@ Each Deliverable and gate contributes its substance, without gate kinds or codes
 finding-disposition authority and supported decisions needed to continue; neither translation
 nor overall approval makes a working choice hard.
 
-In explicit split mode, apply the same translation to each Deliverable and carry every applicable Global Invariant with its source authority into every Ticket. A Deliverable that is a layer rather than something exercisable end-to-end is amended in the Manifest first, per the cut rule above. Do not emit the Manifest's ceiling invariant as a rule; its substance already lives in each Ticket's Scope.
+In explicit split mode, apply the same translation to each Deliverable and carry every applicable Global Invariant with its source authority into every Ticket. A Deliverable that is a layer rather than something exercisable end-to-end is amended in the Manifest first, per the cut rule above.
 
 ## Auto grant
+
+Before granting or withholding Auto, or recording a grant decision, read
+`references/AUTOMATED_EXECUTION.md` → *The automation identity* and *Transitions*: they say whose
+grant counts and who may make it.
 
 Apply the convention's Auto criterion: every decision needed for this assignment's completion
 is settled or delegated, and the grantor chooses to trust unattended execution. A retained

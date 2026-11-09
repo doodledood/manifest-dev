@@ -279,5 +279,6 @@
 | 2026-11-07 | [Review rebuilds and checks the whole state machine a change touches](20261107-review-checks-the-whole-state-machine-a-change-touches.md) | Accepted | Code review |
 | 2026-11-07 | [The tending identity can answer a review body](20261107-the-tending-identity-can-answer-a-review-body.md) | Accepted | PR lifecycle |
 | 2026-11-08 | [The Ticket protocol's moves have one owning table, kept single by a test](20261108-the-ticket-protocols-moves-have-one-owning-table.md) | Accepted | Ticketing |
+| 2026-11-09 | [An unattended run keeps to a principle over a conflicting request](20261109-an-unattended-run-keeps-to-a-principle-over-a-conflicting-request.md) | Accepted | Project context |
 | 2026-11-09 | [Area principles live in project skills, one per area, and stay principles only](20261109-area-principles-live-in-project-skills.md) | Accepted | Project context |
 | 2026-11-09 | [Shared additions help colleagues who do not use manifest-dev, not only stay out of their way](20261109-shared-additions-help-colleagues-who-do-not-use-manifest-dev.md) | Accepted | Positioning |

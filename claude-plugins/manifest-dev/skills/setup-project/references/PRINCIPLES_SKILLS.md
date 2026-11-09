@@ -130,5 +130,11 @@ offers. With no person present, write nothing and report the candidates with the
 ## Using one
 
 Before planning, designing, prototyping, building or reviewing work in an area, load the skill its
-pointer line names. A principle shapes the work. Departing from one is the person's call: name the
-principle and why, and leave the choice to them, or to the delegation that covers it.
+pointer line names. A principle shapes the work. Where what was asked conflicts with a
+principle and the line's own yield does not cover the case, the principle holds unless the person
+chose the departure: they named the principle or said to set it aside, or a decision record or a
+delegation covers it. With the person present, ask whether the principle has moved or this is an
+exception. A run with no person present builds to the principle and puts the conflict first in
+what it reports: what was asked, the principle, what it built instead, and the one change that
+restores what was asked. A departure the person chose is kept, and named with the principle and
+why.
