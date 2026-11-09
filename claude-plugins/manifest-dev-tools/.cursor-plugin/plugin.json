@@ -1,7 +1,7 @@
 {
   "name": "manifest-dev-tools",
   "displayName": "Manifest Dev Tools",
-  "version": "8.4.0",
+  "version": "8.4.1",
   "description": "Helps AI coding assistants write better prompts and see pull requests through. It reviews pull requests, walks you through a change, and keeps working on a pull request until its checks pass and it is ready to merge. It can make an existing page, prompt, document or piece of code better round after round toward a goal. It can also explain any topic simply and pass unfinished work on without losing the thread.",
   "author": {
     "name": "doodledood",
