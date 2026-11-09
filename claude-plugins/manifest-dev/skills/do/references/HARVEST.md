@@ -33,9 +33,11 @@ mistake fails for every later contributor, with or without this workflow.
   where its time goes; it is never debt.
 - **Principles skills:** a correction that is a principle no check can hold, guiding only one
   area's work, is drafted as a line for that area's principles skill, as `../SKILL.md` → *Taste on
-  reversal* says; a principles skill this run loaded that holds a line failing the test in
-  `../../setup-project/references/PRINCIPLES_SKILLS.md` gets one offer in the report to move or
-  remove it. Neither is written without the person's yes.
+  reversal* says. A steering message against a principle this run loaded is that method's *A
+  principle steered against*: follow the steer, and carry in the report the question whether the
+  principle moved, with the revised line shown. A principles skill this run loaded that holds a
+  line failing the test in `../../setup-project/references/PRINCIPLES_SKILLS.md` gets one offer in
+  the report to move or remove it. None of these is written without the person's yes.
 - **Suppressions:** a new suppression of a lock carries its reason on the suppressing line and is
   reported as debt. It needs no approval to land.
 

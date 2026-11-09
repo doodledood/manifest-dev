@@ -108,8 +108,17 @@ offers. With no person present, write nothing and report the candidates with the
 - **Sharpen before adding:** when an existing line covers or nearly covers a candidate, offer to
   sharpen or replace it instead of adding a sibling; when a new line makes an old one redundant,
   offer to retire the old one in the same offer.
-- **Prune on contact:** a run that loads a principles skill and meets a line failing the test above
-  offers, once, to move it to its home or remove it.
+- **A principle steered against:** when a person steers work against a principle the run loaded,
+  ask whether the principle has moved or this is an exception. On "moved", show the revised or
+  removed line and change it on their yes; on "exception", change nothing, and the work names the
+  principle it departs from.
+- **Gather what the session showed:** before a session ends, look again at the corrections with a
+  stated reason that it did not offer or that the person put off. Where one area's corrections in
+  this session meet the high-signal bar above, offer that area's lines in one batch, with the count
+  and sources. One stray correction is still not signal.
+- **Prune on contact:** a run that keeps or grows principles skills — not a review of a change —
+  and loads one holding a line that fails the test above offers, once, to move it to its home or
+  remove it.
 
 ## Using one
 

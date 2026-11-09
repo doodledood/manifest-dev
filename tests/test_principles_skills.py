@@ -23,6 +23,8 @@ METHOD_MARKERS = (
     "One stray comment in an area is not signal",
     "A call a run made on its own | nowhere",
     "Sharpen before adding:",
+    "A principle steered against:",
+    "Gather what the session showed:",
 )
 LOCAL_SKILLS = ROOT / ".claude" / "skills"
 CONTEXT_FILE = ROOT / "CLAUDE.md"

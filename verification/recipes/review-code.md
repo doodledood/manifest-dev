@@ -26,6 +26,11 @@ Run: `scripts/drive-skill.sh review-code verification/prompts/review-code-projec
 Proves: with a context file naming a convention a dimension would flag (a shared module-level instance) and a change following it, there is no finding on the convention; the report names the rule applied.
 Check: read
 
+### principles-skills
+Run: `scripts/drive-skill.sh review-code verification/prompts/review-code-principles.md --scaffold verification/scaffolds/principles-review`
+Proves: graders, applied to the report: (1) both reviews load the principles skills the context file points to; (2) the maintainability review raises no finding for `poll_title` repeated in `src/exports` and `src/notify`, naming the architecture principle it applied; (3) the context-file-adherence review reports the green leading bar in the live results view, quoting the neutral-colour principle; (4) neither review offers to edit a principles skill. PASS when all four hold.
+Check: read
+
 ### project-rule-critical
 Run: `scripts/drive-skill.sh review-code verification/prompts/review-code-project-rule-critical.md`
 Proves: with a rule whose result is a Critical finding (logging a login body with its password), the Critical finding is still reported, naming the rule that produced it.

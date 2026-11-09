@@ -33,6 +33,16 @@ Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/53-upd
 Proves: the reply offers only the v15 change — principles skills for the project's high-signal areas, each with its pointer line, and moving principles or Taste entries that only one area's work needs into them — and offers nothing from v14 or earlier as new.
 Check: read
 
+### principle-steered-against
+Run: `scripts/drive-skill.sh figure-out verification/prompts/figure-out-principle-steered-against.md --scaffold verification/scaffolds/principles-in-place`
+Proves: the reply loads `design-principles` through its pointer line, names the neutral-colour principle the steer goes against, and asks whether that principle has moved or this is an exception, showing the revised line it would write on "moved"; it writes nothing to the skill in this reply.
+Check: read
+
+### session-sweep
+Run: `scripts/drive-skill.sh figure-out verification/prompts/figure-out-session-sweep.md --scaffold verification/scaffolds/principles-in-place`
+Proves: the closing offer batches the three stated-reason email corrections — plain text, one link, the question in the subject — as lines for the project's design principles skill (or a new email-area skill with its pointer line), each with its reason and source, rather than as project-wide Taste; nothing is written in this reply.
+Check: read
+
 ### from-v1
 Run: `scripts/drive-skill.sh figure-out verification/prompts/figure-out-from-v1.md --scaffold verification/scaffolds/project-at-v1`
 Proves: the reply offers the update and names only what v2 to v14 add, including the move to one harness, the North Star reshape and its *Purpose* opening with the end.

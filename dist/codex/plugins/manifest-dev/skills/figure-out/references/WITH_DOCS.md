@@ -50,8 +50,12 @@ every step below follows it. Load it when one of these fires:
   reason guides only one area's work: offer the line for that area's skill, creating the skill and
   its pointer line on a yes when none exists. A personal lean still goes to Taste, and a rule nearly
   every session needs still goes to the project context file.
+- **A principle steered against** — the user steers against a principle this session loaded:
+  ask, as the method says, whether it moved or this is an exception, before the next question.
 - **A failing line met** — a principles skill this session loaded holds a line failing the
   method's test: offer, once, to move it to its home or remove it.
+- **Session end** — before naming the read, beside the ADR sweep, gather this session's area
+  corrections as the method says and make the batched offer for each area that clears its bar.
 
 With the user's yes, write as the method says. A session with no person present writes none and
 names the candidates in the read.

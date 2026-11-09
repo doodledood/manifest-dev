@@ -20,6 +20,8 @@ Use the active host's identity, loaded instructions, and configuration to establ
 - **Codex CLI**: ~/.codex/AGENTS.override.md → ~/.codex/AGENTS.md → AGENTS.override.md/AGENTS.md at each level from git root to CWD → configured fallbacks
 - **OpenCode**: AGENTS.md traversing upward from CWD to git root → ~/.config/opencode/AGENTS.md → opencode.json instructions field
 
+**Principles skills the context file points to** — project skills named `<area>-principles`, which `../SKILL.md` loads for the areas the change touches — are audited like outcome rules here. Flag a change that departs from one of their principles where the principle's yield condition does not hold, quoting the principle, and name any user's call the work records for that departure. A line in such a skill that is not a principle — a decision, a fact, a history note — is not a rule to audit; you offer no edit to the skill (`../../setup-project/references/PRINCIPLES_SKILLS.md` → *Using one*).
+
 **Only audit against the context file for the CURRENT CLI.** Ignore stale context files from other CLIs (e.g., an unmaintained CLAUDE.md in a project that now uses Codex/AGENTS.md).
 
 ## Focus: outcome-based rules only

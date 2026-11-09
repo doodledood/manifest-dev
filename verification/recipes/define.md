@@ -45,6 +45,11 @@ Run: `scripts/drive-skill.sh define verification/prompts/define-feature-defaults
 Proves: for a feature whose installs upgrade on different days, the Manifest keeps old and new versions working side by side on shared data.
 Check: read
 
+### principles-in-place
+Run: `scripts/drive-skill.sh define verification/prompts/define-principles-in-place.md --scaffold verification/scaffolds/principles-in-place`
+Proves: graders, applied to `./manifest.md`: (1) the Manifest honors the design principles the request runs into — the live view gets its own page rather than a pop-up panel, and the leading option is not coloured while the poll is open — or records each departure as a user's call naming the principle; (2) at least one gate binds a principle the result must not depart from and cites `design-principles` as its source; (3) nothing in it treats the pop-up panel or the green highlight as settled without naming the principle. PASS when all three hold.
+Check: read
+
 ### bounded-growth
 Run: `scripts/drive-skill.sh define verification/prompts/define-bounded-growth.md --scaffold claude-plugins/manifest-dev/evals/45-current-setup-offers-nothing`
 Proves: for data that grows for years, the Manifest carries FEATURE's *Bounded growth* gate: a gate keeps append and per-member query cost tolerable at a stated or assumed scale.
