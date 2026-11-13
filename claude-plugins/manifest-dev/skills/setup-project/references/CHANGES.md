@@ -20,3 +20,4 @@ says how an update reads and offers them, and when it records the newest.
 - v13 — `changes/v13.md`: setup offers, once, a few Taste entries drawn from reasons the owner already stated in the project's history.
 - v14 — `changes/v14.md`: deleting or retargeting a draft decision record gives back the Status it changed and the check it moved; overlapping drives keep the summary of the run that finished last.
 - v15 — `changes/v15.md`: setup offers principles skills — one project skill per high-signal area, holding how the project's people want that area's work done — and moves one area's principles and Taste entries out of the context file into them.
+- v16 — `changes/v16.md`: overlapping drives publish evidence one at a time and report stale publishing holds.

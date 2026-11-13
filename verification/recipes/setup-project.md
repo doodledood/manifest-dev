@@ -19,7 +19,7 @@ Installs a project's surfaces — North Star, glossary, ADR conventions, a verif
 ## Scenarios
 
 ### update-from-v14
-Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-update-one-behind.md --scaffold claude-plugins/manifest-dev/evals/53-update-offer-from-v14 --max-turns 80`
+Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-update-one-behind.md --scaffold claude-plugins/manifest-dev/evals/53-update-offer-from-v15 --max-turns 80`
 Proves: it follows the v14 guide: it looks for high-signal areas and area-specific context-file content, finds none in this project and says so, offers no principles skill, and records v15. Nothing from v14 or earlier is offered as new — not the draft-record rule, not the tool update, not the Taste entries — and no record, North Star position or code is rewritten.
 Check: read
 

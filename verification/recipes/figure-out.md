@@ -29,7 +29,7 @@ Proves: the reply says the setup is current, lists nothing the project lacks, do
 Check: read
 
 ### one-version-behind
-Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/53-update-offer-from-v14/prompt.md --scaffold claude-plugins/manifest-dev/evals/53-update-offer-from-v14`
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/53-update-offer-from-v15/prompt.md --scaffold claude-plugins/manifest-dev/evals/53-update-offer-from-v15`
 Proves: the reply offers only the v15 change — principles skills for the project's high-signal areas, each with its pointer line, and moving principles or Taste entries that only one area's work needs into them — and offers nothing from v14 or earlier as new.
 Check: read
 

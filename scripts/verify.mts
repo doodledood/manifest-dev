@@ -10,7 +10,7 @@
 
 import { spawn, spawnSync, type ChildProcess } from "node:child_process";
 import { randomBytes } from "node:crypto";
-import { closeSync, existsSync, fstatSync, mkdirSync, mkdtempSync, openSync, readdirSync, readFileSync, readSync, realpathSync, renameSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { closeSync, existsSync, fstatSync, mkdirSync, mkdtempSync, openSync, readdirSync, readFileSync, readSync, realpathSync, renameSync, rmdirSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { arch, availableParallelism, constants, homedir, platform, tmpdir } from "node:os";
 import { isAbsolute, join, relative, resolve } from "node:path";
 
@@ -285,8 +285,12 @@ function readIfThere(path: string): string | undefined {
 /** Write a whole file at once, so a run beside this one never reads it half written. */
 function writeWhole(path: string, text: string): void {
   const part = join(path, "..", `.${stem(path)}.${process.pid}.partial`);
-  writeFileSync(part, text);
-  renameSync(part, path);
+  try {
+    writeFileSync(part, text);
+    renameSync(part, path);
+  } finally {
+    rmSync(part, { force: true });
+  }
 }
 
 /**
@@ -319,10 +323,10 @@ function readSummary(path: string): Summary | undefined {
 const older = (a: Summary, b: Summary): number => a.when.localeCompare(b.when) || a.order - b.order;
 
 /**
- * Orders summaries by when their runs finished, the path breaking a tie, so runs that overlapped
+ * Orders summaries by when their runs finished, start order breaking a tie, so runs that overlapped
  * agree on which one is latest: a run started first may finish last.
  */
-const finishedBefore = (a: Summary, b: Summary): number => a.ended - b.ended || a.path.localeCompare(b.path);
+const finishedBefore = (a: Summary, b: Summary): number => a.ended - b.ended || older(a, b);
 
 /** The summaries this machine keeps for a recipe, oldest first. */
 function summariesFor(recipe: Recipe): Summary[] {
@@ -415,7 +419,9 @@ one, so a failure explains itself in the run that met it. When a run fails and t
 declares \`logs:\`, its output for that run is kept too. It stays on this machine: the evidence
 directory ignores itself in git, so nothing a run writes is committed. Whatever a command started
 is stopped when it ends: SIGTERM, then SIGKILL after {grace} s (\`grace:\` in {settings}). An
-interrupted run keeps no evidence; a command that crashes is failed.
+interrupted run keeps no evidence; a command that crashes is failed. Runs publish one at a
+time per recipe. A leftover .publishing directory means a publisher may have stopped; remove it
+only after confirming no publisher is still running.
 
 Exit codes: 0 done; 1 a scenario failed or could not start, or a problem; 2 usage; 3 a
 prerequisite is missing; 4 refused without a person's agreement (--yes). A control command exits
@@ -647,14 +653,33 @@ function plantedDuration(): number | undefined {
   return Number(planted);
 }
 
-/**
- * Remove the scenario's summaries of runs that finished before the one just written, so this
- * machine keeps one — the run that finished last, however the runs overlapped.
- */
-function replaceOlder(recipe: Recipe, scenario: string, kept: Summary): void {
-  for (const item of summariesFor(recipe)) {
-    if (item.path !== kept.path && item.scenario === scenario && finishedBefore(item, kept) < 0) rmSync(item.path, { force: true });
+/** Publication is one short critical section: no other publisher can replace a listed path. */
+const PUBLISH_WAIT_MS = 30_000;
+const publishWaitMs = (): number => {
+  const override = Number(process.env.VERIFY_PUBLISH_WAIT_MS);
+  return Number.isFinite(override) && override > 0 ? override : PUBLISH_WAIT_MS;
+};
+
+function publicationProblem(lock: string): Problem {
+  return new Problem(`Evidence publication is held at ${rel(lock)}. If no publisher is still running, remove that directory and rerun the drive.`);
+}
+
+async function acquirePublication(lock: string, interrupts: Interrupts): Promise<boolean> {
+  const deadline = performance.now() + publishWaitMs();
+  let said = false;
+  while (!interrupts.interrupted) {
+    try {
+      mkdirSync(lock);
+      return true;
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code !== "EEXIST") throw error;
+      if (performance.now() >= deadline) throw publicationProblem(lock);
+      if (!said) console.log(`waiting to publish evidence at ${rel(lock)}`);
+      said = true;
+      await new Promise((resolve) => setTimeout(resolve, 25));
+    }
   }
+  return false;
 }
 
 /** The last `bytes` of an open file, how many lines the whole file holds, and whether it held more. */
@@ -744,8 +769,10 @@ interface Drive {
  * which keeps no evidence.
  */
 async function runOnce(recipe: Recipe, scenario: Scenario, drive: Drive): Promise<Outcome | undefined> {
+  const lock = join(evidenceFolder(recipe), ".publishing");
+  const held = statSync(lock, { throwIfNoEntry: false });
+  if (held && Date.now() - held.mtimeMs >= publishWaitMs()) throw publicationProblem(lock);
   const [path, stamp, marker] = reserve(recipe);
-  let written = false;
   try {
     console.log(`running [${scenario.name}] as run ${drive.id}: ${scenario.run}`);
     const run = drive.interrupts.interrupted ? undefined : await runShown(scenario.run, drive.interrupts, withRun(drive.id), drive.conf.grace);
@@ -755,28 +782,37 @@ async function runOnce(recipe: Recipe, scenario: Scenario, drive: Drive): Promis
     const logs = outcome !== "passed" && drive.conf.control.logs ? `\n${await logsFor(drive.conf.control.logs, drive.id, drive.scrub)}` : "";
     if (drive.interrupts.interrupted) return undefined;
     const reading = scenario.judged && outcome === "passed" ? "; its output needs reading (Check: read)" : "";
-    writeWhole(
-      path,
-      `# ${recipe.name} / ${scenario.name} — ${stamp}\n\n` +
-        `- **Scenario:** ${scenario.name}\n` +
-        `- **Command:** \`${scenario.run}\`\n` +
-        `- **Exit code:** ${run.code}\n` +
-        `- **Outcome:** ${outcome}${reading}\n` +
-        `- **Run:** ${drive.id}\n` +
-        `- **Machine:** ${drive.machine}\n` +
-        `- **Duration:** ${seconds(took)}\n` +
-        `- **Proves:** ${scenario.proves || "(not stated)"}\n\n` +
-        `## Output\n\n${run.output.trim().replace(drive.scrub, "[local path]") || "(none)"}\n` +
-        logs,
-    );
-    written = true;
-    const kept = readSummary(path);
-    if (kept) replaceOlder(recipe, scenario.name, kept);
+    if (!(await acquirePublication(lock, drive.interrupts))) return undefined;
+    try {
+      if (drive.interrupts.interrupted) return undefined;
+      writeWhole(
+        path,
+        `# ${recipe.name} / ${scenario.name} — ${stamp}\n\n` +
+          `- **Scenario:** ${scenario.name}\n` +
+          `- **Command:** \`${scenario.run}\`\n` +
+          `- **Exit code:** ${run.code}\n` +
+          `- **Outcome:** ${outcome}${reading}\n` +
+          `- **Run:** ${drive.id}\n` +
+          `- **Machine:** ${drive.machine}\n` +
+          `- **Duration:** ${seconds(took)}\n` +
+          `- **Proves:** ${scenario.proves || "(not stated)"}\n\n` +
+          `## Output\n\n${run.output.trim().replace(drive.scrub, "[local path]") || "(none)"}\n` +
+          logs,
+      );
+      try {
+        for (const item of summariesFor(recipe)) {
+          if (item.path !== path && item.scenario === scenario.name) rmSync(item.path, { force: true });
+        }
+      } catch (error) {
+        rmSync(path, { force: true });
+        throw error;
+      }
+    } finally {
+      rmdirSync(lock);
+    }
     console.log(`${outcome} in ${seconds(took)}${reading}: evidence in ${rel(path)}`);
     return outcome;
   } finally {
-    // A run that did not finish leaves nothing behind to pass for evidence.
-    if (!written) rmSync(path, { force: true });
     rmSync(marker, { force: true });
   }
 }
