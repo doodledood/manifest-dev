@@ -1275,16 +1275,33 @@ def test_failed_publication_cleans_up_its_partial_and_reservation(
 
 
 def test_publication_wait_times_out_without_clearing_the_hold(tmp_path: Path) -> None:
-    started = tmp_path / "started"
+    ready, release = tmp_path / "ready", tmp_path / "release"
     env = {
-        **_harness(tmp_path, "", f"### once\nRun: `touch {started}`\n"),
-        "VERIFY_PUBLISH_WAIT_MS": "1000",
+        **_harness(
+            tmp_path,
+            "",
+            f"### once\nRun: `touch {ready}; while [ ! -e {release} ]; do sleep .05; done`\n",
+        ),
+        "VERIFY_PUBLISH_WAIT_MS": "100",
     }
-    lock = _hold_publication(tmp_path)
-    result = run_verify("drive", "thing", env=env)
-    assert started.exists()
-    assert result.returncode != 0 and "remove that directory" in result.stderr
-    assert list(lock.parent.iterdir()) == [lock]
+    with subprocess.Popen(
+        [str(VERIFY), "drive", "thing"],
+        env=env,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+    ) as drive:
+        try:
+            _when_ready(ready)
+            lock = _hold_publication(tmp_path)
+            release.touch()
+            out, err = drive.communicate(timeout=10)
+            assert drive.returncode != 0 and "remove that directory" in err, out + err
+            assert list(lock.parent.iterdir()) == [lock]
+        finally:
+            release.touch()
+            if drive.poll() is None:
+                drive.kill()
 
 
 def test_stale_publication_hold_refuses_to_start_the_scenario(tmp_path: Path) -> None:
