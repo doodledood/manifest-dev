@@ -1150,29 +1150,207 @@ def test_a_run_never_takes_a_name_that_sorts_before_the_one_it_replaces(
 
 
 def test_overlapping_drives_keep_the_run_that_finished_last(tmp_path: Path) -> None:
-    # A scenario keeps one summary on this machine, the run that finished last. Two drives that
-    # overlapped once both kept theirs: the slow one, started first, removed only summaries
-    # stamped before its own start, and `help` reported the one that started later — a pass —
-    # while the run that ended last had failed.
+    ready, release = tmp_path / "ready", tmp_path / "release"
     env = _harness(
-        tmp_path, "", '### once\nRun: `if [ -n "$SLOW" ]; then sleep 3; exit 1; fi`\n'
+        tmp_path,
+        "",
+        f'### once\nRun: `if [ -n "$SLOW" ]; then touch {ready}; while [ ! -e {release} ]; do sleep .05; done; exit 1; fi`\n',
     )
     slow = subprocess.Popen(
         [str(VERIFY), "drive", "thing"],
         cwd=REPO_ROOT,
-        env={**env, "SLOW": "1"},
+        env={**env, "SLOW": "1", "VERIFY_STAMP": "20260101T000000Z"},
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         text=True,
     )
-    time.sleep(1.2)  # the fast run's stamp sorts after the slow run's
+    _when_ready(ready)
+    env["VERIFY_STAMP"] = "20260101T000001Z"
     assert run_verify("drive", "thing", env=env).returncode == 0
+    release.touch()
     slow.communicate(timeout=60)
     assert slow.returncode != 0
     (kept,) = _summaries(tmp_path)
     assert "- **Outcome:** failed" in kept.read_text(encoding="utf-8")
     shown = run_verify("help", "thing", env=env).stdout
     assert "failed" in shown and "passed" not in shown, shown
+
+
+def _hold_publication(tmp_path: Path) -> Path:
+    lock = tmp_path / "verification" / "evidence" / "thing" / ".publishing"
+    lock.mkdir(parents=True)
+    return lock
+
+
+def _await_publication(log: Path, drive: subprocess.Popen[str]) -> None:
+    deadline = time.monotonic() + 10
+    while "waiting to publish evidence" not in log.read_text(encoding="utf-8"):
+        assert drive.poll() is None and time.monotonic() < deadline, log.read_text()
+        time.sleep(0.025)
+
+
+def test_waiting_publisher_prunes_a_summary_written_after_it_started(
+    tmp_path: Path,
+) -> None:
+    env = _harness(tmp_path, "")
+    lock = _hold_publication(tmp_path)
+    log = tmp_path / "stdout"
+    with (
+        log.open("w", encoding="utf-8") as out,
+        subprocess.Popen(
+            [str(VERIFY), "drive", "thing"], env=env, stdout=out, text=True
+        ) as drive,
+    ):
+        try:
+            _await_publication(log, drive)
+            earlier = _evidence(
+                tmp_path,
+                "20260101T000000Z",
+                "- **Scenario:** once\n- **Outcome:** failed\n",
+            )
+            lock.rmdir()
+            assert drive.wait(timeout=10) == 0
+            assert not earlier.exists()
+            assert len(list(lock.parent.iterdir())) == 1
+        finally:
+            if drive.poll() is None:
+                drive.kill()
+
+
+def test_same_second_drives_leave_one_complete_summary(tmp_path: Path) -> None:
+    release = tmp_path / "release"
+    env = {
+        **_harness(
+            tmp_path,
+            "",
+            f"### once\nRun: `while [ ! -e {release} ]; do sleep .05; done; echo complete`\n",
+        ),
+        "VERIFY_STAMP": "20260101T000000Z",
+    }
+    folder = tmp_path / "verification" / "evidence" / "thing"
+    drives = [
+        subprocess.Popen(
+            [str(VERIFY), "drive", "thing"], env=env, stdout=subprocess.DEVNULL
+        )
+        for _ in range(5)
+    ]
+    try:
+        deadline = time.monotonic() + 10
+        while len(list(folder.glob("*.reserved"))) != len(drives):
+            assert time.monotonic() < deadline
+            time.sleep(0.025)
+        release.touch()
+        assert [drive.wait(timeout=10) for drive in drives] == [0] * 5
+        assert "complete" in _only_summary(tmp_path)
+        assert len(list(folder.iterdir())) == 1
+    finally:
+        for drive in drives:
+            if drive.poll() is None:
+                drive.kill()
+            drive.wait(timeout=10)
+
+
+def test_failed_publication_cleans_up_its_partial_and_reservation(
+    tmp_path: Path,
+) -> None:
+    env = {**_harness(tmp_path, ""), "VERIFY_STAMP": "20260101T000000Z"}
+    lock = _hold_publication(tmp_path)
+    log = tmp_path / "stdout"
+    with (
+        log.open("w", encoding="utf-8") as out,
+        subprocess.Popen(
+            [str(VERIFY), "drive", "thing"], env=env, stdout=out, text=True
+        ) as drive,
+    ):
+        try:
+            _await_publication(log, drive)
+            blocked = lock.parent / "20260101T000000Z.md"
+            blocked.mkdir()  # Force the final rename to fail after the partial was written.
+            lock.rmdir()
+            assert drive.wait(timeout=10) != 0
+            assert list(lock.parent.iterdir()) == [blocked]
+        finally:
+            if drive.poll() is None:
+                drive.kill()
+
+
+def test_publication_wait_times_out_without_clearing_the_hold(tmp_path: Path) -> None:
+    ready, release = tmp_path / "ready", tmp_path / "release"
+    env = {
+        **_harness(
+            tmp_path,
+            "",
+            f"### once\nRun: `touch {ready}; while [ ! -e {release} ]; do sleep .05; done`\n",
+        ),
+        "VERIFY_PUBLISH_WAIT_MS": "100",
+    }
+    with subprocess.Popen(
+        [str(VERIFY), "drive", "thing"],
+        env=env,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+    ) as drive:
+        try:
+            _when_ready(ready)
+            lock = _hold_publication(tmp_path)
+            release.touch()
+            out, err = drive.communicate(timeout=10)
+            assert drive.returncode != 0 and "remove that directory" in err, out + err
+            assert list(lock.parent.iterdir()) == [lock]
+        finally:
+            release.touch()
+            if drive.poll() is None:
+                drive.kill()
+
+
+def test_stale_publication_hold_refuses_to_start_the_scenario(tmp_path: Path) -> None:
+    started = tmp_path / "started"
+    env = _harness(tmp_path, "", f"### once\nRun: `touch {started}`\n")
+    lock = _hold_publication(tmp_path)
+    os.utime(lock, (1, 1))
+    result = run_verify("drive", "thing", env=env)
+    assert result.returncode != 0 and "remove that directory" in result.stderr
+    assert not started.exists()
+    assert list(lock.parent.iterdir()) == [lock]
+
+
+def test_sigint_during_publication_wait_keeps_no_summary(tmp_path: Path) -> None:
+    env = _harness(tmp_path, "")
+    lock = _hold_publication(tmp_path)
+    log = tmp_path / "stdout"
+    with (
+        log.open("w", encoding="utf-8") as out,
+        subprocess.Popen(
+            [str(VERIFY), "drive", "thing"], env=env, stdout=out, text=True
+        ) as drive,
+    ):
+        try:
+            _await_publication(log, drive)
+            drive.send_signal(signal.SIGINT)
+            assert drive.wait(timeout=5) == 130
+            assert list(lock.parent.iterdir()) == [lock]
+        finally:
+            if drive.poll() is None:
+                drive.kill()
+
+
+@pytest.mark.parametrize("tie", [False, True])
+def test_help_reports_latest_by_finish_then_numeric_start_order(
+    tmp_path: Path, tie: bool
+) -> None:
+    env = _harness(tmp_path, "")
+    nine = _evidence(
+        tmp_path, "20260101T000000Z-9", "- **Scenario:** once\n- **Outcome:** passed\n"
+    )
+    ten = _evidence(
+        tmp_path, "20260101T000000Z-10", "- **Scenario:** once\n- **Outcome:** failed\n"
+    )
+    os.utime(nine, (1001, 1001))
+    os.utime(ten, (1001 if tie else 1000, 1001 if tie else 1000))
+    shown = run_verify("help", "thing", env=env).stdout
+    expected = ten if tie else nine
+    assert expected.name in shown, shown
 
 
 def test_older_summaries_of_a_scenario_fold_into_one_on_its_next_run(

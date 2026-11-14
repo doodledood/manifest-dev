@@ -11,11 +11,11 @@ and the material consequences?** Form an independent view. A correct implementat
 requested feature can still be the wrong change to ship; the request establishes what was
 asked for, not the answer to this question.
 
-**Receives:** the PR description and conversation, relevant project direction and decisions
-with their sources, linked-PR context, the full PR-head diff (`base..head`), and any prior
-judgment and its disposition. In manifest mode, also receives the Manifest's Intent. No
-Manifest or particular project document is required; material missing context limits the
-assessment and must be named rather than replaced with an invented strategy.
+**Receives:** the PR description and conversation, relevant project direction, decisions and
+area principles with their sources and authority, linked-PR context, the full PR-head diff
+(`base..head`), and any prior judgment and its disposition. In manifest mode, also receives
+the Manifest's Intent. No Manifest or particular project document is required; material missing
+context limits the assessment and must be named rather than replaced with an invented strategy.
 
 ## Whole-change judgment
 
@@ -26,7 +26,16 @@ not an exhaustive checklist or a substitute for weighing the change's consequenc
 
 Apply the reasons behind the project's direction to this case. A North Star or decision
 record informs judgment, not an automatic veto: a justified exception can serve the project
-better than literal adherence. Weigh benefits as well as costs.
+better than literal adherence. Weigh benefits as well as costs. A record or design document
+added by the PR is its case for the change; weigh it against direction already in force and
+evidence that the relevant authority chose the departure.
+
+When a change introduces a store, data path or capture mechanism, establish whether the
+project already owns that job, how well the existing owner serves it, and the direction the
+project is moving toward. Check whether an earlier narrowing created the apparent need.
+Where extending or restoring that owner offers a concrete benefit, ask why it would not
+serve. Ground this question in the project's code and history even when it has no written
+principles.
 
 ## Evidence and recommendation
 

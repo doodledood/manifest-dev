@@ -65,7 +65,7 @@ does not thereby become resolved or cease to count against acceptance.
 
 **Reviewer fleet.** No-manifest mode only — skipped entirely in manifest mode (`references/MANIFEST_MODE.md`). Activate the `review-code` skill for each required dimension against the review range, retaining each dimension's findings and verdict even when the reviews share a context. Always-on dimensions: `change-intent`, `code-bugs`, `code-design`, `code-maintainability`, `code-simplicity`, `context-file-adherence`. Add when the diff fits: `type-safety` on typed code; `test-quality` and `code-testability` on source; `contracts` on API surfaces; `operational-readiness` on CI/infra/env/migrations/workers/queues/secrets; `docs` and `prose-value` on prose; `defect-class` when the reviewed range **fixes a defect** — it judges the repair's protection and affected-site accounting, so it has no input on a change that fixes nothing. Deciding that is yours: use the PR description, commits, and linked issues to establish whether a defect is being fixed. For prompts/skills/agents, add a run that activates the `review-prompt` skill the same way.
 
-**Evidence and scope.** Keep each dimension focused on its own standard. Use binding requirements, explicit exclusions, and permission limits to judge scope, and give them to defect-class so it can judge authorized remedies. An author's implementation preference is not such a limit. Inspect the code and relevant evidence; the author's explanation or success report does not establish correct behavior. The judgment pass separately assesses the consequences against the project's purpose, using the inputs below.
+**Evidence and scope.** Keep each dimension focused on its own standard. Use binding requirements, explicit exclusions, and permission limits to judge scope, and give them to defect-class so it can judge authorized remedies. An author's implementation preference is not such a limit. Pass each inspection the relevant project principles and their sources gathered below, alongside the code and evidence. The author's explanation or success report does not establish correct behavior. The judgment pass separately assesses the consequences against the project's purpose, using the inputs below.
 
 **Holistic coherence pass.** After every required inspection has returned, collect their findings. Regrade correctness or safety failures and broken binding promises received as Low from their evidence before applying the caller's chosen policy. Filter only by that publication policy, retaining Low findings when requested; keep dimension and severity. Invoke the `review-pr-holistic` skill. Keep BLOCKED verdicts with their missing evidence or authority in the cycle summary; consolidation cannot turn an incomplete evaluation into a clean result. Supply the retained findings and the chosen caller policy plus:
 
@@ -80,10 +80,13 @@ It prunes what the PR already covers, dedupes across reviewers, subordinates def
 
 **Judgment pass (project consequences).** Runs in **both** modes; manifest mode wires via
 `references/MANIFEST_MODE.md`. Activate the `review-pr-judgment` skill as its own assessment
-before consolidation. Retrieve the project's purpose, intended users, goals and applicable
-decisions from its available context, documentation and linked discussion, following relevant
-pointers. Pass the sources and their reasons, not just a summary of the author's request; name
-material gaps. This needs neither a Manifest nor a particular filename or setup workflow.
+before consolidation. Retrieve the project's purpose, intended users, goals, applicable decisions
+and area principles from its available context, documentation and linked discussion, following
+the project context file's pointers to applicable principles skills.
+Distinguish direction already in force from changes this PR proposes, checking the base and
+relevant history when the distinction matters. Pass the sources, their reasons and any evidence
+of authorized changes; name material gaps. This needs neither a Manifest nor a particular
+filename or setup workflow.
 Supply those inputs with the PR description, conversation, linked-PR context (diff,
 description, top-level conversation), the **full PR-head diff** (`base..head`), and recovered
 prior judgment and dispositions. The skill owns the assessment and finding shape. In
