@@ -43,6 +43,9 @@ The Progressive Disclosure entry in `CONTEXT.md` was sharpened to carry this rul
 - Gate criteria and write-time mechanics live in separate files; edits to the gate now touch `WITH_DOCS.md` while format edits touch `ADR_FORMAT.md`.
 - The "unified gate" phrasing weakens to unified-in-substance across the inline and post-hoc capture paths (drift already accepted by the existing duplication note).
 
+## Enforced by
+partly — `tests/test_setup_project_versions.py::test_shape_guides_load_whatever_version_is_recorded` pins one instance: `upgrades/MOVE_TO_HARNESS.md` does not restate the load trigger that `setup-project/SKILL.md` owns. Whether any other deferred reference carries its own trigger stays review judgment.
+
 ## Source
 - Related: PR #214.
 - Related: 20260611-figure-out-spine-owns-epistemics-mode-refs-thin; 20260703-figure-out-fog-discipline
