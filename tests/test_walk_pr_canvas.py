@@ -19,6 +19,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DRIVE = ROOT / "tests/fixtures/walk-pr-canvas/drive-canvas.mjs"
 
 
+# Partly holds docs/adr/20260730-walk-pr-attention-contract-picture-not-document.md.
 def test_canvas_shell_interactions() -> None:
     node = shutil.which("node")
     if node is None:
