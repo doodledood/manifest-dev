@@ -32,6 +32,9 @@ The binding contract for walk-pr is an attention contract, and it applies to eve
 - Reviewers who prefer document-first reading get more taps to reach depth.
 - Evidence base is one reviewer and one large PR; the contract generalizes by argument, not by measurement.
 
+## Enforced by
+partly — `tests/test_walk_pr_canvas.py::test_canvas_shell_interactions` drives the shipped reference shell in headless Chromium and fails when the shell is missing or loses its on-demand diff drawer, its pin sheets or its single completion bundle. The attention contract in every mode, a bespoke map per PR, no agent-side preflight, and canvas mode having no prose primer stay review judgment.
+
 ## Source
 - Session: figure-out session reworking `walk-pr/references/CANVAS_MODE.md` (2026-07-30), continuing a handoff from the walk of a large private PR whose approved artifact defined the reference UX.
 - Related: 20260730-walk-pr-triages-before-drafting-comments

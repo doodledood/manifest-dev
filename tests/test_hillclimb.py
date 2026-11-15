@@ -38,7 +38,8 @@ def test_command_routes_and_restates_no_climb_rule() -> None:
     assert "Use the hillclimb skill with: $ARGUMENTS" in _text(PI_TEMPLATE)
 
 
-# Holds docs/adr/20261106-hill-climbing-runs-through-figure-out-define-and-do.md.
+# Holds docs/adr/20261106-hill-climbing-runs-through-figure-out-define-and-do.md, and partly
+# docs/adr/20260604-figure-out-owns-domain-probing-via-mirrored-task-files.md.
 def test_each_climb_and_measure_file_has_its_mirror_and_composes_onto_measure() -> None:
     for name in ("HILLCLIMB.md", "MEASURE.md", "PERF.md"):
         assert (DEFINE / "tasks" / name).is_file(), f"define/tasks/{name} missing"

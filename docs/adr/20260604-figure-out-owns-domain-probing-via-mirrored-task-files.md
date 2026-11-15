@@ -51,6 +51,9 @@ define continues to *formalize* the understanding figure-out reaches; it does no
 - figure-out gains task-type detection machinery — a step away from pure leanness — justified by it being the primary prober.
 - The pre-pivot docs (`CLAUDE.md`, `tasks/README.md`) must be reconciled to the new model as part of the change.
 
+## Enforced by
+partly — `tests/test_hillclimb.py::test_each_climb_and_measure_file_has_its_mirror_and_composes_onto_measure` pins that `HILLCLIMB.md`, `MEASURE.md` and `PERF.md` exist in both define's and figure-out's `tasks/`, and that each skill's own `SKILL.md` index names them. That figure-out's files hold only probing fuel, that figure-out never reads define's task files or index, and the other task files stay review judgment.
+
 ## Source
 
 - Related: over-slim root cause in promotion `17043f9`; partial steering restore in `d8ffab7` (#145).
