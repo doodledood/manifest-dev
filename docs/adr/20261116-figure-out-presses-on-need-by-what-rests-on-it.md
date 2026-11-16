@@ -74,10 +74,11 @@ whether it was needed at all. The press has to be named where stated requirement
 So the shipped text is:
 
 - In `figure-out/SKILL.md`, beside the rule that carries stated requirements as hard: "and press
-  the need of one much of the build rests on before designing any version of it: what rests on
+  the need of one much of the build rests on before designing any version: what rests on
   it, the result without it, your recommendation" (`110`, `115`).
-- In the pricing bullet: "Cheap to build is not cheap to own: count what each part takes to read,
-  verify and keep true, and how it can break" (`114`).
+- In the pricing bullet: "Cheap to build is not cheap to own: where answers differ in size, name
+  what the larger keeps costing — more to read, verify and keep true, more that can break"
+  (`114`). Counting that cost in the abstract, without naming where, did not hold `114`.
 - In `autonomous.md`, the keep-and-flag sentence, with the requirement kept "as they stated it,
   not narrowed to a cheaper reading" (`115`).
 
@@ -121,11 +122,11 @@ press.
   text in the skill. A model change can lose them; the cases are what would show that.
 - `115` is held out, yet its failure prompted the unattended edit. The edit's wording comes from
   the owner's ruling, not from that reply, but no tuning case covers the unattended flag.
-- To make room, three phrases left the always-loaded body: the North Star heading names under
+- To make room, some wording left the always-loaded body: the North Star heading names under
   which a project names who it is for, "of code, documents or analysis" after the agent's work,
-  and the examples of a record line read wider than its words. A session finds the person in a
-  North Star without the heading, and the remaining wording still names a line that does not
-  cover the case.
+  the examples of a record line read wider than its words, and a few filler words. A session
+  finds the person in a North Star without the heading, and the remaining wording still names a
+  line that does not cover the case.
 
 ## Enforced by
 partly — eval cases under `claude-plugins/manifest-dev/evals/`, driven through
