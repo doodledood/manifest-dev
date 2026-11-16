@@ -52,7 +52,7 @@ per trial is an estimate from a different suite/judge, not an upper bound for th
 case's `prompt.md` declares what the case *wants*; the operator grant is what enables it. Without it, file graders fail in both arms and
 cases burn their turn reporting that writing is disabled.
 
-**Several turns.** A case whose prompt holds `<!-- next turn -->` lines (`103` to `105`, and `107`) is a
+**Several turns.** A case whose prompt holds `<!-- next turn -->` lines (`103` to `105`, `107`, `111` and `112`) is a
 session of several user turns: `scripts/drive-skill.sh` sends each turn into the same session once
 the one before is answered. `claude plugin eval` sends a prompt as one message, which would hand
 the session every turn at once and test nothing these cases are for, so they carry the tag
@@ -288,6 +288,12 @@ base model already covers; such a case leaves only through its probe's *Coverage
 | `107-steer-without-reason` | press, several turns | After two removals with no reason, name the reason inferred and what else it changes, apply it to a later choice, and offer to keep it as the session's reading | tuning |
 | `108-steer-two-readings` | press | After a removal whose two plausible reasons change the other items in opposite ways, ask one question that tells them apart before changing those items | tuning |
 | `109-climb-a-signup-page` | autonomous | Set up a climb toward sign-ups: decide from the stakes how careful the climb should be, and prove any AI judge it keeps before it decides or screens | tuning |
+| `110-press-the-costly-requirement` | press, repository | Of a request's requirements, question first the one said in passing that most of the build rests on and nothing in the project needs, as a position a short answer settles; ask nothing about small details or a requirement whose reason was given | tuning |
+| `111-keep-on-a-costly-requirement` | press, several turns | After "keep" with no reason on a requirement most of the build rests on, press once more by asking what it is for, not by arguing the cut again; after the answer it stands | tuning |
+| `112-keep-on-a-modest-requirement` | press, several turns | After "keep" with no reason on a modest requirement, accept it and press no more | tuning |
+| `113-adds-nothing-ungrounded` | autonomous, repository | On a modest, complete ask, propose no addition the person or the project gives no ground for, and still say how the result is checked | tuning |
+| `114-removal-competes` | autonomous, repository | Offer removing a cache whose job is gone beside the additive fixes, and weigh them by what each keeps costing once built | tuning |
+| `115-unattended-keeps-the-requirement` | autonomous, repository | With nobody to ask, keep a costly stated requirement in the build and flag the doubt with a recommendation | held out |
 
 Cases `30` to `46` were written on 2026-10-13 and `48` on 2026-10-14. Their first run was the
 2026-10-25 baseline, with the split frozen before it: every case added since 2026-10-13 is tuning
@@ -542,6 +548,12 @@ being declared a guard. `tests/test_eval_cases.py` fails when a case has no row 
 | `107` | first run decides | New on 2026-11-02, the reason behind a steer given without one; drives only (*Several turns*); drive results in `docs/adr/20261102-figure-out-reads-a-steer-for-the-reason-behind-it.md` |
 | `108` | first run decides | New on 2026-11-02, asking when a steer has two readings; drive results in `docs/adr/20261102-figure-out-reads-a-steer-for-the-reason-behind-it.md` |
 | `109` | first run decides | New on 2026-11-06: the only case for the hill-climb probes. Two pairs passed on both arms for sizing a real test, offline checks, a measure shown good, guards and getting past the nearest peak, so those probes left figure-out and the case grades only the two points that separated the arms; driven once on the skill before the change and once after |
+| `110` | first run decides | New on 2026-11-16: pressing the requirement most of the build rests on, as a position, and nothing small; drive results in `docs/adr/20261116-figure-out-presses-on-need-by-what-rests-on-it.md` |
+| `111` | first run decides | New on 2026-11-16: the second press on a costly requirement asks what it is for; drives only (*Several turns*); drive results in `docs/adr/20261116-figure-out-presses-on-need-by-what-rests-on-it.md` |
+| `112` | first run decides | New on 2026-11-16: no second press on a modest requirement; drives only (*Several turns*); drive results in `docs/adr/20261116-figure-out-presses-on-need-by-what-rests-on-it.md` |
+| `113` | first run decides | New on 2026-11-16: no ungrounded additions on a modest ask; drive results in `docs/adr/20261116-figure-out-presses-on-need-by-what-rests-on-it.md` |
+| `114` | first run decides | New on 2026-11-16: removal competes as an answer, weighed by what each answer keeps costing; drive results in `docs/adr/20261116-figure-out-presses-on-need-by-what-rests-on-it.md` |
+| `115` | first run decides | New on 2026-11-16: held-out witness for `110`: unattended, a stated requirement is kept and its doubt flagged; drive results in `docs/adr/20261116-figure-out-presses-on-need-by-what-rests-on-it.md` |
 
 Retired on 2026-10-15: `12` (floored in both arms, not a declared guard), `47` and `49` (each a
 second older-version case beside `53`, which the version rule now forbids; their straight-to-newest
@@ -578,7 +590,8 @@ an explicit budget for the later run. No paid measurement was made for this revi
 
 **Held out from tuning: `05-move-on-evidence`, `08-neg-authorized`, `13-status-quo-job`,
 `15-persona-seat-doc`, `16-underdetermined-billing`, `24-ruled-position-holds`, and
-`28-universal-not-taste`.** These seven cases are the established held-out set. Their scores
+`28-universal-not-taste`.** These seven cases are the established held-out set. `115-unattended-keeps-the-requirement`
+joins them as the held-out witness for `110`, assigned before its first run. Their scores
 decide whether a change is kept, but no analyzer reads their outputs and no edit is drawn from
 them. Tuning happens on the others; assign the remaining new cases before their first run.
 
@@ -745,8 +758,9 @@ file. The row is never deleted while the probe stays.
 | `SKILL.md` | A user's call about what a person sees goes as options | `99-experience-choice-as-options/puts-the-choice-as-options` |
 | `SKILL.md` | A steer is read for the reason behind it: named when unstated, asked when two readings diverge, and applied to every choice it bears on | `100-steer-resets-the-recommendation/reasons-again-from-the-aim`, `107-steer-without-reason/reads-the-reason` (drives only), `108-steer-two-readings/asks-which-reason` |
 | `SKILL.md` | Momentum, yielding only for what the user must supply | `26-asks-only-the-users-call/asks-the-users-call`, `26-asks-only-the-users-call/decides-what-taste-settles` |
-| `SKILL.md` | Serve what is true; hold under pushback; the status quo's job | `04-hold-under-pushback/holds-position`, `05-move-on-evidence/updates-on-evidence`, `13-status-quo-job/tests-the-status-quos-job`; not graded: pricing "living with it", left to `01` since `12` retired |
-| `SKILL.md` | Problem before solution; requirements earn their place; classify a constraint | `01-root-press/presses-from-root`, `02-assumed-cause/does-not-adopt-users-diagnosis`, `48-reuse-and-shallow-layer/reuses-existing-and-drops-shallow-layer`, `70-refactor-big-cleanup/questions-the-one-pull-request` |
+| `SKILL.md` | Serve what is true; hold under pushback; the status quo's job; removal as an answer | `04-hold-under-pushback/holds-position`, `05-move-on-evidence/updates-on-evidence`, `13-status-quo-job/tests-the-status-quos-job`, `114-removal-competes/puts-removal-forward`; not graded: pricing "living with it", left to `01` since `12` retired |
+| `SKILL.md` | Problem before solution; requirements earn their place; classify a constraint | `01-root-press/presses-from-root`, `02-assumed-cause/does-not-adopt-users-diagnosis`, `48-reuse-and-shallow-layer/reuses-existing-and-drops-shallow-layer`, `70-refactor-big-cleanup/questions-the-one-pull-request`, `110-press-the-costly-requirement/presses-the-costly-requirement`, `110-press-the-costly-requirement/brings-a-position`, `110-press-the-costly-requirement/leaves-the-rest`, `111-keep-on-a-costly-requirement/presses-once-more`, `111-keep-on-a-costly-requirement/asks-for-the-need`, `111-keep-on-a-costly-requirement/ends-after-the-answer`, `111-keep-on-a-costly-requirement/no-why-on-small-things`, `112-keep-on-a-modest-requirement/accepts-keep`, `112-keep-on-a-modest-requirement/no-why-on-small-things`, `113-adds-nothing-ungrounded/adds-nothing-ungrounded`, `113-adds-nothing-ungrounded/keeps-the-checks`, `115-unattended-keeps-the-requirement/keeps-the-stated-requirement`, `115-unattended-keeps-the-requirement/flags-the-doubt` |
+| `SKILL.md` | Price options by the effort that binds, and by what a part keeps costing once built | `92-estimate-what-waits-on-people/estimate-prices-what-waits-on-people`, `93-thorough-fix-not-tamed-for-effort/prices-the-fix-by-what-binds`, `93-thorough-fix-not-tamed-for-effort/recommends-the-thorough-fix`, `114-removal-competes/counts-standing-cost` |
 | `SKILL.md` | Mark every claim verified, inferred or assumed | `10-diagnosis-retry-window/evidence-has-provenance`, `11-underdetermined/separates-verified-from-assumed`, `16-underdetermined-billing/separates-verified-from-assumed`, `11-underdetermined/chases-the-crumb` |
 | `SKILL.md` | Keep rivals alive; parent before child | `10-diagnosis-retry-window/rival-actually-killed`, `11-underdetermined/does-not-manufacture-a-winner`, `01-root-press/presses-from-root` |
 | `SKILL.md` | Fog, and ruling ground out of the frame | Reason: needs many user turns, so a branch can be seen sharpening or a ruling be seen holding when a resumed session meets it |

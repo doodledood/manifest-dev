@@ -1,0 +1,5 @@
+# Holds the decision in docs/adr/20261116-figure-out-presses-on-need-by-what-rests-on-it.md — that record's Enforced by line names this case; weakening or removing it means updating that line in the same change.
+schema_version: "1.0"
+name: 114-removal-competes
+context:
+  scaffold_script: scaffold.sh

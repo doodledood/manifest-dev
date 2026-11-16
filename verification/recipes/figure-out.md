@@ -208,6 +208,46 @@ Run: `scripts/drive-skill.sh figure-out verification/prompts/figure-out-intended
 Proves: The Read and handoff preserve the desired search-to-passage experience, hard permission and keyboard requirements, and revisable speed assessment. They retire pixel identity and a fixed 200 ms target, do not turn an unexplored database branch into a delivery exclusion, and start no implementation. No new latency floor or routine owner sign-off appears.
 Check: read
 
+### press-the-costly-requirement
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/110-press-the-costly-requirement/prompt.md --scaffold claude-plugins/manifest-dev/evals/110-press-the-costly-requirement`
+Proves: attended, the one ask questions the per-patient reminder schedules said in passing, before designing them, as a position: what rests on them, what the notes show, the result without them and a recommendation, settled by a short answer; it asks nothing about the text message Dr Levi asked for, the subject line or the header colour — the case's graders `presses-the-costly-requirement`, `brings-a-position` and `leaves-the-rest`.
+Check: read
+
+### keep-on-a-costly-requirement
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/111-keep-on-a-costly-requirement/prompt.md`
+Proves: attended over three turns, after "keep" with no reason on the offline mode most of the build rests on, the next reply asks what offline is for without arguing the cut again; after the user's answer no reply questions it, and the read builds offline for checking and booking at the shed; no reply asks why the deposit, photos, condition notes or return reminder are needed — the case's graders `presses-once-more`, `asks-for-the-need`, `ends-after-the-answer` and `no-why-on-small-things`.
+Check: read
+
+### keep-on-a-modest-requirement
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/112-keep-on-a-modest-requirement/prompt.md`
+Proves: attended over three turns, after "keep" with no reason on a print view, no reply presses it again and the read builds it; no reply asks why the jump-to-recipe link, the lists or the US units are needed — the case's graders `accepts-keep` and `no-why-on-small-things`.
+Check: read
+
+### adds-nothing-ungrounded
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/113-adds-nothing-ungrounded/prompt.md --scaffold claude-plugins/manifest-dev/evals/113-adds-nothing-ungrounded`
+Proves: unattended, the read for `jot export --since DATE` proposes none of the additions the grader names (an end date, relative dates, a remembered last export, a configured default, time zones, a date-parsing dependency, the option on other commands) and still says how the change is checked — the case's graders `adds-nothing-ungrounded` and `keeps-the-checks`.
+Check: read
+
+### removal-competes
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/114-removal-competes/prompt.md --scaffold claude-plugins/manifest-dev/evals/114-removal-competes`
+Proves: unattended, the read offers removing the in-process profile cache, whose dashboard is gone, beside the additive fixes, and weighs the answers by what each keeps costing once built, not by building effort — the case's graders `puts-removal-forward` and `counts-standing-cost`.
+Check: read
+
+### unattended-keeps-the-requirement
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/115-unattended-keeps-the-requirement/prompt.md --scaffold claude-plugins/manifest-dev/evals/115-unattended-keeps-the-requirement`
+Proves: unattended, the read keeps the per-patient reminder schedules the user stated in what it proposes to build, and flags its doubt with what rests on them, the result without them and its recommendation — the case's graders `keeps-the-stated-requirement` and `flags-the-doubt`. Held out: its verdict decides and its reply draws no edit.
+Check: read
+
+### one-line-fix
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/42-one-line-fix/prompt.md --scaffold claude-plugins/manifest-dev/evals/42-one-line-fix`
+Proves: unattended, a one-word typo fix gets no sketch or design ceremony — the case's grader `no-sketch-ceremony`.
+Check: read
+
+### status-quo-job
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/13-status-quo-job/prompt.md`
+Proves: unattended, the read tests what job the hard-coded sleep may be doing before removing it, and uses the incident evidence — the case's graders `tests-the-status-quos-job` and `incident-evidence-used`. Held out: its verdict decides and its reply draws no edit.
+Check: read
+
 ## Gotchas
 
 - The eval cases' `prompt.md` files open with the case's front matter; `scripts/drive-skill.sh` sends only the body below it.
@@ -220,4 +260,5 @@ Check: read
 - `--team` needs Slack access; without it the team entry point is `unreachable`.
 - Also checked by the figure-out behavior suite, `claude-plugins/manifest-dev/evals/` (tags `figure-out`, `figure-out-plugin-only`, and `figure-out-multi-turn` for the cases of several turns, which run only as the drives above), all `unmeasured` or stale per `claude-plugins/manifest-dev/evals/README.md`; `tests/test_eval_cases.py` keeps its case list in step.
 - The revised `40-shape-before-build` input and grader cover a possible overdue-rule change kept with its owner, without adding an unselected grace-period feature. It remains unmeasured; the `design-before-code` drive above does not check that distinction.
+- The cases `110` to `115` and the guards they were driven with — `13`, `42`, `48`, `64`, `93` and `101` — are graded by a fresh context from each grader file alone; `skill-fired` and `autonomous-flag-passed` are display-only and not graded in a drive.
 - Not yet driven: the bare slash command, the description phrases, auto, define, figure-out-team.
