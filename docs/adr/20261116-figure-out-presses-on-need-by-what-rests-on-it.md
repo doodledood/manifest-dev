@@ -7,9 +7,12 @@ Accepted
 figure-out
 
 ## Decided by
-The user — the rulings quoted under Decision, and setting aside the parts of the two records named
-under Source that this decision reverses. An agent wrote this record and the change under the
-user's instruction to carry out and merge it; the user has not reviewed the record's text.
+The user — the rulings quoted under Decision, and reversing part of two records:
+`20260714-figure-out-classifies-constraints-before-they-prune`, which rejected challenging whether
+a user-fixed constraint should exist, and
+`20261026-figure-out-prices-effort-by-what-the-agent-does-not-control`, under which only costs
+outside the agent's control moved the default. An agent wrote this record and the change under
+the user's instruction to carry out and merge it; the user has not reviewed the record's text.
 
 ## Context
 The owner reported that a figure-out session on a feature accepts each requirement they state,
@@ -66,26 +69,60 @@ The behavior figure-out owes, as the owner ruled it:
   session's recommendation. The owner chose "keep it, flag doubt" over cutting it or narrowing it
   silently.
 
-What this change ships, and why only that: the skill was edited only where a case failed. A
-standing-cost line alone, worded to count what a part keeps costing "against the larger answer",
-did not hold `114` or `115` and broke `110` on three runs of three: each session recast the costly
-requirement as a cheaper fixed menu and asked which reading the person meant, instead of asking
-whether it was needed at all. The press has to be named where stated requirements are carried.
-So the shipped text is:
+What this change ships, and why only that: the skill was edited only where a case failed, and
+each later edit answers a failing verdict or a review finding. A first standing-cost line, worded
+to count what a part keeps costing "against the larger answer", did not hold `114` or `115` and
+broke `110` on three runs of three: each session recast the costly requirement as a cheaper fixed
+menu and asked which reading the person meant, instead of asking whether it was needed at all.
+The press has to be named where stated requirements are carried. So the shipped text is:
 
-- In `figure-out/SKILL.md`, beside the rule that carries stated requirements as hard: "and press
-  the need of one much of the build rests on before designing any version: what rests on
-  it, the result without it, your recommendation" (`110`, `115`).
-- In the pricing bullet: "Cheap to build is not cheap to own: where answers differ in size, name
-  what the larger keeps costing — more to read, verify and keep true, more that can break"
-  (`114`). Counting that cost in the abstract, without naming where, did not hold `114`.
+- In `figure-out/SKILL.md`, beside the rule that carries stated requirements as hard: "before
+  designing any version of one that much of the build rests on and whose reason is unstated,
+  press its need: what rests on it, the result without it, your recommendation" (`110`, `115`).
+  A requirement whose reason the person gave is not pressed.
+- In the pricing bullet: "Cheap to build is not cheap to own, so where options differ in size,
+  what the larger keeps costing — more to read, verify and keep true, more that can break — is
+  one" — one of the costs that move the default off the solution that would be right if effort
+  were free (`114`). Counting it in the abstract did not hold `114`.
+- In `autonomous.md`, each flagged item also carries, "where the two differ in size, what the
+  larger keeps costing once built" (`114`). With the pricing bullet alone, `114` named the
+  standing cost on one run of two; with this clause, on four of four.
 - In `autonomous.md`, the keep-and-flag sentence, with the requirement kept "as they stated it,
   not narrowed to a cheaper reading" (`115`).
 
-Room was made inside the same bullets, so the always-loaded body is no longer than it was. The
-second press and the removal answer get no new text: the cases showed them holding, and an
+Room was made inside the same and nearby bullets, so the always-loaded body is no longer than it
+was (3,359 words). What left it: "genuinely", "for the person" and "beside it"; the North Star
+heading names under which a project names who it is for; "of code, documents or analysis" after
+the agent's work, now "research, design, building and testing"; the examples of a record line
+read wider than its words; and "An inquiry exclusion does not exclude later delivery", which
+`ticket-up/references/AUTHORITY.md` states and every run reads first. The status-quo trigger now
+reads "Before proposing to change or remove what exists, test what job it might be doing". A
+review of the trims restored the record-line fit check in full: a line "whose words and reason,
+read as written, do not cover the case, or a record whose premise no longer holds, counts nothing
+against it".
+
+The second press and the removal answer get no new text: the cases showed them holding, and an
 addition that costs every run earns its place by a gain shown on evidence. The cases now hold
 them.
+
+Results, each reply graded by a fresh context from the grader file alone (runs that passed of
+runs graded):
+
+| Case | Grader | Merge base | Shipped |
+|---|---|---|---|
+| `110` | presses the costly requirement / brings a position / leaves the rest | 2/2 each | 2/2 each |
+| `111` | presses once more / asks for the need / ends after the answer / no why on small things | 2/2 each | 1/1 each |
+| `112` | accepts keep / no why on small things | 2/2 each | 1/1 each |
+| `113` | adds nothing ungrounded / keeps the checks | 2/2 each | 1/1 each |
+| `114` | puts removal forward | 2/2 | 2/2 |
+| `114` | counts standing cost | 1/2 | 2/2 |
+| `115` | keeps the stated requirement | 1/1 | 1/1 |
+| `115` | flags the doubt | 0/1 | 1/1 |
+
+Guard cases on the same two skill states: `42` (no sketch ceremony), `48` (reuses existing code)
+and `13` (tests the status quo's job) passed on both; `93` recommends the thorough fix and stays
+on the same problem on the shipped text. `64` (picks without ceremony) and `13`'s incident-evidence
+grader failed on every run of both, so they are not this change's to fix.
 
 A stated requirement stays hard in the skill's sense: pressing it asks its owner, and only the
 owner's answer drops it. "Needs no re-litigating" now applies once the person has answered the
@@ -106,6 +143,9 @@ press.
   "design the smaller version" and narrowed a costly requirement instead of pressing its need.
 - **With nobody to ask, cut or narrow a doubted requirement:** rejected by the owner; a stated
   requirement is the person's to drop.
+- **The keep-and-flag sentence in `autonomous.md` alone:** tried first, with the standing-cost
+  line above. The unattended session still narrowed the requirement to a cheaper fixed menu;
+  the press in `SKILL.md` and "not narrowed to a cheaper reading" were both needed for `115`.
 
 ## Consequences
 
@@ -118,14 +158,15 @@ press.
 ### Negative
 - Whether a requirement is a cornerstone stays judgment; the cases cover one costly and one
   modest instance, not the boundary between them.
-- The second press and the removal answer rest on what the model does by default today, not on
-  text in the skill. A model change can lose them; the cases are what would show that.
+- Several of the owner's rulings rest on what the model does by default today, not on text in
+  the skill: one press, not two, for a requirement only part of the build rests on; the second
+  press after "keep", and acceptance after its answer; no press when the person named the
+  requirement's owner; a doubt about a small thing taking no turn; and removal competing as an
+  answer. A model change can lose them; the cases are what would show that.
 - `115` is held out, yet its failure prompted the unattended edit. The edit's wording comes from
   the owner's ruling, not from that reply, but no tuning case covers the unattended flag.
-- To make room, some wording left the always-loaded body: the North Star heading names under
-  which a project names who it is for, "of code, documents or analysis" after the agent's work,
-  the examples of a record line read wider than its words, and a few filler words. A session
-  finds the person in a North Star without the heading, and the remaining wording still names a
+- To make room, the wording listed under Decision left the always-loaded body. A session finds
+  the person in a North Star without the heading names, and the restored fit check still names a
   line that does not cover the case.
 
 ## Enforced by
