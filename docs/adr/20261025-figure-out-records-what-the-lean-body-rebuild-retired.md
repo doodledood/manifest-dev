@@ -1,7 +1,7 @@
 # ADR: figure-out records what the lean-body rebuild retired
 
 ## Status
-Accepted; amended by 20261026-figure-out-prompt-engineering-pointer-keeps-its-fallback: the prompt-engineering pointer's guard and fallback are back in `SKILL.md`
+Accepted; amended by 20261026-figure-out-prompt-engineering-pointer-keeps-its-fallback: the prompt-engineering pointer's guard and fallback are back in `SKILL.md`; amended by 20261116-figure-out-presses-on-need-by-what-rests-on-it: the existence row's question, whether a read keeps a part whose need nobody tested, is now held by cases 110 to 115
 
 ## Area
 figure-out

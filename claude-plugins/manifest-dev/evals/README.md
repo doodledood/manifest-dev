@@ -1,5 +1,12 @@
 # figure-out eval suite
 
+**Standing-cost change, 2026-11-16: every measurement remains stale.** figure-out's pricing
+line now counts what a part keeps costing once it exists, and an unattended read keeps a stated
+requirement it doubts and flags the doubt. Cases `110` to `115` were added; their native drives
+on both arms are in the pull request and in
+`docs/adr/20261116-figure-out-presses-on-need-by-what-rests-on-it.md`. No suite has run for this
+change.
+
 **Principles-audit change, 2026-11-09: every measurement remains stale.** figure-out's draft
 mechanics moved to `references/DRAFT.md`, team mode's poll gained an exit on silence, and a
 request that conflicts with a project principle now keeps to the principle unless the person
