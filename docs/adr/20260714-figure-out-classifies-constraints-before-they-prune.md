@@ -1,7 +1,7 @@
 # ADR: figure-out classifies stated constraints before they prune options
 
 ## Status
-Accepted; narrowed by 20261026-decision-records-give-grounds-not-a-veto: a decision record or a North Star line is grounds, not an established constraint that prunes
+Accepted; narrowed by 20261026-decision-records-give-grounds-not-a-veto: a decision record or a North Star line is grounds, not an established constraint that prunes; narrowed by 20261116-figure-out-presses-on-need-by-what-rests-on-it: a requirement the user stated, on which much of the build rests, is pressed on need before it is established, at most twice, and stays theirs to drop
 
 ## Area
 figure-out
@@ -39,6 +39,13 @@ Like the crux-root decision, this lives at spine altitude and is phrased domain-
 ### Negative
 - The hard-vs-assumed call is a judgment; miscalibrated wording could read as haggling over genuinely fixed constraints. Drafting must frame it as classification, not challenge.
 - One more classification the model performs during deliberation on constraint-heavy topics.
+
+## Enforced by
+partly — the press that narrows this record is pinned by `110-press-the-costly-requirement` and
+`111-keep-on-a-costly-requirement` under `claude-plugins/manifest-dev/evals/`, which cite
+20261116-figure-out-presses-on-need-by-what-rests-on-it. Classifying a constraint before it
+prunes stays judgment, with no case of its own.
+
 
 ## Source
 - Grounding: textual analysis of the skill's spine and task files (no constraint-classification instruction exists), corroborated by the residual-risk note in the existence-challenge ADR's Consequences.

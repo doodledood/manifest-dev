@@ -1,7 +1,7 @@
 # ADR: figure-out challenges solution existence before descendant design
 
 ## Status
-Accepted; amended by 20260905-investigation-messages-do-not-require-acknowledgment: the attention budget applies per message, and evidence-resolvable questions no longer require a user turn; the low-load and existence-first purposes remain; narrowed by 20261025-figure-out-records-what-the-lean-body-rebuild-retired: the per-child repeat and the benefit-against-cost wording are not decided
+Accepted; amended by 20260905-investigation-messages-do-not-require-acknowledgment: the attention budget applies per message, and evidence-resolvable questions no longer require a user turn; the low-load and existence-first purposes remain; narrowed by 20261025-figure-out-records-what-the-lean-body-rebuild-retired: the per-child repeat and the benefit-against-cost wording are not decided; amended by 20261116-figure-out-presses-on-need-by-what-rests-on-it: a stated requirement's need is pressed by what rests on it, and the benefit-against-cost weighing counts what a part keeps costing
 
 ## Area
 figure-out
@@ -46,6 +46,14 @@ The judgment must be surfaced as natural conversation. It is expressly **not** p
 - The skill must distinguish proposed solution structure from unresolved truths and from goals or constraints the user has fixed.
 - Some descendant probing is still needed to judge whether a parent earns existence, so the change reduces speculative elaboration rather than eliminating judgment.
 - A poorly stated goal or constraint set can still lead to under- or over-scoped structure; the "keep it unresolved" outcome is the release valve.
+
+## Enforced by
+partly — `48-reuse-and-shallow-layer`, `113-adds-nothing-ungrounded` and
+`114-removal-competes` under `claude-plugins/manifest-dev/evals/` pin that a proposed part earns
+its place and that removal competes as an answer; the last two cite
+20261116-figure-out-presses-on-need-by-what-rests-on-it. Ordering the existence question before
+descendant design stays judgment.
+
 
 ## Source
 - Grounding: observed prompt behavior where solution mechanisms accreted during solution-shaped deliberation before their necessity was tested; the correction was validated by isolated prompt A/B evaluation against the unchanged opening, plus edge checks on a non-build decision, a diagnosis, and a reliability-critical design.
