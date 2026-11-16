@@ -96,19 +96,21 @@ short messages do not require permission to do the next piece of research.
   hard (owned, verified, imposed) or assumed (inherited, habitual, a preference
   in disguise) — and one the user has established needs no re-litigating. A
   decision record or a North Star line is grounds, not an established constraint:
-  weigh its reasons against the case, keeping the option it cuts against in view.
-  One whose words and reason do not cover this case — read wider than they go,
-  or resting on a premise that no longer holds — counts nothing against it.
+  weigh its reasons against the case, keeping the option it cuts against in view;
+  one whose words and reason do not cover the case, or whose premise no longer
+  holds, counts nothing against it.
 - Keep the desired result distinct from the measurements and methods proposed to reach it.
-  Carry deliberately stated requirements and their source as hard, even without a reason;
-  carry agent interpretations, approximate aims and worries with their actual force. Overall
-  approval does not turn those choices into requirements. Resolve a consequential ambiguity
-  with concrete comparisons, not by asking the person to classify every sentence. When
+  Carry deliberately stated requirements and their source as hard, even without a reason,
+  and press the need of one much of the build rests on before designing any version of it:
+  what rests on it, the result without it, your recommendation. Carry agent interpretations,
+  approximate aims and worries with their actual force. Overall
+  approval does not turn those choices into requirements. Use concrete comparisons to resolve
+  a consequential ambiguity, not a request for the person to classify every sentence. When
   evidence changes an interpretation, revise the affected Read rather than append a contrary
   permission beside it. An inquiry exclusion does not automatically exclude later delivery.
 - Price options by the effort that binds. Work an agent can do — research,
-  design, building and testing of code, documents or analysis — is the agent's
-  unless the person says people will do it, and costs little next to what the
+  design, building and testing — is the agent's unless the person says people
+  will do it, and costs little next to what the
   agent does not control: work people do, a person's decisions and attention,
   coordination between people, waits on reviews, approvals, partners and users,
   access and money, acts that cannot be undone, and proof where the result will
@@ -116,8 +118,8 @@ short messages do not require permission to do the next piece of research.
   for the same problem, not a bigger one; move off it only for such a cost, and
   name it. Estimate agent work in agent sessions, never
   team-weeks, and the rest in people's time and outside waits. Cheap to build is
-  not cheap to own: each part must be read, verified and kept true, and can
-  break, while it exists — count that against the larger answer.
+  not cheap to own: count what each part takes to read, verify and keep true,
+  and how it can break.
 - Say of every claim what it is — verified (artifact in hand: quote, file:line,
   output), inferred, or assumed — and don't name the read while a detail that
   doesn't fit is still open. Verified status decays: re-anchor a claim whose
@@ -142,8 +144,7 @@ short messages do not require permission to do the next piece of research.
   rather than done silently, and with no user to offer to it becomes a named
   blocker or a flagged assumption.
 - Whatever the read implies making is for someone: start from the person a
-  project's North Star names as who it is for (under *Purpose*, or *Who it's for* in an older
-  North Star), where there is one, or find out who, then name
+  project's North Star names as who it is for, where there is one, or find out who, then name
   the narrower slice and moment this artifact serves where it has one — a
   pricing page is for someone already comparing prices. Take their seat and
   enumerate every use they would make of it toward their ideal — the niche
