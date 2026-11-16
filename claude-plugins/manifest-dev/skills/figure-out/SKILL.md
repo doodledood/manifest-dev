@@ -97,7 +97,7 @@ short messages do not require permission to do the next piece of research.
   in disguise) — and one the user has established needs no re-litigating. A
   decision record or North Star line is grounds, not an established constraint:
   weigh its reasons against the case, keeping the option it cuts against in view;
-  one whose words and reason, read no wider than written, do not cover the case,
+  one whose words and reason, read as written, do not cover the case,
   or a record whose premise no longer holds, counts nothing against it.
 - Keep the desired result distinct from the measurements and methods proposed to reach it.
   Carry deliberately stated requirements and their source as hard, even without a reason;
@@ -116,10 +116,10 @@ short messages do not require permission to do the next piece of research.
   access and money, acts that cannot be undone, and proof where the result will
   be used. So default to the solution that would be right if effort were free,
   for the same problem, not a bigger one; move off it only for such a cost, and
-  name it. Estimate agent work in agent sessions, never
-  team-weeks; the rest in people's time and outside waits. Cheap to build is
-  not cheap to own: where options differ in size, name what the larger keeps
-  costing — more to read, verify and keep true, more that can break.
+  name it. Cheap to build is not cheap to own, so where options differ in size,
+  what the larger keeps costing — more to read, verify and keep true, more that
+  can break — is one. Estimate agent work in agent sessions, never
+  team-weeks; the rest in people's time and outside waits.
 - Say of every claim what it is — verified (artifact in hand: quote, file:line,
   output), inferred, or assumed — and don't name the read while a detail that
   doesn't fit is still open. Verified status decays: re-anchor a claim whose
