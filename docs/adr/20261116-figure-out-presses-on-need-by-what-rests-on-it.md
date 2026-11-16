@@ -120,9 +120,14 @@ runs graded):
 | `115` | flags the doubt | 0/1 | 1/1 |
 
 Guard cases on the same two skill states: `42` (no sketch ceremony), `48` (reuses existing code)
-and `13` (tests the status quo's job) passed on both; `93` recommends the thorough fix and stays
-on the same problem on the shipped text. `64` (picks without ceremony) and `13`'s incident-evidence
-grader failed on every run of both, so they are not this change's to fix.
+and `13` (tests the status quo's job) passed on both. `93` recommends the thorough fix on both and
+stays on the same problem on three runs of three of the shipped text, which it did not at the
+merge base. `93` prices the fix by what binds on two runs of three of the shipped text: the
+failing reply named a larger codebase elsewhere as a condition under which the developer
+estimate "could be right" and the quick fix would win, a build-effort argument the standing-cost
+wording does not touch; it passed on every other run since the merge base. `64` (picks without
+ceremony), `101` (meets the person where they are) and `13`'s incident-evidence grader failed on
+the merge base and on the shipped text, so they are not this change's to fix.
 
 A stated requirement stays hard in the skill's sense: pressing it asks its owner, and only the
 owner's answer drops it. "Needs no re-litigating" now applies once the person has answered the

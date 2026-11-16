@@ -1,7 +1,7 @@
 # ADR: figure-out prices effort by what the agent does not control, and defaults to the solution that would be right if effort were free
 
 ## Status
-Accepted; amended by 20261116-figure-out-presses-on-need-by-what-rests-on-it: what a part keeps costing once it exists counts against the larger answer, so the effort-free default does not make it free
+Accepted; amended by 20261116-figure-out-presses-on-need-by-what-rests-on-it: what the larger answer keeps costing once it exists is one of the costs that move the default, so the effort-free default does not make it free
 
 ## Area
 figure-out
