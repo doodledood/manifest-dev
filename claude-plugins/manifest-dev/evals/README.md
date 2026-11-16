@@ -1,11 +1,13 @@
 # figure-out eval suite
 
-**Standing-cost change, 2026-11-16: every measurement remains stale.** figure-out's pricing
-line now counts what a part keeps costing once it exists, and an unattended read keeps a stated
-requirement it doubts and flags the doubt. Cases `110` to `115` were added; their native drives
-on both arms are in the pull request and in
-`docs/adr/20261116-figure-out-presses-on-need-by-what-rests-on-it.md`. No suite has run for this
-change.
+**Standing-cost change, 2026-11-16: every measurement remains stale.** figure-out now presses
+the need of a stated requirement much of the build rests on, before designing any version of it;
+its pricing line counts what a part keeps costing once it exists as a cost that can move the
+default; and an unattended read keeps a stated requirement it doubts and flags the doubt. Cases
+`110` to `115` were added. Their native drives, with the plugin, on the merge base and on the
+shipped text, are summarized in
+`docs/adr/20261116-figure-out-presses-on-need-by-what-rests-on-it.md` and listed in the pull
+request; no without-plugin arm was driven. No suite has run for this change.
 
 **Principles-audit change, 2026-11-09: every measurement remains stale.** figure-out's draft
 mechanics moved to `references/DRAFT.md`, team mode's poll gained an exit on silence, and a
@@ -600,7 +602,9 @@ an explicit budget for the later run. No paid measurement was made for this revi
 `28-universal-not-taste`.** These seven cases are the established held-out set. `115-unattended-keeps-the-requirement`
 joins them as the held-out witness for `110`, assigned before its first run. Their scores
 decide whether a change is kept, but no analyzer reads their outputs and no edit is drawn from
-them. Tuning happens on the others; assign the remaining new cases before their first run.
+them. One exception is on record: `115`'s first failure, on the unchanged skill, prompted the
+unattended keep-and-flag sentence of 2026-11-16, worded from the owner's ruling rather than from
+that reply, so `115` is not an independent witness for that sentence. Tuning happens on the others; assign the remaining new cases before their first run.
 
 `15` took the place of `12-living-with-it`, held out until 2026-09-14, when it was re-run to
 decide whether to cut two sentences from the skill and so steered the prompt; `12` was retired on

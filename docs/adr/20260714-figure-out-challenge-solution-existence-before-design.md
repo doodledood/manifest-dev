@@ -47,6 +47,14 @@ The judgment must be surfaced as natural conversation. It is expressly **not** p
 - Some descendant probing is still needed to judge whether a parent earns existence, so the change reduces speculative elaboration rather than eliminating judgment.
 - A poorly stated goal or constraint set can still lead to under- or over-scoped structure; the "keep it unresolved" outcome is the release valve.
 
+## Enforced by
+partly — `48-reuse-and-shallow-layer`, `113-adds-nothing-ungrounded` and
+`114-removal-competes` under `claude-plugins/manifest-dev/evals/` pin that a proposed part earns
+its place and that removal competes as an answer; the last two cite
+20261116-figure-out-presses-on-need-by-what-rests-on-it. Ordering the existence question before
+descendant design stays judgment.
+
+
 ## Source
 - Grounding: observed prompt behavior where solution mechanisms accreted during solution-shaped deliberation before their necessity was tested; the correction was validated by isolated prompt A/B evaluation against the unchanged opening, plus edge checks on a non-build decision, a diagnosis, and a reliability-critical design.
 - Related: 20260703-figure-out-fog-discipline
