@@ -48,7 +48,7 @@ Before reporting a violation, it must pass ALL of:
 2. **Outcome rule, not process** — The rule affects the files being committed, not how the developer works.
 3. **Explicitly specified** — The naming convention, pattern, or documentation requirement is EXPLICITLY stated in a context file, or is a principle in a principles skill it points to, applied to the calls it bears on. General best practices belong to other dimensions, not here.
 4. **Introduced by this change** — Flag violations in changed code, not pre-existing violations the change didn't introduce.
-5. **Authorized exception** — A suppression or documented trade-off excuses a violation only when the rule's authority permits that exception. An implementation comment alone cannot waive a project obligation. For a principle, the exceptions are a shown yield and a person's choice of the departure, as `PROJECT_PRINCIPLES.md` defines them. A record the change itself adds is not a person's choice, and its claim that a yield holds is not evidence; evidence it cites still counts.
+5. **Authorized exception** — A suppression or documented trade-off excuses a violation only when the rule's authority permits that exception. An implementation comment alone cannot waive a project obligation. For a principle, the exceptions are a shown yield and a person's choice of the departure, and `PROJECT_PRINCIPLES.md` alone says what counts as each; evidence a change's own record cites still counts there.
 
 ## Out of scope (belongs to a sibling dimension)
 
