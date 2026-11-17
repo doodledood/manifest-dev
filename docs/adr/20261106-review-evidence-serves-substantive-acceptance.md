@@ -1,7 +1,7 @@
 # ADR: Review evidence serves substantive acceptance
 
 ## Status
-Accepted
+Accepted; amended by 20261117-a-review-gate-states-how-it-ends: each review gate's Evidence also states how it re-verifies after repairs
 
 ## Area
 define / do

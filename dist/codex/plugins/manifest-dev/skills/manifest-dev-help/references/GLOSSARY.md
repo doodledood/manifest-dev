@@ -67,6 +67,14 @@ criteria change, the next evaluation reads the full change again, so a wider gat
 old pass. New external evidence can still
 show a real failure in material already reviewed.
 
+### Look Once / Look Again
+<!-- context: e404c7a49f7b -->
+A review gate tells in its Evidence how it ends after repairs. A look-once gate, for advisory
+qualities, tests, scripts and docs, gets one full review, and then each repair gets only a check.
+A look-again gate, for product behavior, gets a review after each group of repairs. When no later
+review comes after the run, it also gets one new full review at the end. Without this rule, each
+repair can start a new review, and the run does not stop.
+
 ### Process Guidance
 <!-- context: abb3d0948b40 -->
 Process Guidance is advice about how to do the work. It does not bind. `/do` may depart from it and explains material departures in its report and log. The Outcome and current gates are owed. Working claims may change through an amendment supported by evidence.

@@ -45,6 +45,16 @@ Run: `scripts/drive-skill.sh define verification/prompts/define-feature-defaults
 Proves: for a feature whose installs upgrade on different days, the Manifest keeps old and new versions working side by side on shared data.
 Check: read
 
+### review-gate-ends
+Run: `scripts/drive-skill.sh define verification/prompts/define-review-gate-ends.md --scaffold claude-plugins/manifest-dev/evals/45-current-setup-offers-nothing`
+Proves: graders, applied to `./manifest.md`, for a code change the requester merges himself with no reviewer named: (1) every gate whose Evidence activates a review skill states in that Evidence whether it looks once or looks again, and what ends it; (2) the defect-finding review of the shipped command code (`change-intent`, `code-bugs`, and `contracts` or `type-safety` where encoded) looks again, with a continued look after each repair batch; (3) advisory dimensions, and any review gate on tests alone, look once: one full look once the Deliverables it covers are done, each finding fixed or rejected, each repair checked, and no further review run; (4) because the Manifest names no later review, the look-again gate's Evidence names one fresh full look by defect-finding dimensions at the finished change after repairs settle, with no further fresh look; (5) no gate's claim is that a review took place. PASS when all five hold.
+Check: read
+
+### review-gate-ends-with-reviewer
+Run: `scripts/drive-skill.sh define verification/prompts/define-review-gate-ends-with-reviewer.md --scaffold claude-plugins/manifest-dev/evals/45-current-setup-offers-nothing`
+Proves: the fresh look does not fire where a later review is named. Graders, applied to `./manifest.md`, for the same change shipped through a pull request whose review bot's comments must be addressed before merge: (1) a gate names that review (a pull-request lifecycle gate whose feedback includes the bot); (2) graders (1) to (3) and (5) of `review-gate-ends` hold; (3) no look-again gate's Evidence names a fresh full look at the finished change. PASS when all three hold.
+Check: read
+
 ### principles-in-place
 Run: `scripts/drive-skill.sh define verification/prompts/define-principles-in-place.md --scaffold verification/scaffolds/principles-in-place`
 Proves: graders, applied to `./manifest.md` and the reply, for a request made with nobody to ask that conflicts with two design principles without mentioning them: (1) the Manifest builds to the principles — the live view gets its own page rather than a pop-up panel, and the leading option is not coloured while the poll is open; (2) the reply opens with the conflict, before anything else it reports: what was asked, each principle, what the Manifest specifies instead, and the change that restores what was asked; (3) at least one gate binds a principle the result must not depart from and cites `design-principles` as its source; (4) the Manifest records each set-aside request detail in a Known Assumption. PASS when all four hold. A Manifest that keeps the pop-up panel or the green highlight fails.

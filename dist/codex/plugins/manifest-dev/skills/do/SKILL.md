@@ -153,6 +153,12 @@ external state, not just a commit identifier.
 
 A judgment gate reads the full change once, then checks outstanding findings and failures
 introduced or exposed by the changes since that evaluation; a deterministic gate re-runs in full.
+Where a gate's Evidence states how it re-verifies, that statement governs. A look-once gate takes
+no review run after its full look of record: it settles on that look, a disposition for each
+finding and the check of each repair its Evidence names, and those are its fresh evidence for the
+finished change; work added after that look gets a full look of its own. A look-again gate keeps
+its continued looks, and takes any fresh look its Evidence names once, after repairs settle. A
+gate that states no form re-verifies as this section says.
 When a judgment gate's criteria change, its next evaluation is a new full look, since work the old
 criteria did not reach has never been judged. It is that gate's first full look under its new
 criteria for every rule below that names a first full look, the ceiling's included.
@@ -193,8 +199,8 @@ edited only to fix it is what that fix runs into, not the path. Fix the pre-exis
 findings of a first full look that improve the work, and dismiss the rest with a reason. What the
 path brings is fixed as part of the build. What first full looks and review bring is fixed in a
 batch, not one at a time; then each judgment gate whose subject the batch changed takes one
-continued look, which reports only outstanding findings and failures the batch introduced or
-exposed. A continued look lists no pre-existing issues, and a below-bar finding it reports is left,
+continued look — a look-once gate checks each repair instead — which reports only outstanding
+findings and failures the batch introduced or exposed. A continued look lists no pre-existing issues, and a below-bar finding it reports is left,
 neither applied nor handed over: it re-samples taste on a repair, and chasing it is a loop that
 never settles. Each pre-existing fix lands as its own commit, and the pull request lists it as fixed
 on the way. These fixes are work the Manifest requires under any scope ceiling it carries, whatever
