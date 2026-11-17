@@ -1060,10 +1060,11 @@ def test_the_grace_setting_sets_the_wait_before_the_kill(tmp_path: Path) -> None
         "verification/recipes",
     )
     _settings(tmp_path, grace="0.2")
-    began = time.monotonic()
     result = run_verify("drive", "thing", env=env)
     assert result.returncode == 0, result.stdout + result.stderr
-    assert time.monotonic() - began < 1.5, "the run waited longer than its grace"
+    # The job touches the marker 1.5 s in, before the 2 s default grace would kill it, so a missing
+    # marker shows the 0.2 s grace was used. Timing the whole run instead counted Node's start-up
+    # and failed on a loaded machine.
     time.sleep(2)
     assert not marker.exists(), "the job outlived the grace"
 
