@@ -246,9 +246,10 @@ REVIEW_GATE_ENDS = {
         "The claim stays about the artifact.",
         "**Look again** — product behavior",
         "Where the Manifest names no later review",
-        "a person's read before merging that no gate names is not one",
-        "one fresh full look by its defect-finding dimensions at the finished change once repairs"
-        " settle",
+        "never its tests, fixtures, scripts or tooling",
+        "one fresh full look by its defect-finding dimensions at the finished change, once its"
+        " continued looks report nothing outstanding",
+        "A person's read before merging that no gate names is not one.",
         "no further fresh look",
         "**Look once** — advisory qualities, and every dimension on supporting code",
         "once every Deliverable it covers is done",
@@ -257,12 +258,14 @@ REVIEW_GATE_ENDS = {
         "is seen by the look-again gates whose subject it changes",
         "Operational readiness looks once, and looks again where the work is high-stakes",
     ),
+    "define/tasks/UI.md": ("A review gate states how it ends",),
     "define/references/SCHEMA.md": (
         "for a review gate, also how it re-verifies after repairs",
     ),
     "define/tasks/CODING.md": (
         "defect-finding dimensions on shipped code look again",
         "every dimension on tests, fixtures and scripts, look once",
+        "operational readiness looks again on high-stakes work",
     ),
     "define/tasks/PROMPTING.md": (
         "intent on a shipped prompt looks again; prompt quality looks once",
@@ -273,7 +276,8 @@ REVIEW_GATE_ENDS = {
         "those are its fresh evidence for the finished change",
         "takes any fresh look its Evidence names once, after repairs settle",
         "A gate that states no form re-verifies as this section says.",
-        "a look-once gate checks each repair instead",
+        "a below-bar finding of that fresh look is left",
+        "A look-once gate checks each repair instead.",
     ),
 }
 

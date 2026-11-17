@@ -332,13 +332,14 @@ claim never reads as done on its own. Place it by what is owed; split a gate who
 on both sides. The claim stays about the artifact.
 
 - **Look again** — product behavior: the Outcome, behaviors the Manifest names, safety
-  obligations, and defect-finding dimensions on code and prompts the project ships or runs. After
-  each repair batch it takes a continued look. Where the Manifest names no later review — a gate
-  that sends defect findings back before merge, such as a pull-request lifecycle gate whose
-  feedback includes a reviewer bot or agent, or a required reviewer approval; a person's read
-  before merging that no gate names is not one — its Evidence also names one fresh full look by
-  its defect-finding dimensions at the finished change once repairs settle, whose findings get
-  fixes and repair checks and no further fresh look.
+  obligations, and defect-finding dimensions on code and prompts the project ships or deploys,
+  never its tests, fixtures, scripts or tooling. After each repair batch it takes a continued
+  look. Where the Manifest names no later review, its Evidence also names one fresh full look by
+  its defect-finding dimensions at the finished change, once its continued looks report nothing
+  outstanding; that look's findings get fixes and repair checks, and no further fresh look
+  follows. A later review is a gate that sends defect findings back before merge, such as a
+  pull-request lifecycle gate whose feedback includes a reviewer bot or agent, or a required
+  reviewer approval. A person's read before merging that no gate names is not one.
 - **Look once** — advisory qualities, and every dimension on supporting code (tests, fixtures,
   scaffolds, scripts, tooling) and on docs. Its Evidence names one full look at the change as
   built once every Deliverable it covers is done; each finding fixed or rejected with a reason;
@@ -348,8 +349,9 @@ on both sides. The claim stays about the artifact.
   look, such as a later Deliverable or an amendment that adds work, gets a full look of its own.
   A repair that changes product behavior is seen by the look-again gates whose subject it changes.
 
-Operational readiness looks once, and looks again where the work is high-stakes: it acts with a
-person's authority, reaches credentials, moves money or data, or runs unattended in production.
+Operational readiness looks once, and looks again where the work is high-stakes, such as work
+that acts with a person's authority, reaches credentials, moves money or people's data, deletes
+what cannot be restored, or runs unattended in production.
 
 ## What else loads
 

@@ -46,13 +46,16 @@ splits a gate whose concerns fall on both sides. The claim stays about the artif
 field is added.
 
 - **Look again** covers product behavior: the Outcome, behaviors the Manifest names, safety
-  obligations, and defect-finding dimensions on code and prompts the project ships or runs.
+  obligations, and defect-finding dimensions on code and prompts the project ships or deploys,
+  never its tests, fixtures, scripts or tooling.
   - After each repair batch, the gate takes a continued look.
   - The Manifest may name no later review. A later review is a gate that sends defect findings
     back before merge, such as a pull-request lifecycle gate whose feedback includes a reviewer
     bot or agent, or a required reviewer approval. In that case the gate also takes one fresh
-    full look by its defect-finding dimensions at the finished change, once repairs settle.
-  - The fresh look's findings get fixes and repair checks. No second fresh look follows.
+    full look by its defect-finding dimensions at the finished change, once its continued looks
+    report nothing outstanding.
+  - The fresh look's findings get fixes and repair checks. Its below-bar findings are left, as a
+    continued look's are. No second fresh look follows.
 - **Look once** covers advisory qualities, and every dimension on supporting code (tests,
   fixtures, scaffolds, scripts, tooling) and on docs.
   - The gate takes one full look at the change as built, once every Deliverable it covers is done.
@@ -65,9 +68,13 @@ field is added.
     look of its own.
   - A repair that changes product behavior is seen by the look-again gates whose subject it
     changes.
-- **Operational readiness** looks once. It looks again where the work is high-stakes: the work
-  acts with a person's authority, reaches credentials, moves money or data, or runs unattended in
-  production.
+- **Operational readiness** looks once. It looks again where the work is high-stakes, such as
+  work that acts with a person's authority, reaches credentials, moves money or people's data,
+  deletes what cannot be restored, or runs unattended in production. `/define` judges it; the
+  examples are not a closed list.
+- **A design review** splits the same way: what the person can do with the artifact (task fit,
+  functional states, viewport behavior) looks again; composition, hierarchy, craft, copy and
+  register fit look once.
 
 `/do` follows the form a gate states. A gate that states no form, such as a gate in a Manifest
 written before this decision, re-verifies as before.
@@ -111,7 +118,7 @@ written before this decision, re-verifies as before.
 ## Enforced by
 partly — `tests/test_review_convergence.py::test_a_review_gate_states_how_it_ends` fails when the
 rule's sentences leave `define/SKILL.md`, `define/tasks/CODING.md`, `define/tasks/PROMPTING.md`,
-`define/references/SCHEMA.md` or `do/SKILL.md`, or their Codex copies. Behavior cases in
+`define/tasks/UI.md`, `define/references/SCHEMA.md` or `do/SKILL.md`, or their Codex copies. Behavior cases in
 `verification/recipes/define.md` (`review-gate-ends`, `review-gate-ends-with-reviewer`) and
 `verification/recipes/do.md` (`look-once-settles`) exercise placement and execution. Whether
 `/define` places a quality on the right side stays judgment.

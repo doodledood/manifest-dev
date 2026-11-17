@@ -72,7 +72,8 @@ show a real failure in material already reviewed.
 A review gate tells in its Evidence how it ends after repairs. A look-once gate, for advisory
 qualities, tests, scripts and docs, gets one full review, and then each repair gets only a check.
 A look-again gate, for product behavior, gets a review after each group of repairs. When no later
-review comes after the run, it also gets one new full review at the end. Without this rule, each
+review comes after the run, it also gets one new full review at the end. On high-risk work,
+operational readiness is a look-again gate too. Without this rule, each
 repair can start a new review, and the run does not stop.
 
 ### Process Guidance

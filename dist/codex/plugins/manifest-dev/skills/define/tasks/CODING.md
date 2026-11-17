@@ -37,7 +37,7 @@ Each row names a quality to assess through a **dimension** of `review-code` (one
 several dimensions share one claim. Preserve a deliberately required review policy with its source.
 Each gate states how it ends, as `define/SKILL.md` → *A review gate states how it ends* says:
 defect-finding dimensions on shipped code look again; advisory dimensions, and every dimension
-on tests, fixtures and scripts, look once.
+on tests, fixtures and scripts, look once; operational readiness looks again on high-stakes work.
 
 **Kind:** these quality claims are **Judgment Gates**, assessed from concrete findings and evidence rather than a command outcome. The defect-finding dimensions run alongside the project's mechanical gates below (typecheck, lint, test, format), which are Deterministic Gates. An overlay may add a dimension, as `BUG.md` adds `defect-class`.
 
