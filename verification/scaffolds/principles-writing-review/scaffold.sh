@@ -5,9 +5,9 @@
 # draft's own note claims that line's yield, which its steps do not bear out.
 set -euo pipefail
 git rev-parse --git-dir >/dev/null 2>&1 || git init -q
-git branch -M main 2>/dev/null || true
-git config user.name "Lee Moreau"
-git config user.email "lee@relay.example"
+git branch -M main
+git config user.name "Sam Okoro"
+git config user.email "sam@frontdesk.example"
 git config commit.gpgsign false
 git config core.hooksPath /dev/null
 mkdir -p .agents/skills/frontdesk-principles .claude handbook

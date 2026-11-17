@@ -30,18 +30,22 @@ own record counted as a person's choice. A person caught the departure by hand.
 
 ## Decision
 At review, a principle in a principles skill the project context file points to holds unless its
-yield is shown or a person chose the departure.
+yield is shown or a person with authority over it chose the departure.
 
 - **Shown yield.** Evidence shows the yield's condition holds. The work itself and the rest of the
   project count; the work's own assertion that the yield holds does not; a condition the evidence
   leaves open or arguable is not shown, because the principle holds unless its yield is shown.
-- **A person's choice.** A record in force before the change, that person's own statement in the
+- **A person's choice.** The person needs authority over the principle: the work is done for
+  them, or the project's records give them that area; writing the change gives none, and where
+  the evidence leaves open who chose or whether they had that authority, nothing was chosen. The
+  choice shows in a record in force before the change, that person's own statement in the
   session or the pull request conversation, a delegation naming the departure, or the caller's
   report of that choice with its source. A record or design document the change itself adds is its
   case, not that choice, and so is anything the run that produced the change wrote, such as the
   pull request description or a reply posted on the person's account.
 - **An unchosen departure** is a broken project obligation: reported with the principle quoted,
-  never graded Low for concerning naming, structure or style, and counted against acceptance under
+  graded High on the shared ladder (Critical where its consequence is) whichever dimension
+  reports it, so a verdict does not turn on the dimension named, and counted against acceptance under
   the caller's policy.
 - **Both directions.** The project's principles outrank a review's general standards: work that
   follows one raises no finding from a default it departs from, and work that departs from one
@@ -110,8 +114,8 @@ advisory (`20260708-judgment-layer-is-a-review-time-premise-check`).
 ## Enforced by
 partly — `tests/test_principles_skills.py::test_review_code_carries_the_review_rule_word_for_word`
 holds that the method and `review-code` carry the same paragraph, and
-`test_no_review_skill_picks_principles_by_area_name` that no review file selects a principles skill
-by one of the common area names. Whether a review applies it
+`test_no_review_skill_picks_principles_by_area_name` that no file a review skill loads names a
+concrete principles skill rather than the `<area>-principles` placeholder. Whether a review applies it
 is judged by the `review-code` recipe's `principles-depart` and `principles-hold` scenarios, the
 `review-pr` recipe's `principles` scenario, and the `principles` scenarios of the `review-prompt`,
 `review-design` and `review-writing` recipes.

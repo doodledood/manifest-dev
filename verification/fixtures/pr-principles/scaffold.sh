@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Two local pull request snapshots of Shelfmark for review-pr: departs/ carries the change that
 # departs from a principle with no person's choice behind it; holds/ carries the change whose
-# touched principles each have a shown yield, a chosen departure or nothing the change can show.
+# touched principles are each followed, have a shown yield or a chosen departure, or cannot be shown
+# by the change.
 set -euo pipefail
 cat > .gitignore <<'IGNORE'
 /departs/

@@ -20,7 +20,7 @@ Use the active host's identity, loaded instructions, and configuration to establ
 - **Codex CLI**: ~/.codex/AGENTS.override.md → ~/.codex/AGENTS.md → AGENTS.override.md/AGENTS.md at each level from git root to CWD → configured fallbacks
 - **OpenCode**: AGENTS.md traversing upward from CWD to git root → ~/.config/opencode/AGENTS.md → opencode.json instructions field
 
-**Principles skills the context file points to** are audited here for every principle, whichever dimension owns its call, so a departure no other dimension reports is still caught. Find, load and apply them as `PROJECT_PRINCIPLES.md` says. A finding on a principle quotes it with the path of its skill, names the departing text, and says why its yield is not shown and that no person's choice of the departure exists; that statement, not the word "might", is what makes the departure reportable. A line in such a skill that is not a principle — a decision, a fact, a history note — is not a rule to audit; you offer no edit to the skill (`../../setup-project/references/PRINCIPLES_SKILLS.md` → *Using one*).
+**Principles skills the context file points to** are audited here for every principle, whichever dimension owns its call, so a departure no other dimension reports is still caught. Find, load and apply them as `PROJECT_PRINCIPLES.md` says. A finding on a principle quotes it with the path of its skill, names the departing text, and says why its yield is not shown and that no choice of the departure by a person with authority over it was found; a finding that states both meets this dimension's bar, though a principle calls for judgment. A line in such a skill that is not a principle — a decision, a fact, a history note — is not a rule to audit; you offer no edit to the skill (`../../setup-project/references/PRINCIPLES_SKILLS.md` → *Using one*).
 
 **Only audit against the context file for the CURRENT CLI.** Ignore stale context files from other CLIs (e.g., an unmaintained CLAUDE.md in a project that now uses Codex/AGENTS.md).
 
@@ -48,7 +48,7 @@ Before reporting a violation, it must pass ALL of:
 2. **Outcome rule, not process** — The rule affects the files being committed, not how the developer works.
 3. **Explicitly specified** — The naming convention, pattern, or documentation requirement is EXPLICITLY stated in a context file, or is a principle in a principles skill it points to, applied to the calls it bears on. General best practices belong to other dimensions, not here.
 4. **Introduced by this change** — Flag violations in changed code, not pre-existing violations the change didn't introduce.
-5. **Authorized exception** — A suppression or documented trade-off excuses a violation only when the rule's authority permits that exception. An implementation comment alone cannot waive a project obligation. For a principle, the exceptions are a shown yield and a person's choice of the departure, and `PROJECT_PRINCIPLES.md` alone says what counts as each; evidence a change's own record cites still counts there.
+5. **Authorized exception** — A suppression or documented trade-off excuses a violation only when the rule's authority permits that exception. An implementation comment alone cannot waive a project obligation. For a principle, the exceptions are a shown yield and a person's choice of the departure, and `PROJECT_PRINCIPLES.md` alone says what counts as each.
 
 ## Out of scope (belongs to a sibling dimension)
 
@@ -57,10 +57,10 @@ Do NOT report on:
 - **Intent-behavior divergence** (does the change achieve its goal?) → belongs to the change-intent dimension
 - **Mechanical code defects** (race conditions, resource leaks, null handling) → belongs to the code-bugs dimension
 - **API contract correctness** (wrong params, consumer breakage) → belongs to the contracts dimension
-- **General maintainability** (not specified in context file) → belongs to the code-maintainability dimension
-- **Over-engineering / complexity** (not specified in context file) → belongs to the code-simplicity dimension
+- **General maintainability** (not specified in a context file or a principles skill it points to) → belongs to the code-maintainability dimension
+- **Over-engineering / complexity** (not specified in a context file or a principles skill it points to) → belongs to the code-simplicity dimension
 - **Type safety** → belongs to the type-safety dimension
-- **Documentation accuracy** (not specified in context file) → belongs to the docs dimension
+- **Documentation accuracy** (not specified in a context file or a principles skill it points to) → belongs to the docs dimension
 - **Test coverage** → belongs to the test-quality dimension
 - **Prose value / AI-tells in comments and doc files** (when not explicitly specified as a context-file rule) → belongs to the prose-value dimension
 

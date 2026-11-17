@@ -48,29 +48,22 @@ class CentralBranchOverdueSms:
                 sent += 1
         return sent
 EOF
-cat > src/shelfmark/reminders.py <<'EOF'
-"""Overdue reminders."""
-from datetime import date
-
-from shelfmark import channels
-
-
-def overdue_message(loan: dict) -> str:
-    return f"{loan['title']} was due on {loan['due']:%d %B %Y}. Please return it to {loan['branch']}."
-
-
-def send_overdue_reminders(branch, loans: list[dict], today: date) -> int:
-    sent = 0
-    for loan in loans:
-        if (today - loan["due"]).days >= branch.reminder_days:
-            channels.send(branch, loan["member"], overdue_message(loan))
-            sent += 1
-    if branch.name == "central":
-        from shelfmark.central_overdue_sms import CentralBranchOverdueSms
-
-        CentralBranchOverdueSms().send_all(branch, loans, today)
-    return sent
-EOF
+python3 - <<'PY'
+from pathlib import Path
+p = Path("src/shelfmark/reminders.py")
+t = p.read_text()
+old = "            sent += 1\n    return sent\n"
+new = (
+    "            sent += 1\n"
+    "    if branch.name == \"central\":\n"
+    "        from shelfmark.central_overdue_sms import CentralBranchOverdueSms\n"
+    "\n"
+    "        CentralBranchOverdueSms().send_all(branch, loans, today)\n"
+    "    return sent\n"
+)
+assert t.count(old) == 1, f"the base scaffold's reminders.py no longer holds {old!r}"
+p.write_text(t.replace(old, new))
+PY
 cat > tests/test_central_sms.py <<'EOF'
 from datetime import date
 

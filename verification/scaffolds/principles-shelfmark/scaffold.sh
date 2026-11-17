@@ -6,7 +6,7 @@
 # principles scenarios branch from.
 set -euo pipefail
 git rev-parse --git-dir >/dev/null 2>&1 || git init -q
-git branch -M main 2>/dev/null || true
+git branch -M main
 git config user.name 'Mara Okafor'
 git config user.email 'mara@shelfmark.example'
 git config commit.gpgsign false

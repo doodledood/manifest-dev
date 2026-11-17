@@ -4,6 +4,8 @@ The method — what a line must be, the skill's shape, the pointer line, which a
 skill, and how lines are written and pruned — lives in setup-project's PRINCIPLES_SKILLS.md
 alone. Every other shipped file that works with a principles skill points there, so the copies
 cannot drift. create-principles-skill stays a thin wrapper over figure-out that points there too.
+The one exception is the review rule: review-code runs alone, so its PROJECT_PRINCIPLES.md carries
+the method's review paragraph word for word, and a test below keeps the two equal.
 
 Holds docs/adr/20261109-area-principles-live-in-project-skills.md.
 """
@@ -148,16 +150,11 @@ def test_a_principle_holds_unless_the_person_chose_the_departure() -> None:
         assert "whether the principle has moved or this is an exception" in text, where
 
 
-TOOLS_SKILLS = ROOT / "claude-plugins" / "manifest-dev-tools" / "skills"
 REVIEW_CODE = SKILLS / "review-code" / "SKILL.md"
 REVIEW_CODE_RULE = SKILLS / "review-code" / "references" / "PROJECT_PRINCIPLES.md"
-REVIEWERS = (
-    REVIEW_CODE,
-    SKILLS / "review-design" / "SKILL.md",
-    SKILLS / "review-writing" / "SKILL.md",
-    TOOLS_SKILLS / "review-prompt" / "SKILL.md",
-)
-# The paragraph opens and closes on these; everything between them must match word for word.
+# The shared review paragraph opens and closes on these; everything between them must match word for
+# word. review-code's copy adds one leading sentence of its own (which dimension reports a
+# departure, and its grade), which this pattern leaves out and this test does not hold.
 REVIEW_RULE = re.compile(
     r"A\s+project's\s+principles\s+skills\s+are\s+project\s+skills\s+named\s.*?"
     r"naming\s+the\s+principle\s+that\s+produced\s+it\.",
@@ -172,8 +169,8 @@ def review_rule(path: Path) -> str:
 
 
 def test_review_code_carries_the_review_rule_word_for_word() -> None:
-    """A review holds work to the project's principles unless a person chose the departure, and a
-    record the change adds is its case, not that choice. review-code runs alone, so it carries the
+    """A review holds work to the project's principles unless a person with authority over the
+    principle chose the departure, and a record the change adds is its case, not that choice. review-code runs alone, so it carries the
     rule in a reference its body loads only where the project points to principles skills; the
     method states it too. The two copies must not drift apart.
 
@@ -181,7 +178,9 @@ def test_review_code_carries_the_review_rule_word_for_word() -> None:
     """
     method = review_rule(METHOD)
     for marker in (
-        "A principle holds unless its yield is shown or a person chose the departure.",
+        "A principle holds unless its yield is shown or a person with authority over it chose the departure.",
+        "authoring the change gives none",
+        "it is not chosen",
         "is its case, not a person's choice",
         "never grade it Low",
         "count it against acceptance",
@@ -189,7 +188,7 @@ def test_review_code_carries_the_review_rule_word_for_word() -> None:
         "whatever the skill holding it is called",
         "the work's own assertion that it holds does not",
         "anything the run that produced the change wrote",
-        "until then the work departs, unless a person chose the departure",
+        "until then the work departs, unless such a person chose the departure",
         "a condition the evidence leaves open or arguable is not shown",
         "for a line the work under review cannot show either way",
     ):
@@ -205,21 +204,24 @@ def test_review_code_carries_the_review_rule_word_for_word() -> None:
 
 def test_no_review_skill_picks_principles_by_area_name() -> None:
     """Projects name their areas freely, so a review finds principles skills by their pointers and
-    stated use. This catches the common slip, a review file naming one of the usual area skills.
+    stated use. No file a review skill loads may name a concrete principles skill: the only form
+    allowed is the placeholder `<area>-principles`.
 
     Holds docs/adr/20261117-a-review-holds-work-to-the-projects-principles-unless-a-person-chose-the-departure.md.
     """
-    named = re.compile(
-        r"`(?:design|code|prompt|writing|architecture|product)-principles`"
-    )
-    review_files = [
-        *REVIEWERS,
-        *sorted((SKILLS / "review-code" / "references").glob("*.md")),
-        *sorted(TOOLS_SKILLS.glob("review-pr*/SKILL.md")),
-    ]
+    named = re.compile(r"(?<![\w<>-])[a-z][a-z-]*-principles\b(?!-)")
+    review_files = sorted(ROOT.glob("claude-plugins/*/skills/review-*/**/*.md"))
+    skills = {p.relative_to(ROOT).parts[3] for p in review_files}
+    assert {
+        "review-code",
+        "review-design",
+        "review-writing",
+        "review-prompt",
+        "review-pr",
+    } <= skills
     hits = [
-        str(p.relative_to(ROOT))
+        f"{p.relative_to(ROOT)}: {m.group(0)}"
         for p in review_files
-        if named.search(p.read_text(encoding="utf-8"))
+        for m in named.finditer(p.read_text(encoding="utf-8"))
     ]
-    assert not hits, f"these review files select principles by an area name: {hits}"
+    assert not hits, f"these review files name a principles skill: {hits}"

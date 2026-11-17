@@ -12,22 +12,22 @@ git switch -qc feature/monthly-statements
 git config user.name 'Jonas Pike'
 git config user.email 'jonas@shelfmark.example'
 mkdir -p tests/snapshots
-cat > config/branches.toml <<'EOF'
-[central]
-reminder_days = 3
-channels = ["email"]
-address = "Central Library, 1 Market Square"
-
-[north]
-reminder_days = 2
-channels = ["email"]
-address = "North Library, 40 Mill Road"
-
-[harbor]
-reminder_days = 3
-channels = ["email"]
-address = "Harbor Library, 7 Quay Street"
-EOF
+python3 - <<'PY'
+from pathlib import Path
+p = Path("config/branches.toml")
+t = p.read_text()
+for section, address in [
+    ("central", "Central Library, 1 Market Square"),
+    ("north", "North Library, 40 Mill Road"),
+    ("harbor", "Harbor Library, 7 Quay Street"),
+]:
+    head = f"[{section}]\n"
+    assert t.count(head) == 1, f"the base scaffold's branches.toml no longer has [{section}]"
+    at = t.index("channels = ", t.index(head))
+    eol = t.index("\n", at) + 1
+    t = t[:eol] + f'address = "{address}"\n' + t[eol:]
+p.write_text(t)
+PY
 python3 - <<'PY'
 from pathlib import Path
 p = Path("src/shelfmark/branches.py")
@@ -115,7 +115,10 @@ def test_long_statement_body_matches_the_reviewed_snapshot():
 
 
 def test_member_with_no_loans_is_told_so():
-    assert statement_body([], CENTRAL, date(2026, 3, 31)) == "You have no loans out on 31 March 2026."
+    member = {"name": "Ana", "email": "ana@example.org"}
+    assert loan_statement(member, [], CENTRAL, date(2026, 3, 31)) == (
+        statement_greeting("Ana") + "\n\nYou have no loans out on 31 March 2026."
+    )
 
 
 def test_greeting_names_the_member():

@@ -3,13 +3,19 @@
 # commit with no record narrowed it to item ids. A principles skill, pointed to in the project's own
 # words under an area word no reviewer carries, holds a reuse line. Run inside an empty repository.
 set -euo pipefail
-git branch -M main 2>/dev/null || true
+git branch -M main
 git config user.name 'Rui Santos'
 git config user.email 'rui@branchline.example'
 git config commit.gpgsign false
 git config core.hooksPath /dev/null
 mkdir -p .agents/skills/foundations-principles .claude docs/decisions src/branchline tests
 ln -s ../.agents/skills .claude/skills
+cat > tests/conftest.py <<'EOF'
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+EOF
 cat > AGENTS.md <<'EOF'
 # Branchline
 

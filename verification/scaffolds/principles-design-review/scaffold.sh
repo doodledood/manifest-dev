@@ -5,9 +5,9 @@
 # line's yield, which its 14 rows contradict.
 set -euo pipefail
 git rev-parse --git-dir >/dev/null 2>&1 || git init -q
-git branch -M main 2>/dev/null || true
-git config user.name "Lee Moreau"
-git config user.email "lee@relay.example"
+git branch -M main
+git config user.name "Ida Lund"
+git config user.email "ida@lendo.example"
 git config commit.gpgsign false
 git config core.hooksPath /dev/null
 mkdir -p .agents/skills/kiosk-principles .claude pages
@@ -54,7 +54,7 @@ html = f"""<!doctype html>
     main {{ padding: 32px; }}
     ul {{ list-style: none; margin: 0; padding: 0; }}
     li {{ display: flex; justify-content: space-between; padding: 18px 0; border-bottom: 2px solid #000; }}
-    button {{ width: 100%; margin-top: 32px; padding: 24px; font: inherit; color: #fff; background: #000; border: 0; }}
+    button {{ width: 100%; margin-top: 32px; padding: 24px; font: inherit; color: #000; background: #fff; border: 3px solid #000; }}
     button:focus-visible {{ outline: 4px solid #000; outline-offset: 4px; }}
   </style>
 </head>

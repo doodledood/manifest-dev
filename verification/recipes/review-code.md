@@ -116,7 +116,7 @@ Check: read
 - No comparison base resolves to BLOCKED.
 - `tests/test_review_scope.py` exercises the scope commands; `tests/test_drive_scripts.py` checks convergence fixtures. The follow-up and fresh drives are unmeasured; fixture checks do not measure review behavior.
 - Not yet driven: the description phrases, define's coding gates. review-pr's fleet runs these dimensions in the review-pr recipe's `principles` and `existing-owner` scenarios.
-- The Shelfmark scaffolds (`principles-depart`, `principles-hold`) use `tomllib`, so their own tests need Python 3.11 or newer; the reviews do not depend on running them.
+- The Shelfmark scaffolds (`principles-shelfmark-departs`, `principles-shelfmark-holds`, used by the `principles-depart` and `principles-hold` scenarios) use `tomllib`, so their own tests need Python 3.11 or newer; the reviews do not depend on running them.
 - The principles cases are caught on the merge-base skills too: today's models follow the context file's pointers. The discriminating evidence for the review rule is a replay on a real change kept outside this repository, on `code-design` and `context-file-adherence`: merge-base skills: not caught; branch: caught.
 
 - The consequence/promise scenario ran once per arm through native GPT-6.1 Sol/xhigh contexts on 2026-11-05. The decision records dated that day name the outcomes and limits; scaffold checks alone do not establish behavior.

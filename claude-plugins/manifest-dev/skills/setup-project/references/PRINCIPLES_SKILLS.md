@@ -144,27 +144,30 @@ them:
 
 A project's principles skills are project skills named `<area>-principles`, with whatever area word
 the project chose, each line a principle with its reason and when it yields. Find them through the
-project context file's pointers, in whatever words those are written, and load each whose stated
-use — what its pointer line or description says it is for — covers the work under review. Apply
-each line to the calls it bears on in that work, whatever the skill holding it is called. These
+project context file's pointers, in whatever words those are written, and load each whose stated use
+— what its pointer line or description says it is for — covers the work under review. Apply each
+line to the calls it bears on in that work, whatever the skill holding it is called. These
 principles outrank the review's general standards in both directions: work that follows one raises
 no finding from a standard it departs from, and work that departs from one raises a finding where
-those standards would raise none. A principle holds unless its yield is shown or a person chose the
-departure. Its yield is shown by evidence that the yield's condition holds: the work itself and the
-rest of the project count, the work's own assertion that it holds does not, and a condition the
-evidence leaves open or arguable is not shown. What a yield then allows, such as a narrow version
-named for its one case, makes the status "yield shown" only once its condition is shown; until then
-the work departs, unless a person chose the departure. A person chose the departure when a record
+those standards would raise none. A principle holds unless its yield is shown or a person with
+authority over it chose the departure. Its yield is shown by evidence that the yield's condition
+holds: the work itself and the rest of the project count, the work's own assertion that it holds
+does not, and a condition the evidence leaves open or arguable is not shown. What a yield then
+allows, such as a narrow version named for its one case, makes the status "yield shown" only once
+its condition is shown; until then the work departs, unless such a person chose the departure. A
+person has authority over a principle when the work is done for them or the project's records give
+them that area, and authoring the change gives none. Such a person chose the departure when a record
 in force before the change, that person's own statement in the session or the pull request
-conversation, a delegation naming the departure, or the caller's report of that person's choice
-with its source says so. A record or design document the change itself adds is its case, not a
-person's choice, and so is anything the run that produced the change wrote, such as the pull
-request description, a commit message or a reply on the person's account. An unchosen departure is
-a broken project obligation: report it with the principle quoted and the departing text named,
-never grade it Low because it concerns naming, structure or style, and count it against acceptance
-under the caller's policy. After the findings, list each principle the work touches that bears on
-the calls this review judges, and where it stands — followed; yield shown, with the evidence;
-departure chosen, by whom and where; departs, with the finding; or not judgeable, for a line the
-work under review cannot show either way, such as how its author works — and leave the list out
-where no loaded principles skill covers the work. A critical failure is still reported, naming the
-principle that produced it.
+conversation, a delegation naming the departure, or the caller's report of that person's choice with
+its source says so; where the evidence leaves open who chose it or whether they had that authority,
+it is not chosen. A record or design document the change itself adds is its case, not a person's
+choice, and so is anything the run that produced the change wrote, such as the pull request
+description, a commit message or a reply on the person's account. An unchosen departure is a broken
+project obligation: report it with the principle quoted and the departing text named, never grade it
+Low because it concerns naming, structure or style, and count it against acceptance under the
+caller's policy. After the findings, list each principle the work touches that bears on the calls
+this review judges, and where it stands — followed; yield shown, with the evidence; departure
+chosen, by whom and where; departs, with the finding; or not judgeable, for a line the work under
+review cannot show either way, such as how its author works — and leave the list out where no loaded
+principles skill covers the work. A critical failure is still reported, naming the principle that
+produced it.

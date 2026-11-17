@@ -37,7 +37,7 @@ Do NOT report on:
 - **Type safety** → belongs to the type-safety dimension
 - **Test coverage gaps** → belongs to the test-quality dimension
 - **Prose value / AI-tells in comments and doc files** → belongs to the prose-value dimension
-- **Context file compliance** (except doc-related rules) → belongs to the context-file-adherence dimension. A departure from a project principle that bears on this dimension's own calls is reported here as well (`PROJECT_PRINCIPLES.md`).
+- **Context file compliance** (except doc-related rules) → belongs to the context-file-adherence dimension. Where `PROJECT_PRINCIPLES.md` is loaded, a departure from one of its principles that bears on this dimension's own calls is reported here as well.
 
 **Boundary with prose-value:** this dimension owns *accuracy* — whether comments and doc files match what the code actually does (drift, stale content, wrong signatures). The prose-value dimension owns whether the prose *earns its place* (value, AI-tells). Accuracy here; worth-keeping there.
 

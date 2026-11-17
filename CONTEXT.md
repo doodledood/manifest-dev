@@ -245,7 +245,7 @@ A durable personal steering preference persisted only by offer-and-ratify — ca
 _Avoid_: Preference, style, judgment.
 
 **Principles Skill**:
-A project skill named `<area>-principles` holding how a project's people want one area of its work done — design, product, prompts, architecture or another — each line a principle with its reason and when it yields, drawn from what those people said, failures seen in that area's work, or defaults they chose to depart from or keep, and written only on a person's yes. Any agent loads it through its pointer line in the Project Context File, and a review holds the work it reviews to its principles unless a person chose the departure.
+A project skill named `<area>-principles` holding how a project's people want one area of its work done — design, product, prompts, architecture or another — each line a principle with its reason and when it yields, drawn from what those people said, failures seen in that area's work, or defaults they chose to depart from or keep, and written only on a person's yes. Any agent loads it through its pointer line in the Project Context File, and a review holds the work it reviews to its principles unless a person with authority over the principle chose the departure.
 _Avoid_: Area skill, style guide, playbook.
 
 **User's Call**:

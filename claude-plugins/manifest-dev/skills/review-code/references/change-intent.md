@@ -99,7 +99,7 @@ This dimension owns the question of whether the **logic achieves the change's go
 - **Test coverage gaps** (missing tests) → belongs to the test-quality dimension
 - **Testability design** (hard to test, mock friction) → belongs to the code-testability dimension
 - **Documentation accuracy** (stale docs) → belongs to the docs dimension
-- **Context file compliance** (project rule violations) → belongs to the context-file-adherence dimension. A departure from a project principle that bears on this dimension's own calls is reported here as well (`PROJECT_PRINCIPLES.md`).
+- **Context file compliance** (project rule violations) → belongs to the context-file-adherence dimension. Where `PROJECT_PRINCIPLES.md` is loaded, a departure from one of its principles that bears on this dimension's own calls is reported here as well.
 
 **Key distinctions from neighboring dimensions:**
 - The **code-bugs** dimension asks: "Does this code have mechanical defects?" (race conditions, resource leaks, edge case crashes). This dimension asks: "Does this code do what the author intended?"

@@ -5,7 +5,7 @@
 # prompt's own note claims that line's yield, which the context file contradicts.
 set -euo pipefail
 git rev-parse --git-dir >/dev/null 2>&1 || git init -q
-git branch -M main 2>/dev/null || true
+git branch -M main
 git config user.name "Lee Moreau"
 git config user.email "lee@relay.example"
 git config commit.gpgsign false

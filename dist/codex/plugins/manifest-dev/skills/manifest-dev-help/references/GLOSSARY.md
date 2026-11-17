@@ -171,7 +171,7 @@ you are not present, but only a preference that you approved. A project preferen
 work, such as design, goes to that area's Principles Skill.
 
 ### Principles Skill
-<!-- context: b66c9a86ff05 -->
+<!-- context: a1c217b32af0 -->
 A Principles Skill is a project skill with the name `<area>-principles`. It holds how the people of a
 project want one area of work done, for example design or prompts. Each line is a principle, with its
 reason and when it does not apply. Lines come from what those people said, from a failure in that
@@ -184,8 +184,9 @@ starts from what the team wants, and the Project Context File stays short. A dec
 Decision Record, not to the skill.
 
 A review also holds the work to these principles. A departure from a principle counts against the
-work, unless evidence shows that the exception in the line applies or a person chose the departure.
-A record that the change itself adds is not that choice. This is so that a team writes a principle
+work. It does not count when the exception in the line applies, or when a person with authority over
+the principle chose the departure. Writing the change does not give that authority. A record that
+the change itself adds is not that choice. This is so that a team writes a principle
 once and does not have to check each change by hand.
 
 ### Skill
