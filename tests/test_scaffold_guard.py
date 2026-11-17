@@ -37,10 +37,15 @@ def _git(cwd: Path, *args: str) -> str:
 
 
 def _repository_state(work: Path) -> tuple[str, str, str, list[str]]:
+    config = Path(
+        _git(
+            work, "rev-parse", "--path-format=absolute", "--git-path", "config"
+        ).strip()
+    )
     return (
         _git(work, "for-each-ref"),
         _git(work, "symbolic-ref", "HEAD"),
-        (work / ".git" / "config").read_text(encoding="utf-8"),
+        config.read_text(encoding="utf-8"),
         sorted(p.name for p in work.iterdir()),
     )
 
@@ -54,6 +59,7 @@ def _one_dot_file(work: Path) -> None:
 
 
 def _many_files(work: Path) -> None:
+    # Enough entries that a check reading the directory through a pipe is cut short under pipefail.
     for n in range(20000):
         (work / f"f{n}").touch()
 
@@ -75,22 +81,55 @@ def _a_commit_and_no_files(work: Path) -> None:
     (work / "owner.txt").unlink()
 
 
+def _an_orphan_checkout(work: Path) -> None:
+    # History on trunk, while HEAD names a new branch with no commit and no files.
+    _a_commit_and_no_files(work)
+    _git(work, "checkout", "-q", "--orphan", "wip")
+
+
+def _a_fetched_ref(work: Path) -> None:
+    # Initialised, then fetched into: refs exist, HEAD names a branch with no commit.
+    source = work.parent / f"{work.name}-source"
+    source.mkdir()
+    _git(source, "init", "-q", "-b", "main")
+    (source / "owner.txt").write_text("mine\n", encoding="utf-8")
+    _git(source, "add", "owner.txt")
+    _git(
+        source,
+        "-c",
+        "user.name=o",
+        "-c",
+        "user.email=o@example.org",
+        "commit",
+        "-qm",
+        "o",
+    )
+    _git(work, "fetch", "-q", str(source), "main:refs/remotes/origin/main")
+
+
 CONTENTS: dict[str, Callable[[Path], None]] = {
     "one file": _one_file,
     "a dot-file": _one_dot_file,
     "many files": _many_files,
     "a repository with history": _a_commit_and_no_files,
+    "an orphan checkout": _an_orphan_checkout,
+    "a fetched ref": _a_fetched_ref,
 }
 
 
-@pytest.fixture(scope="module", params=list(CONTENTS))
+@pytest.fixture(scope="module", params=[*CONTENTS, "a .git file"])
 def occupied(
     request: pytest.FixtureRequest, tmp_path_factory: pytest.TempPathFactory
 ) -> Iterator[Path]:
     # A correct guard writes nothing, so one occupied directory serves every script.
     work = tmp_path_factory.mktemp("occupied")
-    _git(work, "init", "-q", "-b", "trunk")
-    CONTENTS[request.param](work)
+    if request.param == "a .git file":
+        # A worktree-style .git file pointing at a repository kept elsewhere, with no commit.
+        gitdir = tmp_path_factory.mktemp("separate") / "repo.git"
+        _git(work, "init", "-q", "-b", "trunk", f"--separate-git-dir={gitdir}")
+    else:
+        _git(work, "init", "-q", "-b", "trunk")
+        CONTENTS[request.param](work)
     yield work
 
 
