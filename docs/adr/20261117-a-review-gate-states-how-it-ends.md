@@ -18,26 +18,28 @@ be shown false but never shown true. Done then means "a reviewer found nothing t
 each repair reopens the question. One claim also bundled promises the user is owed with qualities
 that merit one careful look, so a polish finding kept the whole gate open.
 
-The owner's run records were mined before this decision: 25 `/do` runs, 13 in one product
+The user's run records were mined before this decision: 25 `/do` runs, 13 in one product
 repository whose pull requests get a second review by an automated reviewer, and 12 in
 repositories with no reviewer after the run. One AI grader classified each run's findings: A for
-a serious defect, B for a real issue with a concrete cost, C for polish. Later rounds produced 465
-code-review findings:
+a serious defect, B for a real issue with a concrete cost, C for polish, D for a false alarm.
+Later rounds produced 465 code-review findings:
 
 - 316 came from advisory dimensions alone, or concerned tests, fixtures, scripts or docs: A 0,
-  B 89, C 226. The count of A was 0 in both groups of repositories.
-- 149 came from defect-finders on product code and prompts: A 20, B 85, C 42.
+  B 89, C 226, D 1. The count of A was 0 in both groups of repositories.
+- 149 came from defect-finders on product code and prompts: A 20, B 85, C 42, D 2.
 
 In repositories with no later reviewer, full re-reads in later rounds were the only second look.
 They found 10 serious defects in original work that the first look had missed.
 
-The skill text already scoped continued looks to repairs (20261024, 20261028). The loop went on
+The skill text already scoped continued looks to repairs
+(20261024-gate-criteria-and-evidence-travel-with-execution,
+20261028-every-pull-request-fixes-what-its-work-meets-and-verification-converges). The loop went on
 for two reasons. First, the completion check reads only the goal block and the Manifest, never
 `/do`'s rules, and asked for a fresh full review of each new head. Second, a defect-finder on test
 scaffolding kept finding real holes in the code each repair added. On 2026-11-17 a ten-dimension
-gate on test code ran six full looks. The owner ended that loop by amending the gate's Evidence
-to "one full look, then a check of each repair". The completion check accepted that wording at
-once.
+gate on test code ran six full looks. The user ended that loop by amending the gate's Evidence to
+one full look, after which each repair gets a check rather than another review run. The
+completion check accepted that wording at once.
 
 ## Decision
 Every gate whose Evidence activates a review skill also states, in that Evidence, how it
@@ -83,13 +85,14 @@ written before this decision, re-verifies as before.
 - **Split by dimension role only (advisory looks once, defect-finders keep looking):** in the
   2026-11-17 run, `code-bugs` on test scaffolding drove every round after the first, so this
   split would not have ended that loop. What a gate judges matters, not only who judges it.
-- **No reviewer after the first look; each repair gets only its own check:** the mined runs show
-  in the first 14 runs mined it would have lost 6 serious findings, 4 of them bugs that
-  round-1 repairs introduced.
-- **Enforce today's rules more strictly:** the 90 polish findings fixed in late rounds were graded
-  Medium by their reviewers, so the rule that leaves below-bar findings never applied to them. The
+- **No reviewer after the first look; each repair gets only its own check:** in the first 14 runs
+  mined, it would have lost 6 serious findings, 4 of them bugs that round-1 repairs introduced.
+- **Enforce today's rules more strictly:** all 177 late polish findings in the first 14 runs mined
+  were graded Medium by their reviewers, so the rule that leaves below-bar findings never applied
+  to them. The
   completion check never read the rule.
-- **A stop rule by a count of rounds:** rejected again, as in 20260805 and 20261106. A count
+- **A stop rule by a count of rounds:** rejected again, as in 20260805-ratchet-judgment-gate-reverification and
+  20261106-review-evidence-serves-substantive-acceptance. A count
   cannot tell an unowed polish promise from an owed correctness repair.
 - **A fresh second look at product behavior on every run:** the user chose to take it only where
   no later review exists. Where a reviewer follows the run, it repeats a layer the repository

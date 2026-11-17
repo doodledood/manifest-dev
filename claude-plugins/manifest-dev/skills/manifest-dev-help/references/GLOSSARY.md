@@ -59,8 +59,9 @@ The same files always give the same result. `/do` runs it again in full each tim
 the gate. Its result does not change by chance, so it needs no Ratchet.
 
 ### Ratchet
-<!-- context: 050166094c61 -->
-The Ratchet is how `/do` examines a Judgment Gate again after a repair. The first evaluation reads
+<!-- context: fddd8f6bf11d -->
+The Ratchet is how `/do` examines a Judgment Gate again after a repair, when the gate states no
+form or is a look-again gate. The first evaluation reads
 the full change. Later evaluations check open findings and problems caused or exposed by the new
 changes. They carry the earlier criteria, subject state, and finding results. When the gate's
 criteria change, the next evaluation reads the full change again, so a wider gate cannot keep an
