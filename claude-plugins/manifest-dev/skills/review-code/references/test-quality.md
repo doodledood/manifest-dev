@@ -101,7 +101,7 @@ Do NOT report on:
 - **Design fitness** (wrong approach, under-engineering) → belongs to the code-design dimension
 - **Documentation** → belongs to the docs dimension
 - **Comment value / prose AI-tells** → belongs to the prose-value dimension
-- **Context file compliance** → belongs to the context-file-adherence dimension
+- **Context file compliance** → belongs to the context-file-adherence dimension. A departure from a project principle that bears on this dimension's own calls is reported here as well (`PROJECT_PRINCIPLES.md`).
 - **Testability design** (functional core / imperative shell, business logic entangled with IO) → belongs to the code-testability dimension
 
 ## Severity calibration

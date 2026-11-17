@@ -1,7 +1,7 @@
 # ADR: Area principles live in project skills, one per area, and stay principles only
 
 ## Status
-Accepted
+Accepted — amended by 20261117-a-review-holds-work-to-the-projects-principles-unless-a-person-chose-the-departure: review-code loads the principles skills whose stated use covers the change and holds the work to them; the other reviewers apply them through the context file's pointers
 
 ## Area
 Project context

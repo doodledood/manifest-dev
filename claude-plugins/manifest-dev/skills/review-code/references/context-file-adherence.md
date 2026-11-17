@@ -20,7 +20,7 @@ Use the active host's identity, loaded instructions, and configuration to establ
 - **Codex CLI**: ~/.codex/AGENTS.override.md → ~/.codex/AGENTS.md → AGENTS.override.md/AGENTS.md at each level from git root to CWD → configured fallbacks
 - **OpenCode**: AGENTS.md traversing upward from CWD to git root → ~/.config/opencode/AGENTS.md → opencode.json instructions field
 
-**Principles skills the context file points to** — project skills named `<area>-principles`, which `../SKILL.md` loads for the areas the change touches — are audited like outcome rules here. Flag a change that departs from one of their principles where the principle's yield condition does not hold, quoting the principle, and name any user's call the work records for that departure. A line in such a skill that is not a principle — a decision, a fact, a history note — is not a rule to audit; you offer no edit to the skill (`../../setup-project/references/PRINCIPLES_SKILLS.md` → *Using one*).
+**Principles skills the context file points to** are audited here for every principle, whichever dimension owns its call, so a departure no other dimension reports is still caught. Find, load and apply them as `PROJECT_PRINCIPLES.md` says. A finding on a principle quotes it with the path of its skill, names the departing text, and says why its yield is not shown and that no person's choice of the departure exists; that statement, not the word "might", is what makes the departure reportable. A line in such a skill that is not a principle — a decision, a fact, a history note — is not a rule to audit; you offer no edit to the skill (`../../setup-project/references/PRINCIPLES_SKILLS.md` → *Using one*).
 
 **Only audit against the context file for the CURRENT CLI.** Ignore stale context files from other CLIs (e.g., an unmaintained CLAUDE.md in a project that now uses Codex/AGENTS.md).
 
@@ -44,11 +44,11 @@ These rule categories are guidance, not exhaustive. If you identify a context-fi
 
 Before reporting a violation, it must pass ALL of:
 
-1. **Quotable rule** — You can quote the exact context-file text being broken and cite its source path. No quote, no finding.
+1. **Quotable rule** — You can quote the exact text of the context file or principles skill being broken and cite its path. No quote, no finding.
 2. **Outcome rule, not process** — The rule affects the files being committed, not how the developer works.
-3. **Explicitly specified** — The naming convention, pattern, or documentation requirement is EXPLICITLY stated in a context file. General best practices belong to other dimensions, not here.
+3. **Explicitly specified** — The naming convention, pattern, or documentation requirement is EXPLICITLY stated in a context file, or is a principle in a principles skill it points to, applied to the calls it bears on. General best practices belong to other dimensions, not here.
 4. **Introduced by this change** — Flag violations in changed code, not pre-existing violations the change didn't introduce.
-5. **Authorized exception** — A suppression or documented trade-off excuses a violation only when the rule's authority permits that exception. An implementation comment alone cannot waive a project obligation.
+5. **Authorized exception** — A suppression or documented trade-off excuses a violation only when the rule's authority permits that exception. An implementation comment alone cannot waive a project obligation. For a principle, the exceptions are a shown yield and a person's choice of the departure, as `PROJECT_PRINCIPLES.md` defines them. A record the change itself adds is not a person's choice, and its claim that a yield holds is not evidence; evidence it cites still counts.
 
 ## Out of scope (belongs to a sibling dimension)
 
@@ -68,15 +68,15 @@ Do NOT report on:
 
 ## Severity calibration
 
-Use the shared ladder. Violating an explicit binding requirement is High even when the rule concerns style, naming or structure. A concrete must-fix consistency or contributor burden is Medium. Polish or nits of any kind are Low, including departures from advisory preferences.
+Use the shared ladder. Violating an explicit binding requirement is High even when the rule concerns style, naming or structure. A principle in a loaded principles skill is such a requirement, not an advisory preference: an unchosen departure from it is High. A concrete must-fix consistency or contributor burden is Medium. Polish or nits of any kind are Low, including departures from advisory preferences.
 
 ## Dimension-specific report fields
 
 Beyond the shared report skeleton, every finding for this dimension MUST cite the rule it breaks:
 
 - **Violation**: clear explanation of what rule was broken
-- **Context File Rule**: "<exact quote from the context file>"
-- **Source**: path to the context file
+- **Context File Rule**: "<exact quote from the context file or the principles skill>"
+- **Source**: path to the context file or the principles skill
 - **Impact**: why this matters for the project
 - **Recommended fix**: concrete change that brings the code into compliance
 

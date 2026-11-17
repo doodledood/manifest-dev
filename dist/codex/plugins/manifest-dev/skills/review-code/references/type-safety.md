@@ -73,7 +73,7 @@ Whether a null check is *correct at runtime* (will it crash?) belongs to the cod
 - **Semantic overloading of concepts** (an enum used for a purpose it wasn't designed for) → the code-design dimension's concept purity. Naming collisions are narrower than this.
 - **Documentation accuracy** → the docs dimension.
 - **Test coverage gaps** → the test-quality dimension.
-- **Context file compliance** → the context-file-adherence dimension.
+- **Context file compliance** → the context-file-adherence dimension. A departure from a project principle that bears on this dimension's own calls is reported here as well (`PROJECT_PRINCIPLES.md`).
 
 ## Severity calibration
 

@@ -1,7 +1,7 @@
 # ADR: Design-time probes cover what the reviewers can know, and every shipped default yields to the user's and the project's rules
 
 ## Status
-Accepted
+Accepted — narrowed by 20261117-a-review-holds-work-to-the-projects-principles-unless-a-person-chose-the-departure: a project principle also raises findings where a shipped default raises none
 
 ## Area
 Task guidance

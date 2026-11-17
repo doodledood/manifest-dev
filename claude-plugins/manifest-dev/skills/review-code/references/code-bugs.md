@@ -121,7 +121,7 @@ Do NOT report on (owned by other dimensions):
 - **Documentation quality** → the docs dimension
 - **Test coverage gaps** → the test-quality dimension
 - **Testability design** (hard to test, mock friction) → the code-testability dimension
-- **Context file compliance** → the context-file-adherence dimension
+- **Context file compliance** → the context-file-adherence dimension. A departure from a project principle that bears on this dimension's own calls is reported here as well (`PROJECT_PRINCIPLES.md`).
 - Security vulnerabilities requiring static analysis (injection, auth design) → separate security audit
 - Performance optimizations (unless causing functional bugs)
 

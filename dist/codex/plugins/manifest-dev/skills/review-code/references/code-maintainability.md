@@ -44,7 +44,7 @@ Do NOT report on these — they belong elsewhere:
 - **API contract correctness** (wrong params, consumer breakage) → the contracts dimension.
 - **Test coverage gaps** → the test-quality dimension.
 - **Comment value / prose AI-tells in comments and doc files** (this dimension owns dead-code identification; value-of-comment lives with the prose auditor) → the prose-value dimension.
-- **Context file compliance** → the context-file-adherence dimension.
+- **Context file compliance** → the context-file-adherence dimension. A departure from a project principle that bears on this dimension's own calls is reported here as well (`PROJECT_PRINCIPLES.md`).
 - **Design fitness** (reinvented wheels, code vs configuration boundary, under-engineering, interface foresight, concept misuse/overloading) → the code-design dimension.
 
 ## Scope notes specific to this dimension

@@ -146,3 +146,80 @@ def test_a_principle_holds_unless_the_person_chose_the_departure() -> None:
         assert "chose the departure" in text, where
         assert "the one change that restores what was asked" in text, where
         assert "whether the principle has moved or this is an exception" in text, where
+
+
+TOOLS_SKILLS = ROOT / "claude-plugins" / "manifest-dev-tools" / "skills"
+REVIEW_CODE = SKILLS / "review-code" / "SKILL.md"
+REVIEW_CODE_RULE = SKILLS / "review-code" / "references" / "PROJECT_PRINCIPLES.md"
+REVIEWERS = (
+    REVIEW_CODE,
+    SKILLS / "review-design" / "SKILL.md",
+    SKILLS / "review-writing" / "SKILL.md",
+    TOOLS_SKILLS / "review-prompt" / "SKILL.md",
+)
+# The paragraph opens and closes on these; everything between them must match word for word.
+REVIEW_RULE = re.compile(
+    r"A\s+project's\s+principles\s+skills\s+are\s+project\s+skills\s+named\s.*?"
+    r"naming\s+the\s+principle\s+that\s+produced\s+it\.",
+    re.S,
+)
+
+
+def review_rule(path: Path) -> str:
+    match = REVIEW_RULE.search(path.read_text(encoding="utf-8"))
+    assert match, f"{path.relative_to(ROOT)} lost the review rule for principles skills"
+    return " ".join(match.group(0).split())
+
+
+def test_review_code_carries_the_review_rule_word_for_word() -> None:
+    """A review holds work to the project's principles unless a person chose the departure, and a
+    record the change adds is its case, not that choice. review-code runs alone, so it carries the
+    rule in a reference its body loads only where the project points to principles skills; the
+    method states it too. The two copies must not drift apart.
+
+    Holds docs/adr/20261117-a-review-holds-work-to-the-projects-principles-unless-a-person-chose-the-departure.md.
+    """
+    method = review_rule(METHOD)
+    for marker in (
+        "A principle holds unless its yield is shown or a person chose the departure.",
+        "is its case, not a person's choice",
+        "never grade it Low",
+        "count it against acceptance",
+        "outrank the review's general standards in both directions",
+        "whatever the skill holding it is called",
+        "the work's own assertion that it holds does not",
+        "anything the run that produced the change wrote",
+        "until then the work departs, unless a person chose the departure",
+        "a condition the evidence leaves open or arguable is not shown",
+        "for a line the work under review cannot show either way",
+    ):
+        assert marker in method, f"the review rule lost {marker!r}"
+    assert (
+        review_rule(REVIEW_CODE_RULE) == method
+    ), "review-code carries a review rule that differs from the method's"
+    body = " ".join(REVIEW_CODE.read_text(encoding="utf-8").split())
+    assert (
+        "also load `references/PROJECT_PRINCIPLES.md` and follow it" in body
+    ), "review-code's body no longer loads its review rule for principles skills"
+
+
+def test_no_review_skill_picks_principles_by_area_name() -> None:
+    """Projects name their areas freely, so a review finds principles skills by their pointers and
+    stated use. This catches the common slip, a review file naming one of the usual area skills.
+
+    Holds docs/adr/20261117-a-review-holds-work-to-the-projects-principles-unless-a-person-chose-the-departure.md.
+    """
+    named = re.compile(
+        r"`(?:design|code|prompt|writing|architecture|product)-principles`"
+    )
+    review_files = [
+        *REVIEWERS,
+        *sorted((SKILLS / "review-code" / "references").glob("*.md")),
+        *sorted(TOOLS_SKILLS.glob("review-pr*/SKILL.md")),
+    ]
+    hits = [
+        str(p.relative_to(ROOT))
+        for p in review_files
+        if named.search(p.read_text(encoding="utf-8"))
+    ]
+    assert not hits, f"these review files select principles by an area name: {hits}"

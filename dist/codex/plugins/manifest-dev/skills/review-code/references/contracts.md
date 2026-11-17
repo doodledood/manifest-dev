@@ -113,7 +113,7 @@ Do NOT report on — these belong to other dimensions:
 - **Design fitness** (wrong approach, reinvented wheels) → the code-design dimension
 - **Test coverage gaps** → the test-quality dimension
 - **Documentation accuracy** → the docs dimension
-- **Context file compliance** → the context-file-adherence dimension
+- **Context file compliance** → the context-file-adherence dimension. A departure from a project principle that bears on this dimension's own calls is reported here as well (`PROJECT_PRINCIPLES.md`).
 
 **Key distinctions from neighboring dimensions:**
 - **code-bugs** asks: "Will this code crash or produce wrong output?" (runtime defects). This dimension asks: "Does this code match the API's documented contract?"

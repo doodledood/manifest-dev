@@ -78,7 +78,7 @@ Do NOT report on:
 - **Type safety** (any/unknown, invalid states) → belongs to the type-safety dimension
 - **Documentation accuracy** → belongs to the docs dimension
 - **Test coverage gaps** → belongs to the test-quality dimension
-- **Context file compliance** → belongs to the context-file-adherence dimension
+- **Context file compliance** → belongs to the context-file-adherence dimension. A departure from a project principle that bears on this dimension's own calls is reported here as well (`PROJECT_PRINCIPLES.md`).
 
 **Key distinction from maintainability:**
 

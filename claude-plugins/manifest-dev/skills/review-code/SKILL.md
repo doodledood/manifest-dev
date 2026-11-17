@@ -14,7 +14,7 @@ Audit a change along **one** review dimension and report findings. Load only tha
 
 ## Dimensions
 
-Before reviewing a change in a project, read the project context file's pointers to principles skills — project skills named `<area>-principles` holding how the project's people want one area's work done — and load each one for an area the change touches (`../setup-project/references/PRINCIPLES_SKILLS.md` → *Using one*). Load `references/<dimension>.md` for the requested dimension and follow it. Its standards are opinionated defaults: where a rule the user stated, in the session or a context file, a principle in a loaded principles skill, or a convention the project states or documents (not a pattern its code merely repeats) differs, that rule governs, a change following it raises no finding, and the report names the rule applied — except a Critical finding on the ladder below, which is still reported, naming the rule that produced it. Classify findings by consequence; the caller chooses the acceptance threshold and handling policy.
+Load `references/<dimension>.md` for the requested dimension and follow it. Its standards are opinionated defaults: where a rule the user stated, in the session or a context file, or a convention the project states or documents (not a pattern its code merely repeats) differs, that rule governs, a change following it raises no finding, and the report names the rule applied — except a Critical finding on the ladder below, which is still reported, naming the rule that produced it. Where the project context file points to principles skills — project skills named `<area>-principles`, whatever the area word (`../setup-project/references/PRINCIPLES_SKILLS.md`) — also load `references/PROJECT_PRINCIPLES.md` and follow it: a project's principles govern a review in both directions. Classify findings by consequence; the caller chooses the acceptance threshold and handling policy.
 
 | Dimension | Reference | Role |
 |-----------|-----------|------|
@@ -115,6 +115,9 @@ remains unresolved.
 - **Trigger**: [the condition under which the defect manifests — the concrete input, state, or sequence that produces the failure, or for a static mismatch such as a contract or signature divergence, the call or consumer path that reaches it — required on defect-finder dimensions]
 - **Impact**: [what it breaks / why it matters — a Medium finding must name the concrete cost that earns that grade: the future change it makes harder, the reader or operator task it defeats, or the condition under which behavior degrades]
 - **Recommended fix**: [specific change]
+
+## Project principles (only where a loaded principles skill covers the change)
+- [principle, quoted short]: followed | yield shown — [evidence] | departure chosen — [who, where] | departs — Finding #N | not judgeable (the work cannot show this line either way)
 
 ## Pre-existing (only when the caller asked, on a fresh full look)
 - [title] — `file:line` — [the issue, with its trigger or cost] — [recommended fix]

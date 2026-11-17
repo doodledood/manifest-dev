@@ -1,7 +1,7 @@
 # ADR: An unattended run keeps to a principle over a conflicting request
 
 ## Status
-Accepted
+Accepted — extended to reviews by 20261117-a-review-holds-work-to-the-projects-principles-unless-a-person-chose-the-departure
 
 ## Area
 Project context

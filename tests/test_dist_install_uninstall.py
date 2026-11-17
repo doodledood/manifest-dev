@@ -100,7 +100,8 @@ def test_codex_core_plugin_bundles_code_review_with_all_dimensions() -> None:
         / "review-code"
         / "references"
     )
-    dimensions = {p.stem for p in refs.glob("*.md")}
+    # Upper-case names are shared references, such as PROJECT_PRINCIPLES.md; the rest are dimensions.
+    dimensions = {p.stem for p in refs.glob("*.md") if not p.stem.isupper()}
     assert dimensions == {
         "change-intent",
         "code-bugs",
