@@ -5,10 +5,7 @@
 # never writes. Every branch's members carry a phone number. The base the review-code and review-pr
 # principles scenarios branch from.
 set -euo pipefail
-if [ -n "$(ls -A | grep -vx .git)" ]; then
-  echo "scaffold: run in an empty directory; it builds its own repository here" >&2
-  exit 1
-fi
+. "$(dirname "${BASH_SOURCE[0]}")/../../scaffold-guard.sh"
 git init -q
 git branch -M main
 git config user.name 'Mara Okafor'

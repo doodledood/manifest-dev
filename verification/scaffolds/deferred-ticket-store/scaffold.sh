@@ -4,6 +4,7 @@
 # whose source shows its condition met, shows it unmet, or cannot be read. The next-ticket and
 # orchestrate recipes' deferred scenarios and the figure-out recipe's strategy-signpost scenario.
 set -euo pipefail
+. "$(dirname "${BASH_SOURCE[0]}")/../../scaffold-guard.sh"
 mkdir -p tickets/club docs/adr signals src
 cat > CLAUDE.md <<'EOF'
 # Shelfnote

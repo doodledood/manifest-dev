@@ -2,6 +2,7 @@
 # Tablewise, a restaurant-booking web app with its own page patterns: design's
 # variants-of-an-experience-choice scenario prototypes a new flow on it.
 set -euo pipefail
+. "$(dirname "${BASH_SOURCE[0]}")/../../scaffold-guard.sh"
 mkdir -p pages
 cat > README.md <<'EOF'
 # Tablewise

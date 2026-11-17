@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # A Shelfnote project recording surfaces v1: the setup-project and figure-out recipes' from-v1 scenarios.
 set -euo pipefail
+. "$(dirname "${BASH_SOURCE[0]}")/../../scaffold-guard.sh"
 mkdir -p docs/adr src tests verify/features
 cat > CLAUDE.md <<'EOF'
 # Shelfnote

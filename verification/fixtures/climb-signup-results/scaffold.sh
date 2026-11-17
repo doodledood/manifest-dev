@@ -2,6 +2,7 @@
 # The sign-up page after an earlier climb: its record as carried in the pull request
 # description, its two leading versions, and the results of the A/B test that ran on them.
 set -euo pipefail
+. "$(dirname "${BASH_SOURCE[0]}")/../../scaffold-guard.sh"
 # Copy the fixture tree, minus bytecode a local test run may have left in it.
 cp -R "$DRIVE_CHECKOUT/verification/fixtures/climb-signup-page/files/." .
 find . -name __pycache__ -type d -prune -exec rm -rf {} +

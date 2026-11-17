@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
+. "$(dirname "${BASH_SOURCE[0]}")/../../scaffold-guard.sh"
 fixture=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 cp "$fixture"/{README.md,store.py,payments.py,shipping.py,delivery.py,refunds.py} .
 git branch -M main

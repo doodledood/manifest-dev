@@ -3,6 +3,7 @@
 # commit with no record narrowed it to item ids. A principles skill, pointed to in the project's own
 # words under an area word no reviewer carries, holds a reuse line. Run inside an empty repository.
 set -euo pipefail
+. "$(dirname "${BASH_SOURCE[0]}")/../../scaffold-guard.sh"
 git branch -M main
 git config user.name 'Rui Santos'
 git config user.email 'rui@branchline.example'

@@ -2,6 +2,7 @@
 # The principles-from-history project with a settled design-principles skill and its pointer line:
 # the define, figure-out and review-code recipes' principles scenarios.
 set -euo pipefail
+. "$(dirname "${BASH_SOURCE[0]}")/../../scaffold-guard.sh"
 bash "$(dirname "$0")/../principles-from-history/scaffold.sh"
 mkdir -p .claude/skills/design-principles
 cat > .claude/skills/design-principles/SKILL.md <<'EOF'

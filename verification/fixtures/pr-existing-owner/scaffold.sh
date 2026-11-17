@@ -4,6 +4,7 @@
 # keep, with its own design note and Accepted record; ordinary/ adds an opening-hours module that
 # no existing code owns.
 set -euo pipefail
+. "$(dirname "${BASH_SOURCE[0]}")/../../scaffold-guard.sh"
 cat > .gitignore <<'IGNORE'
 /parallel/
 /ordinary/

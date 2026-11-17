@@ -7,6 +7,7 @@
 # cannot show. A code comment writes a number as a word, which only outreach-principles, whose
 # stated use does not cover code, would object to.
 set -euo pipefail
+. "$(dirname "${BASH_SOURCE[0]}")/../../scaffold-guard.sh"
 bash "$(dirname "$0")/../principles-shelfmark/scaffold.sh"
 git switch -qc feature/monthly-statements
 git config user.name 'Jonas Pike'

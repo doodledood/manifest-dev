@@ -3,10 +3,7 @@
 # corrections with stated reasons, one design decision a record settles, one design reaction with
 # no reason, and one stray storage comment: the create-principles-skill recipe's fixture.
 set -euo pipefail
-if [ -n "$(ls -A | grep -vx .git)" ]; then
-  echo "scaffold: run in an empty directory; it builds its own repository here" >&2
-  exit 1
-fi
+. "$(dirname "${BASH_SOURCE[0]}")/../../scaffold-guard.sh"
 git init -q
 commit() { git -c user.name="Dana Reyes" -c user.email=dana@pollbox.example add -A && git -c user.name="Dana Reyes" -c user.email=dana@pollbox.example commit -q "$@"; }
 mkdir -p src/templates docs/adr docs/reviews tests

@@ -3,10 +3,7 @@
 # defaults, one preference a shipped default already states, one choice a decision record settles,
 # and one correction with no stated reason: the setup-project recipe's taste-from-history scenario.
 set -euo pipefail
-if [ -n "$(ls -A | grep -vx .git)" ]; then
-  echo "scaffold: run in an empty directory; it builds its own repository here" >&2
-  exit 1
-fi
+. "$(dirname "${BASH_SOURCE[0]}")/../../scaffold-guard.sh"
 git init -q
 commit() { git -c user.name="Dana Reyes" -c user.email=dana@pollbox.example add -A && git -c user.name="Dana Reyes" -c user.email=dana@pollbox.example commit -q "$@"; }
 mkdir -p src docs/adr docs/reviews tests

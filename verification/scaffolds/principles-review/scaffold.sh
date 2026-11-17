@@ -3,6 +3,7 @@
 # a default, and an uncommitted change that follows that principle and departs from a design one:
 # the review-code recipe's principles scenario.
 set -euo pipefail
+. "$(dirname "${BASH_SOURCE[0]}")/../../scaffold-guard.sh"
 bash "$(dirname "$0")/../principles-in-place/scaffold.sh"
 mkdir -p .claude/skills/architecture-principles src/exports src/notify
 cat > .claude/skills/architecture-principles/SKILL.md <<'EOF'

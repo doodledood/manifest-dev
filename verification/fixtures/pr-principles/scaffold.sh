@@ -4,6 +4,7 @@
 # touched principles are each followed, have a shown yield or a chosen departure, or cannot be shown
 # by the change.
 set -euo pipefail
+. "$(dirname "${BASH_SOURCE[0]}")/../../scaffold-guard.sh"
 cat > .gitignore <<'IGNORE'
 /departs/
 /holds/

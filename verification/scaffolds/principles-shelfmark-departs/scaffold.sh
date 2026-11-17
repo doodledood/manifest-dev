@@ -5,6 +5,7 @@
 # own decision record declares the other branches out of scope and claims the first line's yield
 # on that ground alone; no person with authority chose the departure.
 set -euo pipefail
+. "$(dirname "${BASH_SOURCE[0]}")/../../scaffold-guard.sh"
 bash "$(dirname "$0")/../principles-shelfmark/scaffold.sh"
 git switch -qc feature/central-sms
 git config user.name 'Jonas Pike'
