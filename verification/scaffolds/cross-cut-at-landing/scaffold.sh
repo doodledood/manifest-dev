@@ -7,7 +7,6 @@
 # The run-ticket recipe's cross-cut scenario.
 set -euo pipefail
 . "$(dirname "${BASH_SOURCE[0]}")/../../scaffold-guard.sh"
-git init -q
 git config user.name "Sam Okafor"
 git config user.email sam@shelfnote.example
 git checkout -q -B main

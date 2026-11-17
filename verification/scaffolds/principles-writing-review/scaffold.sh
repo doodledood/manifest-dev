@@ -5,7 +5,6 @@
 # draft's own note claims that line's yield, which its steps do not bear out.
 set -euo pipefail
 . "$(dirname "${BASH_SOURCE[0]}")/../../scaffold-guard.sh"
-git init -q
 git branch -M main
 git config user.name "Sam Okoro"
 git config user.email "sam@frontdesk.example"

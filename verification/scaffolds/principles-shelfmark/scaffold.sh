@@ -6,7 +6,6 @@
 # principles scenarios branch from.
 set -euo pipefail
 . "$(dirname "${BASH_SOURCE[0]}")/../../scaffold-guard.sh"
-git init -q
 git branch -M main
 git config user.name 'Mara Okafor'
 git config user.email 'mara@shelfmark.example'

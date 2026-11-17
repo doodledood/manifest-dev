@@ -6,7 +6,6 @@
 # red-base scenario.
 set -euo pipefail
 . "$(dirname "${BASH_SOURCE[0]}")/../../scaffold-guard.sh"
-git init -q
 git config user.name "Shelfnote Automation"
 git config user.email automation@shelfnote.example
 git checkout -q -B main

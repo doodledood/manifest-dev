@@ -3,7 +3,9 @@
 A scaffold writes its project into the current directory. Run by hand inside a checkout, one renamed
 the checkout's branch and overwrote its context file before failing. Every scaffold and fixture
 script sources verification/scaffold-guard.sh first, which refuses a directory holding anything but
-.git and gives an empty one a repository of its own.
+.git and gives an empty one a repository of its own. The eval-case scaffolds under
+claude-plugins/manifest-dev/evals are outside this check; scaffold-guard.sh says why and what would
+close them.
 """
 
 from __future__ import annotations
@@ -26,26 +28,47 @@ SCRIPTS = sorted(
 
 
 def _env(home: Path) -> dict[str, str]:
-    env = {**os.environ, "HOME": str(home)}
-    env.pop("MANIFEST_DEV_SCAFFOLD_NESTED", None)
-    return env
+    return {**os.environ, "HOME": str(home)}
+
+
+def _one_file(work: Path) -> None:
+    (work / "keep.txt").write_text("mine\n", encoding="utf-8")
+
+
+def _one_dot_file(work: Path) -> None:
+    (work / ".env").write_text("mine\n", encoding="utf-8")
+
+
+def _many_files(work: Path) -> None:
+    # Enough entries that a check reading them through a pipe would be cut off early.
+    for n in range(5000):
+        (work / f"f{n}").touch()
+
+
+CONTENTS = {
+    "one file": _one_file,
+    "a dot-file": _one_dot_file,
+    "many files": _many_files,
+}
 
 
 def test_the_scripts_were_found() -> None:
     assert len(SCRIPTS) > 50, "the verification scaffolds were not found"
 
 
+@pytest.mark.parametrize("contents", CONTENTS)
 @pytest.mark.parametrize(
     "script", SCRIPTS, ids=lambda p: p.relative_to(VERIFICATION).as_posix()
 )
 def test_a_scaffold_refuses_a_directory_that_holds_anything(
-    script: Path, tmp_path: Path
+    script: Path, contents: str, tmp_path: Path
 ) -> None:
     work, home = tmp_path / "work", tmp_path / "home"
     work.mkdir()
     home.mkdir()
     subprocess.run(["git", "init", "-q"], cwd=work, check=True)
-    (work / "keep.txt").write_text("mine\n", encoding="utf-8")
+    CONTENTS[contents](work)
+    before = sorted(p.name for p in work.iterdir())
     result = subprocess.run(
         ["bash", str(script)],
         cwd=work,
@@ -56,8 +79,7 @@ def test_a_scaffold_refuses_a_directory_that_holds_anything(
     )
     assert result.returncode != 0, f"{script.name} ran in a directory holding a file"
     assert "run in an empty directory" in result.stderr
-    assert sorted(p.name for p in work.iterdir()) == [".git", "keep.txt"]
-    assert (work / "keep.txt").read_text(encoding="utf-8") == "mine\n"
+    assert sorted(p.name for p in work.iterdir()) == before
     refs = subprocess.run(
         ["git", "for-each-ref"], cwd=work, capture_output=True, text=True, check=True
     )

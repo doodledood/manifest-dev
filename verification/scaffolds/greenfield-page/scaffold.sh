@@ -3,7 +3,6 @@
 # recipe's greenfield-principles scenario.
 set -euo pipefail
 . "$(dirname "${BASH_SOURCE[0]}")/../../scaffold-guard.sh"
-git init -q
 mkdir -p site
 cat > README.md <<'EOF'
 # Tidepool

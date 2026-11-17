@@ -4,7 +4,6 @@
 # no reason, and one stray storage comment: the create-principles-skill recipe's fixture.
 set -euo pipefail
 . "$(dirname "${BASH_SOURCE[0]}")/../../scaffold-guard.sh"
-git init -q
 commit() { git -c user.name="Dana Reyes" -c user.email=dana@pollbox.example add -A && git -c user.name="Dana Reyes" -c user.email=dana@pollbox.example commit -q "$@"; }
 mkdir -p src/templates docs/adr docs/reviews tests
 cat > README.md <<'EOF'

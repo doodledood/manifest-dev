@@ -152,6 +152,21 @@ def test_a_principle_holds_unless_the_person_chose_the_departure() -> None:
 
 REVIEW_CODE = SKILLS / "review-code" / "SKILL.md"
 REVIEW_CODE_RULE = SKILLS / "review-code" / "references" / "PROJECT_PRINCIPLES.md"
+# The dimensions whose out-of-scope list sends project rules to context-file-adherence; each still
+# reports a principle departure that bears on its own calls.
+OWNING_DIMENSIONS = (
+    "change-intent",
+    "code-bugs",
+    "code-design",
+    "code-maintainability",
+    "code-simplicity",
+    "code-testability",
+    "contracts",
+    "docs",
+    "prose-value",
+    "test-quality",
+    "type-safety",
+)
 # The shared review paragraph opens and closes on these; everything between them must match word for
 # word. review-code's copy opens with two sentences of its own (which dimension reports a departure;
 # its grade), which this pattern leaves out; the test asserts both separately.
@@ -202,11 +217,15 @@ def test_review_code_carries_the_review_rule_word_for_word() -> None:
         "the dimension that owns a principle's call reports a departure from it, and "
         "`context-file-adherence` covers every principle" in own
     ), "review-code no longer says which dimension reports a departure"
-    owner = SKILLS / "review-code" / "references" / "code-design.md"
-    assert (
-        "Where `PROJECT_PRINCIPLES.md` is loaded, a departure from one of its principles"
-        in (" ".join(owner.read_text(encoding="utf-8").split()))
-    ), "code-design no longer reports a departure from a principle bearing on its own calls"
+    pointer = (
+        "Where `PROJECT_PRINCIPLES.md` is loaded, a departure from one of its principles that "
+        "bears on this dimension's own calls is reported here as well."
+    )
+    for name in OWNING_DIMENSIONS:
+        reference = SKILLS / "review-code" / "references" / f"{name}.md"
+        assert pointer in " ".join(
+            reference.read_text(encoding="utf-8").split()
+        ), f"{name} no longer reports a departure from a principle bearing on its own calls"
     assert (
         "Whichever dimension reports an unchosen departure, it is a broken binding requirement: High"
         in own

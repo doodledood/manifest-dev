@@ -5,7 +5,6 @@
 # line's yield, which its 14 rows contradict.
 set -euo pipefail
 . "$(dirname "${BASH_SOURCE[0]}")/../../scaffold-guard.sh"
-git init -q
 git branch -M main
 git config user.name "Ida Lund"
 git config user.email "ida@lendo.example"
