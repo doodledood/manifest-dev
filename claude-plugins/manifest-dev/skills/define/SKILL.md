@@ -332,8 +332,8 @@ claim never reads as done on its own. Place it by what is owed; split a gate who
 on both sides. The claim stays about the artifact.
 
 - **Look again** — product behavior: the Outcome, behaviors the Manifest names, safety
-  obligations, and defect-finding dimensions on code and prompts the project ships or deploys,
-  never its tests, fixtures, scripts or tooling. After each repair batch it takes a continued
+  obligations, and defect-finding dimensions (the review skill's role table names them) on code
+  and prompts the project ships or deploys, never its tests, fixtures, scripts or tooling. After each repair batch it takes a continued
   look. Where the Manifest names no later review, its Evidence also names one fresh full look by
   its defect-finding dimensions at the finished change, once its continued looks report nothing
   outstanding; that look's findings get fixes and repair checks, and no further fresh look
