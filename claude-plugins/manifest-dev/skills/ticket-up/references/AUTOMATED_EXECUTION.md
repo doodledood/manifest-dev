@@ -147,7 +147,7 @@ adds a second one. It holds:
 
 Progress carries the assessed criteria and actual subject, including relevant external state;
 Outcome and gate verdicts with reachable evidence and known staleness; which judgment gates
-took their full look; findings, supported dispositions and verified repairs; the accepted source
+took their full look, and which look-again gates took any fresh look their Evidence names; findings, supported dispositions and verified repairs; the accepted source
 of each repair promise, attempts and outcomes across finding IDs; mandatory build work and its
 disposition; decisions, amendments and what remains. Keep this in the attempt record, not a
 second log the next runner cannot reach. A verdict or commit identifier alone is insufficient.

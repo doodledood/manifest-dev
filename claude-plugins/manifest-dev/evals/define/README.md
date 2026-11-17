@@ -1,5 +1,11 @@
 # define eval suite
 
+**Review-gate form change, 2026-11-17: every measurement remains stale.** A review gate's Evidence
+now states whether it looks once or looks again, and a look-again gate takes one fresh
+defect-finder look where the Manifest names no later review. The `review-gate-ends` scenarios in
+`verification/recipes/define.md` and `look-once-settles` in `verification/recipes/do.md` drive
+it; no suite has run for this change.
+
 **Principles-audit change, 2026-11-09: every measurement remains stale.** define's Amendment and
 Taste-on-reversal text moved to references, its digest opens with what needs the person, several
 task files changed, and a request that conflicts with a project principle now keeps to the

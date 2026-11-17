@@ -31,7 +31,9 @@ or working — the agent's operational interpretation and the outcome it serves.
 Split claims of different authority into separate gates.]
 
 Evidence: [The current method for assessing the claim: observations, commands, artifacts or a
-skill and dimension. This method is revisable; it cannot silently add or weaken a requirement.]
+skill and dimension; for a review gate, also how it re-verifies after repairs, as `SKILL.md` →
+*A review gate states how it ends* says. This method is revisable; it cannot silently add or
+weaken a requirement.]
 
 Why: [optional context, binds nothing — omit where the body already carries it]
 

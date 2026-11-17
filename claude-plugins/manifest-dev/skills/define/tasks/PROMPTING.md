@@ -13,7 +13,8 @@ Claims state these qualities for the prompt's intended use. Evidence activates `
 with dimension `change-intent` and `review-prompt` for prompt quality, passing the claims and any
 deliberately required policy, as `SKILL.md` → *Specialized gates activate a skill* says. Reviewer
 grades inform those judgments. Both are Judgment Gates, assessed from findings and evidence
-rather than a command outcome.
+rather than a command outcome. Each states how it ends, as `SKILL.md` → *A review gate states how
+it ends* says: intent on a shipped prompt looks again; prompt quality looks once.
 
 When `review-prompt` is unavailable, assess the quality claim yourself: the prompt states its
 goal, each line carries a user ruling, knowledge outside the run's reach or a model default it

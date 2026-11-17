@@ -169,7 +169,7 @@ A Manifest has six sections, each with its own ID scheme:
 | Known Assumptions | Items resolved with a recorded default | `ASM-{N}` |
 | Deliverables | Work items with their criteria, least-proven first | `AC-{D}.{N}` |
 
-Each gate states its authority, claim, evidence method and kind. A hard claim names its actual source; a working claim names the outcome it serves. Evidence methods remain revisable unless explicitly required. The kind tells `/do` how to re-verify it.
+Each gate states its authority, claim, evidence method and kind. A hard claim names its actual source; a working claim names the outcome it serves. Evidence methods remain revisable unless explicitly required. The kind tells `/do` how to re-verify it, and a review gate's Evidence says whether it looks once (one full look, then a check of each repair) or looks again after each repair.
 
 ## Example manifest
 

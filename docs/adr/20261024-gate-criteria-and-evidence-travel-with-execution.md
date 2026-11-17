@@ -1,7 +1,7 @@
 # ADR: Gate criteria and evidence travel with execution
 
 ## Status
-Accepted
+Accepted; amended by 20261117-a-review-gate-states-how-it-ends: a look-once gate's continuation checks each repair rather than taking a continued review
 
 ## Area
 define / do

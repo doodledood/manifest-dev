@@ -190,8 +190,12 @@ A gate whose verdict comes from a command or check that returns the same outcome
 _Avoid_: Binary gate.
 
 **Ratchet**:
-A re-verification discipline for Judgment Gates where the first evaluation reads the full change and later evaluations, under unchanged criteria, check outstanding findings and failures introduced or exposed by subsequent changes; a change to a gate's criteria starts a new full look. Applicable criteria, subject state, and finding dispositions travel with the evaluation. This bounds repeat searches without suppressing independently supplied evidence of a relevant failure.
+A re-verification discipline for Judgment Gates that state no form, and for a look-again gate's continued looks, where the first evaluation reads the full change and later evaluations, under unchanged criteria, check outstanding findings and failures introduced or exposed by subsequent changes; a change to a gate's criteria starts a new full look. Applicable criteria, subject state, and finding dispositions travel with the evaluation. This bounds repeat searches without suppressing independently supplied evidence of a relevant failure.
 _Avoid_: Round cap, round limit.
+
+**Look Once / Look Again**:
+The two ways a review gate's Evidence states it ends: a look-once gate takes one full look at the change as built and then only checks each repair, and a look-again gate keeps the Ratchet's continued looks, plus one fresh defect-finder look at the finished change where the Manifest names no later review.
+_Avoid_: Advisory gate, blocking gate.
 
 **Skill**:
 A reusable capability that extends an agent's behavior.
@@ -346,8 +350,8 @@ _Avoid_: Ticket sweep, batch runner, scheduler.
 - `/do` owns the **Do/Verify Loop**: it implements **Deliverables**, judges the **Outcome** and failed-or-unverified **Acceptance Criteria** and **Global Invariants** against the evidence each names, repairs FAILs, and routes BLOCKED gates.
 - Every gate evaluation returns PASS, FAIL, or BLOCKED with the concrete evidence behind it.
 - Every **Acceptance Criterion** and **Global Invariant** is either a **Judgment Gate** or a **Deterministic Gate**; the kind is a property of the gate itself, declared in its **Gate Text**.
-- The **Ratchet** governs how the **Do/Verify Loop** re-verifies **Judgment Gates** after repairs; **Deterministic Gates** re-run freely.
-- The **Ratchet** is run-level `/do` behavior, never **Manifest** content.
+- The **Ratchet** governs how the **Do/Verify Loop** re-verifies **Judgment Gates** that state no form, and a look-again gate's continued looks, after repairs; **Deterministic Gates** re-run freely.
+- The **Ratchet** is run-level `/do` behavior; a review gate's Evidence places the gate on the **Look Once** or **Look Again** side, and `/do` follows that statement.
 - The **Outcome** and hard claims change only with their source's authorization. Working claims and evidence methods may be amended through `define` on evidence that the replacement better serves the unchanged Outcome and hard requirements; affected verdicts become unverified.
 - A **Skill** may invoke other **Skills** and may run through host **Agent** contexts.
 - A **Host Continuation Backstop** is an outer guard for unattended runs; it does not replace the **Do/Verify Loop**.

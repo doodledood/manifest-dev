@@ -2,10 +2,12 @@
 
 Behavior drives exercise decisions; these locks prevent contradictory prompt owners.
 ADR: 20261105-review-severity-follows-consequence
-Also holds 20261105-repairs-track-the-accepted-promise and
-20261106-review-evidence-serves-substantive-acceptance.
+Also holds 20261105-repairs-track-the-accepted-promise,
+20261106-review-evidence-serves-substantive-acceptance and
+20261117-a-review-gate-states-how-it-ends.
 """
 
+import re
 from pathlib import Path
 
 import pytest
@@ -232,3 +234,67 @@ def test_amendment_repairs_the_fault_in_claim_or_evidence(plugins: Path) -> None
     assert "source-specific fact may rest on one authoritative source" in research
     assert "initially sound result need not produce findings" in research
     assert "findings descended in severity across waves" not in research
+
+
+# 20261117-a-review-gate-states-how-it-ends: each string is one load-bearing clause of the rule that
+# record's Decision states, in the words each file uses; rewording a file without changing the rule
+# updates its string here.
+REVIEW_GATE_ENDS = {
+    "define/SKILL.md": (
+        "A review gate states how it ends.",
+        "Place it by what is owed; split a gate whose concerns fall on both sides.",
+        "The claim stays about the artifact.",
+        "**Look again** — product behavior",
+        "Where the Manifest names no later review",
+        "never its tests, fixtures, scripts or tooling",
+        "After each repair batch it takes a continued look.",
+        "A later review is a gate that sends defect findings back before merge",
+        "one fresh full look by its defect-finding dimensions at the finished change, once its"
+        " continued looks report nothing outstanding",
+        "A person's read before merging that no gate names is not one.",
+        "no further fresh look",
+        "**Look once** — advisory qualities, and every dimension on supporting code",
+        "and on docs",
+        "each finding fixed or rejected with a reason",
+        "by a test or reproduction that fails without it where the finding names a behavior",
+        "once every Deliverable it covers is done",
+        "with no further review run owed",
+        "gets a full look of its own",
+        "is seen by the look-again gates whose subject it changes",
+        "Operational readiness looks once, and looks again where the work is high-stakes",
+    ),
+    "define/tasks/UI.md": (
+        "A review gate states how it ends",
+        "(task fit, functional states, viewport behavior) looks again, and composition, hierarchy,"
+        " craft, copy and register fit look once",
+    ),
+    "define/references/SCHEMA.md": (
+        "for a review gate, also how it re-verifies after repairs",
+    ),
+    "define/tasks/CODING.md": (
+        "defect-finding dimensions on shipped code look again",
+        "every dimension on tests, fixtures and scripts, look once",
+        "operational readiness looks again on high-stakes work",
+    ),
+    "define/tasks/PROMPTING.md": (
+        "intent on a shipped prompt looks again; prompt quality looks once",
+    ),
+    "do/SKILL.md": (
+        "Where a gate's Evidence states how it re-verifies, that statement governs.",
+        "A look-once gate takes no review run after its full look of record",
+        "A look-again gate keeps its continued looks",
+        "those are its fresh evidence for the finished change",
+        "takes any fresh look its Evidence names once, after repairs settle",
+        "A gate that states no form re-verifies as this section says.",
+        "a below-bar finding of that fresh look is left",
+        "A look-once gate checks each repair instead.",
+    ),
+}
+
+
+def test_a_review_gate_states_how_it_ends(plugins: Path) -> None:
+    for name, clauses in REVIEW_GATE_ENDS.items():
+        skill_name, _, file = name.partition("/")
+        text = re.sub(r"\s+", " ", skill(plugins, skill_name, file))
+        for clause in clauses:
+            assert clause in text, f"{plugins}/{name} lost: {clause!r}"
