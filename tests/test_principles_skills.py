@@ -4,6 +4,8 @@ The method — what a line must be, the skill's shape, the pointer line, which a
 skill, and how lines are written and pruned — lives in setup-project's PRINCIPLES_SKILLS.md
 alone. Every other shipped file that works with a principles skill points there, so the copies
 cannot drift. create-principles-skill stays a thin wrapper over figure-out that points there too.
+The one exception is the review rule: review-code runs alone, so its PROJECT_PRINCIPLES.md carries
+the method's review paragraph word for word, and a test below keeps the two equal.
 
 Holds docs/adr/20261109-area-principles-live-in-project-skills.md.
 """
@@ -146,3 +148,117 @@ def test_a_principle_holds_unless_the_person_chose_the_departure() -> None:
         assert "chose the departure" in text, where
         assert "the one change that restores what was asked" in text, where
         assert "whether the principle has moved or this is an exception" in text, where
+
+
+REVIEW_CODE = SKILLS / "review-code" / "SKILL.md"
+REVIEW_CODE_RULE = SKILLS / "review-code" / "references" / "PROJECT_PRINCIPLES.md"
+# Every dimension in review-code's table still reports a principle departure that bears on its own
+# calls, except these, each for its reason.
+NOT_OWNING = {
+    "context-file-adherence": "it is the backstop that covers every principle",
+    "defect-class": "it reviews a fix against a supplied defect and routes no project rules away",
+    "operational-readiness": "its out-of-scope list routes no project rules away",
+}
+OWNING_DIMENSIONS = sorted(
+    set(
+        re.findall(
+            r"^\| `([a-z-]+)` \| `references/",
+            REVIEW_CODE.read_text(encoding="utf-8"),
+            re.M,
+        )
+    )
+    - set(NOT_OWNING)
+)
+# The shared review paragraph opens and closes on these; everything between them must match word for
+# word. review-code's copy opens with two sentences of its own (which dimension reports a departure;
+# its grade), which this pattern leaves out; the test asserts both separately.
+REVIEW_RULE = re.compile(
+    r"A\s+project's\s+principles\s+skills\s+are\s+project\s+skills\s+named\s.*?"
+    r"naming\s+the\s+principle\s+that\s+produced\s+it\.",
+    re.S,
+)
+
+
+def review_rule(path: Path) -> str:
+    match = REVIEW_RULE.search(path.read_text(encoding="utf-8"))
+    assert match, f"{path.relative_to(ROOT)} lost the review rule for principles skills"
+    return " ".join(match.group(0).split())
+
+
+def test_review_code_carries_the_review_rule_word_for_word() -> None:
+    """A review holds work to the project's principles unless a person with authority over the
+    principle chose the departure, and a record the change adds is its case, not that choice.
+    review-code runs alone, so it carries the rule in a reference its body loads only where the
+    project points to principles skills; the method states it too. The two copies must not drift
+    apart, and review-code's own leading sentence keeps one grade across dimensions.
+
+    Holds docs/adr/20261117-a-review-holds-work-to-the-projects-principles-unless-a-person-chose-the-departure.md.
+    """
+    method = review_rule(METHOD)
+    for marker in (
+        "A principle holds unless its yield is shown or a person with authority over it chose the departure.",
+        "authoring the change gives none",
+        "it is not chosen",
+        "is its case, not a person's choice",
+        "never grade it Low",
+        "count it against acceptance",
+        "outrank the review's general standards in both directions",
+        "whatever the skill holding it is called",
+        "the work's own assertion that it holds does not",
+        "anything the run that produced the change wrote",
+        "until then the work departs, unless such a person chose the departure",
+        "a condition the evidence leaves open or arguable is not shown",
+        "for a line the work under review cannot show either way",
+    ):
+        assert marker in method, f"the review rule lost {marker!r}"
+    assert (
+        review_rule(REVIEW_CODE_RULE) == method
+    ), "review-code carries a review rule that differs from the method's"
+    own = " ".join(REVIEW_CODE_RULE.read_text(encoding="utf-8").split())
+    assert (
+        "the dimension that owns a principle's call reports a departure from it, and "
+        "`context-file-adherence` covers every principle" in own
+    ), "review-code no longer says which dimension reports a departure"
+    pointer = (
+        "Where `PROJECT_PRINCIPLES.md` is loaded, a departure from one of its principles that "
+        "bears on this dimension's own calls is reported here as well."
+    )
+    assert len(OWNING_DIMENSIONS) == 11, "review-code's dimension table was not read"
+    for name in OWNING_DIMENSIONS:
+        reference = SKILLS / "review-code" / "references" / f"{name}.md"
+        assert pointer in " ".join(
+            reference.read_text(encoding="utf-8").split()
+        ), f"{name} no longer reports a departure from a principle bearing on its own calls"
+    assert (
+        "Whichever dimension reports an unchosen departure, it is a broken binding requirement: High"
+        in own
+    ), "review-code no longer grades an unchosen departure the same in every dimension"
+    body = " ".join(REVIEW_CODE.read_text(encoding="utf-8").split())
+    assert (
+        "also load `references/PROJECT_PRINCIPLES.md` and follow it" in body
+    ), "review-code's body no longer loads its review rule for principles skills"
+
+
+def test_no_review_skill_picks_principles_by_area_name() -> None:
+    """Projects name their areas freely, so a review finds principles skills by their pointers and
+    stated use. No file in a review skill's own directory may name a concrete principles skill: the
+    only form allowed is the placeholder `<area>-principles`.
+
+    Holds docs/adr/20261117-a-review-holds-work-to-the-projects-principles-unless-a-person-chose-the-departure.md.
+    """
+    named = re.compile(r"(?<![\w<>-])[a-z][a-z-]*-principles\b(?!-)")
+    review_files = sorted(ROOT.glob("claude-plugins/*/skills/review-*/**/*.md"))
+    skills = {p.relative_to(ROOT).parts[3] for p in review_files}
+    assert {
+        "review-code",
+        "review-design",
+        "review-writing",
+        "review-prompt",
+        "review-pr",
+    } <= skills
+    hits = [
+        f"{p.relative_to(ROOT)}: {m.group(0)}"
+        for p in review_files
+        for m in named.finditer(p.read_text(encoding="utf-8"))
+    ]
+    assert not hits, f"these review files name a principles skill: {hits}"

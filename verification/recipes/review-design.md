@@ -15,6 +15,7 @@ Reviews a digital artifact as delivered — rendered, played or opened in its re
 - define's UI gates (run under `/do`).
 - On HTML it runs `claude-plugins/manifest-dev/skills/review-design/scripts/design-check.mjs` (see design-instruments).
 - Grades run CRITICAL to LOW; PASS by default at no MEDIUM or above.
+- In a project whose context file points to principles skills, it follows those pointers and holds the work to the principles: a principle outranks the shipped standards both ways, and an unchosen departure is reported with the principle quoted. The skill states no rule for this; the `principles` scenario shows the behavior.
 
 ## Scenarios
 
@@ -31,6 +32,11 @@ Check: read
 ### project-rule
 Run: `scripts/drive-skill.sh review-design verification/prompts/review-design-project-rule.md`
 Proves: with a context file holding a rule a standard would flag (a fixed-width layout) and a page following it, the overridden checks raise no finding and the report names the rule; rendered properties are BLOCKED where no browser runs.
+Check: read
+
+### principles
+Run: `scripts/drive-skill.sh review-design verification/prompts/review-design-principles.md --scaffold verification/scaffolds/principles-design-review`
+Proves: review-design, run alone, in a project whose context file points in its own words to `kiosk-principles`. Graders: (1) the run read that skill; (2) no finding asks for colour, imagery or more visual character, and the report names the black-on-white principle it applied; (3) a finding quotes the list-count principle for the list of 14 loans with no count, with the yield not shown: 14 rows do not fit the 768-pixel screen, and the page's own comment claiming the list fits is not taken as evidence; (4) the gate verdict fails on that finding. A BLOCKED result for the list count is not a pass. PASS when all four hold.
 Check: read
 
 ## Gotchas

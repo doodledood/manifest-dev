@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # A short About page in its owner's own voice, with a local bare remote so a push is detectable.
 set -euo pipefail
+. "$(dirname "${BASH_SOURCE[0]}")/../../scaffold-guard.sh"
 # Copy the fixture tree, minus bytecode a local test run may have left in it.
 cp -R "$DRIVE_CHECKOUT/verification/fixtures/climb-copy/files/." .
 find . -name __pycache__ -type d -prune -exec rm -rf {} +

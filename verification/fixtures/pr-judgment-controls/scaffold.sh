@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
+. "$(dirname "${BASH_SOURCE[0]}")/../../scaffold-guard.sh"
 # Each subject owns its history; keep the outer drive from staging them as gitlinks.
 cat > .gitignore <<'IGNORE'
 /exception/

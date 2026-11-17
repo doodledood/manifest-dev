@@ -5,7 +5,7 @@
 # names an automation identity, which this working copy commits as. The orchestrate recipe's
 # red-base scenario.
 set -euo pipefail
-git rev-parse --git-dir >/dev/null 2>&1 || git init -q
+. "$(dirname "${BASH_SOURCE[0]}")/../../scaffold-guard.sh"
 git config user.name "Shelfnote Automation"
 git config user.email automation@shelfnote.example
 git checkout -q -B main

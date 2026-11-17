@@ -37,6 +37,16 @@ Run: `scripts/drive-skill.sh review-pr verification/prompts/review-pr-judgment-c
 Proves: the exception snapshot weighs the actual sponsorship rule and accepts its justified use within relevance ties, rather than treating a broad reader-first principle as a veto. The speculation snapshot does not turn an unsupported stale-data-culture prediction into a judgment objection. The missing snapshot names the unavailable project direction and limits its conclusion instead of inventing strategy or treating absence alone as a reason not to ship. The Manifest snapshot verifies the explicit three-slot contract independently while still assessing its discovery consequences: all supplied contract claims can pass alongside an adverse advisory recommendation. Any independently demonstrated implementation defect remains separate. No case posts remotely or auto-approves.
 Check: read
 
+### principles
+Run: `scripts/drive-skill.sh review-pr verification/prompts/review-pr-principles.md --tools --scaffold verification/fixtures/pr-principles`
+Proves: two local snapshots of the Shelfmark project, reviewed in no-Manifest mode under the default policies. For departs/ (the review-code `principles-depart` change): the drafted review holds one comment for the departure from craft-principles' first line, quoting it with file and line, however many inspections reported it, and the cycle summary withholds implementation acceptance and names that finding. For holds/ (the `principles-hold` change): the drafted review holds no comment that rests on a craft-principles or outreach-principles line, and acceptance is not withheld on such a ground. Nothing is posted, approved or sent as request_changes. PASS when all of these hold.
+Check: read
+
+### existing-owner
+Run: `scripts/drive-skill.sh review-pr verification/prompts/review-pr-existing-owner.md --tools --scaffold verification/fixtures/pr-existing-owner`
+Proves: two local snapshots of Branchline, whose decision 0001 made the visit log the one record of checkouts and a later commit with no record narrowed it to item ids. For parallel/, which adds a second store and nightly job to capture full item records, with its own design note and Accepted record: the judgment pass asks why the visit log is not extended or restored, or recommends changing the proposal toward it. For ordinary/, which adds an opening-hours module nothing owns: judgment raises no existing-owner question. In both, judgment findings carry no severity and block nothing. PASS when all of these hold.
+Check: read
+
 ## Gotchas
 
 - The prompt file carries the placeholder `THROWAWAY_PR_URL`; replace it with a throwaway pull request in a repository the run owns before driving.
@@ -46,6 +56,7 @@ Check: read
 - Manifest mode needs the checkout at the pull request's head.
 - Continued Manifest-mode loop wakes pass the applicable checkpoint and reporting scope to each evaluator. A fresh explicit invocation retains its requested independent review scope. This handoff remains unmeasured by a live review drive.
 - The reviewer chooses context placement for thread assessments, dimensions, premise checks, consolidation, and Manifest gates. Required results and evidence remain per item; reporting names the actual context used.
-- `consolidation` stops before posting and uses only a local snapshot. It does not establish live GitHub transport, the fleet's finding accuracy, or the quality difference between context choices. It is **unmeasured** until driven; the free cold fixture test only checks its inputs and runner wiring.
+- `consolidation` stops before posting and uses only a local snapshot. It does not establish live GitHub transport, the fleet's finding accuracy, or the quality difference between context choices. It has been driven on both arms with the principles change; the free cold fixture test only checks its inputs and runner wiring.
 - `tests/test_dist_skill_references.py` checks its markers, Manifest mode, dimension references, context choice, and complete per-gate results. `tests/test_drive_scripts.py::test_consolidation_fixture_preserves_review_state_and_reproducible_findings` exercises the consolidation scaffold with a CLI stand-in.
-- Existing-owner judgment and principles handoff are unmeasured by these scenarios. The owner deferred behavioral drives for this change; source review and property checks cover wiring, not finding accuracy.
+- The `principles` fixture builds the Shelfmark scaffolds, which use `tomllib`, so their own tests need Python 3.11 or newer; the reviews do not depend on running them.
+- `principles` and `existing-owner` measure the principles handoff and the existing-owner judgment on local snapshots. Both were caught on the merge-base skills as well as after the review rule landed in review-code, so they guard behavior rather than show the rule's gain; the gain rests on a replay of a real change kept outside this repository.

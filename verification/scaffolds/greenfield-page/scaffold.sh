@@ -2,7 +2,7 @@
 # A new project with one web page and no history beyond its first commit: the setup-project
 # recipe's greenfield-principles scenario.
 set -euo pipefail
-git rev-parse --git-dir >/dev/null 2>&1 || git init -q
+. "$(dirname "${BASH_SOURCE[0]}")/../../scaffold-guard.sh"
 mkdir -p site
 cat > README.md <<'EOF'
 # Tidepool

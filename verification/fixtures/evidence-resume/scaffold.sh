@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
+. "$(dirname "${BASH_SOURCE[0]}")/../../scaffold-guard.sh"
 fixture=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 cp -R "$fixture/project/." .
 git config user.name 'Resume fixture'

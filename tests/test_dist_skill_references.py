@@ -166,7 +166,10 @@ def test_codex_code_review_skill_carries_every_dimension() -> None:
         / "review-code"
         / "references"
     )
-    assert {p.stem for p in refs.glob("*.md")} == CODE_REVIEW_DIMENSIONS
+    # Every dimension ships, plus the one shared reference the body loads for principles skills.
+    assert {p.stem for p in refs.glob("*.md")} == CODE_REVIEW_DIMENSIONS | {
+        "PROJECT_PRINCIPLES"
+    }
 
 
 def test_codex_does_not_ship_reviewer_agents_or_removed_skills() -> None:

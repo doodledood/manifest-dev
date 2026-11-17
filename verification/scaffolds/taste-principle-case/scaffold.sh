@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # The Taste test, principle-plus-case arm: the same entry with one case line from a different gate.
 set -euo pipefail
+. "$(dirname "${BASH_SOURCE[0]}")/../../scaffold-guard.sh"
 cat > CLAUDE.md <<'EOF'
 # Larder
 

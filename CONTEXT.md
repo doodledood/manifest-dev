@@ -245,7 +245,7 @@ A durable personal steering preference persisted only by offer-and-ratify — ca
 _Avoid_: Preference, style, judgment.
 
 **Principles Skill**:
-A project skill named `<area>-principles` holding how a project's people want one area of its work done — design, product, prompts, architecture or another — each line a principle with its reason and when it yields, drawn from what those people said, failures seen in that area's work, or defaults they chose to depart from or keep, and written only on a person's yes. Any agent loads it through its pointer line in the Project Context File.
+A project skill named `<area>-principles` holding how a project's people want one area of its work done — design, product, prompts, architecture or another — each line a principle with its reason and when it yields, drawn from what those people said, failures seen in that area's work, or defaults they chose to depart from or keep, and written only on a person's yes. Any agent loads it through its pointer line in the Project Context File, and a review holds the work it reviews to its principles unless a person with authority over the principle chose the departure.
 _Avoid_: Area skill, style guide, playbook.
 
 **User's Call**:
@@ -363,7 +363,7 @@ _Avoid_: Ticket sweep, batch runner, scheduler.
 - One **Door** per discovery surface; every **Door** opens into the same **House**.
 - A **Re-host** preserves **Spine** content verbatim while making its **Altitude** typographically legible.
 - A **Taste** entry is ratified by the user and routed by scope to a user-level or project-level memory file; it is never inferred and applied silently, and it stays distinct from the review-time **Judgment Layer**.
-- A **Principles Skill** holds only principles; a chosen option stays in its **Decision Record**, and a rule a check can hold becomes a **Lock**. figure-out, `/define`, `/define`'s review and review-code load the ones whose areas the work touches, through their pointer lines.
+- A **Principles Skill** holds only principles; a chosen option stays in its **Decision Record**, and a rule a check can hold becomes a **Lock**. figure-out, `/define` and `/define`'s review load the ones for the areas the work touches, and review-code those whose stated use covers the change, through their pointer lines.
 - `/setup-project` installs a project's **ADR Conventions**, its glossary, and the **Project Context File** wiring that keeps sessions reading both; a **Seed** is layered on top wherever the project has history, and is never a substitute for the wiring.
 - figure-out loads the **ADR Conventions** at bootstrap and writes records under them, which is what makes the project's copy govern rather than the shipped default; cadence — when a session offers to record a decision — stays with figure-out and is not the project's to set.
 - A **Derived Index** is rebuilt from the decision records per the **ADR Conventions**, in the same act that writes a record and restatuses whatever it supersedes.

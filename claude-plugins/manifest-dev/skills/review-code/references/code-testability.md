@@ -71,7 +71,7 @@ Do NOT report on (owned by other dimensions):
 - **Mechanical code defects** (race conditions, resource leaks) → the code-bugs dimension
 - **API contract correctness** (wrong params, consumer breakage) → the contracts dimension
 - **Documentation** (stale comments) → the docs dimension
-- **Context file compliance** → the context-file-adherence dimension
+- **Context file compliance** → the context-file-adherence dimension. Where `PROJECT_PRINCIPLES.md` is loaded, a departure from one of its principles that bears on this dimension's own calls is reported here as well.
 
 ## Severity calibration
 

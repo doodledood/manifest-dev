@@ -4,6 +4,7 @@
 # sections that are not principles: the setup-project
 # recipe's principles-from-v14 scenario.
 set -euo pipefail
+. "$(dirname "${BASH_SOURCE[0]}")/../../scaffold-guard.sh"
 bash "$(dirname "$0")/../principles-from-history/scaffold.sh"
 sed -i.bak 's/surfaces v15 -->/surfaces v14 -->/' CLAUDE.md && rm -f CLAUDE.md.bak
 cat >> CLAUDE.md <<'EOF'

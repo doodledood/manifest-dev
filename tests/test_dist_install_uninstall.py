@@ -89,36 +89,6 @@ def test_codex_plugins_bundle_skills() -> None:
             assert (skills_dir / skill / "SKILL.md").is_file()
 
 
-# Holds the decision in docs/adr/20260811-a-review-dimension-may-take-a-defect-as-input.md.
-def test_codex_core_plugin_bundles_code_review_with_all_dimensions() -> None:
-    refs = (
-        DIST
-        / "codex"
-        / "plugins"
-        / "manifest-dev"
-        / "skills"
-        / "review-code"
-        / "references"
-    )
-    dimensions = {p.stem for p in refs.glob("*.md")}
-    assert dimensions == {
-        "change-intent",
-        "code-bugs",
-        "code-design",
-        "code-maintainability",
-        "code-simplicity",
-        "code-testability",
-        "context-file-adherence",
-        "defect-class",
-        "contracts",
-        "docs",
-        "operational-readiness",
-        "prose-value",
-        "test-quality",
-        "type-safety",
-    }
-
-
 # --------------------------------------------------------------------------
 # OpenCode: plugin-native distribution (no installer)
 # --------------------------------------------------------------------------

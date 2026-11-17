@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
+. "$(dirname "${BASH_SOURCE[0]}")/../../scaffold-guard.sh"
 git branch -M main
 git config user.name 'Review fixture'
 git config user.email 'review@example.invalid'

@@ -13,7 +13,7 @@ Reviews a change along exactly one quality dimension and returns PASS, FAIL or B
 - `/review-code <dimension> [scope]`. The dimension is one of: change-intent, code-bugs, code-design, code-simplicity, code-maintainability, code-testability, test-quality, type-safety, contracts, operational-readiness, docs, prose-value, defect-class, context-file-adherence. The scope is a supplied range, or the diff against the remote default branch.
 - Phrases its description matches: "review this diff for bugs", "audit the change for type safety".
 - define's coding gates (run under `/do`); review-pr's reviewer fleet.
-- In a project, it loads the principles skills the project context file points to for the areas the change touches, and applies them beside its dimension.
+- In a project, it loads the principles skills the project context file points to whose stated use covers the change, whatever their area word, and holds the change to them: the dimension that owns a principle's call reports an unchosen departure, and context-file-adherence covers every principle.
 
 ## Scenarios
 
@@ -98,6 +98,16 @@ Run: `scripts/drive-skill.sh review-code verification/prompts/review-code-state-
 Proves: a change that adds a paused state to an explicit machine, with every new transition in its table and every write through one function, draws no state-machine finding, and the verdict is PASS.
 Check: read
 
+### principles-depart
+Run: `scripts/drive-skill.sh review-code verification/prompts/review-code-principles-depart.md --scaffold verification/scaffolds/principles-shelfmark-departs`
+Proves: the project's context file points, in its own words, to `craft-principles`, an area word no dimension carries, whose lines are of several kinds. The change names and guards SMS reminders for one branch (`CentralBranchOverdueSms`, `CENTRAL_SMS_ENABLED`, `if branch.name == "central"`) beside a channel registry that would carry SMS as a setting. The registry would carry SMS as a setting for any of the three branches, whose members all have phone numbers in `data/members.csv`. The change's own decision 0002 declares North and Harbor out of scope, "a later decision for their managers", and claims the first line's yield on that ground alone. No other project document states a rule against the change. Graders, on both reports (code-design and context-file-adherence): (1) a finding quotes craft-principles' first line, names the changed code, and says the yield is not shown; (2) decision 0002 is taken neither as a person's choice of the departure nor as evidence that the yield holds; (3) that finding is graded above Low; (4) the verdict is FAIL. PASS when all four hold on both reports.
+Check: read
+
+### principles-hold
+Run: `scripts/drive-skill.sh review-code verification/prompts/review-code-principles-hold.md --scaffold verification/scaffolds/principles-shelfmark-holds`
+Proves: the same project, with a change that sends a monthly statement and touches the three craft-principles lines while owing nothing on any. Graders: (1) on both reports (code-design and context-file-adherence), no finding that counts against acceptance rests on any craft-principles line; (2) the code-design report gives the first line as followed, since the return address is a branch setting; on the context-file-adherence report, which covers every principle: (3) the first line is followed; (4) the long statement body's comparison with a reviewed snapshot file is the second line's yield, shown by the work itself; (5) the greeting test's partial check is a departure the maintainer chose in decision 0001; (6) the third line (paste the test summary before review) is not reported as followed or as a departure; (7) on both reports, no outreach-principles line draws a finding or appears as touched, though a comment writes "three" as a word; (8) both verdicts are PASS. PASS when all eight hold.
+Check: read
+
 ## Gotchas
 
 - Each prompt builds its own scratch repository state: a commit on a branch ahead of its default branch.
@@ -105,6 +115,8 @@ Check: read
 - `defect-class` needs a change that fixes a defect, or it reports none found.
 - No comparison base resolves to BLOCKED.
 - `tests/test_review_scope.py` exercises the scope commands; `tests/test_drive_scripts.py` checks convergence fixtures. The follow-up and fresh drives are unmeasured; fixture checks do not measure review behavior.
-- Not yet driven: the description phrases, define's coding gates, review-pr's fleet.
+- Not yet driven: the description phrases, define's coding gates. review-pr's fleet runs these dimensions in the review-pr recipe's `principles` and `existing-owner` scenarios.
+- The Shelfmark scaffolds (`principles-shelfmark-departs`, `principles-shelfmark-holds`, used by the `principles-depart` and `principles-hold` scenarios) use `tomllib`, so their own tests need Python 3.11 or newer; the reviews do not depend on running them.
+- The principles cases are caught on the merge-base skills too: today's models follow the context file's pointers. The discriminating evidence for the review rule is a replay on a real change kept outside this repository, on `code-design` and `context-file-adherence`: merge-base skills: not caught; branch: caught.
 
 - The consequence/promise scenario ran once per arm through native GPT-6.1 Sol/xhigh contexts on 2026-11-05. The decision records dated that day name the outcomes and limits; scaffold checks alone do not establish behavior.

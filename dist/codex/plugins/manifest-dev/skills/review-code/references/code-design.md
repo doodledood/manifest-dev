@@ -107,7 +107,7 @@ Note: This category requires understanding the change as a whole, not just indiv
 - **Testability design** (logic buried in IO, mock friction) → the code-testability dimension
 - **Test coverage gaps** (missing tests) → the test-quality dimension
 - **Documentation accuracy** (stale docs, wrong comments) → the docs dimension
-- **Context file compliance** (project rule violations) → the context-file-adherence dimension
+- **Context file compliance** (project rule violations) → the context-file-adherence dimension. Where `PROJECT_PRINCIPLES.md` is loaded, a departure from one of its principles that bears on this dimension's own calls is reported here as well.
 
 **Boundary lines against the closest neighbors:**
 - **Maintainability** asks: "Is this well-organized for future changes?" (DRY, coupling, consistency, boundary leakage)

@@ -14,6 +14,7 @@ Reviews a prompt against the prompt-engineering principles and reports findings 
 - Phrases its description matches: "review this prompt", "audit this system prompt".
 - define's prompting gate (run under `/do`); review-pr for diffs that touch prompts.
 - The report gives strengths and graded findings, led by where each line came from, with no overall rating.
+- In a project whose context file points to principles skills, it follows those pointers and holds the work to the principles: a principle outranks the shipped standards both ways, and an unchosen departure is reported with the principle quoted. The skill states no rule for this; the `principles` scenario shows the behavior.
 
 ## Scenarios
 
@@ -30,6 +31,11 @@ Check: read
 ### team-rule
 Run: `scripts/drive-skill.sh review-prompt verification/prompts/review-prompt-team-rule.md --tools`
 Proves: with a team rule the principles would question (a ROLE line) and a prompt following it, there is no finding on the rule, and the report names it.
+Check: read
+
+### principles
+Run: `scripts/drive-skill.sh review-prompt verification/prompts/review-prompt-principles.md --tools --scaffold verification/scaffolds/principles-prompt-review`
+Proves: review-prompt, run alone, in a project whose context file points in its own words to `assistant-principles`. Graders: (1) the run read that skill; (2) no finding on the closing capitalised NEVER line, and the report names the principle it applied; (3) a finding quotes the `Tools:` principle for the prompt that calls `gh` with no `Tools:` line, with the yield not shown: the context file says every prompt runs behind the gateway, and the prompt's own note claiming it runs outside is not taken as evidence; (4) the gate verdict fails on that finding. PASS when all four hold.
 Check: read
 
 ## Gotchas

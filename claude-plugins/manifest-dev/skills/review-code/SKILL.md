@@ -6,7 +6,7 @@ user-invocable: true
 
 # review-code — one dimension per invocation
 
-Audit a change along **one** review dimension and report findings. Load only that dimension's reference.
+Audit a change along **one** review dimension and report findings. Load only that dimension's reference, plus `references/PROJECT_PRINCIPLES.md` where the project has principles skills.
 
 ## Input
 
@@ -14,7 +14,7 @@ Audit a change along **one** review dimension and report findings. Load only tha
 
 ## Dimensions
 
-Before reviewing a change in a project, read the project context file's pointers to principles skills — project skills named `<area>-principles` holding how the project's people want one area's work done — and load each one for an area the change touches (`../setup-project/references/PRINCIPLES_SKILLS.md` → *Using one*). Load `references/<dimension>.md` for the requested dimension and follow it. Its standards are opinionated defaults: where a rule the user stated, in the session or a context file, a principle in a loaded principles skill, or a convention the project states or documents (not a pattern its code merely repeats) differs, that rule governs, a change following it raises no finding, and the report names the rule applied — except a Critical finding on the ladder below, which is still reported, naming the rule that produced it. Classify findings by consequence; the caller chooses the acceptance threshold and handling policy.
+Load `references/<dimension>.md` for the requested dimension and follow it. Its standards are opinionated defaults: where a rule the user stated, in the session or a context file, or a convention the project states or documents (not a pattern its code merely repeats) differs, that rule governs, a change following it raises no finding, and the report names the rule applied — except a Critical finding on the ladder below, which is still reported, naming the rule that produced it. Before reviewing, read the project context file's pointers to principles skills — project skills named `<area>-principles`, whatever the area word (`../setup-project/references/PRINCIPLES_SKILLS.md`); where there are any, also load `references/PROJECT_PRINCIPLES.md` and follow it: a project's principles govern a review in both directions. Classify findings by consequence; the caller chooses the acceptance threshold and handling policy.
 
 | Dimension | Reference | Role |
 |-----------|-----------|------|
@@ -116,6 +116,9 @@ remains unresolved.
 - **Impact**: [what it breaks / why it matters — a Medium finding must name the concrete cost that earns that grade: the future change it makes harder, the reader or operator task it defeats, or the condition under which behavior degrades]
 - **Recommended fix**: [specific change]
 
+## Project principles (only where a loaded principles skill covers the change)
+- [principle, quoted short]: followed | yield shown — [evidence] | departure chosen — [who, where] | departs — Finding #N | not judgeable (the work cannot show this line either way)
+
 ## Pre-existing (only when the caller asked, on a fresh full look)
 - [title] — `file:line` — [the issue, with its trigger or cost] — [recommended fix]
 
@@ -136,7 +139,7 @@ When invoked as a gate with the caller's acceptance policy, end with one verdict
 
 ## Gotchas
 
-- **One ref only.** Load exactly the reference for the requested dimension. Loading several defeats progressive disclosure and blurs the orthogonality boundaries each dimension defines against its neighbors.
+- **One dimension reference only.** Load exactly the dimension reference for the requested dimension; `PROJECT_PRINCIPLES.md` is not a dimension and loads on its own trigger. Loading several defeats progressive disclosure and blurs the orthogonality boundaries each dimension defines against its neighbors.
 - **Classify before policy.** A Low label never discharges a correctness or safety failure or a broken binding promise. Check the consequence before applying the caller's policy.
 - **Reportability is a stated trigger, not a confidence level** (defect-finders). Name the condition under which the defect manifests: "this WILL fail when X", with X written down. Where the defect is static rather than sequential — a contract or signature mismatch that is wrong on every call — the trigger is the call or consumer path that reaches it. A finding that cannot name its trigger is not reportable however strongly you suspect it — "this might be a bug", "this looks fragile", "this could break under load" all fail the test. Someone reading only the finding must be able to tell whether it clears this bar, which is what holds the bar in one place across reviewers rather than moving it with whoever is reading. A stated trigger is necessary rather than sufficient — each dimension's own bar for reporting (its actionability filter, or for defect-class its acceptance rules) still applies on top of it.
 - **A Medium is a stated cost, not a strength of feeling** (all dimensions). Name the cost in the finding — the change made harder, the task defeated, the condition under which behavior degrades — specifically enough that someone reading only the finding can tell the grade is earned. A finding whose case rests on "could be cleaner", "feels off", or "not ideal" has not named one, and sits at Low. Each dimension's own calibration still applies on top.

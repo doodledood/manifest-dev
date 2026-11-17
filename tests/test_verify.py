@@ -976,10 +976,13 @@ def test_a_tool_killed_during_the_grace_still_stops_what_was_left(
 
 def test_a_run_with_nothing_left_behind_does_not_wait_the_grace(tmp_path: Path) -> None:
     env = _covering(tmp_path, "echo done", "verification/recipes")
+    # A 30 s grace keeps the bound far from both a normal run and Node's start-up on a loaded
+    # machine, so only waiting out the grace can fail it.
+    _settings(tmp_path, grace="30")
     began = time.monotonic()
     result = run_verify("drive", "thing", env=env)
     assert result.returncode == 0, result.stdout + result.stderr
-    assert time.monotonic() - began < 1.9  # short of the 2s grace
+    assert time.monotonic() - began < 10
 
 
 def test_a_signal_during_a_stop_kills_at_once(tmp_path: Path) -> None:
@@ -1060,10 +1063,11 @@ def test_the_grace_setting_sets_the_wait_before_the_kill(tmp_path: Path) -> None
         "verification/recipes",
     )
     _settings(tmp_path, grace="0.2")
-    began = time.monotonic()
     result = run_verify("drive", "thing", env=env)
     assert result.returncode == 0, result.stdout + result.stderr
-    assert time.monotonic() - began < 1.5, "the run waited longer than its grace"
+    # The job touches the marker 1.5 s in, before the 2 s default grace would kill it, so a missing
+    # marker shows the job was stopped well before the default: the configured grace was not
+    # ignored. Timing the whole run instead counted Node's start-up and failed on a loaded machine.
     time.sleep(2)
     assert not marker.exists(), "the job outlived the grace"
 
@@ -1835,10 +1839,11 @@ def test_a_process_the_logs_command_leaves_running_does_not_hold_the_run(
     tmp_path: Path,
 ) -> None:
     env = _harness(tmp_path, "", "### bad\nRun: `exit 1`\n")
-    _settings(tmp_path, logs="sleep 8 & echo the log")
+    # The leftover process lives 30 s, so the bound sits far from both it and a slow start-up.
+    _settings(tmp_path, logs="sleep 30 & echo the log")
     began = time.monotonic()
     assert run_verify("drive", "thing", env=env).returncode == 1
-    assert time.monotonic() - began < 5
+    assert time.monotonic() - began < 10
     assert "the log" in _only_summary(tmp_path)
 
 

@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # A Shelfnote project with no surfaces: the setup-project recipe's app-project scenario.
 set -euo pipefail
+. "$(dirname "${BASH_SOURCE[0]}")/../../scaffold-guard.sh"
 mkdir -p src tests
 cat > CLAUDE.md <<'EOF'
 # Shelfnote

@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # The journeys-gate fixture app, with no seeded defect, for define's journeys-gate scenarios.
 set -euo pipefail
+. "$(dirname "${BASH_SOURCE[0]}")/../../scaffold-guard.sh"
 # A drive passes the checkout in DRIVE_CHECKOUT; run by hand, the checkout is found from here.
 checkout=${DRIVE_CHECKOUT:-$(cd "$(dirname "$0")/../../.." && pwd)}
 mkdir -p app

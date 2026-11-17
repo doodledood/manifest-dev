@@ -6,7 +6,7 @@
 # see, that print directly.
 # The run-ticket recipe's cross-cut scenario.
 set -euo pipefail
-git rev-parse --git-dir >/dev/null 2>&1 || git init -q
+. "$(dirname "${BASH_SOURCE[0]}")/../../scaffold-guard.sh"
 git config user.name "Sam Okafor"
 git config user.email sam@shelfnote.example
 git checkout -q -B main

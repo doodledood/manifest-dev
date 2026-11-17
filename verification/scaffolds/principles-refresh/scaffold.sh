@@ -3,6 +3,7 @@
 # principle stated loosely, one decision line, one history note. New review notes restate that
 # principle more sharply and add one new principle: the create-principles-skill refresh scenario.
 set -euo pipefail
+. "$(dirname "${BASH_SOURCE[0]}")/../../scaffold-guard.sh"
 bash "$(dirname "$0")/../principles-from-history/scaffold.sh"
 commit() { git -c user.name="Dana Reyes" -c user.email=dana@pollbox.example add -A && git -c user.name="Dana Reyes" -c user.email=dana@pollbox.example commit -q "$@"; }
 mkdir -p .claude/skills/design-principles

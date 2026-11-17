@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # The Taste test, principle arm: a project context file whose Taste entry states the principle alone.
 set -euo pipefail
+. "$(dirname "${BASH_SOURCE[0]}")/../../scaffold-guard.sh"
 cat > CLAUDE.md <<'EOF'
 # Larder
 

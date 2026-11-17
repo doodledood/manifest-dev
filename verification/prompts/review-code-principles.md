@@ -1,3 +1,3 @@
 /manifest-dev:review-code
 
-Review the uncommitted change in this repository (`git diff` plus the new files `git status` lists) twice: once for maintainability and once for context-file adherence. Report the findings of each.
+Review the change in this repository's latest commit (`git show HEAD`: the new files and the template edit) twice: once for maintainability and once for context-file adherence. Report the findings of each.
