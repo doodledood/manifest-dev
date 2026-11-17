@@ -152,14 +152,22 @@ def test_a_principle_holds_unless_the_person_chose_the_departure() -> None:
 
 REVIEW_CODE = SKILLS / "review-code" / "SKILL.md"
 REVIEW_CODE_RULE = SKILLS / "review-code" / "references" / "PROJECT_PRINCIPLES.md"
-# Every dimension reference that sends project rules to context-file-adherence still reports a
-# principle departure that bears on its own calls.
+# Every dimension in review-code's table still reports a principle departure that bears on its own
+# calls, except these, each for its reason.
+NOT_OWNING = {
+    "context-file-adherence": "it is the backstop that covers every principle",
+    "defect-class": "it reviews a fix against a supplied defect and routes no project rules away",
+    "operational-readiness": "its out-of-scope list routes no project rules away",
+}
 OWNING_DIMENSIONS = sorted(
-    p.stem
-    for p in (SKILLS / "review-code" / "references").glob("*.md")
-    if p.stem != "context-file-adherence"
-    and p != REVIEW_CODE_RULE
-    and "context-file-adherence" in p.read_text(encoding="utf-8")
+    set(
+        re.findall(
+            r"^\| `([a-z-]+)` \| `references/",
+            REVIEW_CODE.read_text(encoding="utf-8"),
+            re.M,
+        )
+    )
+    - set(NOT_OWNING)
 )
 # The shared review paragraph opens and closes on these; everything between them must match word for
 # word. review-code's copy opens with two sentences of its own (which dimension reports a departure;
@@ -215,7 +223,7 @@ def test_review_code_carries_the_review_rule_word_for_word() -> None:
         "Where `PROJECT_PRINCIPLES.md` is loaded, a departure from one of its principles that "
         "bears on this dimension's own calls is reported here as well."
     )
-    assert len(OWNING_DIMENSIONS) >= 10, "the dimension references were not found"
+    assert len(OWNING_DIMENSIONS) == 11, "review-code's dimension table was not read"
     for name in OWNING_DIMENSIONS:
         reference = SKILLS / "review-code" / "references" / f"{name}.md"
         assert pointer in " ".join(

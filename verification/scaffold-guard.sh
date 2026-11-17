@@ -3,7 +3,8 @@
 # .git directory with no commit yet, or nothing at all, in which case it makes the repository. Run
 # by hand inside a checkout or a no-checkout clone, it would otherwise rename that repository's
 # branch and commit over its files. A scaffold called by another runs this check too, so it is
-# called before its caller writes or commits anything.
+# called before its caller writes or commits anything. The climb-copy and climb-number fixtures also
+# create a bare remote beside the directory, at ../remote.git, which this check does not cover.
 #
 # The eval-case scaffolds under claude-plugins/manifest-dev/evals do not source this. The eval runner
 # (`claude plugin eval`) runs them from a copy of the plugin, in a directory whose contents this
