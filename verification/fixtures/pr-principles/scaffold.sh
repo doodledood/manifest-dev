@@ -16,7 +16,6 @@ snapshot() {
   mkdir -p "$dir"
   (
     cd "$dir"
-    git init -q
     bash "$scaffolds/$scaffold/scaffold.sh"
     TITLE=$title DESCRIPTION=$description python3 -B - <<'INNER'
 import json

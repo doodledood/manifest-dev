@@ -152,20 +152,14 @@ def test_a_principle_holds_unless_the_person_chose_the_departure() -> None:
 
 REVIEW_CODE = SKILLS / "review-code" / "SKILL.md"
 REVIEW_CODE_RULE = SKILLS / "review-code" / "references" / "PROJECT_PRINCIPLES.md"
-# The dimensions whose out-of-scope list sends project rules to context-file-adherence; each still
-# reports a principle departure that bears on its own calls.
-OWNING_DIMENSIONS = (
-    "change-intent",
-    "code-bugs",
-    "code-design",
-    "code-maintainability",
-    "code-simplicity",
-    "code-testability",
-    "contracts",
-    "docs",
-    "prose-value",
-    "test-quality",
-    "type-safety",
+# Every dimension reference that sends project rules to context-file-adherence still reports a
+# principle departure that bears on its own calls.
+OWNING_DIMENSIONS = sorted(
+    p.stem
+    for p in (SKILLS / "review-code" / "references").glob("*.md")
+    if p.stem != "context-file-adherence"
+    and p != REVIEW_CODE_RULE
+    and "context-file-adherence" in p.read_text(encoding="utf-8")
 )
 # The shared review paragraph opens and closes on these; everything between them must match word for
 # word. review-code's copy opens with two sentences of its own (which dimension reports a departure;
@@ -221,6 +215,7 @@ def test_review_code_carries_the_review_rule_word_for_word() -> None:
         "Where `PROJECT_PRINCIPLES.md` is loaded, a departure from one of its principles that "
         "bears on this dimension's own calls is reported here as well."
     )
+    assert len(OWNING_DIMENSIONS) >= 10, "the dimension references were not found"
     for name in OWNING_DIMENSIONS:
         reference = SKILLS / "review-code" / "references" / f"{name}.md"
         assert pointer in " ".join(

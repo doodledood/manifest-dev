@@ -29,7 +29,6 @@ INNER
 mkdir -p parallel ordinary
 (
   cd parallel
-  git init -q
   bash "$fixture/base.sh"
   git switch -qc feature/checkout-snapshots
   git config user.name 'Priya Nair'
@@ -118,7 +117,6 @@ EOF
 )
 (
   cd ordinary
-  git init -q
   bash "$fixture/base.sh"
   git switch -qc feature/opening-hours
   git config user.name 'Priya Nair'
