@@ -67,7 +67,9 @@ yield is shown or a person with authority over it chose the departure.
 The rule is one paragraph, carried word for word by the method,
 `setup-project/references/PRINCIPLES_SKILLS.md` → *Using one*, and by `review-code`'s
 `references/PROJECT_PRINCIPLES.md`, which its body loads only where the project context file points
-to principles skills, so reviews in other projects carry none of it. `review-prompt`, `review-design`,
+to principles skills, so reviews in other projects carry none of it. `review-code`'s copy opens
+with one sentence of its own: which dimension reports a departure, and that every dimension grades
+an unchosen one High, or Critical where its consequence is. `review-prompt`, `review-design`,
 `review-writing` and `review-pr`'s consolidation get no new text: run alone on projects whose
 context file points to a principles skill, they already loaded it, applied it in both directions,
 rejected the work's own claim of a yield, and failed the gate on an unchosen departure. Text is added
@@ -114,8 +116,8 @@ advisory (`20260708-judgment-layer-is-a-review-time-premise-check`).
 ## Enforced by
 partly — `tests/test_principles_skills.py::test_review_code_carries_the_review_rule_word_for_word`
 holds that the method and `review-code` carry the same paragraph, and
-`test_no_review_skill_picks_principles_by_area_name` that no file a review skill loads names a
-concrete principles skill rather than the `<area>-principles` placeholder. Whether a review applies it
+`test_no_review_skill_picks_principles_by_area_name` that no file in a review skill's own directory
+names a concrete principles skill rather than the `<area>-principles` placeholder. Whether a review applies it
 is judged by the `review-code` recipe's `principles-depart` and `principles-hold` scenarios, the
 `review-pr` recipe's `principles` scenario, and the `principles` scenarios of the `review-prompt`,
 `review-design` and `review-writing` recipes.

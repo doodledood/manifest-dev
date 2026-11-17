@@ -4,7 +4,11 @@
 # prompt under review follows it; the other the prompt departs from, with no person's choice. The
 # prompt's own note claims that line's yield, which the context file contradicts.
 set -euo pipefail
-git rev-parse --git-dir >/dev/null 2>&1 || git init -q
+if [ -n "$(ls -A | grep -vx .git)" ]; then
+  echo "scaffold: run in an empty directory; it builds its own repository here" >&2
+  exit 1
+fi
+git init -q
 git branch -M main
 git config user.name "Lee Moreau"
 git config user.email "lee@relay.example"

@@ -4,7 +4,11 @@
 # defaults and the draft follows it; the other the draft departs from, with no person's choice. The
 # draft's own note claims that line's yield, which its steps do not bear out.
 set -euo pipefail
-git rev-parse --git-dir >/dev/null 2>&1 || git init -q
+if [ -n "$(ls -A | grep -vx .git)" ]; then
+  echo "scaffold: run in an empty directory; it builds its own repository here" >&2
+  exit 1
+fi
+git init -q
 git branch -M main
 git config user.name "Sam Okoro"
 git config user.email "sam@frontdesk.example"

@@ -184,8 +184,8 @@ starts from what the team wants, and the Project Context File stays short. A dec
 Decision Record, not to the skill.
 
 A review also holds the work to these principles. A departure from a principle counts against the
-work. It does not count when the exception in the line applies, or when a person with authority over
-the principle chose the departure. Writing the change does not give that authority. A record that
+work. It does not count when evidence shows that the line's exception applies, or when a person with
+authority over the principle chose the departure. Writing the change does not give that authority. A record that
 the change itself adds is not that choice. This is so that a team writes a principle
 once and does not have to check each change by hand.
 

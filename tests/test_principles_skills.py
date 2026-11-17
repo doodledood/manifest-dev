@@ -170,9 +170,10 @@ def review_rule(path: Path) -> str:
 
 def test_review_code_carries_the_review_rule_word_for_word() -> None:
     """A review holds work to the project's principles unless a person with authority over the
-    principle chose the departure, and a record the change adds is its case, not that choice. review-code runs alone, so it carries the
-    rule in a reference its body loads only where the project points to principles skills; the
-    method states it too. The two copies must not drift apart.
+    principle chose the departure, and a record the change adds is its case, not that choice.
+    review-code runs alone, so it carries the rule in a reference its body loads only where the
+    project points to principles skills; the method states it too. The two copies must not drift
+    apart, and review-code's own leading sentence keeps one grade across dimensions.
 
     Holds docs/adr/20261117-a-review-holds-work-to-the-projects-principles-unless-a-person-chose-the-departure.md.
     """
@@ -196,6 +197,11 @@ def test_review_code_carries_the_review_rule_word_for_word() -> None:
     assert (
         review_rule(REVIEW_CODE_RULE) == method
     ), "review-code carries a review rule that differs from the method's"
+    own = " ".join(REVIEW_CODE_RULE.read_text(encoding="utf-8").split())
+    assert (
+        "Whichever dimension reports an unchosen departure, it is a broken binding requirement: High"
+        in own
+    ), "review-code no longer grades an unchosen departure the same in every dimension"
     body = " ".join(REVIEW_CODE.read_text(encoding="utf-8").split())
     assert (
         "also load `references/PROJECT_PRINCIPLES.md` and follow it" in body
@@ -204,8 +210,8 @@ def test_review_code_carries_the_review_rule_word_for_word() -> None:
 
 def test_no_review_skill_picks_principles_by_area_name() -> None:
     """Projects name their areas freely, so a review finds principles skills by their pointers and
-    stated use. No file a review skill loads may name a concrete principles skill: the only form
-    allowed is the placeholder `<area>-principles`.
+    stated use. No file in a review skill's own directory may name a concrete principles skill: the
+    only form allowed is the placeholder `<area>-principles`.
 
     Holds docs/adr/20261117-a-review-holds-work-to-the-projects-principles-unless-a-person-chose-the-departure.md.
     """

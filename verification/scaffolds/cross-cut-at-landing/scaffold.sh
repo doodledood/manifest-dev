@@ -6,7 +6,11 @@
 # see, that print directly.
 # The run-ticket recipe's cross-cut scenario.
 set -euo pipefail
-git rev-parse --git-dir >/dev/null 2>&1 || git init -q
+if [ -n "$(ls -A | grep -vx .git)" ]; then
+  echo "scaffold: run in an empty directory; it builds its own repository here" >&2
+  exit 1
+fi
+git init -q
 git config user.name "Sam Okafor"
 git config user.email sam@shelfnote.example
 git checkout -q -B main
