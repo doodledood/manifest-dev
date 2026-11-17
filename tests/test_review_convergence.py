@@ -247,18 +247,27 @@ REVIEW_GATE_ENDS = {
         "**Look again** — product behavior",
         "Where the Manifest names no later review",
         "never its tests, fixtures, scripts or tooling",
+        "After each repair batch it takes a continued look.",
+        "A later review is a gate that sends defect findings back before merge",
         "one fresh full look by its defect-finding dimensions at the finished change, once its"
         " continued looks report nothing outstanding",
         "A person's read before merging that no gate names is not one.",
         "no further fresh look",
         "**Look once** — advisory qualities, and every dimension on supporting code",
+        "and on docs",
+        "each finding fixed or rejected with a reason",
+        "by a test or reproduction that fails without it where the finding names a behavior",
         "once every Deliverable it covers is done",
         "with no further review run owed",
         "gets a full look of its own",
         "is seen by the look-again gates whose subject it changes",
         "Operational readiness looks once, and looks again where the work is high-stakes",
     ),
-    "define/tasks/UI.md": ("A review gate states how it ends",),
+    "define/tasks/UI.md": (
+        "A review gate states how it ends",
+        "(task fit, functional states, viewport behavior) looks again, and composition, hierarchy,"
+        " craft, copy and register fit look once",
+    ),
     "define/references/SCHEMA.md": (
         "for a review gate, also how it re-verifies after repairs",
     ),
@@ -273,6 +282,7 @@ REVIEW_GATE_ENDS = {
     "do/SKILL.md": (
         "Where a gate's Evidence states how it re-verifies, that statement governs.",
         "A look-once gate takes no review run after its full look of record",
+        "A look-again gate keeps its continued looks",
         "those are its fresh evidence for the finished change",
         "takes any fresh look its Evidence names once, after repairs settle",
         "A gate that states no form re-verifies as this section says.",
