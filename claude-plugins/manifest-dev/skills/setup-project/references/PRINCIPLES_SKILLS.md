@@ -65,8 +65,9 @@ saying only when to load it and where it is:
 
 `- **<Area> work** — load the \`<area>-principles\` skill (\`<path to its SKILL.md>\`) before planning, designing, building or reviewing it.`
 
-A skill about how any change is made, such as working practice, has a pointer line that says to
-load it before changing anything in the project.
+A skill about how any change is made, such as working practice, says so in both places: its
+description reads "Use before making any change in this project", and its pointer line says to load
+it before changing anything in the project.
 
 ## Where content goes
 
@@ -113,7 +114,7 @@ the project's own, and a later change to a set reaches the project only as a new
 |---|---|
 | Code | `starter-principles/code.md` |
 | Architecture | `starter-principles/architecture.md` |
-| Agent behavior | `starter-principles/agent.md` |
+| Agent behavior (prompts, skills, features built on a model) | `starter-principles/agent.md` |
 | Evaluation | `starter-principles/evaluation.md` |
 | Design | `starter-principles/design.md` |
 | Product | `starter-principles/product.md` |
@@ -122,16 +123,22 @@ the project's own, and a later change to a set reaches the project only as a new
 | Working practice | `starter-principles/working-practice.md` |
 
 An area with no set here keeps the routes above: its history, or the context file's principles.
+An area a person names is matched to a set by what the set covers, not by its name, and the skill
+takes the person's word for the area where they gave one.
 
 - **Which areas.** Offer each area whose `Offered when` the project meets, or will meet from what
-  its person says it is for; a new project counts by what it is about to hold. Offer the areas
-  three at a time, by the bar above, and once a batch is answered offer the next.
+  its person says it is for; a new project counts by what it is about to hold, for an area and
+  for a line's condition alike. Offer the areas three at a time, by the bar above, and once a
+  batch is answered offer the next.
 - **How a set is shown.** Show each line exactly as it would be written: a conditional line
   without its marker, and only where its condition holds; a choice as its two sides, the
-  recommended side first with the signal that picked it. Before the person answers, say that an
-  accepted line is one later reviews hold the work to, and that any line can be struck or reworded
-  now. Write what is accepted; a choice left unanswered takes the recommended side, and a line
-  struck stays out.
+  recommended side first with the signal that picked it. Leave out a line that restates a
+  principle the project context file holds; where that principle moves into the skill (*Where
+  content goes*), it takes the starter line's place in the project's own words. Before the person
+  answers, say that an accepted line is one later reviews hold the work to, and that any line can
+  be struck or reworded now. Write what is accepted, a choice as its chosen side's text alone;
+  within a set the person accepted, a choice they left unanswered takes the recommended side, and
+  a line struck stays out.
 - **With history.** Read the project's history for this area as *Create* says, then let it work
   on the set rather than beside it: a source that gives a starter line this project's own reason
   or case sharpens that line; a source the set does not cover becomes a new line, under the test
@@ -143,14 +150,14 @@ An area with no set here keeps the routes above: its history, or the context fil
   states a starter line, offer to sharpen the existing line instead of adding a second. Where one
   conflicts with a starter line, show both and keep the existing one unless the person picks the
   other. Where the project cuts its areas differently from the sets, offer a split or a merge of
-  its skills as an item of its own; an existing line moves only on the person's yes. Offer no line
-  that restates a principle the project context file already holds.
-- **When.** A setup offers the whole set for every area the project meets and no skill covers. A
-  setup or audit of a project whose skills cover an area offers that area's lacking lines once,
-  when the project's recorded surfaces version predates the sets, and again whenever a person asks
-  for them. With no person present, write nothing and report each area's lines as candidates for
-  the person.
-
+  its skills as an item of its own; an existing line moves only on the person's yes.
+- **When.** A first setup offers the whole set for every area the project meets and no skill
+  covers. A later setup or audit names each such area in one line — the area, how many lines its
+  set holds, and why it applies — and shows the set only on a yes. For an area a skill covers,
+  the lines it lacks are offered once, where the project records no surfaces version or one before
+  the version that last changed that area's set — each version's changes file names the sets it
+  changed — and again whenever a person asks for them. With no person present, write nothing and
+  report each area's lines as candidates for the person.
 
 ## Writing, growing and pruning
 

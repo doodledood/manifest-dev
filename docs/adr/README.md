@@ -288,4 +288,5 @@
 | 2026-11-16 | [figure-out presses on need by what rests on it, and counts what a part keeps costing](20261116-figure-out-presses-on-need-by-what-rests-on-it.md) | Accepted | figure-out |
 | 2026-11-17 | [A review gate states how it ends: look once, or look again](20261117-a-review-gate-states-how-it-ends.md) | Accepted | define / do |
 | 2026-11-17 | [A review holds work to the project's principles unless a person chose the departure](20261117-a-review-holds-work-to-the-projects-principles-unless-a-person-chose-the-departure.md) | Accepted | Code review |
+| 2026-11-18 | [Pull request review adds a rendered design review when a change alters what a person sees](20261118-pull-request-review-adds-a-rendered-design-review.md) | Accepted | Code review |
 | 2026-11-18 | [Starter principles ship as sets of general lines that a project takes into its own principles skills](20261118-starter-principles-ship-as-sets-a-project-owns.md) | Accepted | Project context |

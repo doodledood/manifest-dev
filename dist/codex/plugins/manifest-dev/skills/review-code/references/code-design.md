@@ -84,7 +84,7 @@ Note: This is about **semantic misuse** — using X for purpose Y was never desi
 
 The change as a whole doesn't make sense as a cohesive unit — unrelated areas touched, cross-cutting impacts missed, or shared contracts changed without updating consumers.
 
-- **Incoherent change scope**: Change mixes unrelated features, bug fixes, or refactors that should be separate. Each concern should be reviewable independently.
+- **Incoherent change scope**: Change mixes unrelated features, bug fixes, or refactors that should be separate. Each concern should be reviewable independently. A fix to a pre-existing problem the change ran into is not this when it lands as its own commit and the project's rules or principles put such fixes in the change that meets them.
 - **Cross-cutting impact missed**: Change affects a shared interface, data format, or contract but doesn't update all consumers. Individual file review looks fine; holistic review reveals the gap.
 - **Incomplete migration in this change**: This change introduces a new pattern/approach and touches files that use the old pattern, but doesn't migrate them — leaving a split that this change could have resolved.
 - **Cross-layer coherence**: When a concept spans multiple layers (internal type → serializer → API DTO → controller), all layers should be consistent. Don't evaluate files in isolation — tie related changes across layers into a single narrative. If one layer was updated but another wasn't, that's a coherence gap.

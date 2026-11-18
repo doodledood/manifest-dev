@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # A small project that accepted the shipped working-practice starter set: its skill holds the
-# set's lines, each choice at its default side, and its context file carries the pointer line
+# set's lines, each choice at its default side and no conditional line, since it has no surface a
+# person sees, and its context file carries the pointer line
 # setup writes. The setup-project recipe's working-practice-in-use scenario asks an agent with
 # none of this repository's plugins for a small change here.
 set -euo pipefail
@@ -17,7 +18,7 @@ i = 0
 while i < len(lines):
     line = lines[i]
     if line.startswith("- Only where "):
-        out.append("- " + line.split(": ", 1)[1])
+        pass  # Ledgerline meets no line's condition: it has no surface a person sees.
     elif line.startswith("- Choice — "):
         default = next(l for l in lines[i + 1:] if l.lstrip().startswith("- Default side: "))
         out.append("- " + default.split("- Default side: ", 1)[1])

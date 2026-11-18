@@ -64,6 +64,11 @@ def set_errors(path: Path) -> list[str]:
             i += 1
             continue
         text = entry[2:]
+        conditional = CONDITION.match(text)
+        if text.startswith("Only where") and not conditional:
+            errors.append(f"conditional line without 'Only where <condition>: ': {text[:60]!r}")
+        if conditional:
+            text = conditional["line"]
         if text.startswith("Choice"):
             if not CHOICE.match(text):
                 errors.append(f"choice without its default rule: {text[:60]!r}")
@@ -79,11 +84,7 @@ def set_errors(path: Path) -> list[str]:
             if sides != ["Default side", "Other side"]:
                 errors.append(f"choice sides are {sides}, not a default then an other side")
         else:
-            conditional = CONDITION.match(text)
-            if text.startswith("Only where") and not conditional:
-                errors.append(f"conditional line without 'Only where <condition>: ': {text[:60]!r}")
-            line = conditional["line"] if conditional else text
-            errors += [f"{line[:50]!r}: {e}" for e in principle_errors(line)]
+            errors += [f"{text[:50]!r}: {e}" for e in principle_errors(text)]
         i += 1
     return errors
 
@@ -111,7 +112,7 @@ def test_the_method_names_exactly_the_sets_on_disk() -> None:
     )
     for name, area in named.items():
         title = TITLE.match((SETS / name).read_text(encoding="utf-8").splitlines()[0])
-        assert title and title["area"] == area, f"{name}: the table calls it {area!r}"
+        assert title and area.split(" (")[0] == title["area"], f"{name}: the table calls it {area!r}"
 
 
 def test_each_set_names_a_skill_of_its_own() -> None:
