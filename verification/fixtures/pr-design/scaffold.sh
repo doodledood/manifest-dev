@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Two local pull request snapshots of Pantry, a static shopping-list page, for review-pr. page/
-# adds a "Clear list" button whose absolute position lands it on top of the card's Save button, a
-# defect the rendered page shows and the diff alone does not: the Save button's place comes from
-# unchanged layout rules. docs/ changes only Markdown documents.
+# adds a "Clear list" button beside Save in the card's header; at a phone's width the header row
+# no longer fits, and the card's unchanged clipping hides Save entirely, a defect only the page
+# rendered at that width shows. docs/ changes only Markdown documents.
 set -euo pipefail
 . "$(dirname "${BASH_SOURCE[0]}")/../../scaffold-guard.sh"
 cat > .gitignore <<'IGNORE'
@@ -39,9 +39,9 @@ EOF
 EOF
   cat > site/style.css <<'EOF'
 body { font: 16px/1.4 system-ui, sans-serif; margin: 24px; color: #222; }
-.card { position: relative; max-width: 420px; padding: 16px; border: 1px solid #ccc; border-radius: 8px; }
-.card-head { display: flex; justify-content: space-between; align-items: center; }
-.card-head h2 { margin: 0; font-size: 20px; }
+.card { max-width: 420px; padding: 16px; border: 1px solid #ccc; border-radius: 8px; overflow: hidden; }
+.card-head { display: flex; align-items: center; gap: 8px; }
+.card-head h2 { margin: 0 auto 0 0; font-size: 20px; white-space: nowrap; }
 .save { padding: 8px 14px; font-size: 15px; }
 .add { width: 100%; margin: 12px 0; padding: 8px; box-sizing: border-box; }
 EOF
@@ -78,9 +78,10 @@ INNER
 mkdir page docs
 (
   cd page && base && git switch -qc feature/clear-list
-  sed -i.bak 's|<ul class="items">|<button class="clear" type="button">Clear list</button>\n  <ul class="items">|' site/index.html && rm -f site/index.html.bak
+  sed -i.bak 's|<button class="save" type="button">Save</button>|<button class="clear" type="button">Clear list</button><button class="save" type="button">Save</button>|' site/index.html && rm -f site/index.html.bak
   cat >> site/style.css <<'EOF'
-.clear { position: absolute; top: 16px; right: 16px; padding: 8px 14px; font-size: 15px; background: #fff; border: 1px solid #b00; color: #b00; }
+.clear { min-width: 170px; padding: 8px 14px; font-size: 15px; background: #fff; border: 1px solid #b00; color: #b00; }
+.save { flex-shrink: 0; }
 EOF
   cat >> site/app.js <<'EOF'
 document.querySelector('.clear').addEventListener('click', () => {
@@ -88,7 +89,7 @@ document.querySelector('.clear').addEventListener('click', () => {
   localStorage.removeItem('pantry');
 });
 EOF
-  pr "Add a Clear list button" "People asked for a quick way to start a new list. This adds a Clear list button in the card's top corner that empties the list and forgets the saved copy."
+  pr "Add a Clear list button" "People asked for a quick way to start a new list. This adds a Clear list button beside Save that empties the list and forgets the saved copy."
 )
 (
   cd docs && base && git switch -qc docs/saving
