@@ -142,14 +142,16 @@ takes the person's word for the area where they gave one.
 - **With history.** Read the project's history for this area as *Create* says, then let it work
   on the set rather than beside it: a source that gives a starter line this project's own reason
   or case sharpens that line; a source the set does not cover becomes a new line, under the test
-  above; a source that states a line the set already holds adds nothing of its own. Where a source
-  takes the other side of a starter line, show both sides with that source, recommend the
-  project's side, and leave the starter line out unless the person picks it.
+  above; a source that states a line the set already holds adds nothing of its own. A source
+  takes the other side of a starter line when following it departs from that line in a case the
+  project meets, even where the line's yield could be read to allow the departure; then show both
+  sides with that source, recommend the project's side, and leave the starter line out unless the
+  person picks it.
 - **With skills already in place.** Fit each set to the project's own skills by what each says it
   is for, never by its name. Offer only the lines its skills lack. Where an existing line nearly
   states a starter line, offer to sharpen the existing line instead of adding a second. Where one
-  conflicts with a starter line, show both and keep the existing one unless the person picks the
-  other. Where the project cuts its areas differently from the sets, offer a split or a merge of
+  takes the other side of a starter line, in the sense above, show both and keep the existing one
+  unless the person picks the other. Where the project cuts its areas differently from the sets, offer a split or a merge of
   its skills as an item of its own; an existing line moves only on the person's yes.
 - **When.** A first setup offers the whole set for every area the project meets and no skill
   covers. A later setup or audit names each such area in one line — the area, how many lines its
