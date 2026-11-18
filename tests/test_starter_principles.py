@@ -15,7 +15,14 @@ import re
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-SETUP = REPO_ROOT / "claude-plugins" / "manifest-dev" / "skills" / "setup-project" / "references"
+SETUP = (
+    REPO_ROOT
+    / "claude-plugins"
+    / "manifest-dev"
+    / "skills"
+    / "setup-project"
+    / "references"
+)
 SETS = SETUP / "starter-principles"
 METHOD = SETUP / "PRINCIPLES_SKILLS.md"
 
@@ -27,7 +34,9 @@ CHOICE = re.compile(
     r"^Choice — (?P<what>[^.]+)\. Default side, unless (?P<signal>.+); then the other side\.$"
 )
 SIDE = re.compile(r"^  - (?P<side>Default side|Other side): (?P<line>.+)$")
-TABLE_ROW = re.compile(r"^\| (?P<area>[^|]+?) \| `starter-principles/(?P<file>[a-z-]+\.md)` \|$")
+TABLE_ROW = re.compile(
+    r"^\| (?P<area>[^|]+?) \| `starter-principles/(?P<file>[a-z-]+\.md)` \|$"
+)
 
 
 def principle_errors(text: str) -> list[str]:
@@ -35,7 +44,9 @@ def principle_errors(text: str) -> list[str]:
     errors = []
     if " — " not in text:
         errors.append("no reason after ' — '")
-    if not re.search(r"(Yields (when|for|where|while|to|inside|once)|Holds without a yield)", text):
+    if not re.search(
+        r"(Yields (when|for|where|while|to|inside|once)|Holds without a yield)", text
+    ):
         errors.append("no 'Yields ...' or 'Holds without a yield'")
     return errors
 
@@ -66,7 +77,9 @@ def set_errors(path: Path) -> list[str]:
         text = entry[2:]
         conditional = CONDITION.match(text)
         if text.startswith("Only where") and not conditional:
-            errors.append(f"conditional line without 'Only where <condition>: ': {text[:60]!r}")
+            errors.append(
+                f"conditional line without 'Only where <condition>: ': {text[:60]!r}"
+            )
         if conditional:
             text = conditional["line"]
         if text.startswith("Choice"):
@@ -80,9 +93,13 @@ def set_errors(path: Path) -> list[str]:
                     errors.append(f"choice side not named: {entries[i][:60]!r}")
                     continue
                 sides.append(side["side"])
-                errors += [f"{side['side']}: {e}" for e in principle_errors(side["line"])]
+                errors += [
+                    f"{side['side']}: {e}" for e in principle_errors(side["line"])
+                ]
             if sides != ["Default side", "Other side"]:
-                errors.append(f"choice sides are {sides}, not a default then an other side")
+                errors.append(
+                    f"choice sides are {sides}, not a default then an other side"
+                )
         else:
             errors += [f"{text[:50]!r}: {e}" for e in principle_errors(text)]
         i += 1
@@ -107,19 +124,25 @@ def test_every_starter_set_keeps_the_shape_setup_reads() -> None:
 def test_the_method_names_exactly_the_sets_on_disk() -> None:
     on_disk = {p.name for p in SETS.glob("*.md")}
     named = method_table()
-    assert on_disk and set(named) == on_disk, (
-        f"PRINCIPLES_SKILLS.md names {sorted(named)}; on disk: {sorted(on_disk)}"
-    )
+    assert (
+        on_disk and set(named) == on_disk
+    ), f"PRINCIPLES_SKILLS.md names {sorted(named)}; on disk: {sorted(on_disk)}"
     for name, area in named.items():
         title = TITLE.match((SETS / name).read_text(encoding="utf-8").splitlines()[0])
-        assert title and area.split(" (")[0] == title["area"], f"{name}: the table calls it {area!r}"
+        assert (
+            title and area.split(" (")[0] == title["area"]
+        ), f"{name}: the table calls it {area!r}"
 
 
 def test_each_set_names_a_skill_of_its_own() -> None:
     names = []
     for path in SETS.glob("*.md"):
-        names += [m["name"] for m in map(SKILL.match, path.read_text().splitlines()) if m]
-    assert len(names) == len(set(names)), f"two sets name the same skill: {sorted(names)}"
+        names += [
+            m["name"] for m in map(SKILL.match, path.read_text().splitlines()) if m
+        ]
+    assert len(names) == len(
+        set(names)
+    ), f"two sets name the same skill: {sorted(names)}"
 
 
 def test_set_errors_catches_each_broken_shape() -> None:
@@ -132,9 +155,11 @@ def test_set_errors_catches_each_broken_shape() -> None:
         "no reason": good.replace(" — a reason", ""),
         "no yield": good.replace(" Yields when a case.", ""),
         "condition": good.replace("- A rule", "- Only where a thing holds A rule"),
-        "choice rule": good + "- Choice — a call.\n  - Default side: a — b. Yields when c.\n"
+        "choice rule": good
+        + "- Choice — a call.\n  - Default side: a — b. Yields when c.\n"
         "  - Other side: d — e. Yields when f.\n",
-        "choice side": good + "- Choice — a call. Default side, unless s; then the other side.\n"
+        "choice side": good
+        + "- Choice — a call. Default side, unless s; then the other side.\n"
         "  - Default side: a — b. Yields when c.\n",
     }
     for what, text in broken.items():
