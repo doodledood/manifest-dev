@@ -42,7 +42,7 @@ usability, so a person looking for a UX review finds this one.
 
 ### Negative
 - Each such review renders the change, which costs time and a browser where the review runs; where nothing can be rendered, that part of the review reports blocked rather than passing.
-- The evidence is one case driven before and after the change. On the plugin before it, the reviewer found the case's defect on its own both times it was driven — once by adding the design review unprompted, once inside the code-bugs dimension — at 202k and 217k tokens and 309 and 342 seconds; after it, the design review ran as a listed step and carried the defect, at 216k tokens and 383 seconds, and did not run for a change to Markdown alone. The gain shown is that the design review runs reliably, not that more defects are caught.
+- The evidence is one case driven before and after the change. On the plugin before it, the reviewer found the case's defect on its own both times it was driven — once by adding the design review unprompted, which met that first form's pass rule, and once, on the sharpened form, inside the code-bugs dimension, which did not meet its rule because no design review ran — at 202k and 217k tokens and 309 and 342 seconds; after it, the design review ran as a listed step and carried the defect, at 216k tokens and 383 seconds, and did not run for a change to Markdown alone. The gain shown is that the design review runs reliably, not that more defects are caught.
 - Untested: whether the design review holds a change to a plain design guide document the project keeps, and whether pull request review hands the project's principles on to it. A drive shows it applying a principles skill reached through the context file's pointer, and nothing more.
 
 ## Enforced by
