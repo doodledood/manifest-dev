@@ -199,6 +199,18 @@ authority over the principle chose the departure. Writing the change does not gi
 record that the change itself adds is not that choice, and it does not show the exception. This is
 so that a team writes a principle once and does not have to check each change by hand.
 
+
+### Starter Principles
+<!-- context: b5628ff1eb04 -->
+Starter Principles are general lines that manifest-dev supplies for one area of work, for example
+code, design or how changes are made. There is one set for each area. Setup, or a request for one
+area, shows a set word for word as the start of a Principles Skill. Some lines are a choice between
+two sides; the offer recommends one side and tells why it fits the project. The history of the
+project can make a line more exact, add a line, or show that the project keeps a different rule.
+A line is written only when a person says yes to it, and then the project owns it.
+
+They exist because a new project has no history to learn principles from. Without them, its
+agents start each area with no stated principles, or with principles that only a plugin knows.
 ### Skill
 <!-- context: f891c4003d65 -->
 A skill is a set of instructions that adds a capability to an agent. The manifest-dev skills use the

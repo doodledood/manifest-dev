@@ -59,6 +59,7 @@ Check: read
 - Posting is public and does not undo. Never drive it on someone else's pull request to test it.
 - The general agent has its host's ambient access. Drive remote actions only against a throwaway repository the scenario owns; missing GitHub capability leaves that entry point unreachable. A local snapshot scenario supplies its own state and performs no remote action.
 - Manifest mode needs the checkout at the pull request's head.
+- A rendered design review needs a browser in the drive's host; the `design` case renders a static page with Playwright's bundled Chromium. Where no browser runs, that review reports its scope blocked and the case cannot pass.
 - Continued Manifest-mode loop wakes pass the applicable checkpoint and reporting scope to each evaluator. A fresh explicit invocation retains its requested independent review scope. This handoff remains unmeasured by a live review drive.
 - The reviewer chooses context placement for thread assessments, dimensions, premise checks, consolidation, and Manifest gates. Required results and evidence remain per item; reporting names the actual context used.
 - `consolidation` stops before posting and uses only a local snapshot. It does not establish live GitHub transport, the fleet's finding accuracy, or the quality difference between context choices. It has been driven on both arms with the principles change; the free cold fixture test only checks its inputs and runner wiring.

@@ -1,6 +1,6 @@
 ---
 name: review-design
-description: 'Review digital artifacts against the user’s task, creative direction, functional and accessibility requirements, and actual delivery medium. Inspect renders, native files, playback or interaction as appropriate; exercise relevant failure and recovery paths and report evidence-backed findings. Use for design review or a manifest gate. Design guidance belongs to design; implementation and restyling stay with the invoking workflow.'
+description: 'Review digital artifacts, their UX and usability as well as their visual design, against the user’s task, creative direction, functional and accessibility requirements, and actual delivery medium. Inspect renders, native files, playback or interaction as appropriate; exercise relevant failure and recovery paths and report evidence-backed findings. Use for design review, a UX or usability review, or a manifest gate. Design guidance belongs to design; implementation and restyling stay with the invoking workflow.'
 user-invocable: true
 ---
 

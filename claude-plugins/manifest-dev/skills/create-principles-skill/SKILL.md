@@ -1,6 +1,6 @@
 ---
 name: create-principles-skill
-description: 'Create or refresh a project skill that holds one area''s principles — how the project''s people want design, product, prompts, architecture or other work done, and why — drawn from what they already said, so agents with or without manifest-dev start that work from it. Use when the user asks to create a principles skill, capture how the team does design, product or architecture work, or refresh an area''s principles; with no area named, it offers the areas worth one.'
+description: 'Create or refresh a project skill that holds one area''s principles — how the project''s people want design, product, prompts, architecture or other work done, and why — starting from the starter principles this workflow ships for the area and honed by what they already said, so agents with or without manifest-dev start that work from it. Use when the user asks to create a principles skill, capture how the team does design, product or architecture work, or refresh an area''s principles; with no area named, it offers the areas worth one.'
 argument-hint: '[area] [--autonomous] [--no-log]'
 user-invocable: true
 ---
@@ -11,4 +11,4 @@ Invoke the figure-out skill with the brief below and the arguments given, forwar
 
 Brief:
 
-> Create or refresh the principles skill for [the area given], following `../setup-project/references/PRINCIPLES_SKILLS.md`; with no area given, offer the areas that file's bar admits. The read names each line written, each candidate left out and where it belongs instead.
+> Create or refresh the principles skill for [the area given], following `../setup-project/references/PRINCIPLES_SKILLS.md`, starting from the area's starter set where one ships (*Starter principles* there); with no area given, offer the areas that file's bar admits, the starter areas the project works in among them. The read names each line written, each candidate left out and where it belongs instead.

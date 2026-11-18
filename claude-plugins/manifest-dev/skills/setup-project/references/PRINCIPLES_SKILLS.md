@@ -65,6 +65,9 @@ saying only when to load it and where it is:
 
 `- **<Area> work** — load the \`<area>-principles\` skill (\`<path to its SKILL.md>\`) before planning, designing, building or reviewing it.`
 
+A skill about how any change is made, such as working practice, has a pointer line that says to
+load it before changing anything in the project.
+
 ## Where content goes
 
 Sort by how often the work it guides happens:
@@ -88,15 +91,66 @@ Offer a skill only for a high-signal area:
   whose reasoning is a preference in that area — count them, and name the sources;
 - the project context file already holds principles or Taste entries that only that area's work
   needs; or
-- with no history to read, the project does that kind of work and a shipped skill holds an
-  opinionated base for it, such as visual design or prompts. Put the base's key trade-offs to the
-  person as questions, with the base's position as the recommended answer; their answers are the
-  lines.
+- a starter set covers the area and the project does, or is about to do, that kind of work
+  (*Starter principles*, below).
 
 One stray comment in an area is not signal. Offer at most three areas at a time, each with its
 count and sources, and let the person accept them in one batch. This bar governs the offers nobody
 prompted — from history, at setup, or in a session's closing sweep. A person who states why they
 want one area's work done differently has given the signal themselves: *Grow* offers that line.
+
+## Starter principles
+
+This workflow ships one starter set per area, as data beside this file in `starter-principles/`.
+Each set names its skill, says which projects it is offered to (`Offered when`), and lists its
+lines in the shape a principles skill holds. A line marked `Only where <condition>:` is offered
+only to a project that meets the condition. A line marked `Choice —` holds two sides of a call
+careful teams make differently, and says which side to recommend from what the project shows. The
+sets are general lines a person can take as they are, sharpen, or strike; once written, a line is
+the project's own, and a later change to a set reaches the project only as a new offer.
+
+| Area | Set |
+|---|---|
+| Code | `starter-principles/code.md` |
+| Architecture | `starter-principles/architecture.md` |
+| Agent behavior | `starter-principles/agent.md` |
+| Evaluation | `starter-principles/evaluation.md` |
+| Design | `starter-principles/design.md` |
+| Product | `starter-principles/product.md` |
+| Writing | `starter-principles/writing.md` |
+| Security and privacy | `starter-principles/security.md` |
+| Working practice | `starter-principles/working-practice.md` |
+
+An area with no set here keeps the routes above: its history, or the context file's principles.
+
+- **Which areas.** Offer each area whose `Offered when` the project meets, or will meet from what
+  its person says it is for; a new project counts by what it is about to hold. Offer the areas
+  three at a time, by the bar above, and once a batch is answered offer the next.
+- **How a set is shown.** Show each line exactly as it would be written: a conditional line
+  without its marker, and only where its condition holds; a choice as its two sides, the
+  recommended side first with the signal that picked it. Before the person answers, say that an
+  accepted line is one later reviews hold the work to, and that any line can be struck or reworded
+  now. Write what is accepted; a choice left unanswered takes the recommended side, and a line
+  struck stays out.
+- **With history.** Read the project's history for this area as *Create* says, then let it work
+  on the set rather than beside it: a source that gives a starter line this project's own reason
+  or case sharpens that line; a source the set does not cover becomes a new line, under the test
+  above; a source that states a line the set already holds adds nothing of its own. Where a source
+  takes the other side of a starter line, show both sides with that source, recommend the
+  project's side, and leave the starter line out unless the person picks it.
+- **With skills already in place.** Fit each set to the project's own skills by what each says it
+  is for, never by its name. Offer only the lines its skills lack. Where an existing line nearly
+  states a starter line, offer to sharpen the existing line instead of adding a second. Where one
+  conflicts with a starter line, show both and keep the existing one unless the person picks the
+  other. Where the project cuts its areas differently from the sets, offer a split or a merge of
+  its skills as an item of its own; an existing line moves only on the person's yes. Offer no line
+  that restates a principle the project context file already holds.
+- **When.** A setup offers the whole set for every area the project meets and no skill covers. A
+  setup or audit of a project whose skills cover an area offers that area's lacking lines once,
+  when the project's recorded surfaces version predates the sets, and again whenever a person asks
+  for them. With no person present, write nothing and report each area's lines as candidates for
+  the person.
+
 
 ## Writing, growing and pruning
 
@@ -104,11 +158,12 @@ Only a person's explicit yes to the shown text writes, moves or removes a line, 
 or a pointer line. An answer the person gave in advance for a named run is that yes for that run's
 offers. With no person present, write nothing and report the candidates with their sources.
 
-- **Create:** read the sources — the project's docs, its decision records' reasoning, review and
-  pull request threads, commit bodies, the project context file and its Taste entries, and past
-  session records only once the person agrees to have them read. Put each candidate through the
-  test above, show the draft lines verbatim with the source of each, write what the person
-  accepts, and add the pointer line.
+- **Create:** start from the area's starter set where there is one (*Starter principles*). Read the
+  sources — the project's docs, its decision records' reasoning, review and pull request threads,
+  commit bodies, the project context file and its Taste entries, and past session records only
+  once the person agrees to have them read. Put each candidate through the test above, show the
+  draft lines verbatim with the source of each, write what the person accepts, and add the pointer
+  line.
 - **Grow:** when a person states why they want work in one area done differently, offer a line for
   that area's skill — creating the skill and its pointer line on a yes when none exists — rather
   than a project-wide Taste entry.
