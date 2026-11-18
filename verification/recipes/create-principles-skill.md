@@ -36,6 +36,11 @@ Run: `scripts/drive-skill.sh create-principles-skill verification/prompts/create
 Proves: graders, applied to `.claude/skills/design-principles/SKILL.md` after the run: (1) the results line is sharpened in place to cover anything a member or organizer might send to someone else, with no second line beside it on the same principle; (2) the Tailwind line is gone, its choice left to `docs/adr/0002`; (3) the history note is gone; (4) lines for the neutral vote bars and the one-column forms are added, each with its reason and when it yields; (5) the edit rule and the self-check still open and end the body, and `CLAUDE.md` still carries exactly one pointer line for the skill. PASS when all five hold.
 Check: read
 
+### starter-on-demand
+Run: `scripts/drive-skill.sh create-principles-skill verification/prompts/create-principles-skill-starter.md --scaffold verification/scaffolds/greenfield-page --max-turns 80`
+Proves: asked for design principles in a project with no design history, it offers the design starter set word for word, each choice set to a named side with the reason, and no line whose condition the page does not meet; it writes `.claude/skills/design-principles/SKILL.md` holding exactly the offered lines, in the method's shape, with one pointer line in the context file. PASS when all hold.
+Check: read
+
 ## Gotchas
 
 - It writes into the project and changes later sessions' context. Scratch directory only.

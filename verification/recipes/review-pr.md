@@ -47,6 +47,11 @@ Run: `scripts/drive-skill.sh review-pr verification/prompts/review-pr-existing-o
 Proves: two local snapshots of Branchline, whose decision 0001 made the visit log the one record of checkouts and a later commit with no record narrowed it to item ids. For parallel/, which adds a second store and nightly job to capture full item records, with its own design note and Accepted record: the judgment pass asks why the visit log is not extended or restored, or recommends changing the proposal toward it. For ordinary/, which adds an opening-hours module nothing owns: judgment raises no existing-owner question. In both, judgment findings carry no severity and block nothing. PASS when all of these hold.
 Check: read
 
+### design
+Run: `scripts/drive-skill.sh review-pr verification/prompts/review-pr-design.md --tools --scaffold verification/fixtures/pr-design`
+Proves: two local snapshots of Pantry, reviewed in no-Manifest mode under the default policies. For page/, which adds a Clear list button: the drafted review carries the defect that the new button sits on top of the Save button, so a press where Save shows clears the list, found by a design review that rendered the page. For docs/, which changes only Markdown documents: no design review runs, and no comment rests on how a page renders. Nothing is posted. PASS when all of these hold.
+Check: read
+
 ## Gotchas
 
 - The prompt file carries the placeholder `THROWAWAY_PR_URL`; replace it with a throwaway pull request in a repository the run owns before driving.

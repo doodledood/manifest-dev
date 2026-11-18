@@ -131,6 +131,22 @@ def test_native_prepare_has_copied_skill_and_no_success(tmp_path: Path) -> None:
     assert Path(request["records"]).is_relative_to(out)
 
 
+def test_no_plugins_hands_in_no_skill(tmp_path: Path) -> None:
+    """A drive of what a project's own files make an agent do supplies none of this repo's skills."""
+    env = native_env(tmp_path)
+    result = call(env, "--no-plugins")
+    assert result.returncode == 3, result.stdout + result.stderr
+    out = next((tmp_path / "runs/review-code").iterdir())
+    request = json.loads((out / "native-request.json").read_text())
+    worker = (out / "worker-prompt.md").read_text()
+    assert request["catalog"] == {}
+    assert not (out / "plugins").exists()
+    assert "No skill snapshots are supplied" in worker
+    assert "skill-catalog.json" not in worker
+    refused = call(native_env(tmp_path / "other"), "--no-plugins", "--tools")
+    assert refused.returncode != 0 and "cannot take --tools" in refused.stderr
+
+
 @pytest.mark.parametrize("seeds_records", [False, True])
 def test_scaffold_cache_is_distinct_from_private_records(
     tmp_path: Path, seeds_records: bool
