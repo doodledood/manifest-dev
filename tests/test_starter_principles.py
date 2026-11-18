@@ -45,16 +45,16 @@ def set_errors(path: Path) -> list[str]:
     errors: list[str] = []
     if not lines or not TITLE.match(lines[0]):
         errors.append("first line is not '# Starter principles: <Area>'")
-    if not any(SKILL.match(l) for l in lines):
+    if not any(SKILL.match(line) for line in lines):
         errors.append("no '- Skill: `<area>-principles`' line")
-    if not any(OFFERED.match(l) for l in lines):
+    if not any(OFFERED.match(line) for line in lines):
         errors.append("no '- Offered when:' line")
     if "## Lines" not in lines:
         errors.append("no '## Lines' section")
         return errors
     body = lines[lines.index("## Lines") + 1 :]
-    entries = [l for l in body if l.strip()]
-    if not any(l.startswith("- ") for l in entries):
+    entries = [line for line in body if line.strip()]
+    if not any(line.startswith("- ") for line in entries):
         errors.append("no lines under '## Lines'")
     i = 0
     while i < len(entries):
