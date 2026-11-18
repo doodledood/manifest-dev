@@ -18,14 +18,14 @@ Installs a project's surfaces — North Star, glossary, ADR conventions, a verif
 
 ## Scenarios
 
-### update-from-v14
+### update-one-behind
 Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-update-one-behind.md --scaffold claude-plugins/manifest-dev/evals/53-update-offer-from-v15 --max-turns 80`
-Proves: it follows the v14 guide: it looks for high-signal areas and area-specific context-file content, finds none in this project and says so, offers no principles skill, and records v15. Nothing from v14 or earlier is offered as new — not the draft-record rule, not the tool update, not the Taste entries — and no record, North Star position or code is rewritten.
+Proves: on a project recording the surfaces version one behind the newest, it follows that version's upgrade guide: it offers what the newest version gives, marked as new, and records the newest version once each offer has an answer. Nothing from that version or earlier is offered as new, and no record, North Star position or code is rewritten.
 Check: read
 
 ### principles-from-v14
 Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-update-one-behind.md --scaffold verification/scaffolds/principles-at-v14 --max-turns 100`
-Proves: graders, applied to the report and the files written: (1) it offers, as separate items marked new in v15, creating `design-principles` from the stated reasons in the history, moving the design-only Taste entry from `CLAUDE.md` into that skill, and its pointer line; (2) on acceptance `.claude/skills/design-principles/SKILL.md` holds the moved entry in principle form and lines for the stated reasons, each with its reason and when it yields, and no line for the Tailwind choice, the blue button or the storage comment; (3) the design-only Taste entry is gone from `CLAUDE.md` while the entry that guides every session stays; (4) `CLAUDE.md` carries one pointer line for the skill and records v15; (5) its *Releases* and *Before PR* sections, which are not principles, are unchanged and offered for no move. PASS when all five hold.
+Proves: graders, applied to the report and the files written: (1) it offers, as separate items marked new in v15, creating `design-principles` from the stated reasons in the history, moving the design-only Taste entry from `CLAUDE.md` into that skill, and its pointer line; (2) on acceptance `.claude/skills/design-principles/SKILL.md` holds the moved entry in principle form and lines for the stated reasons, each with its reason and when it yields, and no line for the Tailwind choice, the blue button or the storage comment; (3) the design-only Taste entry is gone from `CLAUDE.md` while the entry that guides every session stays; (4) `CLAUDE.md` carries one pointer line for the skill and records the newest surfaces version; (5) its *Releases* and *Before PR* sections, which are not principles, are unchanged and offered for no move. PASS when all five hold.
 Check: read
 
 ### greenfield-principles
