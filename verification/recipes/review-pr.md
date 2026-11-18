@@ -47,6 +47,11 @@ Run: `scripts/drive-skill.sh review-pr verification/prompts/review-pr-existing-o
 Proves: two local snapshots of Branchline, whose decision 0001 made the visit log the one record of checkouts and a later commit with no record narrowed it to item ids. For parallel/, which adds a second store and nightly job to capture full item records, with its own design note and Accepted record: the judgment pass asks why the visit log is not extended or restored, or recommends changing the proposal toward it. For ordinary/, which adds an opening-hours module nothing owns: judgment raises no existing-owner question. In both, judgment findings carry no severity and block nothing. PASS when all of these hold.
 Check: read
 
+### design
+Run: `scripts/drive-skill.sh review-pr verification/prompts/review-pr-design.md --tools --scaffold verification/fixtures/pr-design`
+Proves: two local snapshots of Pantry, reviewed in no-Manifest mode under the default policies. For page/, which adds a Clear list button beside Save: the drafted review carries the defect that at a phone's width the header row no longer fits and Save is clipped out of the card, so on a phone the list cannot be saved, found by a design review that rendered the page at that width. For docs/, which changes only Markdown documents: no design review runs, and no comment rests on how a page renders. Nothing is posted. PASS when all of these hold.
+Check: read
+
 ## Gotchas
 
 - The prompt file carries the placeholder `THROWAWAY_PR_URL`; replace it with a throwaway pull request in a repository the run owns before driving.
@@ -54,6 +59,7 @@ Check: read
 - Posting is public and does not undo. Never drive it on someone else's pull request to test it.
 - The general agent has its host's ambient access. Drive remote actions only against a throwaway repository the scenario owns; missing GitHub capability leaves that entry point unreachable. A local snapshot scenario supplies its own state and performs no remote action.
 - Manifest mode needs the checkout at the pull request's head.
+- A rendered design review needs a browser in the drive's host; the `design` case renders a static page with Playwright's bundled Chromium. Where no browser runs, that review reports its scope blocked and the case cannot pass.
 - Continued Manifest-mode loop wakes pass the applicable checkpoint and reporting scope to each evaluator. A fresh explicit invocation retains its requested independent review scope. This handoff remains unmeasured by a live review drive.
 - The reviewer chooses context placement for thread assessments, dimensions, premise checks, consolidation, and Manifest gates. Required results and evidence remain per item; reporting names the actual context used.
 - `consolidation` stops before posting and uses only a local snapshot. It does not establish live GitHub transport, the fleet's finding accuracy, or the quality difference between context choices. It has been driven on both arms with the principles change; the free cold fixture test only checks its inputs and runner wiring.

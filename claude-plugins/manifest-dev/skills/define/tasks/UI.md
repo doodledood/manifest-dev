@@ -6,7 +6,7 @@ User-visible artifact work of any genre — anything a person will see and judge
 
 | Aspect | Skill | Threshold |
 |--------|-------|-----------|
-| Design quality | `review-design` | The intended audience can use and understand the artifact in its actual medium, with composition and craft serving its purpose |
+| Design quality (UX, usability, visual design) | `review-design` | The intended audience can use and understand the artifact in its actual medium, with composition and craft serving its purpose |
 | Reference fidelity | — | Faithful to any mocks, references, or reaction-pinned criteria the manifest carries |
 
 The design claim names the audience, purpose and use it serves. Evidence activates

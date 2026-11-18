@@ -50,6 +50,9 @@ def parse() -> argparse.Namespace:
     parser.add_argument("inputs", nargs="*")
     parser.add_argument("--scaffold", type=Path)
     parser.add_argument("--tools", action="store_true")
+    # An agent with none of this repository's plugins, for a scenario about what a project's own
+    # files make any agent do.
+    parser.add_argument("--no-plugins", action="store_true")
     parser.add_argument("--max-turns", type=int, default=40)
     parser.add_argument("--dry-run", action="store_true")
     return parser.parse_args()
@@ -135,7 +138,13 @@ def prepare(args: argparse.Namespace, feature: str, prompt: str) -> Path:
             ["git", "-C", str(ROOT), "rev-parse", "--verify", f"{revision}^{{commit}}"],
             text=True,
         ).strip()
-    names = ["manifest-dev"] + (["manifest-dev-tools"] if args.tools else [])
+    if args.no_plugins and args.tools:
+        fail("--no-plugins hands in no plugin, so it cannot take --tools")
+    names = (
+        []
+        if args.no_plugins
+        else ["manifest-dev"] + (["manifest-dev-tools"] if args.tools else [])
+    )
     catalog = snapshot(out, names, revision) if args.mode == "skill" else {}
     if args.scaffold:
         fixture = args.scaffold.resolve()
@@ -216,9 +225,14 @@ def prepare(args: argparse.Namespace, feature: str, prompt: str) -> Path:
         },
     }
     write_json(out / "skill-catalog.json", catalog)
+    skills = (
+        "No skill snapshots are supplied: work with the project's own files and your general tools."
+        if getattr(args, "no_plugins", False)
+        else f"""Available skill snapshots and references: {out / 'skill-catalog.json'}
+Use these copies for any skill the task calls for; scripts inside them are available."""
+    )
     worker = f"""Working directory: {project}
-Available skill snapshots and references: {out / 'skill-catalog.json'}
-Use these copies for any skill the task calls for; scripts inside them are available.
+{skills}
 Keep workflow records under {records}. Use no parent conversation, installed skill
 copies, personal records, source checkout, verification recipes or expected outcomes.
 Do not inspect other agents or their messages, including agent-inventory tools. A fresh

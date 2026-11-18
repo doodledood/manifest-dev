@@ -18,19 +18,54 @@ Installs a project's surfaces — North Star, glossary, ADR conventions, a verif
 
 ## Scenarios
 
-### update-from-v14
-Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-update-one-behind.md --scaffold claude-plugins/manifest-dev/evals/53-update-offer-from-v15 --max-turns 80`
-Proves: it follows the v14 guide: it looks for high-signal areas and area-specific context-file content, finds none in this project and says so, offers no principles skill, and records v15. Nothing from v14 or earlier is offered as new — not the draft-record rule, not the tool update, not the Taste entries — and no record, North Star position or code is rewritten.
+### update-one-behind
+Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-update-one-behind.md --scaffold claude-plugins/manifest-dev/evals/53-update-offer-from-v16 --max-turns 80`
+Proves: on a project recording the surfaces version one behind the newest, it follows that version's upgrade guide: it offers what the newest version gives, marked as new, and records the newest version once each offer has an answer. Nothing from that version or earlier is offered as new, and no record, North Star position or code is rewritten.
 Check: read
 
 ### principles-from-v14
 Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-update-one-behind.md --scaffold verification/scaffolds/principles-at-v14 --max-turns 100`
-Proves: graders, applied to the report and the files written: (1) it offers, as separate items marked new in v15, creating `design-principles` from the stated reasons in the history, moving the design-only Taste entry from `CLAUDE.md` into that skill, and its pointer line; (2) on acceptance `.claude/skills/design-principles/SKILL.md` holds the moved entry in principle form and lines for the stated reasons, each with its reason and when it yields, and no line for the Tailwind choice, the blue button or the storage comment; (3) the design-only Taste entry is gone from `CLAUDE.md` while the entry that guides every session stays; (4) `CLAUDE.md` carries one pointer line for the skill and records v15; (5) its *Releases* and *Before PR* sections, which are not principles, are unchanged and offered for no move. PASS when all five hold.
+Proves: graders, applied to the report and the files written: (1) it offers, as separate items marked new in v15, creating `design-principles` from the stated reasons in the history, moving the design-only Taste entry from `CLAUDE.md` into that skill, and its pointer line; (2) on acceptance `.claude/skills/design-principles/SKILL.md` holds the moved entry in principle form and lines for the stated reasons, each with its reason and when it yields, and no line for the Tailwind choice, the blue button or the storage comment; (3) the design-only Taste entry is gone from `CLAUDE.md` while the entry that guides every session stays; (4) `CLAUDE.md` carries one pointer line for the skill and records the newest surfaces version; (5) its *Releases* and *Before PR* sections, which are not principles, are unchanged and offered for no move. PASS when all five hold.
 Check: read
 
 ### greenfield-principles
 Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-install.md --scaffold verification/scaffolds/greenfield-page --max-turns 100`
 Proves: on a new project with a web page and no history, it offers a design principles skill — putting the shipped design guidance's key trade-offs as questions with that guidance's position as the recommended answer — and offers no skill for an area the project has no work in, such as prompts; with every item accepted, `.claude/skills/design-principles/SKILL.md` exists with a pointer line.
+Check: read
+
+### starter-new-project
+Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-starter-new-project.md --scaffold verification/scaffolds/starter-recipebox --max-turns 150`
+Proves: graders, applied to the transcript and the files written: (1) it offers starter principles for code, architecture, agent behavior, design, product, writing, security and privacy, and working practice, and none for evaluation, which this project does not do; (2) no more than three areas' lines are in front of the person at once, and it goes on to the next batch; (3) each offered line is shown word for word before any principles file is written, and the offer says before the yes that an accepted line is then held at review and that any line can be struck; (4) each choice arrives set to a named side with the reason that side fits; (5) no line is offered or written about work run twice or retried, deciding who may see or do what, outside readers of stored data, deleting stored personal data, or several writers of shared state — conditions this project does not meet; (6) a principles skill exists for each accepted area, in the method's shape, with one pointer line each in `CLAUDE.md`, the working-practice one saying to load it before changing anything; (7) the struck line about deleting what a change leaves unused appears in no written file, the choice about problems a change runs into is written on the side the person gave, and no writing skill or pointer exists. PASS when all seven hold.
+Check: read
+
+### starter-away
+Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-starter-away.md --scaffold verification/scaffolds/starter-recipebox --max-turns 100`
+Proves: with the person away, it writes no principles skill and no pointer line, and its report lists the starter lines it would offer, by area, as candidates for the person. PASS when both hold.
+Check: read
+
+### starter-from-history
+Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-starter-from-history.md --scaffold verification/scaffolds/starter-from-history --max-turns 150`
+Proves: graders, applied to the transcript and the files written: (1) it offers starter principles for design and code with what the history adds; (2) it offers no line of its own for the review note about empty lists, which a starter line already states; (3) it offers the starter line about naming figures and their units honed with this project's reason — the "Rooms: 3" label that led two members to book the same room; (4) it offers a new design line for the one-column booking form, with the reason that members book on their phones in the laundry room; (5) it shows the conflict between keeping the replaced form under `legacy/` as the office's paper fallback and the starter line about deleting what a change leaves unused, with both sides, and writes the project's side and not that starter line; (6) nothing is written to a principles skill before its offer. PASS when all six hold.
+Check: read
+
+### starter-one-behind
+Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-starter-principles-only.md --scaffold verification/scaffolds/starter-one-behind --max-turns 150`
+Proves: on a project one surfaces version behind with principles skills in place, graders applied to the transcript and the files written: (1) it offers starter principles marked as new in the newest version: a whole starter set for model work, which no skill covers, and for `ui-principles` and `engineering-principles` the starter lines each lacks, reading which starter area each covers from what it says it is for; (2) it offers the empty-list line of `ui-principles` sharpened rather than a starter line beside it; (3) it shows the conflict between keeping replaced templates under `legacy/` and the starter line about deleting what a change leaves unused, with both sides, and keeps the project's line; (4) it offers no starter line restating the context file's principle against skipping or loosening tests; (5) it offers splitting `engineering-principles` into a code skill and an architecture skill as its own item, and makes the split with each pointer line; (6) no second skill for design appears beside `ui-principles`; (7) the newest version is recorded. PASS when all seven hold.
+Check: read
+
+### starter-current
+Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-starter-principles-only.md --scaffold verification/scaffolds/starter-current --max-turns 100`
+Proves: on a project at the newest surfaces version, it offers the whole starter set for model work, which has work and no skill, and writes it with its pointer line; it offers no starter line for `design-principles`, whose area a skill covers; it does not change the recorded version. PASS when all three hold.
+Check: read
+
+### starter-empty-project
+Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-starter-empty.md --max-turns 120`
+Proves: on an empty folder whose purpose the person states, it offers the starter sets for the areas that purpose implies — design, product, code, architecture, agent behavior, and security and privacy for signed-in members' bills — at most three areas at a time, offers none for evaluation, writes the accepted skills with their pointer lines beside the wiring, and tells the person how to get a set for another area later. PASS when all four hold.
+Check: read
+
+### working-practice-in-use
+Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-working-practice-in-use.md --scaffold verification/scaffolds/starter-working-practice --no-plugins --max-turns 40`
+Proves: an agent with none of this repository's plugins, asked for a small change in a project that accepted the working-practice starter set, reads `.claude/skills/working-practice-principles/SKILL.md` before its first edit. Graded on the host's record of the session's tool calls. PASS when it does.
 Check: read
 
 ### update-from-v3

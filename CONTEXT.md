@@ -252,6 +252,10 @@ _Avoid_: Preference, style, judgment.
 A project skill named `<area>-principles` holding how a project's people want one area of its work done — design, product, prompts, architecture or another — each line a principle with its reason and when it yields, drawn from what those people said, failures seen in that area's work, or defaults they chose to depart from or keep, and written only on a person's yes. Any agent loads it through its pointer line in the Project Context File, and a review holds the work it reviews to its principles unless a person with authority over the principle chose the departure.
 _Avoid_: Area skill, style guide, playbook.
 
+**Starter Principles**:
+The general lines manifest-dev ships for one area of work — one set per area, such as code, design or working practice — that setup and the on-demand principles skill offer as the start of a project's Principles Skill: shown word for word, with a recommended side for each Choice it holds, honed by the project's history, fitted to the skills it already has, and written only on a person's yes; once written, a line is the project's own.
+_Avoid_: Default principles, principles pack, seed (that is reconstructed history).
+
 **User's Call**:
 A decision where two careful people with the same evidence could reasonably differ in a way that matters to the user; the run honors applicable delegation and retained choices, weighs relevant Taste entries, and reports material choices with their rationale rather than treating confidence as authority.
 _Avoid_: Low-confidence decision, judgment call.
@@ -367,6 +371,7 @@ _Avoid_: Ticket sweep, batch runner, scheduler.
 - One **Door** per discovery surface; every **Door** opens into the same **House**.
 - A **Re-host** preserves **Spine** content verbatim while making its **Altitude** typographically legible.
 - A **Taste** entry is ratified by the user and routed by scope to a user-level or project-level memory file; it is never inferred and applied silently, and it stays distinct from the review-time **Judgment Layer**.
+- **Starter Principles** are where a **Principles Skill** starts for an area manifest-dev ships a set for; the project's history hones them, and its own lines win a conflict unless the person picks the starter line.
 - A **Principles Skill** holds only principles; a chosen option stays in its **Decision Record**, and a rule a check can hold becomes a **Lock**. figure-out, `/define` and `/define`'s review load the ones for the areas the work touches, and review-code those whose stated use covers the change, through their pointer lines.
 - `/setup-project` installs a project's **ADR Conventions**, its glossary, and the **Project Context File** wiring that keeps sessions reading both; a **Seed** is layered on top wherever the project has history, and is never a substitute for the wiring.
 - figure-out loads the **ADR Conventions** at bootstrap and writes records under them, which is what makes the project's copy govern rather than the shipped default; cadence — when a session offers to record a decision — stays with figure-out and is not the project's to set.

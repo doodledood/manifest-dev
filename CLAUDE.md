@@ -68,7 +68,7 @@ Read before building plugins:
 
 ## Project Surfaces
 
-<!-- setup-project surfaces v16 -->
+<!-- setup-project surfaces v17 -->
 
 This project keeps its direction, vocabulary, and decision memory in the repo — shared ground for every contributor and agent, regardless of tooling.
 
@@ -86,6 +86,11 @@ This project keeps its direction, vocabulary, and decision memory in the repo �
 - **Product work** — load the `product-principles` skill (`.claude/skills/product-principles/SKILL.md`) before planning, designing, building or reviewing behavior manifest-dev ships.
 - **Architecture work** — load the `architecture-principles` skill (`.claude/skills/architecture-principles/SKILL.md`) before planning, designing, building or reviewing how skills, wrappers, state and the workflow are structured.
 - **Design work** — load the `design-principles` skill (`.claude/skills/design-principles/SKILL.md`) before planning, writing, building or reviewing the design guidance manifest-dev ships or a surface a skill renders for a person.
+- **Code work** — load the `code-principles` skill (`.claude/skills/code-principles/SKILL.md`) before planning, designing, building or reviewing the repository's code — its tests, scripts, the verify tool, or code a skill ships.
+- **Evaluation work** — load the `evaluation-principles` skill (`.claude/skills/evaluation-principles/SKILL.md`) before planning, running, reading or reviewing a measurement — a behavior drive, an eval suite, a design-instrument experiment, a hill-climb, or any choice between versions on a measured result.
+- **Writing work** — load the `writing-principles` skill (`.claude/skills/writing-principles/SKILL.md`) before planning, writing or reviewing text people read — a README, a guide, a decision record, the site, or a pull request description.
+- **Security work** — load the `security-principles` skill (`.claude/skills/security-principles/SKILL.md`) before planning, designing, building or reviewing a skill that takes in outside content, decides whether a run may act, or logs or posts what a run saw.
+- **Any work** — load the `working-practice-principles` skill (`.claude/skills/working-practice-principles/SKILL.md`) before changing anything in this project.
 
 ## Repository Structure
 

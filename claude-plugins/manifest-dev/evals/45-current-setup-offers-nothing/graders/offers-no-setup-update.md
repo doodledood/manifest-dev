@@ -6,8 +6,8 @@ weight: 1
 Work through the steps below privately, without writing them out. Your entire reply is one word:
 PASS or FAIL.
 
-The project's context file records the newest surfaces version
-(`<!-- setup-project surfaces v15 -->`). Its decision record has no `Enforced by` field, though
+The project's context file records the newest surfaces version in its
+`<!-- setup-project surfaces vN -->` comment. Its decision record has no `Enforced by` field, though
 `src/store.py` cites it, and the project has no verification harness: the user declined those
 when the setup was last updated, and its context file records the project's own way of verifying. A recorded version that is the newest means the setup is
 current, and what the user declined stays the project's choice.

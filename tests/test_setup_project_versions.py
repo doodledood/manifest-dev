@@ -28,7 +28,8 @@ UPGRADES = SETUP / "upgrades"
 HARNESS = SETUP / "harness"
 
 # Every file whose text setup-project copies or emits into a project: the conventions, the
-# surfaces template, and the verification harness it copies (the tool and its example data).
+# surfaces template, the verification harness it copies (the tool and its example data), and the
+# starter principles it offers as principles skills.
 EMITTED = (
     SKILLS / "figure-out" / "references" / "ADR_FORMAT.md",
     NORTH_STAR_FORMAT,
@@ -36,6 +37,7 @@ EMITTED = (
     HARNESS / "verify.mts",
     HARNESS / "harness.md",
     *sorted((HARNESS / "recipes").glob("*.md")),
+    *sorted((SETUP / "starter-principles").glob("*.md")),
 )
 
 HTML_COMMENT = re.compile(r"<!--.*?-->", re.DOTALL)

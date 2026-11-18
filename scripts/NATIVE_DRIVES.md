@@ -47,6 +47,10 @@ reading a copied skill alone does not prove that a host installed or registered 
 Document walks use the same flow with only the task and document snapshots. After reading the
 brief, their reader answers from those documents without further tools or a skill catalog.
 
+A drive whose `Run` passes `--no-plugins` hands in no skill snapshot: its agent works from the
+project's own files and its general tools, which is how a scenario shows what an agent with none of
+this repository's plugins does in a project the workflow set up.
+
 ## Missing general agents and approved fallback
 
 Warn and ask what to do. Keep the drive incomplete while that decision is pending. When a request
