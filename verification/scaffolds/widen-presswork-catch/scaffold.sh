@@ -3,9 +3,9 @@
 # take: booklets want their cover on another stock than their inner pages. The job takes one stock;
 # the change does not let it take more. It adds a named setting on the customer profile instead,
 # with its own service, a guard that keeps the setting off proof prints, a glossary term and a
-# decision record whose alternatives never mention the job's input. Its caching rides the profile's
-# existing hash. The change is otherwise sound: one function owns the sheet split, the setting is
-# checked where it enters, and the cache keys on all a quote reads. The review-code recipe's
+# decision record whose alternatives never mention the job's input; it extends the customer profile.
+# The change is otherwise sound: one function owns the sheet split, the setting is checked where it
+# enters, the cache keys on what is priced, and planning re-reserves paper. The review-code recipe's
 # widen-catch scenario.
 set -euo pipefail
 . "$(dirname "${BASH_SOURCE[0]}")/../../scaffold-guard.sh"
@@ -19,7 +19,8 @@ cat > src/presswork/cover_stock.py <<'EOF'
 
 A customer who sets it gets the cover sheet of every booklet they order (one per copy) on that
 stock, and the inner pages on the job's stock. Flat jobs never use it. The guard: proofs never use
-it either, since a proof shows the job exactly as ordered.
+it either, since proofs run on the proof press, which takes one stock; the customer approves the
+card from a sample.
 """
 from presswork import catalogue, customers
 from presswork.jobs import Job
@@ -45,51 +46,64 @@ def sheets_by_stock(job: Job) -> list[tuple[str, int]]:
 EOF
 
 cat > src/presswork/pricing.py <<'EOF'
-"""Quotes a job, caching each quote by the customer's profile and the job's paper and size."""
-from presswork import catalogue, cover_stock, customers
+"""Quotes a job, caching each quote by the stocks and sheets it prints on and its finish."""
+from presswork import catalogue, cover_stock
 from presswork.jobs import Job
 
 FINISH_PER_SHEET = {"matte": 1, "gloss": 2}
-_cache: dict[tuple[str, str, int, int, str, str, bool], int] = {}
+_cache: dict[tuple[tuple[tuple[str, int], ...], str], int] = {}
 
 
 def quote(job: Job) -> int:
-    customer = customers.get(job.customer_id)
-    # The booklet cover stock lives in the profile's preferences, so the profile hash already
-    # changes when it does: the existing cache identity covers it with no new key.
-    key = (customer.profile_hash(), job.stock, job.pages, job.copies, job.finish, job.kind, job.proof)
+    # Keyed on what is priced, so any input of the stock split, the profile's cover stock
+    # included, reaches the key without being listed here.
+    needs = tuple(cover_stock.sheets_by_stock(job))
+    key = (needs, job.finish)
     if key not in _cache:
         finish = FINISH_PER_SHEET[job.finish]
-        _cache[key] = sum(
-            sheets * (catalogue.price_per_sheet(stock) + finish)
-            for stock, sheets in cover_stock.sheets_by_stock(job)
-        )
+        _cache[key] = sum(sheets * (catalogue.price_per_sheet(stock) + finish) for stock, sheets in needs)
     return _cache[key]
 EOF
 
 cat > src/presswork/inventory.py <<'EOF'
-"""Reserves the paper a job needs before it is printed."""
+"""Reserves the paper a job needs before it is printed; a job holds one reservation at a time."""
 from presswork import cover_stock
 from presswork.jobs import Job
 
 on_hand: dict[str, int] = {"uncoated-90": 20000, "silk-130": 8000, "card-300": 3000}
 reserved: dict[str, int] = {}
+_held: dict[str, list[tuple[str, int]]] = {}
+
+
+def reset() -> None:
+    reserved.clear()
+    _held.clear()
+
+
+def release(job_id: str) -> None:
+    for stock, sheets in _held.pop(job_id, []):
+        reserved[stock] -= sheets
+        if not reserved[stock]:
+            del reserved[stock]
 
 
 def reserve(job: Job) -> None:
+    """Reserve what the job prints on now, replacing any reservation it held."""
+    release(job.job_id)
     needs = cover_stock.sheets_by_stock(job)
     for stock, sheets in needs:
         if on_hand.get(stock, 0) - reserved.get(stock, 0) < sheets:
             raise ValueError(f"not enough {stock} for job {job.job_id}")
     for stock, sheets in needs:
         reserved[stock] = reserved.get(stock, 0) + sheets
+    _held[job.job_id] = needs
 EOF
 
 cat > src/presswork/press.py <<'EOF'
 """Plans the press run for a job: which stock to load and how many sheets."""
 from dataclasses import dataclass
 
-from presswork import cover_stock
+from presswork import cover_stock, inventory
 from presswork.jobs import Job
 
 
@@ -101,6 +115,9 @@ class Run:
 
 
 def plan_run(job: Job) -> list[Run]:
+    """Plan the run and re-reserve its paper, so the reservation matches what will be loaded."""
+    if not job.proof:
+        inventory.reserve(job)
     return [Run(stock, sheets, job.finish) for stock, sheets in cover_stock.sheets_by_stock(job)]
 EOF
 
@@ -117,7 +134,7 @@ BOOKLET = Job("j2", "c2", pages=8, copies=10, stock="silk-130", kind="booklet")
 def setup_function() -> None:
     customers.CUSTOMERS["c2"] = Customer("c2", "Lantern Press Club")
     pricing._cache.clear()
-    inventory.reserved.clear()
+    inventory.reset()
 
 
 def test_without_the_setting_a_booklet_prints_on_its_stock() -> None:
@@ -158,6 +175,14 @@ def test_proofs_ignore_the_setting_and_are_quoted_apart() -> None:
     assert pricing.quote(BOOKLET) == 400
 
 
+def test_a_changed_setting_moves_the_reservation_when_the_run_is_planned() -> None:
+    cover_stock.set_cover_stock("c2", "card-300")
+    inventory.reserve(BOOKLET)
+    cover_stock.set_cover_stock("c2", "silk-130")
+    press.plan_run(BOOKLET)
+    assert inventory.reserved == {"silk-130": 40}
+
+
 def test_an_unknown_stock_is_refused_where_it_is_set() -> None:
     with pytest.raises(ValueError, match="card300"):
         cover_stock.set_cover_stock("c2", "card300")
@@ -185,8 +210,9 @@ already live. A customer sets it once; every booklet they order prints its cover
 stock, and an open booklet follows a change to it until it prints, which is what a club changing
 card mid-season wants. One function, `cover_stock.sheets_by_stock`, says which stocks a job uses
 and is what pricing, inventory and the press read. A guard in it keeps the setting off proofs,
-which must show the job as ordered. The quote cache needs no new identity: the setting lives in
-the profile's preferences, so the profile hash the cache already keys on changes with it.
+which run on the proof press with one stock. Planning a run re-reserves its paper, so a changed
+setting moves the reservation with it. The quote cache keys on the stocks and sheets a job prints
+on, so the setting reaches it with no new identity.
 
 ## Alternatives considered
 - A note on the order that press operators read: nothing prices or reserves the card.
@@ -197,6 +223,8 @@ the profile's preferences, so the profile hash the cache already keys on changes
 - A cover stock catalogue table that jobs look up by customer: a new table for one value per
   customer, which the profile already holds.
 EOF
+
+sed -i.bak 's/inventory.reserved.clear()/inventory.reset()/' tests/test_jobs.py && rm tests/test_jobs.py.bak
 
 git add -A
 git commit -qm 'Print booklet covers on a cover stock set in the customer profile'
