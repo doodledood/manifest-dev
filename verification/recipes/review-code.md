@@ -108,6 +108,16 @@ Run: `scripts/drive-skill.sh review-code verification/prompts/review-code-princi
 Proves: the same project, with a change that sends a monthly statement and touches the three craft-principles lines while owing nothing on any. Graders: (1) on both reports (code-design and context-file-adherence), no finding that counts against acceptance rests on any craft-principles line; (2) the code-design report gives the first line as followed, since the return address is a branch setting; on the context-file-adherence report, which covers every principle: (3) the first line is followed; (4) the long statement body's comparison with a reviewed snapshot file is the second line's yield, shown by the work itself; (5) the greeting test's partial check is a departure the maintainer chose in decision 0001; (6) the third line (paste the test summary before review) is not reported as followed or as a departure; (7) on both reports, no outreach-principles line draws a finding or appears as touched, though a comment writes "three" as a word; (8) both verdicts are PASS. PASS when all eight hold.
 Check: read
 
+### widen-catch
+Run: `scripts/drive-skill.sh review-code verification/prompts/review-code-widen.md --scaffold verification/scaffolds/widen-presswork-catch`
+Proves: Presswork's principles skills are the architecture and code starter sets as written. A print job takes one paper stock; the change meets "booklet covers on card" by adding a cover stock override to the customer profile, with its own service, a guard against proofs, a glossary term and a decision record whose five alternatives never mention the job's stock input, and its caching rides the profile's existing hash. Grader, on the code-design report: on that main choice, the report raises a departure from a principle, or asks why the job's existing stock input could not take more than one stock (one per part of the booklet). PASS when it does. With `STARTER_SETS_AT` set to a revision before the starter line about widening before adding a concept, this grader is expected to fail: that arm shows the case is one today's other lines read as followed.
+Check: read
+
+### widen-quiet
+Run: `scripts/drive-skill.sh review-code verification/prompts/review-code-widen.md --scaffold verification/scaffolds/widen-presswork-quiet`
+Proves: the same project, with a change that adds two named concepts where widening is wrong. Quiet hours: a shop setting nothing existing schedules. Lamination: a job setting beside `finish`, which looks close, but the glossary and decision 0001 say a finish is the press coating, and the change's record says why it does not widen `finish`. Graders, on the code-design report: (1) no finding that counts against acceptance rests on the starter line about widening before adding a concept, for either addition; (2) where the report lists that line's standing, it gives followed or yield shown for both. PASS when both hold.
+Check: read
+
 ## Gotchas
 
 - Each prompt builds its own scratch repository state: a commit on a branch ahead of its default branch.
@@ -116,6 +126,7 @@ Check: read
 - No comparison base resolves to BLOCKED.
 - `tests/test_review_scope.py` exercises the scope commands; `tests/test_drive_scripts.py` checks convergence fixtures. The follow-up and fresh drives are unmeasured; fixture checks do not measure review behavior.
 - Not yet driven: the description phrases, define's coding gates. review-pr's fleet runs these dimensions in the review-pr recipe's `principles` and `existing-owner` scenarios.
+- The Presswork scaffolds (`widen-presswork*`) read the architecture and code starter sets from the checkout, or from the revision `STARTER_SETS_AT` names, so a drive with `STARTER_SETS_AT=origin/main` against one without compares two sets on one change. The quiet-change scaffold uses `tomllib` (Python 3.11 or newer).
 - The Shelfmark scaffolds (`principles-shelfmark-departs`, `principles-shelfmark-holds`, used by the `principles-depart` and `principles-hold` scenarios) use `tomllib`, so their own tests need Python 3.11 or newer; the reviews do not depend on running them.
 - The principles cases are caught on the merge-base skills too: today's models follow the context file's pointers. The discriminating evidence for the review rule is a replay on a real change kept outside this repository, on `code-design` and `context-file-adherence`: merge-base skills: not caught; branch: caught.
 

@@ -1,0 +1,1 @@
+Choirs and clubs order booklets and want the cover printed on card while the inner pages stay on lighter paper. Plan how to add a cover stock override to the customer profile so they can set it once for all their booklets. Write the plan to PLAN.md and change no code yet. Report what the plan does and why.

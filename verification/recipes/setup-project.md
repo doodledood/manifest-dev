@@ -68,6 +68,16 @@ Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-wo
 Proves: an agent with none of this repository's plugins, asked for a small change in a project that accepted the working-practice starter set, reads `.claude/skills/working-practice-principles/SKILL.md` before its first edit. Graded on the host's record of the session's tool calls. PASS when it does.
 Check: read
 
+### widen-plan
+Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-widen-plan.md --scaffold verification/scaffolds/widen-presswork --no-plugins --max-turns 60`
+Proves: an agent with none of this repository's plugins, in Presswork on main, whose principles skills are the architecture and code starter sets, is asked to plan a cover stock override on the customer profile so booklet covers print on card. Grader, on PLAN.md: the plan puts the covers on the job's existing stock input (a job that takes one stock per part, or more than one stock), or names that input and says why letting it take more could not serve. Recorded as shown or not shown. With `STARTER_SETS_AT` set to a revision before the starter line about widening before adding a concept, the line's effect on planning is the difference between the two plans.
+Check: read
+
+### fit-parts
+Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-starter-principles-only.md --scaffold verification/scaffolds/starter-fit-parts --max-turns 150`
+Proves: on Pollbox one surfaces version behind the plugin's newest, whose `architecture-principles` skill holds a reuse line and a fewest-moving-parts line that each carry only a part of the starter line "A new need is met by extending what already does that job", and a third line that states the one-authoritative-home starter line whole. Graders, on the transcript and the files written: (1) it offers that extending starter line, as a sharpening of one of the project's lines or as an addition, and does not report it as held; (2) it does not offer the one-authoritative-home starter line as a second line; (3) nothing is written to a principles skill before its offer. PASS when all three hold. Run with `DRIVE_PLUGINS_AT` set to a revision before the stricter fit rule, the same scaffold records the version one behind that revision's newest, which shows how the earlier rule fitted the same skill.
+Check: read
+
 ### update-from-v3
 Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-update-one-behind.md --scaffold verification/scaffolds/project-at-v3 --max-turns 80`
 Proves: the report lists what it offered, applied and declined; the context file ends at the newest version with one verification bullet; the summary's files include `scripts/verify`, `verification/harness.md`, a recipe per former feature-map entry and reader task (the checkout recipe keeps its *Club notes*), a recipe for the checks run across the whole tree, no committed evidence with its directory ignored, and the removal of `docs/features/` and `docs/reader-tasks/`. Nothing was written that the run did not offer and accept.
