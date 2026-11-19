@@ -149,11 +149,11 @@ takes the person's word for the area where they gave one.
   person picks it.
 - **With skills already in place.** Fit each set to the project's own skills by what each says it
   is for, never by its name. Offer only the lines its skills lack. A skill holds a starter line
-  only where one of its lines states all of it, in whatever words and for at least the cases it
-  covers — what it asks and when it yields; for a choice, all of one side, and an `Only where`
+  only where one of its lines states all of it, in whatever words: what it asks, in at least the
+  cases the starter line covers, and when it yields; for a choice, all of one side, and an `Only where`
   condition decides whether the line is offered, not what it says. A starter line whose parts are
-  spread over several lines is lacked, and is offered as a sharpening of the line nearest it or as
-  a line of its own, shown beside those lines. Where an existing line nearly states a starter line, offer to sharpen the
+  spread over several lines is lacked, and is offered as a sharpening of the line nearest it, shown
+  beside the lines carrying its other parts, or as a line of its own where no line comes near it. Where an existing line nearly states a starter line, offer to sharpen the
   existing line instead of adding a second. Where one
   takes the other side of a starter line, in the sense above, show both and keep the existing one
   unless the person picks the other. Where the project cuts its areas differently from the sets, offer a split or a merge of
