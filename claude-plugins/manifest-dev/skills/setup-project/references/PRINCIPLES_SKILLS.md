@@ -165,7 +165,8 @@ takes the person's word for the area where they gave one.
   the version that last changed that area's set — each version's changes file names what it
   changed — and again whenever a person asks for them. Where the project records a version before
   the one that last changed the fit in *With skills already in place*, the lines a skill carries
-  only in part are offered once as well; a line it lacks entirely and was offered before is not. With no person present, write nothing and
+  only in part are offered once as well; a line it lacks entirely and was offered before is not offered again under this rule unless
+  that area's set changed too. With no person present, write nothing and
   report each area's lines as candidates for the person.
 
 ## Writing, growing and pruning
