@@ -67,6 +67,9 @@ One order to print one document: its pages, copies, stock and finish.
 **Stock**:
 The paper a job is printed on, named by its catalogue code, such as `uncoated-90` or `card-300`.
 
+**Kind**:
+What a job's sheets become: `flat` sheets, or a `booklet` folded and stapled from them.
+
 **Finish**:
 The ink coating the press applies as it prints, matte or gloss.
 _Avoid_: lamination, which is a film a separate machine adds after printing and is not a finish.
@@ -114,6 +117,7 @@ class Job:
     copies: int
     stock: str
     finish: str = "matte"
+    kind: str = "flat"
     proof: bool = False
 
     def sheets(self) -> int:

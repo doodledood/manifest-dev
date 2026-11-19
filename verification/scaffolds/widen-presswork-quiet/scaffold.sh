@@ -49,6 +49,7 @@ class Job:
     copies: int
     stock: str
     finish: str = "matte"
+    kind: str = "flat"
     proof: bool = False
     laminate: bool = False
 
