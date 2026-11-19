@@ -1,0 +1,1 @@
+Use review-code to review the change on this branch against main with dimension=code-design. I am the caller and I want a gate verdict under this claim: the change fulfills its stated purpose and applicable obligations without demonstrated defects or material quality costs. Reply with the report in full.

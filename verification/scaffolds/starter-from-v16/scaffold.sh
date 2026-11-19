@@ -1,15 +1,14 @@
 #!/usr/bin/env bash
-# Pollbox recorded one surfaces version behind the newest, with principles skills from an earlier
+# Pollbox recorded at v16, the version before starter principles shipped, with principles skills from an earlier
 # setup: ui-principles covers design under another name and holds a line that nearly covers a
 # general one about empty states; engineering-principles spans code and architecture and holds a
 # line that conflicts with a general one about deleting what a change leaves unused. Its context
 # file states a principle a general code line would restate, and it has model work with no skill:
-# the setup-project recipe's starter-one-behind scenario.
+# the setup-project recipe's starter-from-v16 scenario.
 set -euo pipefail
 . "$(dirname "${BASH_SOURCE[0]}")/../../scaffold-guard.sh"
 bash "$(dirname "$0")/../principles-from-history/scaffold.sh"
-newest=$(grep -oE '^- v[0-9]+' "$DRIVE_CHECKOUT/claude-plugins/manifest-dev/skills/setup-project/references/CHANGES.md" | tail -1 | tr -dc 0-9)
-sed -i.bak "s/surfaces v[0-9]* -->/surfaces v$((newest - 1)) -->/" CLAUDE.md && rm -f CLAUDE.md.bak
+sed -i.bak "s/surfaces v[0-9]* -->/surfaces v16 -->/" CLAUDE.md && rm -f CLAUDE.md.bak
 mkdir -p .claude/skills/ui-principles .claude/skills/engineering-principles src/prompts
 cat > .claude/skills/ui-principles/SKILL.md <<'EOF'
 ---

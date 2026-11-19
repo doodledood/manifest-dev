@@ -19,7 +19,7 @@ Installs a project's surfaces — North Star, glossary, ADR conventions, a verif
 ## Scenarios
 
 ### update-one-behind
-Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-update-one-behind.md --scaffold claude-plugins/manifest-dev/evals/53-update-offer-from-v16 --max-turns 80`
+Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-update-one-behind.md --scaffold claude-plugins/manifest-dev/evals/53-update-offer-from-v17 --max-turns 80`
 Proves: on a project recording the surfaces version one behind the newest, it follows that version's upgrade guide: it offers what the newest version gives, marked as new, and records the newest version once each offer has an answer. Nothing from that version or earlier is offered as new, and no record, North Star position or code is rewritten.
 Check: read
 
@@ -48,9 +48,9 @@ Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-st
 Proves: graders, applied to the transcript and the files written: (1) it offers starter principles for design and code with what the history adds; (2) it offers no line of its own for the review note about empty lists, which a starter line already states; (3) it offers the starter line about naming figures and their units honed with this project's reason — the "Rooms: 3" label that led two members to book the same room; (4) it offers a new design line for the one-column booking form, with the reason that members book on their phones in the laundry room; (5) it shows the conflict between keeping the replaced form under `legacy/` as the office's paper fallback and the starter line about deleting what a change leaves unused, with both sides, and writes the project's side and not that starter line; (6) nothing is written to a principles skill before its offer. PASS when all six hold.
 Check: read
 
-### starter-one-behind
-Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-starter-principles-only.md --scaffold verification/scaffolds/starter-one-behind --max-turns 150`
-Proves: on a project one surfaces version behind with principles skills in place, graders applied to the transcript and the files written: (1) it offers starter principles marked as new in the newest version: a whole starter set for model work, which no skill covers, and for `ui-principles` and `engineering-principles` the starter lines each lacks, reading which starter area each covers from what it says it is for; (2) it offers the empty-list line of `ui-principles` sharpened rather than a starter line beside it; (3) it shows the conflict between keeping replaced templates under `legacy/` and the starter line about deleting what a change leaves unused, with both sides, and keeps the project's line; (4) it offers no starter line restating the context file's principle against skipping or loosening tests; (5) it offers splitting `engineering-principles` into a code skill and an architecture skill as its own item, and makes the split with each pointer line; (6) no second skill for design appears beside `ui-principles`; (7) the newest version is recorded. PASS when all seven hold.
+### starter-from-v16
+Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-starter-principles-only.md --scaffold verification/scaffolds/starter-from-v16 --max-turns 150`
+Proves: on a project at v16, the version before starter principles shipped, with principles skills in place, graders applied to the transcript and the files written: (1) it offers starter principles marked as new since v16: a whole starter set for model work, which no skill covers, and for `ui-principles` and `engineering-principles` the starter lines each lacks, reading which starter area each covers from what it says it is for; (2) it offers the empty-list line of `ui-principles` sharpened rather than a starter line beside it; (3) it shows the conflict between keeping replaced templates under `legacy/` and the starter line about deleting what a change leaves unused, with both sides, and keeps the project's line; (4) it offers no starter line restating the context file's principle against skipping or loosening tests; (5) it offers splitting `engineering-principles` into a code skill and an architecture skill as its own item, and makes the split with each pointer line; (6) no second skill for design appears beside `ui-principles`; (7) the newest version is recorded. PASS when all seven hold.
 Check: read
 
 ### starter-current
@@ -66,6 +66,16 @@ Check: read
 ### working-practice-in-use
 Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-working-practice-in-use.md --scaffold verification/scaffolds/starter-working-practice --no-plugins --max-turns 40`
 Proves: an agent with none of this repository's plugins, asked for a small change in a project that accepted the working-practice starter set, reads `.claude/skills/working-practice-principles/SKILL.md` before its first edit. Graded on the host's record of the session's tool calls. PASS when it does.
+Check: read
+
+### widen-plan
+Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-widen-plan.md --scaffold verification/scaffolds/widen-presswork --no-plugins --max-turns 60`
+Proves: an agent with none of this repository's plugins, in Presswork on main, whose principles skills are the architecture and code starter sets, is asked to plan a cover stock override on the customer profile so booklet covers print on card. Grader, on PLAN.md: the plan puts the covers on the job's existing stock input (a job that takes one stock per part, or more than one stock), or names that input and says why letting it take more could not serve. Recorded as shown or not shown. With `STARTER_SETS_AT` set to a revision before the starter line about widening before adding a concept, the line's effect on planning is the difference between the two plans.
+Check: read
+
+### fit-parts
+Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-starter-principles-only.md --scaffold verification/scaffolds/starter-fit-parts --max-turns 150`
+Proves: on Pollbox one surfaces version behind the plugin's newest, whose `architecture-principles` skill holds a reuse line and a fewest-moving-parts line that each carry only a part of the starter line "A new need is met by extending what already does that job", and a third line that states the one-authoritative-home starter line whole. Graders, on the transcript and the files written: (1) it offers that extending starter line, as a sharpening of one of the project's lines or as an addition, and does not report it as held; (2) it does not offer the one-authoritative-home starter line as a second line; (3) nothing is written to a principles skill before its offer. PASS when all three hold. Run with `DRIVE_PLUGINS_AT` set to a revision before the stricter fit rule, the same scaffold records the version one behind that revision's newest; on an earlier form of this fixture the earlier rule did not mark the line held either, so this scenario does not by itself tell the stricter rule from the earlier one.
 Check: read
 
 ### update-from-v3

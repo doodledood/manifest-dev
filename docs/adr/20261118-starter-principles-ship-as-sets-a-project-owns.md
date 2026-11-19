@@ -1,7 +1,7 @@
 # ADR: Starter principles ship as sets of general lines that a project takes into its own principles skills
 
 ## Status
-Accepted
+Accepted — amended by [20261119-a-starter-line-is-held-only-where-one-line-states-all-of-it](20261119-a-starter-line-is-held-only-where-one-line-states-all-of-it.md): a fitted skill holds a starter line only where one line states all of it, and a changed fit is offered again once
 
 ## Area
 Project context

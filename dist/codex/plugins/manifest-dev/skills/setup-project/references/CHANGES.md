@@ -22,3 +22,4 @@ says how an update reads and offers them, and when it records the newest.
 - v15 — `changes/v15.md`: setup offers principles skills — one project skill per high-signal area, holding how the project's people want that area's work done — and moves one area's principles and Taste entries out of the context file into them.
 - v16 — `changes/v16.md`: overlapping drives publish evidence one at a time and report stale publishing holds.
 - v17 — `changes/v17.md`: setup offers starter principles — a shipped set of general lines per area — as the principles skills for the areas a project works in, honed by its history and fitted to the skills it has.
+- v18 — `changes/v18.md`: an architecture starter line on widening an existing input before adding a concept; a starter line counts as held only where one line states all of it, and skills fitted earlier are offered, once, the lines they carry only in part.

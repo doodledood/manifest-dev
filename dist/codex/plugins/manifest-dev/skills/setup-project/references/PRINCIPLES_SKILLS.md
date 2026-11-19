@@ -148,8 +148,13 @@ takes the person's word for the area where they gave one.
   sides with that source, recommend the project's side, and leave the starter line out unless the
   person picks it.
 - **With skills already in place.** Fit each set to the project's own skills by what each says it
-  is for, never by its name. Offer only the lines its skills lack. Where an existing line nearly
-  states a starter line, offer to sharpen the existing line instead of adding a second. Where one
+  is for, never by its name. Offer only the lines its skills lack. A skill holds a starter line
+  only where one of its lines states all of it, in whatever words: what it asks, in at least the
+  cases the starter line covers, and when it yields; for a choice, all of one side, and an `Only where`
+  condition decides whether the line is offered, not what it says. A starter line whose parts are
+  spread over several lines is lacked, and is offered as a sharpening of the line nearest it, shown
+  beside the lines carrying its other parts, or as a line of its own where no line comes near it. Where an existing line nearly states a starter line, offer to sharpen the
+  existing line instead of adding a second. Where one
   takes the other side of a starter line, in the sense above, show both and keep the existing one
   unless the person picks the other. Where the project cuts its areas differently from the sets, offer a split or a merge of
   its skills as an item of its own; an existing line moves only on the person's yes.
@@ -157,8 +162,11 @@ takes the person's word for the area where they gave one.
   covers. A later setup or audit names each such area in one line — the area, how many lines its
   set holds, and why it applies — and shows the set only on a yes. For an area a skill covers,
   the lines it lacks are offered once, where the project records no surfaces version or one before
-  the version that last changed that area's set — each version's changes file names the sets it
-  changed — and again whenever a person asks for them. With no person present, write nothing and
+  the version that last changed that area's set — each version's changes file names what it
+  changed — and again whenever a person asks for them. Where the project records a version before
+  the one that last changed the fit in *With skills already in place*, the lines a skill carries
+  only in part are offered once as well; a line it lacks entirely and was offered before is not offered again under this rule unless
+  that area's set changed too. With no person present, write nothing and
   report each area's lines as candidates for the person.
 
 ## Writing, growing and pruning
