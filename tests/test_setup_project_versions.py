@@ -47,6 +47,22 @@ DIGEST_LINE = re.compile(r"^Digest: ([0-9a-f]{64})\s*$", re.MULTILINE)
 TEMPLATE_VERSION = re.compile(r"<!-- setup-project surfaces v(\d+) -->")
 
 
+# How setup fits the starter sets to a project's existing principles skills, and when it offers
+# them again. A project fitted under one version is re-offered lines only when a version says the
+# fit changed, so a change to these bullets ships with a new version like a change to a set does.
+# Held for docs/adr/20261119-a-starter-line-is-held-only-where-one-line-states-all-of-it.md.
+PRINCIPLES_METHOD = SETUP / "PRINCIPLES_SKILLS.md"
+FIT_SECTION = re.compile(
+    r"^- \*\*With skills already in place\.\*\*.*?(?=^## )", re.MULTILINE | re.DOTALL
+)
+
+
+def fit_section() -> str:
+    found = FIT_SECTION.search(PRINCIPLES_METHOD.read_text(encoding="utf-8"))
+    assert found, f"{PRINCIPLES_METHOD} has no *With skills already in place* bullet"
+    return found.group(0)
+
+
 def emitted_digest() -> str:
     digest = hashlib.sha256()
     for path in EMITTED:
@@ -55,6 +71,8 @@ def emitted_digest() -> str:
             path.relative_to(SETUP.parent.parent).as_posix().encode("utf-8") + b"\n"
         )
         digest.update(re.sub(r"\s+", " ", text).strip().encode("utf-8") + b"\n")
+    digest.update(b"setup-project/references/PRINCIPLES_SKILLS.md#fit\n")
+    digest.update(re.sub(r"\s+", " ", fit_section()).strip().encode("utf-8") + b"\n")
     return digest.hexdigest()
 
 

@@ -118,7 +118,7 @@ Distributed skill files stay repo-agnostic — maintainer/governance notes like 
 
 ## Setup-Project Surfaces Version
 
-**Changing a file setup-project emits** — `figure-out/references/ADR_FORMAT.md`, `setup-project/references/NORTH_STAR_FORMAT.md`, or anything under `setup-project/references/harness/`, which this repository's `scripts/verify` copies: load the `bump-surfaces-version` skill first. It carries the version, changes, eval-case and upgrade-guide steps; `tests/test_setup_project_versions.py` and `tests/test_verify.py` fail when one is missed.
+**Changing a file setup-project emits** — `figure-out/references/ADR_FORMAT.md`, `setup-project/references/NORTH_STAR_FORMAT.md`, a starter set under `setup-project/references/starter-principles/`, the fit of starter sets in `PRINCIPLES_SKILLS.md` (*With skills already in place* and *When*), or anything under `setup-project/references/harness/`, which this repository's `scripts/verify` copies: load the `bump-surfaces-version` skill first. It carries the version, changes, eval-case and upgrade-guide steps; `tests/test_setup_project_versions.py` and `tests/test_verify.py` fail when one is missed.
 
 ## Red-Flag Mirror Pairs
 

@@ -48,16 +48,28 @@ state — and nothing about a setting, an input or a term, which is where that c
 - A review holding work to the new line names the existing input and asks to widen it, where
   without it a review on the same synthetic change did not (one run per arm).
 
+### Evidence and its limits
+- The line's wording was chosen by the maintainer on blind reviews of a real change in a private
+  project, where reviews without it read the main choice as sound. That result is reported, not
+  shown here.
+- Here, the review scenario's grader was fixed before the runs and asked that a review on sets
+  without the line raise no departure on the main choice. It did not tell the arms apart: on both
+  rebuilt fixtures, today's sets read the "extending" line as followed but faulted the placement
+  through another line. After those results, on the maintainer's delegation, the line was judged
+  by whether only the arm holding it names the existing input and asks to widen it. That rule was
+  chosen after the runs, so the result is in-sample.
+
 ### Negative
 - A stricter fit offers more lines, which costs the person's attention at setup and on the re-fit.
 - On the synthetic fit fixture, the earlier rule also did not mark the line held, so the stricter
   rule's difference is shown only on the observed case, not on the fixture.
 
 ## Enforced by
-partly — the setup-project recipe's `fit-parts` scenario drives a fit on skills that carry only
-parts of a starter line; the review-code recipe's `widen-catch` and `widen-quiet` scenarios drive a
-review holding work to the new line; `tests/test_setup_project_versions.py` fails when a starter
-set changes without a new surfaces version. Applying the held test stays judgment.
+partly — `tests/test_setup_project_versions.py` digests the starter sets and the fit in
+`PRINCIPLES_SKILLS.md` (*With skills already in place* and *When*), so a change to either without a
+new surfaces version fails; the setup-project recipe's `fit-parts` scenario drives a fit on skills
+that carry only parts of a starter line; the review-code recipe's `widen-catch` and `widen-quiet`
+scenarios drive a review holding work to the new line. Applying the held test stays judgment.
 
 ## Source
 - Issue: https://github.com/doodledood/manifest-dev/issues/451
