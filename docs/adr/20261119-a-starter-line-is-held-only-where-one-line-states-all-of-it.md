@@ -20,17 +20,19 @@ followed. The same starter line also named only standing mechanisms — a servic
 state — and nothing about a setting, an input or a term, which is where that change went wrong.
 
 ## Decision
-- A skill holds a starter line only where one of its lines states all of it, in whatever words and
-  for at least the cases it covers: what it asks and when it yields. For a choice, all of one side;
-  an `Only where` condition decides whether the line is offered, not what it says. A starter line
-  whose parts are spread over several lines is lacked, and is offered as a sharpening of the nearest
-  line or as a line of its own.
+- A skill holds a starter line only where one of its lines states all of it, in whatever words:
+  what it asks, in at least the cases the starter line covers, and when it yields. For a choice, all
+  of one side; an `Only where` condition decides whether the line is offered, not what it says. A
+  starter line whose parts are spread over several lines is lacked, and is offered as a sharpening
+  of the line nearest it, or as a line of its own where no line comes near it.
 - A version that changes this fit is a new surfaces version, and a project fitted before it is
   offered, once, the lines its skills carry only in part. Lines a skill lacks entirely and was
   offered before are not offered again unless the area's set changed, so a person's earlier answers
   stand.
 - The architecture set gains a line of its own for widening an existing input, setting or contract
-  before adding a concept beside it, with a yield for a shape others read.
+  before adding a concept beside it: an optional field added to a contract others read counts as
+  that widening, and the line yields where nothing existing takes that kind of value or another of
+  the project's principles directs the new concept.
 
 ## Alternatives Considered
 - **Keep "held" a judgment call**: the observed case shows the call goes to "held" whenever every
