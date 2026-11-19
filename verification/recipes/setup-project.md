@@ -19,7 +19,7 @@ Installs a project's surfaces — North Star, glossary, ADR conventions, a verif
 ## Scenarios
 
 ### update-one-behind
-Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-update-one-behind.md --scaffold claude-plugins/manifest-dev/evals/53-update-offer-from-v16 --max-turns 80`
+Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-update-one-behind.md --scaffold claude-plugins/manifest-dev/evals/53-update-offer-from-v17 --max-turns 80`
 Proves: on a project recording the surfaces version one behind the newest, it follows that version's upgrade guide: it offers what the newest version gives, marked as new, and records the newest version once each offer has an answer. Nothing from that version or earlier is offered as new, and no record, North Star position or code is rewritten.
 Check: read
 
@@ -50,7 +50,7 @@ Check: read
 
 ### starter-one-behind
 Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-starter-principles-only.md --scaffold verification/scaffolds/starter-one-behind --max-turns 150`
-Proves: on a project one surfaces version behind with principles skills in place, graders applied to the transcript and the files written: (1) it offers starter principles marked as new in the newest version: a whole starter set for model work, which no skill covers, and for `ui-principles` and `engineering-principles` the starter lines each lacks, reading which starter area each covers from what it says it is for; (2) it offers the empty-list line of `ui-principles` sharpened rather than a starter line beside it; (3) it shows the conflict between keeping replaced templates under `legacy/` and the starter line about deleting what a change leaves unused, with both sides, and keeps the project's line; (4) it offers no starter line restating the context file's principle against skipping or loosening tests; (5) it offers splitting `engineering-principles` into a code skill and an architecture skill as its own item, and makes the split with each pointer line; (6) no second skill for design appears beside `ui-principles`; (7) the newest version is recorded. PASS when all seven hold.
+Proves: on a project at v16, the version before starter principles shipped, with principles skills in place, graders applied to the transcript and the files written: (1) it offers starter principles marked as new since v16: a whole starter set for model work, which no skill covers, and for `ui-principles` and `engineering-principles` the starter lines each lacks, reading which starter area each covers from what it says it is for; (2) it offers the empty-list line of `ui-principles` sharpened rather than a starter line beside it; (3) it shows the conflict between keeping replaced templates under `legacy/` and the starter line about deleting what a change leaves unused, with both sides, and keeps the project's line; (4) it offers no starter line restating the context file's principle against skipping or loosening tests; (5) it offers splitting `engineering-principles` into a code skill and an architecture skill as its own item, and makes the split with each pointer line; (6) no second skill for design appears beside `ui-principles`; (7) the newest version is recorded. PASS when all seven hold.
 Check: read
 
 ### starter-current
