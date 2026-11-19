@@ -162,8 +162,10 @@ takes the person's word for the area where they gave one.
   covers. A later setup or audit names each such area in one line — the area, how many lines its
   set holds, and why it applies — and shows the set only on a yes. For an area a skill covers,
   the lines it lacks are offered once, where the project records no surfaces version or one before
-  the version that last changed that area's set or the fit in *With skills already in place* — each
-  version's changes file names what it changed — and again whenever a person asks for them. With no person present, write nothing and
+  the version that last changed that area's set — each version's changes file names what it
+  changed — and again whenever a person asks for them. Where the project records a version before
+  the one that last changed the fit in *With skills already in place*, the lines a skill carries
+  only in part are offered once as well; a line it lacks entirely and was offered before is not. With no person present, write nothing and
   report each area's lines as candidates for the person.
 
 ## Writing, growing and pruning

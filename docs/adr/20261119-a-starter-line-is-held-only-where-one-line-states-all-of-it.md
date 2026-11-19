@@ -26,7 +26,9 @@ state — and nothing about a setting, an input or a term, which is where that c
   whose parts are spread over several lines is lacked, and is offered as a sharpening of the nearest
   line or as a line of its own.
 - A version that changes this fit is a new surfaces version, and a project fitted before it is
-  offered, once, the lines it now lacks — as a version that changes an area's set already is.
+  offered, once, the lines its skills carry only in part. Lines a skill lacks entirely and was
+  offered before are not offered again unless the area's set changed, so a person's earlier answers
+  stand.
 - The architecture set gains a line of its own for widening an existing input, setting or contract
   before adding a concept beside it, with a yield for a shape others read.
 
