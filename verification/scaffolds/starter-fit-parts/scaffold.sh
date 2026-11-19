@@ -28,7 +28,7 @@ decision records, rules a check can hold go to the check, and a line is added on
 yes, after sharpening an existing line is ruled out.
 
 - Reuse what already owns a behavior instead of building a second path beside it — two paths for one job drift apart, and fixes land in only one. Yields when the owner would have to change what it means to take the new case.
-- Question a requirement before building for it, then take the design with the fewest moving parts — every part is one more thing to keep right. Yields when a person states the requirement and the fewer parts would not meet it.
+- Question a requirement before building for it, then take the design with the fewest moving parts — every part is one more thing to keep right. Yields when the fewer parts would not meet the requirement.
 - Each fact has one authoritative home, and any other copy is derived from that home — two copies can drift apart without a sound, and only one of them ever gets checked. Yields when measured cost demands a stored copy, which is then a cache verified against its home, or when the copies are supposed to evolve separately.
 
 Before calling architecture work done, check it against these principles from a fresh start — a
