@@ -25,7 +25,10 @@ starter_set() {
 # The lines a project of this kind takes as written: the set's plain lines. Conditional lines and
 # choices are left out, since their conditions and sides are the setup's call, not the fixture's.
 plain_lines() {
-  starter_set "$1" | awk '/^## Lines/ { body = 1; next } body && /^- / && !/^- Only where/ && !/^- Choice —/'
+  local found
+  found=$(starter_set "$1" | awk '/^## Lines/ { body = 1; next } body && /^- / && !/^- Only where/ && !/^- Choice —/')
+  [ -n "$found" ] || { echo "scaffold: the $1 starter set gave no plain lines" >&2; exit 1; }
+  printf '%s\n' "$found"
 }
 skill() {
   local area=$1 title=$2

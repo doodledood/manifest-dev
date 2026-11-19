@@ -4,7 +4,7 @@
 # general one about empty states; engineering-principles spans code and architecture and holds a
 # line that conflicts with a general one about deleting what a change leaves unused. Its context
 # file states a principle a general code line would restate, and it has model work with no skill:
-# the setup-project recipe's starter-one-behind scenario.
+# the setup-project recipe's starter-from-v16 scenario.
 set -euo pipefail
 . "$(dirname "${BASH_SOURCE[0]}")/../../scaffold-guard.sh"
 bash "$(dirname "$0")/../principles-from-history/scaffold.sh"

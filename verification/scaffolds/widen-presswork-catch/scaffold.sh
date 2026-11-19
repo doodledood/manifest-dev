@@ -39,7 +39,7 @@ def sheets_by_stock(job: Job) -> list[tuple[str, int]]:
     cover = None
     if job.kind == "booklet" and not job.proof:
         cover = customers.get(job.customer_id).preferences.get(SETTING)
-    if cover is None:
+    if cover is None or cover == job.stock:
         return [(job.stock, job.sheets())]
     inner = job.sheets() - job.copies
     return [(cover, job.copies)] + ([(job.stock, inner)] if inner else [])
@@ -88,12 +88,16 @@ def release(job_id: str) -> None:
 
 
 def reserve(job: Job) -> None:
-    """Reserve what the job prints on now, replacing any reservation it held."""
-    release(job.job_id)
+    """Reserve what the job prints on now, replacing any reservation it held; on a shortage the
+    old reservation stays."""
     needs = cover_stock.sheets_by_stock(job)
+    held: dict[str, int] = {}
+    for stock, sheets in _held.get(job.job_id, []):
+        held[stock] = held.get(stock, 0) + sheets
     for stock, sheets in needs:
-        if on_hand.get(stock, 0) - reserved.get(stock, 0) < sheets:
+        if on_hand.get(stock, 0) - reserved.get(stock, 0) + held.get(stock, 0) < sheets:
             raise ValueError(f"not enough {stock} for job {job.job_id}")
+    release(job.job_id)
     for stock, sheets in needs:
         reserved[stock] = reserved.get(stock, 0) + sheets
     _held[job.job_id] = needs
@@ -181,6 +185,24 @@ def test_a_changed_setting_moves_the_reservation_when_the_run_is_planned() -> No
     cover_stock.set_cover_stock("c2", "silk-130")
     press.plan_run(BOOKLET)
     assert inventory.reserved == {"silk-130": 40}
+
+
+def test_a_cover_on_the_booklet_stock_is_one_run() -> None:
+    cover_stock.set_cover_stock("c2", "silk-130")
+    assert press.plan_run(BOOKLET) == [press.Run("silk-130", 40, "matte")]
+
+
+def test_a_shortage_on_re_reserving_keeps_the_old_reservation() -> None:
+    cover_stock.set_cover_stock("c2", "card-300")
+    inventory.reserve(BOOKLET)
+    inventory.on_hand["uncoated-90"], saved = 5, inventory.on_hand["uncoated-90"]
+    try:
+        cover_stock.set_cover_stock("c2", "uncoated-90")
+        with pytest.raises(ValueError, match="uncoated-90"):
+            inventory.reserve(BOOKLET)
+        assert inventory.reserved == {"card-300": 10, "silk-130": 30}
+    finally:
+        inventory.on_hand["uncoated-90"] = saved
 
 
 def test_an_unknown_stock_is_refused_where_it_is_set() -> None:

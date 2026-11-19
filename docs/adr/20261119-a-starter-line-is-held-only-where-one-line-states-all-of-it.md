@@ -68,7 +68,8 @@ state — and nothing about a setting, an input or a term, which is where that c
 partly — `tests/test_setup_project_versions.py` digests the starter sets and the fit in
 `PRINCIPLES_SKILLS.md` (*With skills already in place* and *When*), so a change to either without a
 new surfaces version fails; the setup-project recipe's `fit-parts` scenario drives a fit on skills
-that carry only parts of a starter line; the review-code recipe's `widen-catch` and `widen-quiet`
+that carry only parts of a starter line, though it does not by itself tell the stricter rule from
+the earlier one; the review-code recipe's `widen-catch` and `widen-quiet`
 scenarios drive a review holding work to the new line. Applying the held test stays judgment.
 
 ## Source

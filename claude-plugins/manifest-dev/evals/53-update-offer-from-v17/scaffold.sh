@@ -34,11 +34,35 @@ This project keeps its direction, vocabulary, and decision memory in the repo. R
   Recipes marked ask-first cost money, quota, load on shared systems or effects outside the
   repository: run those only when a person runs them or has agreed. `scripts/verify --help` gives
   the rest.
+- **Architecture work** — load the `architecture-principles` skill (`.claude/skills/architecture-principles/SKILL.md`) before planning, designing, building or reviewing it.
 
 ## Before merging
 
 Drive `scripts/verify drive project-checks`; every scenario must pass, and the pull request says
 what the drive found.
+EOF
+mkdir -p .claude/skills/architecture-principles
+cat > .claude/skills/architecture-principles/SKILL.md <<'EOF'
+---
+name: architecture-principles
+description: 'Architecture principles for Shelfnote: how its people want architecture work done, and why. Use before planning, designing, building or reviewing architecture work in this project.'
+---
+
+Edit rule: each line is a principle with its reason and when it yields. Decisions go to the
+decision records, rules a check can hold go to the check, and a line is added only on a person's
+yes, after sharpening an existing line is ruled out.
+
+- Each fact has one authoritative home, and any other copy is derived from that home — two copies can drift apart without a sound, and only one of them ever gets checked. Yields when measured cost demands a stored copy, which is then a cache verified against its home, or when the copies are supposed to evolve separately.
+- A new need is met by extending what already does that job, and a new standing mechanism — a service, a scheduled job, a dependency, a vendor, stored state — is added only once an actual failure, abuse or bill exposes a gap no existing part can fill without changing its meaning, and then the narrowest one that closes it, so long as it does not make a path the project has named harder — each added mechanism is state to keep right, a cost paid again and again, and another thing every person has to learn. Yields for a mechanism a law or a contract requires before any gap shows.
+- A mechanism is shaped for where the project has said it is heading — a written plan, an open ticket, a second user that exists now — and no change makes that path harder, while nothing is built for cases nobody has raised — a shape that fits only its first user gets reopened once the planned case arrives, and generality no one requested is weight every later change must carry. Yields when the shape for the stated path costs clearly more now than moving to it later would.
+- A decision that belongs to one caller lives with that caller, not in the path all callers share — when another caller later wants something else, it can have it without disturbing the rest. Holds without a yield; mechanics all callers need in the same way, such as retries or tracing, are no one caller's decision.
+- Checking and building the project each work as a single command in the repository, alike on any machine and without depending on any particular service — when the only route runs through a service that is down, everyone stops. Yields for a check that needs a paid or shared resource nobody approved for local runs; then that check is named as running elsewhere.
+- Shared logic works only from what it is handed, the clock included, and hands back what it makes, while effects happen at the entry point that asked for them — such code behaves identically in tests and replays, where an effect would fire for no one. Yields where the effect is itself the behavior being shared.
+
+Before calling architecture work done, check it against these principles from a fresh start — a new
+session, or a reviewer who did not do the work. Fix what departs unless the person chose the
+departure, and check again only after a fix, until a check finds none. Name each departure kept,
+with the principle and why.
 EOF
 cat > CONTEXT.md <<'EOF'
 # Shelfnote
