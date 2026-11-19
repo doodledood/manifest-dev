@@ -149,9 +149,11 @@ takes the person's word for the area where they gave one.
   person picks it.
 - **With skills already in place.** Fit each set to the project's own skills by what each says it
   is for, never by its name. Offer only the lines its skills lack. A skill holds a starter line
-  only where one of its lines states all of it — what the line applies to, what it asks and when
-  it yields; a starter line whose parts are spread over several lines is lacked, and is shown
-  beside those lines. Where an existing line nearly states a starter line, offer to sharpen the
+  only where one of its lines states all of it, in whatever words and for at least the cases it
+  covers — what it asks and when it yields; for a choice, all of one side, and an `Only where`
+  condition decides whether the line is offered, not what it says. A starter line whose parts are
+  spread over several lines is lacked, and is offered as a sharpening of the line nearest it or as
+  a line of its own, shown beside those lines. Where an existing line nearly states a starter line, offer to sharpen the
   existing line instead of adding a second. Where one
   takes the other side of a starter line, in the sense above, show both and keep the existing one
   unless the person picks the other. Where the project cuts its areas differently from the sets, offer a split or a merge of
@@ -160,8 +162,8 @@ takes the person's word for the area where they gave one.
   covers. A later setup or audit names each such area in one line — the area, how many lines its
   set holds, and why it applies — and shows the set only on a yes. For an area a skill covers,
   the lines it lacks are offered once, where the project records no surfaces version or one before
-  the version that last changed that area's set or this fit — each version's changes file names
-  what it changed — and again whenever a person asks for them. With no person present, write nothing and
+  the version that last changed that area's set or the fit in *With skills already in place* — each
+  version's changes file names what it changed — and again whenever a person asks for them. With no person present, write nothing and
   report each area's lines as candidates for the person.
 
 ## Writing, growing and pruning
