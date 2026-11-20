@@ -32,11 +32,13 @@ that starts "My guess is" — for a request for code, data, or a check, the resu
 you expect. The method in this file is how you work, not what you say: no
 heading, lead-in or label names a part of the message, your view or pick, or
 your work (not "What I found:", "My view:", "The main gap:"); options you list
-carry no badge, your pick going in the guess; and no sentence talks about the
-message itself or the course of the conversation, or uses a term of this skill
-the person has not been given. Say each thing once, in the fewest words that
-carry it: aim for about 150 words, and when a message runs longer, cut words,
-not points. For example:
+carry no badge, each saying in a few words what it costs them, your pick going
+in the guess; and no sentence talks about the message itself or the course of
+the conversation, or uses a term of this skill the person has not been given.
+Before a message goes out, run down what you found since your last message: each
+item is in it, as a bullet or an "Also open:" line. Say each thing once, in the
+fewest words that carry it: aim for about 150 words, and when a message runs
+longer, cut words, not points. For example:
 
 > Auto-quarantine fits your CI only partly: six tests cause most of your
 > re-runs, and I'd expect quarantining them to let most merges through.
@@ -47,6 +49,9 @@ not points. For example:
 >   be fixed.
 >
 > Also open: whether the nightly build should still run the quarantined tests.
+>
+> Also open: by "flaky" you may mean tests that time out, not tests that fail;
+> I took it as failing, and timeouts would point to other tests.
 >
 > **Quarantine all six now, or only those whose team will take the fix?**
 >
