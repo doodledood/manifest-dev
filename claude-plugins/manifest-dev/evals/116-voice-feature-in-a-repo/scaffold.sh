@@ -4,7 +4,7 @@ mkdir -p src/wallbook tests
 cat > README.md <<'EOF'
 # Wallbook
 
-Class booking for Northgate Climbing: beginner courses, technique classes and yoga for climbers.
+Class booking for Quillon Climbing Wall: beginner courses, technique classes and yoga for climbers.
 Members book in the app; each class has a fixed number of places. Python, no framework yet; the
 web layer calls `src/wallbook/classes.py`. Charges go through `src/wallbook/billing.py`.
 Run the tests with `python3 -m unittest` from the repository root.

@@ -4,7 +4,7 @@ mkdir -p src/boxoffice tests notes
 cat > README.md <<'EOF'
 # Box office
 
-Online box office for the Riverside Players, a community theatre with one 120-seat hall. Buyers
+Online box office for the Fennick Players, a community theatre with one 120-seat hall. Buyers
 pick seats, the seats are held for 15 minutes, and the buyer pays on the payment provider's hosted
 page. The provider calls `POST /payments/notify` on our server when a payment succeeds; that
 endpoint was set up by a contractor in 2025 and today it only logs what arrives. Tickets are
@@ -46,6 +46,20 @@ def expire_holds(bookings: list[Booking], now: datetime) -> list[Booking]:
 def mark_paid(booking: Booking) -> None:
     booking.status = "paid"
 EOF
+cat > src/boxoffice/store.py <<'EOF'
+from boxoffice.bookings import Booking
+
+# Bookings by id. The web layer loads this from the database at start-up and saves on change.
+BOOKINGS: dict[str, Booking] = {}
+
+
+def get(booking_id: str) -> Booking | None:
+    return BOOKINGS.get(booking_id)
+
+
+def save(booking: Booking) -> None:
+    BOOKINGS[booking.id] = booking
+EOF
 cat > src/boxoffice/tickets.py <<'EOF'
 from boxoffice import mailer
 from boxoffice.bookings import Booking
@@ -55,7 +69,7 @@ def send_ticket(booking: Booking) -> None:
     seats = ", ".join(booking.seats)
     mailer.send(
         booking.email,
-        "Your tickets for the Riverside Players",
+        "Your tickets for the Fennick Players",
         f"Booking {booking.id}. Seats: {seats}. Show this email at the door.",
     )
 EOF
@@ -90,11 +104,11 @@ EOF
 cat > notes/contractor-handover.md <<'EOF'
 # Payments handover (2025)
 
-- Provider: Paywell, hosted payment page.
-- After a successful payment Paywell posts a JSON notice to /payments/notify with `id` (the
+- Provider: Larkspay, hosted payment page.
+- After a successful payment Larkspay posts a JSON notice to /payments/notify with `id` (the
   notice's own id), `type` ("payment.succeeded") and `booking_id`.
 - We answer 200. Nothing else is done with it yet.
-- Refunds are done by hand in the Paywell dashboard.
+- Refunds are done by hand in the Larkspay dashboard.
 EOF
 cat > tests/__init__.py <<'EOF'
 import sys

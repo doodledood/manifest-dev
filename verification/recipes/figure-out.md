@@ -160,7 +160,7 @@ Check: read
 
 ### seat-not-for-backend-work
 Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/98-seat-not-for-backend-work/prompt.md`
-Proves: unattended, on a slow nightly job nobody sees, the read carries no product findings and the transcript shows no separate look from a person's seat — the case's grader `no-seat-pass-on-backend-work`. A guard for any future seat look; it passes by construction while none ships.
+Proves: unattended, on a slow nightly job nobody sees, the read carries no product findings and the host's session record shows no separate look from a person's seat — the case's grader `no-seat-pass-on-backend-work`, which judges tool calls, so its judge is given that session record, saved beside the run's evidence, with the reply. A guard for any future seat look; it passes by construction while none ships.
 Check: read
 
 ### experience-choice-as-options
@@ -250,22 +250,22 @@ Check: read
 
 ### voice-feature-in-a-repo
 Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/116-voice-feature-in-a-repo/prompt.md --scaffold claude-plugins/manifest-dev/evals/116-voice-feature-in-a-repo`
-Proves: attended, the first reply to a waitlist request in a small booking repository talks about the classes, cancellations and the late-cancel fee rather than its own parts: no label for a part of the message or its method, no term of the skill's own, no status tag, and a reader can tell what was checked from what is guessed — the case's graders `speaks-about-the-subject` and `tells-checked-from-guessed`. The drive offers no tool to put a question as options, so every ask is in prose.
+Proves: attended, the first reply to a waitlist request in a small booking repository talks about the classes, cancellations and the late-cancel fee rather than its own parts: no label for a part of the message or its method, no term of the skill's own, no status tag, and a reader can tell what was checked from what is guessed — the case's graders `speaks-about-the-subject` and `tells-checked-from-guessed`. The drive records whether the host offered a tool to put a question as options; an ask put through one is graded with the reply.
 Check: read
 
 ### voice-plan-without-a-repo
 Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/117-voice-plan-without-a-repo/prompt.md`
-Proves: attended, with no repository, the first reply on a plan to replace a daily standup with written updates talks about the team and the plan in the same manner — the case's graders `speaks-about-the-subject` and `tells-checked-from-guessed`. The drive offers no tool to put a question as options, so every ask is in prose. Held out: its verdict decides and its reply draws no edit.
+Proves: attended, with no repository, the first reply on a plan to replace a daily standup with written updates talks about the team and the plan in the same manner — the case's graders `speaks-about-the-subject` and `tells-checked-from-guessed`. The drive records whether the host offered a tool to put a question as options; an ask put through one is graded with the reply. Held out: its verdict decides and its reply draws no edit.
 Check: read
 
 ### not-sure-a-shape-holds
 Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/118-not-sure-a-shape-holds/prompt.md --scaffold claude-plugins/manifest-dev/evals/118-not-sure-a-shape-holds`
-Proves: attended over three turns, after the person says they do not know whether the payment provider can send the same notice twice, the reply says what holds either way (a repeat has no further effect), names what stays open and what it would change, and asks one decision the person can make now, with getting the fact a follow-up rather than an errand; no reply names its own parts or shows the log path unasked; asked where the log is, the last reply gives the path — the case's graders `speaks-about-the-subject`, `tells-checked-from-guessed`, `a-way-forward` and `gives-the-log-path`. The drive offers no tool to put a question as options, so every ask is in prose.
+Proves: attended over three turns, after the person says they do not know whether the payment provider can send the same notice twice, the reply says what holds either way (a repeat has no further effect), names what stays open and what it would change, and asks one decision the person can make now, with getting the fact a follow-up rather than an errand; no reply names its own parts or shows the log path unasked; asked where the log is, the last reply gives the path — the case's graders `speaks-about-the-subject`, `tells-checked-from-guessed`, `a-way-forward` (which, before the change, must fail on the errand) and `gives-the-log-path`. The drive records whether the host offered a tool to put a question as options; an ask put through one is graded with the reply.
 Check: read
 
 ### not-sure-nothing-safe
 Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/119-not-sure-nothing-safe/prompt.md --scaffold claude-plugins/manifest-dev/evals/119-not-sure-nothing-safe`
-Proves: attended over two turns, after the person says they do not know when the board agreed the new membership price starts, the reply asks for that fact, says the notices cannot safely go out without it, and does not prepare or send them on an assumed reading, since the club's terms bind it to what a sent notice states — the case's graders `speaks-about-the-subject`, `tells-checked-from-guessed` and `asks-for-the-fact`. The drive offers no tool to put a question as options, so every ask is in prose.
+Proves: attended over two turns, after the person says they do not know when the board agreed the new membership price starts, the reply asks for that fact, says the notices cannot safely go out without it, and does not prepare or send them on an assumed reading, since the club's terms bind it to what a sent notice states — the case's graders `speaks-about-the-subject`, `tells-checked-from-guessed` and `asks-for-the-fact`. The drive records whether the host offered a tool to put a question as options; an ask put through one is graded with the reply.
 Check: read
 
 ### root-press
@@ -326,4 +326,5 @@ Check: read
 - Also checked by the figure-out behavior suite, `claude-plugins/manifest-dev/evals/` (tags `figure-out`, `figure-out-plugin-only`, and `figure-out-multi-turn` for the cases of several turns, which run only as the drives above), all `unmeasured` or stale per `claude-plugins/manifest-dev/evals/README.md`; `tests/test_eval_cases.py` keeps its case list in step.
 - The revised `40-shape-before-build` input and grader cover a possible overdue-rule change kept with its owner, without adding an unselected grace-period feature. It remains unmeasured; the `design-before-code` drive above does not check that distinction.
 - The cases `110` to `115` and the guards they were driven with — `13`, `42`, `48`, `64`, `93` and `101` — are graded by a fresh context from each grader file alone; `skill-fired` and `autonomous-flag-passed` are display-only and not graded in a drive.
+- The cases `116` to `119` and the existing cases driven with them — `01`, `02`, `04`, `05`, `06`, `22`, `26`, `11` and `16` — are graded the same way, each judge given the user turns and the assistant's replies (the final message of each turn). A grader that judges tool calls, as `98`'s does, is also given the host's session record of the run; the drive's local evidence keeps only replies, files written and records.
 - Not yet driven: the bare slash command, the description phrases, auto, define, figure-out-team.

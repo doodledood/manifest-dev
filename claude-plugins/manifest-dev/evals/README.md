@@ -616,17 +616,28 @@ that reply, so `115` is not an independent witness for that sentence. `117-voice
 joins them as the held-out witness for `116`, assigned before its first run; `116`, `118` and `119`
 are tuning cases. Tuning happens on the others; assign the remaining new cases before their first run.
 
-**Pass rules for `116` to `119`, set before their first run.** Each runs once per arm as a drive
-of its scenario in `verification/recipes/figure-out.md`, with its replies graded by a fresh context
-from each grader file alone; `skill-fired` is display-only in a drive. A case passes when every
-other grader passes. On the skill before the change, `116` must fail `speaks-about-the-subject`
-and `118` must fail `a-way-forward`, each for the reason its grader names; a must-catch case that
-passes there is repaired and driven once more before the skill changes, and if it passes again
-its grader is proven on a reply made worse on purpose and the case is reported as not shown to
-catch. `119` must pass `asks-for-the-fact` on both arms. Where a grader passes on one arm and fails
-on the other, the case gets one more run on each arm, and the grader counts as worse only when it
-fails on both runs of the skill after the change and on neither run before it. `117`'s verdict
-decides whether the change is kept, and no wording is drawn from its replies.
+**Pass rules for `116` to `119`, set before their first run.** Each runs once per arm — the skill
+before the change, then after it — as a drive of its scenario in
+`verification/recipes/figure-out.md`. Each reply is graded by a fresh context from one grader file,
+given the case's user turns and the assistant's replies: the final message of each turn, and any
+ask the host put to the person as options. `skill-fired` is display-only in a drive. A case passes
+when every other grader passes.
+
+- **Proven first.** Before any drive, every grader of these four cases is graded on one reply
+  written to fail it and one written to pass it, and both verdicts are shown.
+- **Before the change.** `116` must fail `speaks-about-the-subject`, and `118` must fail
+  `a-way-forward` on its item 4: getting the fact set as the only way on. A must-catch case that
+  passes there is repaired and driven once more before the skill changes; if it passes again its
+  grader stays proven on a reply made worse on purpose, and the case is reported as not shown to
+  catch.
+- **After the change.** The change is kept when `116`, `117` and `118` pass every grader, `119`
+  passes every grader, and no grader of a touched existing case counts as worse. `119` must pass
+  `asks-for-the-fact` on both arms. `117` decides: a fail there blocks the change whatever the
+  tuning cases show, a pass on both arms shows the before arm already met it, and no wording is
+  drawn from its replies.
+- **Further runs.** Only an unexpected flip earns more runs: a grader that passed before the change
+  and fails after it gets one more run on each arm, and counts as worse only when it fails on both
+  runs after the change and on neither before it.
 
 `15` took the place of `12-living-with-it`, held out until 2026-09-14, when it was re-run to
 decide whether to cut two sentences from the skill and so steered the prompt; `12` was retired on
