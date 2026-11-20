@@ -11,8 +11,9 @@ claim-standing bullet and the log reference's path line changed: a turn speaks a
 subject with no label for its own parts or method, says each claim's footing in plain words, and
 shows the log path only when asked; a fact the person cannot supply is weighed by what rides on it.
 Cases `116` to `119` were added and nine cases whose graders judge the turn became recipe scenarios.
-Their native drives, on the merge base and on the shipped text, `57fd046d`, are summarized in
-`docs/adr/20261119-figure-out-speaks-about-the-subject.md`; no suite has run for this change.
+Their native drives, on the merge base, on `57fd046d` and after the merge with `main`, are
+summarized in `docs/adr/20261119-figure-out-speaks-about-the-subject.md`; no suite has run for this
+change.
 
 **Standing-cost change, 2026-11-16: every measurement remains stale.** figure-out now presses
 the need of a stated requirement much of the build rests on, before designing any version of it;
@@ -654,13 +655,14 @@ options. `skill-fired` is display-only in a drive. A case passes when every othe
   and fails after it gets one more run on each side, and counts as worse only when it fails on both
   runs after the change and on neither before it.
 
-**Outcome of these rules, 2026-11-20.** The keep rule was not met. On the shipped text, `57fd046d`,
-two drives per case: `118` failed `speaks-about-the-subject` on both drives, `117` and `119` on one;
-`116`, `118` and `119` failed `tells-checked-from-guessed` on both; and `118` failed `a-way-forward`
-on one, its second reply asking the person to email the contractor, an errand the skill before the
-change never produced on this case. The blind comparison of thinking judged no case worse on both
-pairs. `118` was not shown to catch before the change. The change went to its pull request with
-these results stated, for the owner to keep or send back; see
+**Outcome of these rules, 2026-11-20.** The keep rule was not met. On the changed text, `57fd046d`
+with two drives per case and the merge with `main` with one more: `116` passed
+`speaks-about-the-subject` on every drive and `118` on none; `117` and `119` failed it on most;
+`tells-checked-from-guessed` passed 3 of 13 drives; and one `118` drive failed `a-way-forward`, its
+second-turn reply asking the person to email the contractor, an errand the skill before the change
+never produced on this case. Each case got a second drive on `57fd046d` because the thinking
+comparison takes a second pair when one pair judges the changed text worse. That comparison judged
+the changed text worse on both pairs of no case. `118` was not shown to catch before the change. See
 `docs/adr/20261119-figure-out-speaks-about-the-subject.md`.
 
 `15` took the place of `12-living-with-it`, held out until 2026-09-14, when it was re-run to
