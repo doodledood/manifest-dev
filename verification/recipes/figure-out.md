@@ -255,7 +255,7 @@ Check: read
 
 ### voice-plan-without-a-repo
 Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/117-voice-plan-without-a-repo/prompt.md`
-Proves: attended, with no repository, the first reply on a plan to replace a daily standup with written updates talks about the team and the plan in the same manner — the case's graders `speaks-about-the-subject` and `tells-checked-from-guessed`. The drive records whether the host offered a tool to put a question as options; an ask put through one is graded with the reply. Held out: its verdict decides and its reply draws no edit.
+Proves: attended, with no repository, the first reply on a plan to replace a daily standup with written updates talks about the team and the plan in the same manner — the case's graders `speaks-about-the-subject` and `tells-checked-from-guessed`. The drive records whether the host offered a tool to put a question as options; an ask put through one is graded with the reply. Held out: its verdict decides and its reply draws no edit; it is tuned on since the 2026-11-19 change, whose wording moved after its first drive.
 Check: read
 
 ### not-sure-a-shape-holds

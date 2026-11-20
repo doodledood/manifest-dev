@@ -1,11 +1,11 @@
 # figure-out eval suite
 
-**Turn-voice change, 2026-11-19: every measurement remains stale.** figure-out's turn paragraph,
-its claim-standing bullet and the log reference's path line changed: a turn speaks about the
-person's subject with no label for its own parts or method, says each claim's footing in plain
-words, and shows the log path only when asked; a fact the person cannot supply is weighed by what
-rides on it. Cases `116` to `119` were added and nine cases whose graders judge the turn became
-recipe scenarios. Their native drives, on the merge base and on the shipped text, are summarized in
+**Turn-voice change, 2026-11-19: every measurement remains stale.** figure-out's turn paragraph, its
+claim-standing bullet and the log reference's path line changed: a turn speaks about the person's
+subject with no label for its own parts or method, says each claim's footing in plain words, and
+shows the log path only when asked; a fact the person cannot supply is weighed by what rides on it.
+Cases `116` to `119` were added and nine cases whose graders judge the turn became recipe scenarios.
+Their native drives, on the merge base and on the shipped text, `57fd046d`,, are summarized in
 `docs/adr/20261119-figure-out-speaks-about-the-subject.md`; no suite has run for this change.
 
 **Standing-cost change, 2026-11-16: every measurement remains stale.** figure-out now presses
@@ -312,7 +312,7 @@ base model already covers; such a case leaves only through its probe's *Coverage
 | `114-removal-competes` | autonomous, repository | Offer removing a cache whose job is gone beside the additive fixes, and weigh them by what each keeps costing once built | tuning |
 | `115-unattended-keeps-the-requirement` | autonomous, repository | With nobody to ask, keep a costly stated requirement in the build and flag the doubt with a recommendation | held out |
 | `116-voice-feature-in-a-repo` | press, repository | Speak about the subject: a reply to a feature request names no part of itself or its method, carries no status tag, and lets a reader tell what was checked from what is guessed | tuning |
-| `117-voice-plan-without-a-repo` | press | `116`'s manner on a plan with no repository | held out |
+| `117-voice-plan-without-a-repo` | press | `116`'s manner on a plan with no repository | held out, tuned on since 2026-11-19 |
 | `118-not-sure-a-shape-holds` | press, repository, several turns | When the person cannot supply a fact and some shape of the work holds under every answer, say what holds, name what stays open, and ask one decision they can make now, not an errand; give the log's path when asked, and not before | tuning |
 | `119-not-sure-nothing-safe` | press, repository, several turns | When the person cannot supply a fact and no shape holds or a wrong step cannot be undone, ask for the fact and say nothing can safely go on without it | tuning |
 
@@ -576,7 +576,7 @@ being declared a guard. `tests/test_eval_cases.py` fails when a case has no row 
 | `114` | first run decides | New on 2026-11-16: removal competes as an answer, weighed by what each answer keeps costing; drive results in `docs/adr/20261116-figure-out-presses-on-need-by-what-rests-on-it.md` |
 | `115` | first run decides | New on 2026-11-16: held-out witness for `110`: unattended, a stated requirement is kept and its doubt flagged; drive results in `docs/adr/20261116-figure-out-presses-on-need-by-what-rests-on-it.md` |
 | `116` | first run decides | New on 2026-11-19: a reply speaks about the subject, not its own parts or method; must catch, so its `speaks-about-the-subject` grader has to fail a reply of the skill before the change; drive results in `docs/adr/20261119-figure-out-speaks-about-the-subject.md` |
-| `117` | first run decides | New on 2026-11-19: held-out witness for `116`, with no repository; drive results in `docs/adr/20261119-figure-out-speaks-about-the-subject.md` |
+| `117` | first run decides | New on 2026-11-19: held-out witness for `116`, with no repository, tuned on since the change's wording moved after its first drive; drive results in `docs/adr/20261119-figure-out-speaks-about-the-subject.md` |
 | `118` | first run decides | New on 2026-11-19: a fact the person cannot supply, where a shape holds under every answer; meant to catch an errand, but not shown to catch: the skill before the change passed `a-way-forward` on both drives, so the case guards only against a reply that sends the person away for the fact; drives only (*Several turns*); drive results in `docs/adr/20261119-figure-out-speaks-about-the-subject.md` |
 | `119` | first run decides | New on 2026-11-19: a fact the person cannot supply, where nothing is safe without it; the rule to decide what is safe must not fire here; the twin of `118` that keeps the skill asking for the fact; drives only (*Several turns*); drive results in `docs/adr/20261119-figure-out-speaks-about-the-subject.md` |
 
@@ -622,7 +622,8 @@ them. One exception is on record: `115`'s first failure, on the unchanged skill,
 unattended keep-and-flag sentence of 2026-11-16, worded from the owner's ruling rather than from
 that reply, so `115` is not an independent witness for that sentence. `117-voice-plan-without-a-repo`
 joins them as the held-out witness for `116`, assigned before its first run; `116`, `118` and `119`
-are tuning cases. Tuning happens on the others; assign the remaining new cases before their first run.
+are tuning cases. `117` is tuned on all the same: the skill's wording changed after its first drive
+on the changed text, though no wording was drawn from its replies. Tuning happens on the others; assign the remaining new cases before their first run.
 
 **Pass rules for `116` to `119`, set before their first run.** Each runs as a drive of its scenario in
 `verification/recipes/figure-out.md`, once before the change (the merge base) and once after it.
@@ -647,13 +648,13 @@ options. `skill-fired` is display-only in a drive. A case passes when every othe
   and fails after it gets one more run on each side, and counts as worse only when it fails on both
   runs after the change and on neither before it.
 
-**Outcome of these rules, 2026-11-20.** The keep rule was not met. On `4334893b`, two drives per
-case: `118` and `119` failed `speaks-about-the-subject` on both drives, `116` and `118` failed
-`tells-checked-from-guessed` on one, `119` on both; and the blind comparison of thinking judged
-`117` worse on both pairs. The shipped text, `6e0bf243`, changes only two clauses after that; `119`,
-the one case they reach, was driven on it once and passed `speaks-about-the-subject` and failed
-`tells-checked-from-guessed`. `118` was not shown to catch. The change
-went to its pull request with these results stated, for the owner to keep or send back; see
+**Outcome of these rules, 2026-11-20.** The keep rule was not met. On the shipped text, `57fd046d`,
+two drives per case: `118` failed `speaks-about-the-subject` on both drives, `117` and `119` on one;
+`116`, `118` and `119` failed `tells-checked-from-guessed` on both; and `118` failed `a-way-forward`
+on one, its second reply asking the person to email the contractor, an errand the skill before the
+change never produced on this case. The blind comparison of thinking judged no case worse on both
+pairs. `118` was not shown to catch before the change. The change went to its pull request with
+these results stated, for the owner to keep or send back; see
 `docs/adr/20261119-figure-out-speaks-about-the-subject.md`.
 
 `15` took the place of `12-living-with-it`, held out until 2026-09-14, when it was re-run to

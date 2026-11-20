@@ -60,8 +60,8 @@ The owner's rulings:
 - **A fact the person cannot supply** is split by what rides on it: "Decide-what-is-safe when
   some shape holds under every answer the fact could have. Ask-for-the-fact when no shape does, or
   when a wrong step could not be undone."
-- **The investigation log path** is shown only when the person asks: "its not really releavnt
-  unelss asked its for interla model use basically" [sic].
+- **The investigation log path** is shown only when the person asks: the log is for the model's
+  own use, and the path is not relevant to the person unless they ask for it.
 
 What ships, in the lines that owned the old behavior (wording choices made by the agent within
 the plan):
@@ -70,7 +70,8 @@ the plan):
   point per message, and, for a prose ask, the question in bold on its own line with the guess
   after it in a plain sentence.
 - The method is how the run works, not what it says. No heading, lead-in or label names a part of
-  the message or the run's work, and options carry no badge. The conversation is not narrated, and
+  the message or the run's work, and options carry no badge; through a host's question tool, the
+  guess goes in the recommended option's description. The conversation is not narrated, and
   the reply uses no term of the skill the person has not been given.
 - Every finding that bears on the decision goes in, as a plain sentence or bullet that says where
   it came from. A five-sentence example shows the voice. The read stays a report whose headings may
@@ -82,10 +83,10 @@ the plan):
   - a fact read says where it was read;
   - an inference or estimate reads as the run's own;
   - what the person said stays theirs until checked;
-  - a guess says how to check it.
+  - an assumption says how it could be checked.
 
-  No tag or confidence label is set beside a sentence. A turn's leaning sentences are reread for
-  footing before it goes out.
+  No tag or confidence label is set beside a sentence. "Guess" keeps one meaning: the run's own
+  answer to its question.
 - `references/LOG.md` gives the path when the person running the session asks for it. It keeps
   the path out of every other reply, a list of files written included. `references/autonomous.md`'s
   read line defers to that rule.
@@ -94,49 +95,44 @@ the plan):
   longer names "the Decision Test result"; and the log's entry rule names what the skill carries
   instead of a "belief register" and "ledger" it no longer has.
 
-Ten rounds of wording ran, each answering a failing drive or a review finding. The first wording
-stated the target with no example, and runs wrote "What I found" headings, copying its own phrase
-"open with what you found". The investigation's earlier probe wording ("the method is how you
-work, not what you say") removed most labels, and a short example removed most of the rest.
-Shorter turns then lost findings, and a blind comparison judged them worse on `116` and `118`.
-This comparison read what each side found, checked and prevented, from the replies and the tool
-calls. Wording that kept every finding brought the labels and unsourced claims back. Of the
-wordings driven, tying each finding to its source served both best.
+The wording rests on drives of the four cases. A target stated with no example led runs to copy
+its phrases as headings ("What I found" from "open with what you found"). Stating the method as
+how the run works, not what it says, removed most labels, and a short example removed most of the
+rest. Shorter turns lost findings, and a blind comparison judged them worse on `116` and `118`;
+that comparison read what each side found, checked and prevented, from the replies and the tool
+calls. Keeping every finding that bears on the decision, each tied to its source, served the voice
+and the thinking best of the wordings driven.
 
 ### Results
 Every drive below was graded the same way. The merge base column counts every drive of the skill
-before the change on the case as it now stands; the shipped text column counts drives on
-`4334893b`. `6e0bf243` changed two clauses after that, and `119`, the one case they reach, was
-driven on it once more. Each case got two drives on the shipped text: the second drive was the
-further run the thinking comparison takes when one pair judges the shipped text worse, and it was
-run for all four cases so each has two.
+before the change on the case as it now stands; the shipped text column counts two drives per case
+on `57fd046d`.
 
 | Case | Grader | Merge base | Shipped text |
 |---|---|---|---|
-| `116` | `speaks-about-the-subject` / `tells-checked-from-guessed` | 0 of 2 / 0 of 2 | 2 of 2 / 1 of 2 |
-| `117` (held out) | `speaks-about-the-subject` / `tells-checked-from-guessed` | 0 of 2 / 2 of 2 | 2 of 2 / 2 of 2 |
-| `118` | `speaks-about-the-subject` / `tells-checked-from-guessed` / `a-way-forward` / `gives-the-log-path` | 0 of 2 / 0 of 2 / 2 of 2 / 2 of 2 | 0 of 2 / 1 of 2 / 2 of 2 / 2 of 2 |
-| `119` | `speaks-about-the-subject` / `tells-checked-from-guessed` / `asks-for-the-fact` | 0 of 2 / 1 of 2 / 2 of 2 | 0 of 2 / 0 of 2 / 2 of 2 (on `6e0bf243`: pass / fail / pass) |
+| `116` | `speaks-about-the-subject` / `tells-checked-from-guessed` | 0 of 2 / 0 of 2 | 2 of 2 / 0 of 2 |
+| `117` (held out, tuned on) | `speaks-about-the-subject` / `tells-checked-from-guessed` | 0 of 2 / 2 of 2 | 1 of 2 / 2 of 2 |
+| `118` | `speaks-about-the-subject` / `tells-checked-from-guessed` / `a-way-forward` / `gives-the-log-path` | 0 of 2 / 0 of 2 / 2 of 2 / 2 of 2 | 0 of 2 / 0 of 2 / 1 of 2 / 2 of 2 |
+| `119` | `speaks-about-the-subject` / `tells-checked-from-guessed` / `asks-for-the-fact` | 0 of 2 / 1 of 2 / 2 of 2 | 1 of 2 / 0 of 2 / 2 of 2 |
 
 Across the four cases, `speaks-about-the-subject` passed 4 of 8 shipped-text drives, against 0
-of 8 on the merge base. `tells-checked-from-guessed` passed 4 of 8, against 3 of 8, and fell on
-`119` from 1 of 2 to 0 of 2. No new-case reply on the shipped text showed the log path unasked;
-every new-case reply on the merge base did. Two drives per case still cannot settle these binary
-graders, which move between runs on the same text.
+of 8 on the merge base. `tells-checked-from-guessed` passed 2 of 8, against 3 of 8; the text one
+edit earlier, `4334893b`, passed it 4 of 8, so two drives per case cannot tell that edit's effect
+from run-to-run variation. `118`'s second reply on the shipped text failed `a-way-forward`: it
+designed for the fact the person could not supply, then asked them to email the contractor about
+a second fact, whether notices can be faked. No new-case reply on the shipped text showed the log
+path unasked; every new-case reply on the merge base did.
 
-The blind comparison of thinking, two pairs per case: `116`, `118` and `119` were not judged
-worse. On `117`, held out, the shipped text was judged worse on both pairs. Its first reply raised
-fewer of the plan's hazards: asking the team, a trial period, the day's lag before a written
-blocker is seen. The merge-base replies listed these as points they would raise later; the shipped
-text does not narrate what comes next.
+The blind comparison of thinking, two pairs per case, judged no case worse on both pairs. The
+shipped text was judged worse on one pair of `116` and one of `117`; the merge base was judged
+worse on both pairs of `118`.
 
-The nine existing cases whose graders judge the turn were driven on `04b2eb92`, which differs from
-`4334893b` only in the example's last sentence. No grader that passed on the merge base failed
-there, after the further run each earlier flip got. A flip is a grader that passes on one side and
-fails on the other. `22` `offers-a-draft-not-a-feeling` and `01` `presses-from-root` failed on
-both sides. A reply showed the log path unasked in five of five sampled merge-base drives of these
-cases and in one of eleven on `04b2eb92`; it was a reply to a prompt line saying where notes should
-go.
+The nine existing cases whose graders judge the turn were driven on `57fd046d`. No grader that
+passed on the merge base failed there. `01` `presses-from-root` passed, where it failed on the
+merge base; `22` `offers-a-draft-not-a-feeling` failed on both. A generic
+`speaks-about-the-subject` grader passed six of the seven attended existing cases, against none
+on the merge base; the one failure named its notes file in reply to the prompt's line saying where
+notes should go, and that was the only reply of the nine to name it.
 
 The keep rule set in the eval README before the first drive was not met (see *Outcome of these
 rules* there). The change goes to its pull request with these results, for the owner to keep or
@@ -161,25 +157,23 @@ send back.
 
 ### Positive
 - No reply on the shipped text opened with "Where things stand." or tagged a sentence "verified".
+- The thinking held: the blind comparison judged no case worse on both pairs.
 - The split for a fact the person cannot supply is in the text with both grounds for asking.
-  `118` passed `a-way-forward` and `119` passed `asks-for-the-fact` on every drive, before and
-  after the change.
-- The existing graders that judge the turn hold.
+  `119` passed `asks-for-the-fact` on every drive, before and after the change.
+- The existing graders that judge the turn hold on the shipped text.
 
 ### Negative
-- The owner's bar is every reply, and the shipped text does not meet it. `118` and `119` failed
-  `speaks-about-the-subject` on their shipped-text drives, through a "My guess:" label and a
-  lead-in naming the run's own view. `tells-checked-from-guessed` failed four of eight
-  shipped-text drives, each on an estimate or a fact from a file stated with no source under a
-  recommendation.
-- On `117` the comparison judged the first reply worse at raising the plan's hazards. Whether a
-  list of points to raise later counts as disclosure is the owner's call. He had dropped "show the
-  breadth" as giving only a feeling of progress.
+- The owner's bar is every reply, and the shipped text does not meet it. This is an early version,
+  shipped to learn only if the owner keeps it. `speaks-about-the-subject` failed four of eight
+  shipped-text drives, through a "My guess:" label or a lead-in naming the run's own view.
+  `tells-checked-from-guessed` failed six of eight, each on an estimate or a fact from a file
+  stated with no source under a recommendation. The cause of these residual failures is not found.
+- `118` failed `a-way-forward` once on the shipped text, by an errand about a second fact.
 - `118` was never shown to catch the errand. The decide-what-is-safe rule rests on its text and on
   `118` holding.
 - `117` is tuned on: the wording changed after its first drive on the changed text, though no
   wording was drawn from its replies.
-- The body of `figure-out/SKILL.md` grew from 3,342 to 3,823 words.
+- The body of `figure-out/SKILL.md` grew from 3,342 to 3,811 words.
 
 ## Enforced by
 partly — eval cases under `claude-plugins/manifest-dev/evals/`, driven through
