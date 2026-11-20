@@ -21,12 +21,15 @@ ROOT = Path(__file__).resolve().parent.parent
 VERIFICATION = ROOT / "verification"
 GUARD = VERIFICATION / "scaffold-guard.sh"
 GUARD_LINE = '. "$(dirname "${BASH_SOURCE[0]}")/../../scaffold-guard.sh"'
-# Every shell script under verification/ builds a project, except the guard itself and the model
-# checks, which read a project rather than write one.
+# Every shell script under verification/ builds a project, except the guard itself, the model
+# checks, which read a project rather than write one, and the scripts inside a fixture's `project/`
+# directory, which are the copied project's own files and run only inside that copy.
 SCRIPTS = sorted(
     p
     for p in VERIFICATION.rglob("*.sh")
-    if p != GUARD and p.relative_to(VERIFICATION).parts[0] != "models"
+    if p != GUARD
+    and p.relative_to(VERIFICATION).parts[0] != "models"
+    and "project" not in p.relative_to(VERIFICATION).parts[2:-1]
 )
 
 

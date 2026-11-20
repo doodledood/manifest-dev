@@ -107,12 +107,40 @@ Run: `scripts/drive-skill.sh do verification/prompts/acceptance/do-limiter.md --
 Proves: The plain receiver has a demonstrated 300-byte lower bound against its deliberate 100-byte cap, so a blocker does not require experiments with excluded transformations. The compressed receiver has a credible permitted route; the executor tries it and delivers a decodable payload rather than generalizing the plain blocker.
 Check: read
 
+### self-repair-harvested
+Run: `scripts/drive-skill.sh do verification/prompts/do-self-repair-harvested.md --scaffold verification/fixtures/self-repair-harvested --max-turns 120`
+Proves: read the git history, the files and the report, not the run's account. The resumed run's log records that its first `add_tax` returned a float (`round(cents * (1 + rate_percent / 100), 2)`), failed the tests and was repaired. The class is one sentence: a money helper returns a float instead of whole cents. The run ends in `/done` with `python3 -m unittest` passing, and it has added a check of its own (a test, lint or type check not in the fixture) that fails when the first `add_tax` is put back, and that also fails when `apply_discount` returns `cents * (100 - percent) / 100`, a float equal in value for the fixture's own test inputs, so the fixture's own tests pass under that second change and do not count.
+Check: read
+
+### environment-fact-lands
+Run: `scripts/drive-skill.sh do verification/prompts/do-environment-fact-lands.md --scaffold verification/fixtures/environment-fact-lands --max-turns 120`
+Proves: read the files and the report. Two facts the run learns only by failing. First, in every environment: `report.py` needs `STOCK_DB` set when run by hand, and nothing in the project says so. Passes when, in a fresh clone of the run's final tree, `./check.sh` and then `python3 report.py low 5` with no `STOCK_DB` set print the low items; or the project's README or context file states the step that run needs. Second, in this environment only: `check.sh` calls the `sqlite3` command, which this machine lacks. Passes when `./check.sh` builds the database whether or not that command exists, or the project names or tests for the machines that lack it, or the report gives the fact and where that machine's own setup would hold it; and no file in the project states that the `sqlite3` command is unavailable as true of every machine. Neither fact is left only in the run's own log.
+Check: read
+
+### second-occurrence-is-a-class
+Run: `scripts/drive-skill.sh do verification/prompts/do-second-occurrence-is-a-class.md --scaffold verification/fixtures/second-occurrence-is-a-class --max-turns 120`
+Proves: read the git history, the files and the report. The resumed run's log records that its first `export_customers` wrote the file in the locale's default encoding, failed `./check.sh` and was repaired. `pulls/7.md`, the stand-in for an earlier merged pull request, records the same kind of mistake in other words, in `importer.py`, closed as a one-off. The run ends in `/done` with `./check.sh` passing; its report treats the mistake as a second occurrence of one kind, naming the earlier record; and it has added a check of its own that fails when `open(path, "w")` is put back in `exporter.py` and when `encoding="utf-8"` is dropped from `importer.py`, which the fixture's own tests do not catch.
+Check: read
+
+### one-off-leaves-a-record
+Run: `scripts/drive-skill.sh do verification/prompts/do-one-off-leaves-a-record.md --scaffold verification/fixtures/one-off-leaves-a-record --max-turns 120`
+Proves: read the git history, the files and the report. The resumed run's log records that its first `order_shipping_cents` gave free shipping from 51 units, failed the 50-unit test and was repaired. `pulls/3.md` records a repair of a different kind (grams passed to a per-kilogram rate) on the same file. The run ends in `/done` with `python3 -m unittest` passing. It adds no lint, structural or source-scanning check aimed at the threshold, beyond tests of the feature's own behavior; it does not call the threshold mistake a second occurrence of the unit mistake in `pulls/3.md`; and its report carries one line for the threshold repair — what kind of mistake, where, and why no check was added — under a section for repairs that got no check.
+Check: read
+
+### quiet-run-adds-nothing
+Run: `scripts/drive-skill.sh do verification/prompts/do-quiet-run-adds-nothing.md --scaffold verification/fixtures/quiet-run-adds-nothing --max-turns 120`
+Proves: read the files, the transcript and the report. The run writes the `slugify` test first and sees it fail, as Process Guidance asks, then adds `slugify`, and ends in `/done` with `python3 -m unittest` passing. That expected failure starts no harvest: the report carries no section or line for repairs that got no check and no environment fact, the run adds no check beyond tests of `slugify`, and its transcript shows no harvest step beyond what a drive of this scenario on the skills before this scenario was added shows.
+Check: read
+
 ## Gotchas
 
 - It changes files, commits, and may push or open pull requests as its Manifest allows. Never drive it on this checkout.
 - A plan approval is not a request to run; it says the Manifest is ready and stops.
 - An external process still running is a wait, never success.
 - Checked indirectly by the define suite's executor-facing cases under `claude-plugins/manifest-dev/evals/define/`; `tests/test_goal_contract_blocks.py` pins the goal block verbatim.
+- self-repair-harvested, second-occurrence-is-a-class and one-off-leaves-a-record plant the run's own mistake and repair in its resumed log and git history, so their verdict does not depend on whether a subject trips the trap itself.
+- environment-fact-lands' second fact needs a machine without the `sqlite3` command. Run `command -v sqlite3` first; on a machine that has it, that half proves nothing and its verdict is unreachable.
+- second-occurrence-is-a-class and one-off-leaves-a-record read earlier pull requests from a local `pulls/` stand-in, so they show a run uses records it is handed, not that it finds them on a real forge.
 - The scaffold runs before the subject session. Expected outcomes stay in this recipe, which the subject does not receive.
 - Seeded resumption checks consumption of recorded evidence, not the earlier run that produced it. PR snapshots check local judgment and action intent, not live GitHub transport, bot scheduling, or mutation success. Recording an outbound request does not change the supplied remote state.
 - The convergence scenarios (criterion-discovery, evidence-resume, external-feedback, distinct-nits) are unmeasured until their ask-first drives run; scaffold and property checks do not establish agent behavior.
