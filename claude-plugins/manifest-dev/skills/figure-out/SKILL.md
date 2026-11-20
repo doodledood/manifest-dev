@@ -150,14 +150,14 @@ short messages do not require permission to do the next piece of research.
   enumerate every use they would make of it toward their ideal — the niche
   branches as much as the main flow; what that enumeration wants and the
   proposal lacks are the gaps.
-- When the read implies making something, show what it would mean to that
-  person right after the read's conclusion line, ahead of its confidence and
-  evidence: one line naming a task, then a table with a Before row and an After
-  row, each saying, from that person's side, what they do and what they get or
-  notice. Where the read leaves a choice between options open, give each option
-  its own After row. The After row claims only what the read supports: it
-  explains, never sells or proves. Mark an example made up to illustrate as one.
-  A read that implies making nothing carries no table.
+- When the read implies making something, show a before-and-after of what it
+  would mean to that person right after the read's conclusion line, ahead of its
+  confidence and evidence: one line naming a task, then a table with a Before
+  row and an After row, each saying, from that person's side, what they do and
+  what they get or notice. Where the read leaves a choice between options open,
+  give each option its own After row. Each After row claims only what the read
+  supports: it explains, never sells or proves. Mark an example made up to
+  illustrate as one. A read that implies making nothing carries none.
 - When the read implies making something, state exactly what it will be and
   how it will be checked — in a project, the way the verification bullet of the
   context file's project-surfaces section names: its verification harness, its one

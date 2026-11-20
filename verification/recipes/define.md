@@ -28,7 +28,7 @@ Check: read
 
 ### digest-before-and-after
 Run: `scripts/drive-skill.sh define claude-plugins/manifest-dev/evals/define/d01-layer-cut/prompt.md`
-Proves: the plain-language digest shows, in the part the person confirms or vetoes, a line naming a task and a table with a Before row (today's pain: agents retype the same filters all day) and an After row (what they do and notice with saved searches), each from the support agent's side, and the After row claims nothing the plan does not support. On the skills before the digest carried this table, the digest has no such table. The drive reports its wall time and tokens, which are read beside the verdict, not graded.
+Proves: the plain-language digest shows, in the part the person confirms or vetoes, a line naming a task and a table with a Before row (today's pain: agents retype the same filters all day) and an After row (what they do and notice with saved searches), each from the support agent's side, and the After row claims nothing the plan does not support. The drive's wall time, and the tokens where the host reports them, are read beside the verdict, not graded. The same command with `DRIVE_PLUGINS_AT=0fb9ba0`, the skills before the digest carried this table, gives a digest with no such table.
 Check: read
 
 ### project-rule-over-default

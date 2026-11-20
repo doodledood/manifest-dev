@@ -140,12 +140,12 @@ Check: read
 
 ### before-and-after-on-a-change
 Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/14-persona-seat-feature/prompt.md`
-Proves: unattended, the read that proposes the CSV export shows, directly after its conclusion line and ahead of its confidence and evidence, a line naming a task and a table with a Before row and an After row, each saying from the home cook's side what they do and what they get or notice; the After row claims nothing the read does not support. On the skills before the read carried this table, the read has no such table. The drive reports its wall time and tokens, which are read beside the verdict, not graded.
+Proves: unattended, the read that proposes the CSV export shows, directly after its conclusion line and ahead of its confidence and evidence, a line naming a task and a table with a Before row and an After row, each saying from the home cook's side what they do and what they get or notice; the After row claims nothing the read does not support. The drive's wall time, and the tokens where the host reports them, are read beside the verdict, not graded. The same command with `DRIVE_PLUGINS_AT=0fb9ba0`, the skills before the read carried this table, gives a read with no such table.
 Check: read
 
 ### no-before-and-after-without-a-change
 Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/46-general-question-skips-recall/prompt.md`
-Proves: unattended, the read on which desk to buy implies making nothing, and it carries no Before / After table, on the skills before the read carried one and after.
+Proves: unattended, the read on which desk to buy implies making nothing, and it carries no Before / After table.
 Check: read
 
 ### seat-convenient-placement

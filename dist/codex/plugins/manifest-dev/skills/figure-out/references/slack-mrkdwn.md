@@ -17,6 +17,7 @@ Slack messages render via `mrkdwn`, not GitHub-flavored markdown. The flavors di
 | Blockquote | `> quoted line` | same |
 | Bullet list | `- item` on its own line | same (no special syntax — just hyphens + newlines) |
 | Numbered list | `1. item` on its own line | same |
+| Table | no table syntax: one line per row, such as `*Before:* …` then `*After:* …` | `\| a \| b \|` pipe rows |
 | User mention | `<@U123ABC>` | n/a |
 | Channel mention | `<#C123ABC\|name>` | n/a |
 | User group ping | `<!subteam^S123ABC>` | n/a |

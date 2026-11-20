@@ -4,8 +4,8 @@ Holds the decision in docs/adr/20261120-a-read-and-a-plan-summary-show-a-before-
 figure-out's read, define's plan summary and the pull request description define's
 `PR_LIFECYCLE.md` asks for each show a before-and-after whose sides say, from the person's side,
 what they do and what they get or notice. Each skill states the shape itself, since a shipped
-skill stands alone, so this test keeps the copies in step: a sharpening that lands in one file
-must reach the others.
+skill stands alone, so this test keeps that clause in step: dropping or rewording it in one file
+fails here.
 """
 
 from __future__ import annotations

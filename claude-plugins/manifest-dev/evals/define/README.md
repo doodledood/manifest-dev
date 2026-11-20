@@ -600,8 +600,9 @@ Freeze the full split before inspecting outputs, and let the analyzer read only 
   such as a requirement no gate checks, stays with the judge, and its FAIL is read against the
   Manifest before anything is done about it.
 - **One turn of the interview.** The suite measures unattended encoding, plus one interactive
-  turn after approval (`d16`). Interview order, re-asking settled ground, and the digest's form
-  need a scripted second turn the harness does not run, so they are out of scope.
+  turn after approval (`d16`). Interview order and re-asking settled ground need a scripted second
+  turn the harness does not run, so they are out of scope. The digest's form comes in one turn, but
+  no case grades it; the define recipe's `digest-before-and-after` scenario drives it.
 - **Taste loading is supplied.** `d17` supplies preferences in `append_system_prompt` and seeds
   `preferences.md`; final-state checks cover edits through any tool, not host memory discovery.
 - **Not covered, by choice.** Babysit mode needs a GitHub stand-in, and multi-repo Manifests need

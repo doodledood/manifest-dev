@@ -408,7 +408,7 @@ for the person the work is for: one line naming a task, then a table with a Befo
 and an After row, the intended result, each saying, from that person's side, what they do and
 what they get or notice. The pain matters most, being the one thing only the user can confirm
 and the surface where an invented Problem gets caught; the After row claims only what the plan
-supports, and an example made up to illustrate is marked as one. Then every number a gate holds
+supports, and an example made up to illustrate is marked as one. Then, still in that part, every number a gate holds
 the work to (each threshold, bound, count or target, in plain words) so the user can veto one
 before execution. Then the rest: what must stay fixed, what the agent may revise, the plan, how
 it is verified, and the holes the review found and how each was settled (a search that found
