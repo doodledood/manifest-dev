@@ -170,9 +170,7 @@ def test_caller_owns_gate_and_handling_without_changing_severity(plugins: Path) 
     for task in ("PROMPTING", "DOCUMENT", "WRITING", "UI"):
         guidance = skill(plugins, "define", f"tasks/{task}.md")
         assert "deliberately required policy" in guidance
-        assert "rather than being copied into the gate" not in " ".join(
-            guidance.split()
-        )
+        assert "rather than being copied into the gate" not in flat(guidance)
     holistic = (
         plugins / "manifest-dev-tools/skills/review-pr-holistic/SKILL.md"
     ).read_text()
@@ -199,9 +197,7 @@ def test_findings_are_adjudicated_without_losing_real_obligations(
 
 
 def test_recovery_and_exports_keep_acceptance_meaning(plugins: Path) -> None:
-    recovery = " ".join(
-        skill(plugins, "ticket-up", "references/AUTOMATED_EXECUTION.md").split()
-    )
+    recovery = flat(skill(plugins, "ticket-up", "references/AUTOMATED_EXECUTION.md"))
     assert "new session alone does not stale evidence" in recovery
     assert "current claims and the actual subject" in recovery
     assert "bounded mandatory work must all be settled before done" in recovery

@@ -991,10 +991,8 @@ def test_auto_continues_past_each_child_skills_stop() -> None:
         DIST / "codex/plugins/manifest-dev/skills",
     ):
         auto = flat((root / "auto/SKILL.md").read_text(encoding="utf-8"))
-        child = " ".join(
-            (root / "figure-out/references/autonomous.md")
-            .read_text(encoding="utf-8")
-            .split()
+        child = flat(
+            (root / "figure-out/references/autonomous.md").read_text(encoding="utf-8")
         )
         assert "invoke define with `--autonomous`" in auto, root
         assert "checkpoints that return control to this flow" in auto, root

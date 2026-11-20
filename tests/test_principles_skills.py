@@ -228,8 +228,8 @@ def test_review_code_carries_the_review_rule_word_for_word() -> None:
     assert len(OWNING_DIMENSIONS) == 11, "review-code's dimension table was not read"
     for name in OWNING_DIMENSIONS:
         reference = SKILLS / "review-code" / "references" / f"{name}.md"
-        assert pointer in " ".join(
-            reference.read_text(encoding="utf-8").split()
+        assert pointer in flat(
+            reference.read_text(encoding="utf-8")
         ), f"{name} no longer reports a departure from a principle bearing on its own calls"
     assert (
         "Whichever dimension reports an unchosen departure, it is a broken binding requirement: High"
