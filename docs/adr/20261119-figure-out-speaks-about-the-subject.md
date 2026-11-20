@@ -152,14 +152,16 @@ six of the seven attended existing cases, against none on the merge base; the on
 its notes file in reply to the prompt's line saying where notes should go, and that was the only
 reply of the nine to name it.
 
-Four further wordings were driven on the four cases, two drives each: naming the narration shapes a
-run still wrote ("Here is what I found", "the question below", an agenda line), banning a "My
-guess:" label, reading any claim about the person's world as the run's own unless told or read, and
-having the guess rest only on what the message already showed. They raised
-`speaks-about-the-subject` to as much as 7 of 8 drives and left `tells-checked-from-guessed` at 1 to
-3 of 8. In every one of them the blind comparison judged `119`'s thinking worse on both pairs: its
-replies dropped hazards the merge base raised, such as a re-run of the send script mailing a second
-binding notice. None of them is kept; the text above is `57fd046d`'s turn wording.
+Four further rounds of wording, each built on the last, were driven on the four cases, two drives
+each. The first named the narration shapes a run still wrote ("Here is what I found"), banned a "My
+guess:" label, and read any claim about the person's world as the run's own unless told or read. The
+second cut any sentence that would fit any conversation, such as "the question below" or an agenda
+line. The third told a claim's footing wherever it stands. The fourth had the guess rest only on
+what the message already showed. They raised `speaks-about-the-subject` to as much as 7 of 8 drives
+and left `tells-checked-from-guessed` at 1 to 3 of 8. In every round the blind comparison judged the
+wording's thinking worse on both pairs of `119`: their replies dropped hazards the merge base
+raised, such as a re-run of the send script mailing a second binding notice. None of them is kept;
+the text above is `57fd046d`'s turn wording.
 
 The keep rule set in the eval README before the first drive was not met (see *Outcome of these
 rules* there).
@@ -195,11 +197,13 @@ rules* there).
 - The existing graders that judge the turn hold on the changed text.
 
 ### Negative
-- The owner's bar is every reply, and the changed text does not meet it.
-  `speaks-about-the-subject` failed 7 of 13 drives, through a "My guess:" label or a lead-in
-  naming the run's own view. `tells-checked-from-guessed` failed 10 of 13, each on an estimate, a
-  claim about the person's world, or a fact from a file stated with no source under a
-  recommendation. The cause of these residual failures is not found.
+- The owner's bar is every reply, and the changed text does not meet it. `speaks-about-the-subject`
+  failed 7 of 13 drives, through a "My guess:" label or a lead-in naming the run's own view.
+  `tells-checked-from-guessed` failed 10 of 13, each on an estimate, a claim about the person's
+  world, or a fact from a file stated with no source under a recommendation. Wordings that named
+  these shapes raised `speaks-about-the-subject` to as much as 7 of 8 but were judged worse in
+  thinking on `119` (see *Results*), so none ships; no wording moved `tells-checked-from-guessed`
+  off the merge base's rate.
 - `118` failed `a-way-forward` once, by an errand about a second fact.
 - `118` was never shown to catch the errand. The decide-what-is-safe rule rests on its text and on
   `118` holding.

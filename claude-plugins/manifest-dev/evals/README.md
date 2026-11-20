@@ -662,9 +662,9 @@ with two drives per case and the merge with `main` with one more: `116` passed
 second-turn reply asking the person to email the contractor, an errand the skill before the change
 never produced on this case. Each case got a second drive on `57fd046d` because the thinking
 comparison takes a second pair when one pair judges the changed text worse. That comparison judged
-the changed text worse on both pairs of no case. Four later wordings raised
-`speaks-about-the-subject` but were judged worse in thinking on both `119` pairs each, and were not
-kept. `118` was not shown to catch before the change. See
+the changed text worse on both pairs of no case. Four later rounds of wording, each built on the
+last, raised `speaks-about-the-subject` but were judged worse in thinking on both `119` pairs, and
+were not kept. `118` was not shown to catch before the change. See
 `docs/adr/20261119-figure-out-speaks-about-the-subject.md`.
 
 `15` took the place of `12-living-with-it`, held out until 2026-09-14, when it was re-run to
