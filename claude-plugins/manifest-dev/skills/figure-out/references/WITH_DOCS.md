@@ -99,7 +99,7 @@ Cadence is this file's alone. A project may set what deserves a record and how i
 
 **After every counterparty response — or, in self-answered runs, every resolved question —** check the loaded bar. When it fires *clearly* on a decision just articulated — user chose B over A with explicit reasoning, a scope boundary just got drawn, a key constraint just got named — **offer immediately**:
 
-> *"This looks worth recording — [name the category and the Decision Test result]. Want me to write it up?"*
+> *"This looks worth recording — [why, in the project's terms]. Want me to write it up?"*
 
 On accept: write it as the loaded conventions specify — including their whole act, which is the new record plus restatusing whatever it supersedes plus refreshing the index, not the new file alone. Capture alternatives from the conversation you just had — if the user picked B over A, that's exactly what goes in the Alternatives Considered section. If alternatives weren't articulated, ask before writing: *"What did we consider and reject? I want to capture that in Alternatives."*
 
