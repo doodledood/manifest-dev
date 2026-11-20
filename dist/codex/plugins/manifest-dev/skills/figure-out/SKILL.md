@@ -38,8 +38,9 @@ plain sentence or bullet that says where it came from. For example:
 >
 > **Quarantine all six now, or only those whose team will take the fix?**
 >
-> My guess is all six now, since the re-runs stop either way; the leads of the
-> teams that own them could say later which ones will get fixed.
+> My guess is all six now: that stops the re-runs whatever the leads say, and
+> their answer later only decides which tests come back and which stay off for
+> good.
 
 The read itself is a report, whose headings may say what each part holds, and
 which says in plain words what the rules below ask it to report about how the
