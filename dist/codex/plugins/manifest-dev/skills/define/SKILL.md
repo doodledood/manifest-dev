@@ -404,7 +404,7 @@ ambiguity by writing one reading into the gate. No second review follows.
 Give a plain-language digest. Open it with what needs the person, set apart from the rest: a
 conflict with a principle, as *Task files* above says; then the user's calls, as *The user's call*
 above says; then what is theirs to confirm or veto. First the pain and the intended result for the
-person the work is for: one line naming a task that person does, then a table with a Before row,
+person the work is for: a line `Task: <a task that person does>`, then a table with a Before row,
 the pain, and an After row, the intended result, each saying, from that person's side, what they
 do and what they get or notice. The pain matters most, being the one thing only the user can
 confirm and the surface where an invented Problem gets caught; the After row claims only what the
