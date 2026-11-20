@@ -1,5 +1,13 @@
 # figure-out eval suite
 
+**Turn-voice change, 2026-11-19: every measurement remains stale.** figure-out's turn paragraph,
+its claim-standing bullet and the log reference's path line changed: a turn speaks about the
+person's subject with no label for its own parts or method, says each claim's footing in plain
+words, and shows the log path only when asked; a fact the person cannot supply is weighed by what
+rides on it. Cases `116` to `119` were added and nine cases whose graders judge the turn became
+recipe scenarios. Their native drives, on the merge base and on the shipped text, are summarized in
+`docs/adr/20261119-figure-out-speaks-about-the-subject.md`; no suite has run for this change.
+
 **Standing-cost change, 2026-11-16: every measurement remains stale.** figure-out now presses
 the need of a stated requirement much of the build rests on, before designing any version of it;
 its pricing line counts what a part keeps costing once it exists as a cost that can move the
@@ -795,7 +803,8 @@ file. The row is never deleted while the probe stays.
 | File | Unit | Covered by |
 |---|---|---|
 | `SKILL.md` | The read, and investigation not execution | `17-agreement-is-not-a-go/stops-at-the-read`, `17-agreement-is-not-a-go/state-gatekeeper--app--publisher-py`, `18-read-only-experiment/names-a-read`, `08-neg-authorized/complies-without-reopening` |
-| `SKILL.md` | One claim and one ask per turn, one crux at a time | `01-root-press/turn-discipline`, `06-strategic-open/presses-one-crux`, `06-strategic-open/turn-discipline` |
+| `SKILL.md` | A turn speaks about the subject: the finding first, one new point, no label for its parts or its method, the question in bold with a guess, one crux at a time | `116-voice-feature-in-a-repo/speaks-about-the-subject`, `117-voice-plan-without-a-repo/speaks-about-the-subject`, `118-not-sure-a-shape-holds/speaks-about-the-subject` (drives only), `119-not-sure-nothing-safe/speaks-about-the-subject` (drives only), `01-root-press/turn-discipline`, `06-strategic-open/presses-one-crux`, `06-strategic-open/turn-discipline` |
+| `SKILL.md` | A fact the person cannot supply is weighed by what rides on it | `118-not-sure-a-shape-holds/a-way-forward` (drives only), `119-not-sure-nothing-safe/asks-for-the-fact` (drives only) |
 | `SKILL.md` | Asking through a question-selection capability | Reason: a host capability the headless harness lacks; the plain-text path it falls back to is judged by the `turn-discipline` graders |
 | `SKILL.md` | Simplified Technical English style | `26-asks-only-the-users-call/plain-writing` |
 | `SKILL.md` | The user's call | `25-users-call-and-taste/flags-the-users-calls`, `25-users-call-and-taste/leaves-the-agents-call`, `25-users-call-and-taste/follows-only-what-bears`, `26-asks-only-the-users-call/decides-what-taste-settles` |
@@ -805,7 +814,7 @@ file. The row is never deleted while the probe stays.
 | `SKILL.md` | Serve what is true; hold under pushback; the status quo's job; removal as an answer | `04-hold-under-pushback/holds-position`, `05-move-on-evidence/updates-on-evidence`, `13-status-quo-job/tests-the-status-quos-job`, `114-removal-competes/puts-removal-forward`; not graded: pricing "living with it", left to `01` since `12` retired |
 | `SKILL.md` | Problem before solution; requirements earn their place; classify a constraint | `01-root-press/presses-from-root`, `02-assumed-cause/does-not-adopt-users-diagnosis`, `48-reuse-and-shallow-layer/reuses-existing-and-drops-shallow-layer`, `70-refactor-big-cleanup/questions-the-one-pull-request`, `110-press-the-costly-requirement/presses-the-costly-requirement`, `110-press-the-costly-requirement/brings-a-position`, `110-press-the-costly-requirement/leaves-the-rest`, `111-keep-on-a-costly-requirement/presses-once-more`, `111-keep-on-a-costly-requirement/asks-for-the-need`, `111-keep-on-a-costly-requirement/ends-after-the-answer`, `111-keep-on-a-costly-requirement/no-why-on-small-things`, `112-keep-on-a-modest-requirement/accepts-keep`, `112-keep-on-a-modest-requirement/no-why-on-small-things`, `113-adds-nothing-ungrounded/adds-nothing-ungrounded`, `113-adds-nothing-ungrounded/keeps-the-checks`, `115-unattended-keeps-the-requirement/keeps-the-stated-requirement`, `115-unattended-keeps-the-requirement/flags-the-doubt` |
 | `SKILL.md` | Price options by the effort that binds, and by what a part keeps costing once built | `92-estimate-what-waits-on-people/estimate-prices-what-waits-on-people`, `93-thorough-fix-not-tamed-for-effort/prices-the-fix-by-what-binds`, `93-thorough-fix-not-tamed-for-effort/recommends-the-thorough-fix`, `114-removal-competes/counts-standing-cost` |
-| `SKILL.md` | Mark every claim verified, inferred or assumed | `10-diagnosis-retry-window/evidence-has-provenance`, `11-underdetermined/separates-verified-from-assumed`, `16-underdetermined-billing/separates-verified-from-assumed`, `11-underdetermined/chases-the-crumb` |
+| `SKILL.md` | Every claim's footing told in plain words, never by a tag | `116-voice-feature-in-a-repo/tells-checked-from-guessed`, `117-voice-plan-without-a-repo/tells-checked-from-guessed`, `118-not-sure-a-shape-holds/tells-checked-from-guessed` (drives only), `119-not-sure-nothing-safe/tells-checked-from-guessed` (drives only), `10-diagnosis-retry-window/evidence-has-provenance`, `11-underdetermined/separates-verified-from-assumed`, `16-underdetermined-billing/separates-verified-from-assumed`, `11-underdetermined/chases-the-crumb` |
 | `SKILL.md` | Keep rivals alive; parent before child | `10-diagnosis-retry-window/rival-actually-killed`, `11-underdetermined/does-not-manufacture-a-winner`, `01-root-press/presses-from-root` |
 | `SKILL.md` | Fog, and ruling ground out of the frame | Reason: needs many user turns, so a branch can be seen sharpening or a ruling be seen holding when a resumed session meets it |
 | `SKILL.md` | Explore read-only; acts with durable outside state are offered | `18-read-only-experiment/state-labelhub--labelhub--driver-py`, `18-read-only-experiment/state-labelhub--labelhub--spooler-py`, `17-agreement-is-not-a-go/state-gatekeeper--app--consumer-py`; not graded: acts that leave state outside the session, which need an external-service stub |
@@ -954,7 +963,7 @@ file. The row is never deleted while the probe stays.
 | `tasks/WRITING.md` | The author's own point | `82-writing-post-from-notes/builds-on-the-authors-point` |
 | `tasks/WRITING.md` | Sources in hand | `82-writing-post-from-notes/backs-each-claim` |
 | `tasks/WRITING.md` | Trade-off: Breadth vs one sharp point | `82-writing-post-from-notes/picks-one-sharp-point` |
-| `references/LOG.md` | (whole file) | `01-root-press/log-written`; not graded: log safety and resuming from the log, which have shown no failure and sit outside what a grader reads |
+| `references/LOG.md` | (whole file) | `01-root-press/log-written`, `118-not-sure-a-shape-holds/gives-the-log-path` (drives only), and every `speaks-about-the-subject` grader for the path kept out of replies unasked; not graded: log safety and resuming from the log, which have shown no failure and sit outside what a grader reads |
 | `references/RECALL.md` | (whole file) | `43-recalls-earlier-work/carries-the-earlier-ruling-as-a-lead`, `44-debt-on-the-path/offers-the-on-path-debt`, `46-general-question-skips-recall/no-recall-for-a-general-question`, `59-reverted-fix/names-the-reverted-fix` |
 | `references/TASTE.md` | (whole file) | `27-taste-offers/offers-entry-for-the-stated-preference`, `27-taste-offers/offers-entry-for-the-reversal`, `28-universal-not-taste/no-offer-for-a-universal-rule`, `29-ratified-entry-lands/entry-inside-taste-section`, `105-taste-yardstick-offered/offers-the-yardstick` (drives only), `107-steer-without-reason/reads-the-reason` (drives only) |
 | `references/WITH_DOCS.md` | (whole file) | `23-term-and-record/term-captured`, `23-term-and-record/record-written`, `24-ruled-position-holds/position-text-unchanged`, `30-update-offer-for-older-setup/offers-only-whats-new`, `36-marks-drift-it-wont-fix/export-entry-marked-stale`, `45-current-setup-offers-nothing/offers-no-setup-update`, `53-update-offer-from-v17/offers-only-whats-new-since-v17`, `84-chosen-option-goes-to-a-record/ruling-recorded`, `84-chosen-option-goes-to-a-record/north-star-unchanged`, `85-evidence-against-a-bet/bet-challenged`, `85-evidence-against-a-bet/bet-text-kept` |

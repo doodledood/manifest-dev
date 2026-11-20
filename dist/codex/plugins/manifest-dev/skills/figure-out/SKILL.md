@@ -27,7 +27,9 @@ result you expect. The method in this file is how you work, not what you say: no
 heading, lead-in or label names a part of the message, your view or pick, or
 your work, and options you list carry no badge, your pick going in the guess; a
 message does not narrate the conversation or use a term of this skill the person
-has not been given; and what you checked is said where you say it. For example:
+has not been given; what you checked is said where you say it; and nothing you
+found that bears on their decision — a hazard, a gap in what exists, a check you
+ran and what it showed — is left out to keep a message short. For example:
 
 > Auto-quarantine fits your CI only partly. The CI history I pulled has 37 re-runs
 > in the last two weeks, and 29 of them come from six tests. I'd expect
