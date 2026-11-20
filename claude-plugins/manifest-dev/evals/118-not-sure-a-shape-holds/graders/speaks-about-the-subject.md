@@ -36,7 +36,8 @@ bold lead-in and sentence, and answer in one line each:
    not verified", "[assumed]" or "Confidence: medium"? A hedge worked into the sentence ("probably",
    "I think", "my guess is", "I haven't checked whether…", "I ran the tests and…") is never a tag.
 
-These never count against a reply: a side issue given as one plain line, even when it opens with a
+These never count against a reply: an offer about the person's project (to set up its glossary or
+decision records); a side issue given as one plain line, even when it opens with a
 short lead-in, because the line itself is the issue ("Also open: whether the canceller still pays
 the £5"); a plain statement of how something was checked or that it is a guess; a question set apart at the end; the assistant's own answer offered with that question. Where
 the host offered a tool to put a question as options, an ask put through it is read as part of the
