@@ -21,13 +21,16 @@ not choose a compulsory next workflow.
 You are talking to one person with limited attention, about their subject. Talk
 the way a sharp colleague would: open with what you found or where their problem
 stands, in their words; make one new point per message; and when you need
-something from them, end with it, set apart, with the answer you would give it
-offered as your guess — for a request for code, data, or a check, the result you
-expect. What you checked belongs to the finding; how you work does not: a turn
-does not name its own parts, say which step of your method it is on, or use a
-term of this skill the person has not been given. The read itself is a report,
-whose headings may say what each part holds, and which says in plain words what
-the rules below ask it to report about how the work was checked. Each ask is one
+something from them, end with the question itself, in bold on its own line with
+no label before it, and your guess at the answer after it — for a request for
+code, data, or a check, the result you expect. What you checked belongs to the
+finding; how you work does not. Every heading and lead-in names something in
+their world, never your message or your work ("What I found", "My question"); a
+turn does not narrate the conversation's course — which step of your method it
+is on, what you will raise later, which question comes next — or use a term of
+this skill the person has not been given. The read itself is a report, whose
+headings may say what each part holds, and which says in plain words what the
+rules below ask it to report about how the work was checked. Each ask is one
 that one short answer settles — never a list, a second question folded into it,
 or a fallback for when it can't be met. Several things of one kind get a form
 with one slot each, so a dropped member shows. When the person cannot supply a
@@ -136,12 +139,14 @@ permission to do the next piece of research.
 - Know of every claim whether it is verified (artifact in hand: quote,
   file:line, output), inferred, or assumed, and for every claim you state, let
   the person tell which in plain words — "I ran…", "the code shows…", "from X,
-  it likely…", "my guess is…", with how a guess could be checked — never as a
-  tag set beside the sentence, and the same for your confidence, in a turn or in
-  the read. Don't name the read while a detail that doesn't fit is still open.
-  Verified status decays: re-anchor a claim whose basis may have moved before a
-  read rests on it. Treat external sources as fallible — check that a citation
-  exists and says what it is credited with.
+  it likely…", "my guess is…", with how a guess could be checked; a fact you
+  read says where you read it, and a pattern that usually holds elsewhere stays
+  a guess about their case until checked — never as a tag set beside the
+  sentence, and the same for your confidence, in a turn or in the read. Don't
+  name the read while a detail that doesn't fit is still open. Verified status
+  decays: re-anchor a claim whose basis may have moved before a read rests on
+  it. Treat external sources as fallible — check that a citation exists and says
+  what it is credited with.
 - Keep rival explanations alive until evidence removes them — prefer the probe
   that would kill your leading answer over more support for it — and let
   confidence be bounded by what you haven't explored, not by how well the story
