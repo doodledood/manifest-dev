@@ -70,28 +70,34 @@ The owner's rulings:
 What ships, in the lines that owned the old behavior (wording choices made by the agent within
 the plan):
 
-- The turn paragraph states the voice as a colleague across a desk: the finding first, one new
-  point per message, and, for a prose ask, the question in bold on its own line with the guess
-  after it in a plain sentence, which may say what it rests on.
+- The turn paragraph states the voice as a colleague across a desk and gives a turn one shape:
+  the main finding in a sentence or two; every other finding the person should know as a short
+  bullet that says where it came from, however small, with no heading over the bullets; each
+  point not settled (a side hazard, a question for later, another reading of their words) as one
+  plain line starting "Also open:"; and, for a prose ask, the question in bold on its own line and
+  a sentence starting "My guess is". Before a message goes out, the run goes through what it found
+  since its last message and carries each item. A message aims at about 150 words: cut words, not
+  points. A short example shows the shape, an "Also open" reading line included.
 - The method is how the run works, not what it says. No heading, lead-in or label names a part of
-  the message or the run's work, and options carry no badge; through a host's question tool, the
-  guess goes in the recommended option's description. The conversation is not narrated, and
-  the reply uses no term of the skill the person has not been given.
-- Every finding that bears on the decision goes in, as a plain sentence or bullet that says where
-  it came from. A five-sentence example shows the voice. The read stays a report whose headings may
-  name its parts.
+  the message, the run's view or its work ("What I found:", "My view:", "The main gap:"); options
+  carry no badge and say what each costs; through a host's question tool, the guess goes in the
+  recommended option's description. No sentence talks about the message or the course of the
+  conversation, and the reply uses no term of the skill the person has not been given.
+- The read stays a report whose headings may name its parts.
 - The one-ask rule keeps its ban on a fallback. When a fact is missing, what holds is a statement,
-  not a fallback ask. A step that cannot be undone asks for the fact even where some shape holds.
+  not a fallback ask, and an offer to chase the fact is an "Also open:" line, never the question. A
+  step that cannot be undone asks for the fact even where some shape holds.
 - The claim-standing bullet keeps the verified, inferred and assumed classes and moves them into
   the sentence:
-  - a fact read says where it was read;
+  - a fact read says where it was read, again when it returns as the guess's reason;
   - an inference or estimate reads as the run's own;
   - what the person said stays theirs until checked;
   - an assumption says how it could be checked.
 
   No tag or confidence label is set beside a sentence. "Guess" keeps one meaning: the run's own
   answer to its question.
-- `references/LOG.md` gives the path when the person running the session asks for it. It keeps
+- `references/LOG.md` gives the path when the person running the session asks for it, with no
+  account of how the log is kept. It keeps
   the path out of every other reply, a list of files written included. `references/autonomous.md`'s
   read line defers to that rule.
 - Small edits the same rules drove: the momentum line's "brief progress messages" became "brief
@@ -160,11 +166,38 @@ line. The third told a claim's footing wherever it stands. The fourth had the gu
 what the message already showed. They raised `speaks-about-the-subject` to as much as 7 of 8 drives
 and left `tells-checked-from-guessed` at 1 to 3 of 8. In every round the blind comparison judged the
 wording's thinking worse on both pairs of `119`: their replies dropped hazards the merge base
-raised, such as a re-run of the send script mailing a second binding notice. None of them is kept;
-the text above is `57fd046d`'s turn wording.
+raised, such as a re-run of the send script mailing a second binding notice. None of them was kept on the bar of that time; the owner's direction of 2026-11-20 then set a new bar, below.
 
 The keep rule set in the eval README before the first drive was not met (see *Outcome of these
 rules* there).
+
+**Under the owner's quality bar (2026-11-20).** The owner made no loss in thinking or in what a
+reply shows the hard bar, allowed side issues as one plain line each, and asked for much shorter
+replies. Two graders joined each new case: `no-protocol-markers` (labels, tags and an unasked log
+path, every reply) and `keeps-side-issues` (the points both merge-base drives raised, and three
+the owner named for `116`). Six rounds of wording followed, two drives per case each:
+
+| Round | `no-protocol-markers` | `keeps-side-issues` | `speaks-about-the-subject` | `tells-checked-from-guessed` | Mean words per reply |
+|---|---|---|---|---|---|
+| Merge base | 0 of 8 | 7 of 8 | 0 of 8 | 3 of 8 | about 450 |
+| `d2f576dc` | 5 of 8 | 4 of 8 | 4 of 8 | 3 of 8 | 308 |
+| `dcd93c74` | 6 of 8 | 4 of 8 | 5 of 8 | 2 of 8 | 302 |
+| `5017a0bc` | 7 of 8 | 4 of 8 | 6 of 8 | 6 of 8 | 294 |
+| `48019f07` | 8 of 8 | 6 of 8 | 7 of 8 | 4 of 8 | 263 |
+| `4101f917` | 8 of 8 | 4 of 8 | 7 of 8 | 3 of 8 | 264 |
+| `2e0061c0` | 8 of 8 | 5 of 8 | 8 of 8 | 3 of 8 | 291 |
+
+The blind thinking reader, measured against itself first, called one side worse in 13 of 24
+judgments of two runs of the same text; under the rule set for it (worse in at least two of three
+judgments on both pairs) it judged no case worse on `48019f07` or `2e0061c0`. Side issues were
+kept on `117` and `118` in most drives; `116` and `119` each dropped one small point on most
+drives (the other reading of "go home", what an offer costs; the re-run hazard, the test gap).
+A copy-edit of the merge base's complete replies into this shape, every point kept, came to about
+350 words per reply, so on these cases about 250 words and every point kept pull against each
+other. Two `116` replies also stated a wrong design claim the blind reader did not catch: booking
+from the waitlist only until 12 hours before class does not spare a member the fee, because the
+code charges by the time of the cancellation.
+
 
 ## Alternatives Considered
 - **A finding-first reply that keeps one label for the ask:** not chosen; the label still names a

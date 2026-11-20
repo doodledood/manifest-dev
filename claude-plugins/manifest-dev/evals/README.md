@@ -11,9 +11,8 @@ claim-standing bullet and the log reference's path line changed: a turn speaks a
 subject with no label for its own parts or method, says each claim's footing in plain words, and
 shows the log path only when asked; a fact the person cannot supply is weighed by what rides on it.
 Cases `116` to `119` were added and nine cases whose graders judge the turn became recipe scenarios.
-Their native drives, on the merge base, on `57fd046d` and after the merge with `main`, are
-summarized in `docs/adr/20261119-figure-out-speaks-about-the-subject.md`; no suite has run for this
-change.
+Their native drives, on the merge base and on each candidate wording, are summarized in
+`docs/adr/20261119-figure-out-speaks-about-the-subject.md`; no suite has run for this change.
 
 **Standing-cost change, 2026-11-16: every measurement remains stale.** figure-out now presses
 the need of a stated requirement much of the build rests on, before designing any version of it;
@@ -665,7 +664,11 @@ comparison takes a second pair when one pair judges the changed text worse. That
 the changed text worse on both pairs of no case. Four later rounds of wording, each built on the
 last, raised `speaks-about-the-subject` but were judged worse in thinking on both `119` pairs, and
 were not kept. `118` was not shown to catch before the change. See
-`docs/adr/20261119-figure-out-speaks-about-the-subject.md`.
+`docs/adr/20261119-figure-out-speaks-about-the-subject.md`. A later bar set by the owner on
+2026-11-20 (no loss in thinking or in what a reply shows; one-line side issues allowed; much shorter
+replies) added `no-protocol-markers` and `keeps-side-issues` to `116`–`119`; six rounds of wording
+reached 8 of 8 on the markers and the manner, and 4 to 6 of 8 on side issues, at 263–308 words per
+reply. See the record's results.
 
 `15` took the place of `12-living-with-it`, held out until 2026-09-14, when it was re-run to
 decide whether to cut two sentences from the skill and so steered the prompt; `12` was retired on
