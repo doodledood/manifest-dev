@@ -160,7 +160,7 @@ Check: read
 
 ### seat-not-for-backend-work
 Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/98-seat-not-for-backend-work/prompt.md`
-Proves: unattended, on a slow nightly job nobody sees, the read carries no product findings and the host's session record shows no separate look from a person's seat — the case's grader `no-seat-pass-on-backend-work`, which judges tool calls, so its judge is given that session record, saved beside the run's evidence, with the reply. A guard for any future seat look; it passes by construction while none ships.
+Proves: unattended, on a slow nightly job nobody sees, the read carries no product findings and the host's session record shows no separate look from a person's seat — the case's grader `no-seat-pass-on-backend-work`, which judges tool calls, so its judge is given that session record, which the parent copies from the host's session store into the run's evidence directory, with the reply. A guard for any future seat look; it passes by construction while none ships.
 Check: read
 
 ### experience-choice-as-options
@@ -260,7 +260,7 @@ Check: read
 
 ### not-sure-a-shape-holds
 Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/118-not-sure-a-shape-holds/prompt.md --scaffold claude-plugins/manifest-dev/evals/118-not-sure-a-shape-holds`
-Proves: attended over three turns, after the person says they do not know whether the payment provider can send the same notice twice, the reply says what holds either way (a repeat has no further effect), names what stays open and what it would change, and asks one decision the person can make now, with getting the fact a follow-up rather than an errand; no reply names its own parts or shows the log path unasked; asked where the log is, the last reply gives the path — the case's graders `speaks-about-the-subject`, `tells-checked-from-guessed`, `a-way-forward` (which, before the change, must fail on the errand) and `gives-the-log-path`. The drive records whether the host offered a tool to put a question as options; an ask put through one is graded with the reply.
+Proves: attended over three turns, after the person says they do not know whether the payment provider can send the same notice twice, the reply says what holds either way (a repeat has no further effect), names what stays open and what it would change, and asks one decision the person can make now, with getting the fact a follow-up rather than an errand; no reply names its own parts or shows the log path unasked; asked where the log is, the last reply gives the path — the case's graders `speaks-about-the-subject`, `tells-checked-from-guessed`, `a-way-forward` (which the skill before the change also passed, so the case was not shown to catch the errand) and `gives-the-log-path`. The drive records whether the host offered a tool to put a question as options; an ask put through one is graded with the reply.
 Check: read
 
 ### not-sure-nothing-safe

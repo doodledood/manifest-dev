@@ -1,7 +1,7 @@
 # ADR: figure-out budgets the whole turn, not its bold lines
 
 ## Status
-Accepted; amended by 20260905-investigation-messages-do-not-require-acknowledgment: the attention budget applies per message, and evidence-resolvable questions no longer require a user turn; the low-load and existence-first purposes remain; narrowed by 20261025-figure-out-records-what-the-lean-body-rebuild-retired: the Taste bend of the default load is not decided
+Accepted; amended by 20260905-investigation-messages-do-not-require-acknowledgment: the attention budget applies per message, and evidence-resolvable questions no longer require a user turn; the low-load and existence-first purposes remain; narrowed by 20261025-figure-out-records-what-the-lean-body-rebuild-retired: the Taste bend of the default load is not decided; amended by 20261119-figure-out-speaks-about-the-subject: the guess after the question may say what it rests on and how it could be checked
 
 ## Area
 figure-out

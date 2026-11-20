@@ -577,8 +577,8 @@ being declared a guard. `tests/test_eval_cases.py` fails when a case has no row 
 | `115` | first run decides | New on 2026-11-16: held-out witness for `110`: unattended, a stated requirement is kept and its doubt flagged; drive results in `docs/adr/20261116-figure-out-presses-on-need-by-what-rests-on-it.md` |
 | `116` | first run decides | New on 2026-11-19: a reply speaks about the subject, not its own parts or method; must catch, so its `speaks-about-the-subject` grader has to fail a reply of the skill before the change; drive results in `docs/adr/20261119-figure-out-speaks-about-the-subject.md` |
 | `117` | first run decides | New on 2026-11-19: held-out witness for `116`, with no repository; drive results in `docs/adr/20261119-figure-out-speaks-about-the-subject.md` |
-| `118` | first run decides | New on 2026-11-19: a fact the person cannot supply, where a shape holds under every answer; must catch, so its `a-way-forward` grader has to fail a reply of the skill before the change; drives only (*Several turns*); drive results in `docs/adr/20261119-figure-out-speaks-about-the-subject.md` |
-| `119` | first run decides | New on 2026-11-19: a fact the person cannot supply, where nothing is safe without it; must not fire, the twin of `118` that keeps the skill asking for the fact; drives only (*Several turns*); drive results in `docs/adr/20261119-figure-out-speaks-about-the-subject.md` |
+| `118` | first run decides | New on 2026-11-19: a fact the person cannot supply, where a shape holds under every answer; meant to catch an errand, but not shown to catch: the skill before the change passed `a-way-forward` on both drives, so the case guards only against a reply that sends the person away for the fact; drives only (*Several turns*); drive results in `docs/adr/20261119-figure-out-speaks-about-the-subject.md` |
+| `119` | first run decides | New on 2026-11-19: a fact the person cannot supply, where nothing is safe without it; the rule to decide what is safe must not fire here; the twin of `118` that keeps the skill asking for the fact; drives only (*Several turns*); drive results in `docs/adr/20261119-figure-out-speaks-about-the-subject.md` |
 
 Retired on 2026-10-15: `12` (floored in both arms, not a declared guard), `47` and `49` (each a
 second older-version case beside `53`, which the version rule now forbids; their straight-to-newest
@@ -624,15 +624,15 @@ that reply, so `115` is not an independent witness for that sentence. `117-voice
 joins them as the held-out witness for `116`, assigned before its first run; `116`, `118` and `119`
 are tuning cases. Tuning happens on the others; assign the remaining new cases before their first run.
 
-**Pass rules for `116` to `119`, set before their first run.** Each runs once per arm — the skill
-before the change, then after it — as a drive of its scenario in
-`verification/recipes/figure-out.md`. Each reply is graded by a fresh context from one grader file,
-given the case's user turns and the assistant's replies: the final message of each turn, and any
-ask the host put to the person as options. `skill-fired` is display-only in a drive. A case passes
-when every other grader passes.
+**Pass rules for `116` to `119`, set before their first run.** Each runs as a drive of its scenario in
+`verification/recipes/figure-out.md`, once before the change (the merge base) and once after it.
+Each reply is graded by a fresh context from one grader file, given the case's user turns and the
+assistant's replies: the final message of each turn, and any ask the host put to the person as
+options. `skill-fired` is display-only in a drive. A case passes when every other grader passes.
 
 - **Proven first.** Before any drive, every grader of these four cases is graded on one reply
-  written to fail it and one written to pass it, and both verdicts are shown.
+  written to fail it and one written to pass it; the verdicts are listed in the pull request that
+  added the cases.
 - **Before the change.** `116` must fail `speaks-about-the-subject`, and `118` must fail
   `a-way-forward` on its item 4: getting the fact set as the only way on. A must-catch case that
   passes there is repaired and driven once more before the skill changes; if it passes again its
@@ -640,12 +640,21 @@ when every other grader passes.
   catch.
 - **After the change.** The change is kept when `116`, `117` and `118` pass every grader, `119`
   passes every grader, and no grader of a touched existing case counts as worse. `119` must pass
-  `asks-for-the-fact` on both arms. `117` decides: a fail there blocks the change whatever the
-  tuning cases show, a pass on both arms shows the before arm already met it, and no wording is
-  drawn from its replies.
+  `asks-for-the-fact` both before and after the change. `117` decides: a fail there blocks the
+  change whatever the tuning cases show, a pass before and after shows the skill already met it,
+  and no wording is drawn from its replies.
 - **Further runs.** Only an unexpected flip earns more runs: a grader that passed before the change
-  and fails after it gets one more run on each arm, and counts as worse only when it fails on both
+  and fails after it gets one more run on each side, and counts as worse only when it fails on both
   runs after the change and on neither before it.
+
+**Outcome of these rules, 2026-11-20.** The keep rule was not met. On `4334893b`, two drives per
+case: `118` and `119` failed `speaks-about-the-subject` on both drives, `116` and `118` failed
+`tells-checked-from-guessed` on one, `119` on both; and the blind comparison of thinking judged
+`117` worse on both pairs. The shipped text, `6e0bf243`, changes only two clauses after that; `119`,
+the one case they reach, was driven on it once and passed `speaks-about-the-subject` and failed
+`tells-checked-from-guessed`. `118` was not shown to catch. The change
+went to its pull request with these results stated, for the owner to keep or send back; see
+`docs/adr/20261119-figure-out-speaks-about-the-subject.md`.
 
 `15` took the place of `12-living-with-it`, held out until 2026-09-14, when it was re-run to
 decide whether to cut two sentences from the skill and so steered the prompt; `12` was retired on
