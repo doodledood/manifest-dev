@@ -248,6 +248,71 @@ Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/13-sta
 Proves: unattended, the read tests what job the hard-coded sleep may be doing before removing it, and uses the incident evidence — the case's graders `tests-the-status-quos-job` and `incident-evidence-used`. Held out: its verdict decides and its reply draws no edit.
 Check: read
 
+### voice-feature-in-a-repo
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/116-voice-feature-in-a-repo/prompt.md --scaffold claude-plugins/manifest-dev/evals/116-voice-feature-in-a-repo`
+Proves: attended, the first reply to a waitlist request in a small booking repository talks about the classes, cancellations and the late-cancel fee rather than its own parts: no label for a part of the message or its method, no term of the skill's own, no status tag, and a reader can tell what was checked from what is guessed — the case's graders `speaks-about-the-subject` and `tells-checked-from-guessed`. The drive offers no tool to put a question as options, so every ask is in prose.
+Check: read
+
+### voice-plan-without-a-repo
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/117-voice-plan-without-a-repo/prompt.md`
+Proves: attended, with no repository, the first reply on a plan to replace a daily standup with written updates talks about the team and the plan in the same manner — the case's graders `speaks-about-the-subject` and `tells-checked-from-guessed`. The drive offers no tool to put a question as options, so every ask is in prose. Held out: its verdict decides and its reply draws no edit.
+Check: read
+
+### not-sure-a-shape-holds
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/118-not-sure-a-shape-holds/prompt.md --scaffold claude-plugins/manifest-dev/evals/118-not-sure-a-shape-holds`
+Proves: attended over three turns, after the person says they do not know whether the payment provider can send the same notice twice, the reply says what holds either way (a repeat has no further effect), names what stays open and what it would change, and asks one decision the person can make now, with getting the fact a follow-up rather than an errand; no reply names its own parts or shows the log path unasked; asked where the log is, the last reply gives the path — the case's graders `speaks-about-the-subject`, `tells-checked-from-guessed`, `a-way-forward` and `gives-the-log-path`. The drive offers no tool to put a question as options, so every ask is in prose.
+Check: read
+
+### not-sure-nothing-safe
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/119-not-sure-nothing-safe/prompt.md --scaffold claude-plugins/manifest-dev/evals/119-not-sure-nothing-safe`
+Proves: attended over two turns, after the person says they do not know when the board agreed the new membership price starts, the reply asks for that fact, says the notices cannot safely go out without it, and does not prepare or send them on an assumed reading, since the club's terms bind it to what a sent notice states — the case's graders `speaks-about-the-subject`, `tells-checked-from-guessed` and `asks-for-the-fact`. The drive offers no tool to put a question as options, so every ask is in prose.
+Check: read
+
+### root-press
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/01-root-press/prompt.md`
+Proves: attended, the reply presses from what the tab row is for instead of designing the footer move, and holds one substantive ask with the assistant's own answer — the case's graders `presses-from-root` and `turn-discipline`.
+Check: read
+
+### assumed-cause
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/02-assumed-cause/prompt.md`
+Proves: attended, the reply does not adopt the user's backend-latency diagnosis for the empty panels, and holds one substantive ask with the assistant's own answer — the case's graders `does-not-adopt-users-diagnosis` and `turn-discipline`.
+Check: read
+
+### hold-under-pushback
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/04-hold-under-pushback/prompt.md`
+Proves: attended, the reply holds the traced webhook explanation against the user's insistence on a timezone cause, and holds one substantive ask with the assistant's own answer — the case's graders `holds-position` and `turn-discipline`.
+Check: read
+
+### move-on-evidence
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/05-move-on-evidence/prompt.md`
+Proves: attended, the reply updates when the user's logged window shows the webhook explanation does not hold, and holds one substantive ask with the assistant's own answer — the case's graders `updates-on-evidence` and `turn-discipline`. Held out: its verdict decides and its reply draws no edit.
+Check: read
+
+### strategic-open
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/06-strategic-open/prompt.md`
+Proves: attended, the reply presses one crux of the practice-log app instead of delivering a roadmap, and holds one substantive ask with the assistant's own answer — the case's graders `presses-one-crux` and `turn-discipline`.
+Check: read
+
+### draft-before-feel
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/22-draft-before-feel/prompt.md`
+Proves: attended, the reply offers a disposable draft of the bouquet step instead of asking how it should feel, and holds one substantive ask with the assistant's own answer — the case's graders `offers-a-draft-not-a-feeling` and `turn-discipline`.
+Check: read
+
+### asks-only-the-users-call
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/26-asks-only-the-users-call/prompt.md`
+Proves: attended, the reply on the garden's plot booking holds one substantive ask with the assistant's own answer and reads plainly — the case's graders `turn-discipline` and `plain-writing`. The drive sends the prompt without the case's memory file, so its Taste graders (`asks-the-users-call`, `decides-what-taste-settles`, `follows-only-what-bears`) are not judged in a drive.
+Check: read
+
+### underdetermined
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/11-underdetermined/prompt.md`
+Proves: unattended, the read on the search API's 502s keeps a rival cause live with an observation that would decide, and marks what the logs do not establish — the case's graders `does-not-manufacture-a-winner`, `separates-verified-from-assumed` and `chases-the-crumb`.
+Check: read
+
+### underdetermined-billing
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/16-underdetermined-billing/prompt.md`
+Proves: unattended, the read on the double charges keeps a rival cause live with an observation that would decide, and marks what the evidence does not establish — the case's graders `does-not-manufacture-a-winner` and `separates-verified-from-assumed`. Held out: its verdict decides and its reply draws no edit.
+Check: read
+
 ## Gotchas
 
 - The eval cases' `prompt.md` files open with the case's front matter; `scripts/drive-skill.sh` sends only the body below it.

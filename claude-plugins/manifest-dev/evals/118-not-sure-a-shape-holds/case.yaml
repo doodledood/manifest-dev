@@ -1,0 +1,5 @@
+# Holds the decision in docs/adr/20261119-figure-out-speaks-about-the-subject.md — that record's Enforced by line names this case; weakening or removing it means updating that line in the same change.
+schema_version: "1.0"
+name: 118-not-sure-a-shape-holds
+context:
+  scaffold_script: scaffold.sh

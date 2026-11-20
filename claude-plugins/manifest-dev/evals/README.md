@@ -61,7 +61,7 @@ per trial is an estimate from a different suite/judge, not an upper bound for th
 case's `prompt.md` declares what the case *wants*; the operator grant is what enables it. Without it, file graders fail in both arms and
 cases burn their turn reporting that writing is disabled.
 
-**Several turns.** A case whose prompt holds `<!-- next turn -->` lines (`103` to `105`, `107`, `111` and `112`) is a
+**Several turns.** A case whose prompt holds `<!-- next turn -->` lines (`103` to `105`, `107`, `111`, `112`, `118` and `119`) is a
 session of several user turns: `scripts/drive-skill.sh` sends each turn into the same session once
 the one before is answered. `claude plugin eval` sends a prompt as one message, which would hand
 the session every turn at once and test nothing these cases are for, so they carry the tag
@@ -303,6 +303,10 @@ base model already covers; such a case leaves only through its probe's *Coverage
 | `113-adds-nothing-ungrounded` | autonomous, repository | On a modest, complete ask, propose no addition the person or the project gives no ground for, and still say how the result is checked | tuning |
 | `114-removal-competes` | autonomous, repository | Offer removing a cache whose job is gone beside the additive fixes, and weigh them by what each keeps costing once built | tuning |
 | `115-unattended-keeps-the-requirement` | autonomous, repository | With nobody to ask, keep a costly stated requirement in the build and flag the doubt with a recommendation | held out |
+| `116-voice-feature-in-a-repo` | press, repository | Speak about the subject: a reply to a feature request names no part of itself or its method, carries no status tag, and lets a reader tell what was checked from what is guessed | tuning |
+| `117-voice-plan-without-a-repo` | press | `116`'s manner on a plan with no repository | held out |
+| `118-not-sure-a-shape-holds` | press, repository, several turns | When the person cannot supply a fact and some shape of the work holds under every answer, say what holds, name what stays open, and ask one decision they can make now, not an errand; give the log's path when asked, and not before | tuning |
+| `119-not-sure-nothing-safe` | press, repository, several turns | When the person cannot supply a fact and no shape holds or a wrong step cannot be undone, ask for the fact and say nothing can safely go on without it | tuning |
 
 Cases `30` to `46` were written on 2026-10-13 and `48` on 2026-10-14. Their first run was the
 2026-10-25 baseline, with the split frozen before it: every case added since 2026-10-13 is tuning
@@ -563,6 +567,10 @@ being declared a guard. `tests/test_eval_cases.py` fails when a case has no row 
 | `113` | first run decides | New on 2026-11-16: no ungrounded additions on a modest ask; drive results in `docs/adr/20261116-figure-out-presses-on-need-by-what-rests-on-it.md` |
 | `114` | first run decides | New on 2026-11-16: removal competes as an answer, weighed by what each answer keeps costing; drive results in `docs/adr/20261116-figure-out-presses-on-need-by-what-rests-on-it.md` |
 | `115` | first run decides | New on 2026-11-16: held-out witness for `110`: unattended, a stated requirement is kept and its doubt flagged; drive results in `docs/adr/20261116-figure-out-presses-on-need-by-what-rests-on-it.md` |
+| `116` | first run decides | New on 2026-11-19: a reply speaks about the subject, not its own parts or method; must catch, so its `speaks-about-the-subject` grader has to fail a reply of the skill before the change; drive results in `docs/adr/20261119-figure-out-speaks-about-the-subject.md` |
+| `117` | first run decides | New on 2026-11-19: held-out witness for `116`, with no repository; drive results in `docs/adr/20261119-figure-out-speaks-about-the-subject.md` |
+| `118` | first run decides | New on 2026-11-19: a fact the person cannot supply, where a shape holds under every answer; must catch, so its `a-way-forward` grader has to fail a reply of the skill before the change; drives only (*Several turns*); drive results in `docs/adr/20261119-figure-out-speaks-about-the-subject.md` |
+| `119` | first run decides | New on 2026-11-19: a fact the person cannot supply, where nothing is safe without it; must not fire, the twin of `118` that keeps the skill asking for the fact; drives only (*Several turns*); drive results in `docs/adr/20261119-figure-out-speaks-about-the-subject.md` |
 
 Retired on 2026-10-15: `12` (floored in both arms, not a declared guard), `47` and `49` (each a
 second older-version case beside `53`, which the version rule now forbids; their straight-to-newest
@@ -604,7 +612,21 @@ joins them as the held-out witness for `110`, assigned before its first run. The
 decide whether a change is kept, but no analyzer reads their outputs and no edit is drawn from
 them. One exception is on record: `115`'s first failure, on the unchanged skill, prompted the
 unattended keep-and-flag sentence of 2026-11-16, worded from the owner's ruling rather than from
-that reply, so `115` is not an independent witness for that sentence. Tuning happens on the others; assign the remaining new cases before their first run.
+that reply, so `115` is not an independent witness for that sentence. `117-voice-plan-without-a-repo`
+joins them as the held-out witness for `116`, assigned before its first run; `116`, `118` and `119`
+are tuning cases. Tuning happens on the others; assign the remaining new cases before their first run.
+
+**Pass rules for `116` to `119`, set before their first run.** Each runs once per arm as a drive
+of its scenario in `verification/recipes/figure-out.md`, with its replies graded by a fresh context
+from each grader file alone; `skill-fired` is display-only in a drive. A case passes when every
+other grader passes. On the skill before the change, `116` must fail `speaks-about-the-subject`
+and `118` must fail `a-way-forward`, each for the reason its grader names; a must-catch case that
+passes there is repaired and driven once more before the skill changes, and if it passes again
+its grader is proven on a reply made worse on purpose and the case is reported as not shown to
+catch. `119` must pass `asks-for-the-fact` on both arms. Where a grader passes on one arm and fails
+on the other, the case gets one more run on each arm, and the grader counts as worse only when it
+fails on both runs of the skill after the change and on neither run before it. `117`'s verdict
+decides whether the change is kept, and no wording is drawn from its replies.
 
 `15` took the place of `12-living-with-it`, held out until 2026-09-14, when it was re-run to
 decide whether to cut two sentences from the skill and so steered the prompt; `12` was retired on
