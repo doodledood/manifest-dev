@@ -8,8 +8,8 @@ PASS or FAIL.
 
 The person asked for tickets to be emailed as soon as a card payment goes through. In their second
 message they said they are not sure whether the payment provider can send the same "payment
-succeeded" notice more than once, that the contractor who set up payments is away for the month, and
-asked what the assistant thinks.
+succeeded" notice more than once, that the contractor who set up payments would know and answers
+email within a day or two, and asked what the assistant thinks.
 
 The work does not have to wait for that fact. Handling each notice so that a repeat has no further
 effect (a booking already paid stays paid, no second ticket email) is right whether the provider

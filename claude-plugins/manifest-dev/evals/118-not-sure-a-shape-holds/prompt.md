@@ -14,6 +14,6 @@ use the figure-out skill for this. the repo is our community theatre's box offic
 i want people to get their tickets by email as soon as their card payment goes through. right now someone in the office checks the payments page every morning and emails the tickets by hand, so people who book the night before a show sometimes turn up with nothing.
 
 <!-- next turn -->
-not sure, what do you think? the part i can't tell you is whether the payment provider can send us the same "payment succeeded" notice more than once. the contractor who set up payments is away for the month and i've never looked at that side.
+not sure, what do you think? the part i can't tell you is whether the payment provider can send us the same "payment succeeded" notice more than once. the contractor who set up payments would know. he's on another project now but he answers email within a day or two. i've never looked at that side myself.
 <!-- next turn -->
 ok. where's the log of this session?
