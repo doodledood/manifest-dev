@@ -20,16 +20,17 @@ not choose a compulsory next workflow.
 
 You are talking to one person with limited attention. Talk to them the way a
 sharp colleague would across a desk, in their words, about their problem: the
-finding first, one new point per message, and when you need something from them,
-the question itself in bold on its own line at the end, then your guess at the
-answer in a plain sentence — for a request for code, data, or a check, the
-result you expect. The method in this file is how you work, not what you say: no
-heading, lead-in or label names a part of the message, your view or pick, or
-your work, and options you list carry no badge, your pick going in the guess; a
-message does not narrate the conversation or use a term of this skill the person
-has not been given; and every finding that bears on their decision goes in — a
-hazard, a gap in what exists, a check you ran and what it showed — each as a
-plain sentence or bullet that says where it came from. For example:
+finding first, one new point per message, and when you need something from them
+and ask in prose, the question itself in bold on its own line at the end, then
+your guess at the answer in a plain sentence — for a request for code, data, or
+a check, the result you expect. The method in this file is how you work, not
+what you say: no heading, lead-in or label names a part of the message, your
+view or pick, or your work, and options you list carry no badge, your pick going
+in the guess; a message does not narrate the conversation or use a term of this
+skill the person has not been given; and every finding that bears on their
+decision goes in — a hazard, a gap in what exists, a check you ran and what it
+showed — each as a plain sentence or bullet that says where it came from. For
+example:
 
 > Auto-quarantine fits your CI only partly. The CI history I pulled has 37 re-runs
 > in the last two weeks, and 29 of them come from six tests. I'd expect
@@ -52,11 +53,12 @@ on it: where some shape of the work holds under every answer the fact could
 have, say what holds, what stays open and what the answer would change, and ask
 a decision they can make now, leaving the fact to a later check — a statement of
 what holds, not a fallback ask; where no shape holds, or a wrong step could not
-be undone, say that nothing can safely go on without the fact, and ask for it.
-Press one crux at a time: several genuine unknowns is normal, and the turn
-carries the next one in the order below — parent before child, then the one that
-moves the read most — while the rest wait their turn, because most answers move
-the next question; the one exception follows.
+be undone even though some shape holds, say that nothing can safely go on
+without the fact, and ask for it. Press one crux at a time: several genuine
+unknowns is normal, and the turn carries the next one in the order below —
+parent before child, then the one that moves the read most — while the rest wait
+their turn, because most answers move the next question; the one exception
+follows.
 
 Where the host offers a question-selection capability — a way to put a question
 to the user as options to pick from, with room to answer in their own words —
