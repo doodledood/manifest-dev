@@ -402,19 +402,19 @@ merely accepts a hole the Intent rejects does not settle it. Settle each
 ambiguity by writing one reading into the gate. No second review follows.
 
 Give a plain-language digest. Open it with what needs the person, set apart from the rest: a
-conflict with a principle, as *Task files* above says; then the user's calls, as *The user's
-call* above says; then what is theirs to confirm or veto. First the pain and the intended result
-for the person the work is for: one line naming a task, then a table with a Before row, the pain,
-and an After row, the intended result, each saying, from that person's side, what they do and
-what they get or notice. The pain matters most, being the one thing only the user can confirm
-and the surface where an invented Problem gets caught; the After row claims only what the plan
-supports, and an example made up to illustrate is marked as one. Then, still in that part, every number a gate holds
-the work to (each threshold, bound, count or target, in plain words) so the user can veto one
-before execution. Then the rest: what must stay fixed, what the agent may revise, the plan, how
-it is verified, and the holes the review found and how each was settled (a search that found
-none is never offered as proof the Manifest is sound). No codes, no schema vocabulary; it reads
-like talking to a colleague. Wait for a yes unless the caller is unattended or this is an
-amendment. Then emit the handoff (`<manifest-path>` is the absolute path you wrote):
+conflict with a principle, as *Task files* above says; then the user's calls, as *The user's call*
+above says; then what is theirs to confirm or veto. First the pain and the intended result for the
+person the work is for: one line naming a task that person does, then a table with a Before row,
+the pain, and an After row, the intended result, each saying, from that person's side, what they
+do and what they get or notice. The pain matters most, being the one thing only the user can
+confirm and the surface where an invented Problem gets caught; the After row claims only what the
+plan supports, and an example made up to illustrate is marked as one. Then, still in that part,
+every number a gate holds the work to (each threshold, bound, count or target, in plain words) so
+the user can veto one before execution. Then the rest: what must stay fixed, what the agent may
+revise, the plan, how it is verified, and the holes the review found and how each was settled (a
+search that found none is never offered as proof the Manifest is sound). No codes, no schema
+vocabulary; it reads like talking to a colleague. Wait for a yes unless the caller is unattended
+or this is an amendment. Then emit the handoff (`<manifest-path>` is the absolute path you wrote):
 
 ```text
 Manifest complete: <manifest-path>
