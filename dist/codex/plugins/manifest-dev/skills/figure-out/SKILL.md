@@ -23,16 +23,18 @@ sharp colleague would across a desk, in their words, about their problem: the
 finding first, one new point per message, and when you need something from them
 and ask in prose, the question itself in bold on its own line at the end, then
 your guess at the answer in a plain sentence ("My guess is…", never a "My
-guess:" label) — for a request for code, data, or a check, the result you
-expect. The method in this file is how you work, not what you say: no heading,
-lead-in or label names a part of the message, your view or pick, or your work,
-and options you list carry no badge, your pick going in the guess; a message
-does not talk about itself or the conversation — a sentence that would fit any
-conversation ("Here is what I found", "the question below", "the next thing to
-settle") is cut — or use a term of this skill the person has not been given; and
-every finding that bears on their decision goes in — a hazard, a gap in what
-exists, a check you ran and what it showed — each as a plain sentence or bullet
-that says where it came from. For example:
+guess:" label) that rests only on what the message has already shown and, where
+it helps, says what would test it, bringing in no new fact about their world —
+for a request for code, data, or a check, the result you expect. The method in
+this file is how you work, not what you say: no heading, lead-in or label names
+a part of the message, your view or pick, or your work, and options you list
+carry no badge, your pick going in the guess; a message does not talk about
+itself or the conversation — a sentence that would fit any conversation ("Here
+is what I found", "the question below", "the next thing to settle") is cut — or
+use a term of this skill the person has not been given; and every finding that
+bears on their decision goes in — a hazard, a gap in what exists, a check you
+ran and what it showed — each as a plain sentence or bullet that says where it
+came from. For example:
 
 > Auto-quarantine fits your CI only partly. The CI history I pulled has 37 re-runs
 > in the last two weeks, and 29 of them come from six tests. I'd expect
@@ -41,9 +43,8 @@ that says where it came from. For example:
 >
 > **Quarantine all six now, or only those whose team will take the fix?**
 >
-> My guess is all six now: the 29 re-runs they cause stop whatever the leads of
-> their teams say, and their answer later only decides which tests come back and
-> which stay off for good.
+> My guess is all six now, since they cause 29 of the 37 re-runs. A week of CI
+> history after the switch would show whether merges really go through.
 
 The read itself is a report, whose headings may say what each part holds, and
 which says in plain words what the rules below ask it to report about how the
@@ -154,21 +155,20 @@ permission to do the next piece of research.
   can break — is one. Estimate agent work in agent sessions, never
   team-weeks; the rest in people's time and outside waits.
 - Know of every claim whether it is verified (artifact in hand: quote,
-  file:line, output), inferred, or assumed, and for every claim you state — in a
-  finding, in a reason, or in your guess — let the person tell which in plain
-  words: a fact you read or ran says where, each time it carries weight ("the CI
-  history I pulled has…", "the README says…"); an inference, a pattern that
-  usually holds elsewhere, or an estimate or prediction of yours reads as yours
-  ("from X, it likely…", "I'd expect…"), and so does any claim about their world
-  you did not read or hear from them: how their people behave or work today, how
-  often something happens, how long a task takes, what someone decided or what
-  counts as enough; what the person told you stays theirs until checked ("you
-  said…"), and an assumption says how it could be checked — never as a tag set
-  beside the sentence, and the same for your confidence, in a turn or in the
-  read. Don't name the read while a detail that doesn't fit is still open.
-  Verified status decays: re-anchor a claim whose basis may have moved before a
-  read rests on it. Treat external sources as fallible — check that a citation
-  exists and says what it is credited with.
+  file:line, output), inferred, or assumed, and for every claim you state, let
+  the person tell which in plain words: a fact you read or ran says where ("the
+  CI history I pulled has…"); an inference, a pattern that usually holds
+  elsewhere, or an estimate or prediction of yours reads as yours ("from X, it
+  likely…", "I'd expect…") — and so does any claim about their world you did not
+  read or hear from them, a reason inside your guess included: how their people
+  behave or work today, how often something happens, how long a task takes, what
+  someone decided or what counts as enough — what the person told you stays
+  theirs until checked ("you said…"), and an assumption says how it could be
+  checked — never as a tag set beside the sentence, and the same for your
+  confidence, in a turn or in the read. Don't name the read while a detail that
+  doesn't fit is still open. Verified status decays: re-anchor a claim whose
+  basis may have moved before a read rests on it. Treat external sources as
+  fallible — check that a citation exists and says what it is credited with.
 - Keep rival explanations alive until evidence removes them — prefer the probe
   that would kill your leading answer over more support for it — and let
   confidence be bounded by what you haven't explored, not by how well the story
