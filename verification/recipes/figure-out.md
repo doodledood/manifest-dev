@@ -1,7 +1,7 @@
 ---
 kind: skill
 covers: claude-plugins/manifest-dev/skills/figure-out
-ask-first: starts an agent session per scenario, which uses model quota
+ask-first: starts a fresh agent per scenario, which uses model quota
 dry-run: honored
 ---
 # figure-out
@@ -29,8 +29,8 @@ Proves: the reply says the setup is current, lists nothing the project lacks, do
 Check: read
 
 ### one-version-behind
-Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/53-update-offer-from-v17/prompt.md --scaffold claude-plugins/manifest-dev/evals/53-update-offer-from-v17`
-Proves: the reply offers only what the version after the recorded one adds — the architecture starter line on widening an existing input before adding a concept, and the stricter fit of starter lines to principles skills the project keeps (it keeps none) — and offers nothing from the recorded version or earlier as new.
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/53-update-offer-from-v18/prompt.md --scaffold claude-plugins/manifest-dev/evals/53-update-offer-from-v18`
+Proves: the reply offers only what the version after the recorded one adds — the verification-tool update that makes `verify affected` count the fixtures and prompts a recipe's scenarios name, for this project, which keeps the harness — and offers nothing from the recorded version or earlier as new.
 Check: read
 
 ### principle-steered-against

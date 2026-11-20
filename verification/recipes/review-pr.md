@@ -1,7 +1,7 @@
 ---
 kind: skill
 covers: claude-plugins/manifest-dev-tools/skills/review-pr, claude-plugins/manifest-dev-tools/skills/review-pr-holistic, claude-plugins/manifest-dev-tools/skills/review-pr-judgment, claude-plugins/manifest-dev-tools/skills/review-pr-thread-verify
-ask-first: starts an agent session per scenario, which uses model quota
+ask-first: starts a fresh agent per scenario, which uses model quota
 dry-run: honored
 ---
 # review-pr
