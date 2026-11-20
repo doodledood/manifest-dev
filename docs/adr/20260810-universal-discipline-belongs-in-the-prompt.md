@@ -1,7 +1,7 @@
 # ADR: A discipline every session owes belongs in the prompt, not in a ratified preference
 
 ## Status
-Accepted; narrowed by 20261025-figure-out-records-what-the-lean-body-rebuild-retired: figure-out's guard against a term of art the user has not met is not decided
+Accepted; narrowed by 20261025-figure-out-records-what-the-lean-body-rebuild-retired: figure-out's guard against a term of art the user has not met is not decided; amended by 20261119-figure-out-speaks-about-the-subject: figure-out uses no term of its own that the person has not been given
 
 ## Area
 figure-out

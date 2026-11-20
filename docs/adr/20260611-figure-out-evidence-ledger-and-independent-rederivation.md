@@ -1,7 +1,7 @@
 # ADR: figure-out reads ship an Evidence Ledger and earn their terminals; the independent re-derivation pass is un-deferred
 
 ## Status
-Accepted; amended by 20261025-figure-out-re-derives-only-reads-that-are-costly-to-get-wrong: autonomous mode states this record's load-bearing condition for the re-derivation, and applies it to the fresh-context classification too; narrowed by 20261025-figure-out-records-what-the-lean-body-rebuild-retired: earned underdetermined is carried by the autonomous and diagnosis files only; the trade-off boundary, the anatomy collapse, re-derivation on request and the load-bearing provenance tier are not decided
+Accepted; amended by 20261025-figure-out-re-derives-only-reads-that-are-costly-to-get-wrong: autonomous mode states this record's load-bearing condition for the re-derivation, and applies it to the fresh-context classification too; narrowed by 20261025-figure-out-records-what-the-lean-body-rebuild-retired: earned underdetermined is carried by the autonomous and diagnosis files only; the trade-off boundary, the anatomy collapse, re-derivation on request and the load-bearing provenance tier are not decided; amended by 20261119-figure-out-speaks-about-the-subject: the provenance tier is decided — every claim a turn states has its footing told in plain words, never by a tag
 
 ## Area
 figure-out
