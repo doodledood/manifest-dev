@@ -29,7 +29,7 @@ Proves: the reply says the setup is current, lists nothing the project lacks, do
 Check: read
 
 ### one-version-behind
-Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/53-update-offer-from-v17/prompt.md --scaffold claude-plugins/manifest-dev/evals/53-update-offer-from-v17`
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/53-update-offer-from-v18/prompt.md --scaffold claude-plugins/manifest-dev/evals/53-update-offer-from-v18`
 Proves: the reply offers only what the version after the recorded one adds — the architecture starter line on widening an existing input before adding a concept, and the stricter fit of starter lines to principles skills the project keeps (it keeps none) — and offers nothing from the recorded version or earlier as new.
 Check: read
 

@@ -231,6 +231,7 @@ interface Recipe {
   path: string;
   kind: string;
   covers: string[];
+  uses: string[]; // repository paths its scenarios' commands name as arguments, such as fixtures
   askFirst: string; // the reason, or "" for a recipe that runs freely
   dryRun: boolean; // its commands honor VERIFY_DRY_RUN=1
   scenarios: Scenario[];
@@ -321,6 +322,7 @@ function parseRecipe(path: string): Recipe {
     path,
     kind: meta.kind,
     covers: (meta.covers ?? "").split(",").map((c) => c.trim()).filter(Boolean),
+    uses: [...new Set(scenarios.flatMap((s) => namedPaths(s.run)))],
     askFirst: meta["ask-first"] ?? "",
     dryRun: meta["dry-run"] === "honored",
     scenarios,
@@ -581,8 +583,9 @@ Adding a recipe: copy any file in {recipes}, keep the front matter keys (kind, c
 ask-first when it applies, dry-run: honored when its commands obey VERIFY_DRY_RUN=1), and give
 each scenario a \`### name\` heading with \`Run:\`, \`Proves:\` and, when the exit code cannot decide,
 \`Check: read\`: a run then passes on its exit code and its output still needs reading. A
-\`covers: .\` recipe runs for every change and covers no path in particular. \`verify check\`
-validates it.
+\`covers: .\` recipe runs for every change and covers no path in particular. A recipe also covers
+each repository path its scenarios' commands name as arguments, such as a fixture or prompt, so
+\`verify affected\` names it when one changes. \`verify check\` validates it.
 `;
 
 function cmdHelp(): number {
@@ -1080,10 +1083,25 @@ function isEvidencePath(path: string): boolean {
 /** A cover naming the whole tree (`.`): such a recipe runs for every change and covers no path. */
 const wholeTree = (cover: string): boolean => ["", "."].includes(cover.replace(/^(?:\.\/)+/, "").replace(/\/+$/, ""));
 
+/**
+ * The repository paths a scenario's command names as arguments — the fixture, prompt or input it
+ * drives — so a change to one touches the recipe that runs it. The program the command starts is
+ * not one: a runner many recipes share would otherwise touch them all.
+ */
+function namedPaths(command: string): string[] {
+  const words = command.split(/\s+/).map((w) => w.replace(/^['"]|['"]$/g, "")).filter(Boolean);
+  const program = words.findIndex((w) => !/^[A-Za-z_][A-Za-z0-9_]*=/.test(w));
+  return words
+    .slice(program + 1)
+    .map((w) => w.slice(w.lastIndexOf("=") + 1).replace(/^(?:\.\/)+/, "").replace(/\/+$/, ""))
+    .filter((w) => w && !wholeTree(w) && !isAbsolute(w) && !w.split("/").includes("..") && existsSync(join(ROOT, w)));
+}
+
 /** True when the recipe covers the path; a whole-tree cover counts only when `whole` says so. */
 function covering(recipe: Recipe, path: string, whole: boolean): boolean {
   return (
     path === rel(recipe.path) ||
+    recipe.uses.some((u) => path === u || path.startsWith(`${u}/`)) ||
     recipe.covers.some((c) => {
       if (wholeTree(c)) return whole;
       const cover = c.replace(/^(?:\.\/)+/, "").replace(/\/+$/, "");

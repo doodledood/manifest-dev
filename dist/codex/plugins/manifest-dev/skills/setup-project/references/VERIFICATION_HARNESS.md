@@ -64,8 +64,9 @@ skills, prompts with behavior cases, and living documents are all recipes in the
   reaches or a reader relies on, and one for the checks the project runs across the whole tree —
   its lint, type checks, test suite, build or gate runner — in the recipes directory
   (`verification/recipes/` by default). Front matter: `kind` (a free label — feature, skill, walk,
-  eval, suite, …), `covers` (the paths whose change the recipe checks), `ask-first`
-  with a one-line reason when it applies, and `dry-run: honored` when its commands obey
+  eval, suite, …), `covers` (the paths whose change the recipe checks, beyond those its
+  scenarios' commands name), `ask-first` with a one-line reason when it applies, and
+  `dry-run: honored` when its commands obey
   `VERIFY_DRY_RUN=1`. Body: a title and one paragraph on what the user sees it do; *How a user
   reaches it* — every entry point past the obvious one; *Scenarios* — each a `### name` heading
   with `Run:` (the exact command), `Proves:` (what a passing run shows), and `Check: read` when the
@@ -103,9 +104,10 @@ skills, prompts with behavior cases, and living documents are all recipes in the
   evidence directory, so nothing a run writes is committed. Fuller evidence — transcripts, screenshots — stays where
   the scenario's command keeps it, and the summary says where.
 
-A recipe has no status. What a change runs comes from its diff and each recipe's `covers`
-(`verify affected`), and each run says what it found in the run itself. A run never reports an
-entry point as working because a different one did: each summary names the scenario it came from.
+A recipe has no status. What a change runs comes from its diff, each recipe's `covers` and the
+paths its scenarios' commands name, such as a fixture or a prompt (`verify affected`), and each run
+says what it found in the run itself. A run never reports an entry point as working because a
+different one did: each summary names the scenario it came from.
 
 ## Run time
 
