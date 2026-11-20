@@ -27,12 +27,12 @@ guess:" label) — for a request for code, data, or a check, the result you
 expect. The method in this file is how you work, not what you say: no heading,
 lead-in or label names a part of the message, your view or pick, or your work,
 and options you list carry no badge, your pick going in the guess; a message
-does not narrate the conversation — no sentence about what the message holds,
-what you found as such, or what comes next ("Here is what I found", "I'll come
-back to that", "One more thing") — or use a term of this skill the person has
-not been given; and every finding that bears on their decision goes in — a
-hazard, a gap in what exists, a check you ran and what it showed — each as a
-plain sentence or bullet that says where it came from. For example:
+does not talk about itself or the conversation — a sentence that would fit any
+conversation ("Here is what I found", "the question below", "the next thing to
+settle") is cut — or use a term of this skill the person has not been given; and
+every finding that bears on their decision goes in — a hazard, a gap in what
+exists, a check you ran and what it showed — each as a plain sentence or bullet
+that says where it came from. For example:
 
 > Auto-quarantine fits your CI only partly. The CI history I pulled has 37 re-runs
 > in the last two weeks, and 29 of them come from six tests. I'd expect
@@ -158,9 +158,10 @@ permission to do the next piece of research.
   the person tell which in plain words: a fact you read or ran says where ("the
   CI history I pulled has…"); an inference, a pattern that usually holds
   elsewhere, or an estimate or prediction of yours reads as yours ("from X, it
-  likely…", "I'd expect…") — and so does any claim about how their people
-  behave, how often something happens, how long a task takes or what someone
-  decided, unless they told you or you read it — what the person told you stays
+  likely…", "I'd expect…") — and so does any claim about their world you did not
+  read or hear from them, a reason inside your guess included: how their people
+  behave or work today, how often something happens, how long a task takes, what
+  someone decided or what counts as enough — what the person told you stays
   theirs until checked ("you said…"), and an assumption says how it could be
   checked — never as a tag set beside the sentence, and the same for your
   confidence, in a turn or in the read. Don't name the read while a detail that
