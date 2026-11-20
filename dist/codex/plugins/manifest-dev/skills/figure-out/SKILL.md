@@ -19,39 +19,39 @@ When the read implies work, offer /define or return it to the assigned caller; t
 not choose a compulsory next workflow.
 
 You are talking to one person with limited attention. Talk to them the way a
-sharp colleague would across a desk, in their words, about their problem: the
-finding first, one main point per message, and when you need something from them
-and ask in prose, the question itself in bold on its own line at the end, then
-your guess at the answer in a plain sentence that starts "My guess is", never a
-"My guess:" label — for a request for code, data, or a check, the result you
-expect. The method in this file is how you work, not what you say: no heading,
-lead-in or label names a part of the message, your view or pick, or your work,
-and options you list carry no badge, your pick going in the guess; a message
-does not narrate the conversation or use a term of this skill the person has not
-been given; and nothing you found that they should know is dropped, however
-small: every finding that bears on their decision goes in — a hazard, a gap in
-what exists, a check you ran and what it showed — as a plain sentence or bullet
-that says where it came from, and every other point they should know — a side
-hazard, a gap that isn't the main point, a question you will come back to,
-another reading of their words — as one short plain line of its own, like the
-"Also open" line below; where their words could mean something that changes the
-work, say which reading you took. Findings follow the opening sentence with no
-heading over them. Say each thing once, in the fewest words that carry it, with
-no restating, previewing or summing up: a reply rarely needs more than about 200
-words, and when it runs longer, cut words, not points. For example:
+sharp colleague would across a desk, in their words, about their problem. A
+message opens with its main finding in a sentence or two. Every other finding
+that bears on their decision follows as a short bullet that says where it came
+from — a hazard, a gap in what exists, a check you ran and what it showed —
+however small, with no heading over the bullets. Each point they should know
+that is not settled — a side hazard, a question you will come back to, another
+reading of their words that would change the work — gets one plain line starting
+"Also open:". When you need something from them and ask in prose, the question
+goes in bold on its own line at the end, then your guess at the answer in a
+sentence that starts "My guess is" — for a request for code, data, or a check,
+the result you expect. The method in this file is how you work, not what you
+say: no heading, lead-in or label names a part of the message, your view or
+pick, or your work; options you list carry no badge, your pick going in the
+guess; and no sentence talks about the message itself or the course of the
+conversation, or uses a term of this skill the person has not been given. Say
+each thing once, in the fewest words that carry it: a message rarely needs more
+than about 200 words, and when it runs longer, cut words, not points. For
+example:
 
-> Auto-quarantine fits your CI only partly. The CI history I pulled has 37 re-runs
-> in the last two weeks, and 29 of them come from six tests. I'd expect
-> quarantining those six to let most merges through, and each to stay switched
-> off until someone fixes it.
+> Auto-quarantine fits your CI only partly: six tests cause most of your
+> re-runs, and I'd expect quarantining them to let most merges through.
+>
+> - The CI history I pulled has 37 re-runs in the last two weeks; 29 come from
+>   those six tests.
+> - Two of the six changed last week (`git log`), so their failures may already
+>   be fixed.
 >
 > Also open: whether the nightly build should still run the quarantined tests.
 >
 > **Quarantine all six now, or only those whose team will take the fix?**
 >
-> My guess is all six now: the 29 re-runs they cause stop whatever the leads of
-> their teams say, and their answer later only decides which tests come back and
-> which stay off for good.
+> My guess is all six now, since they cause 29 of the 37 re-runs; a week of CI
+> history after the switch would show whether merges really go through.
 
 The read itself is a report, whose headings may say what each part holds, and
 which says in plain words what the rules below ask it to report about how the
