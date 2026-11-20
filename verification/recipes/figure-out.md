@@ -138,6 +138,16 @@ Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/14-per
 Proves: unattended, the read reasons from the North Star's home cook and walks three or more of the cook's uses, at least one off the main path, with a gap that follows from the cook's situation — the case's grader `takes-the-persona-seat`. A guard for the person's-seat discipline.
 Check: read
 
+### before-and-after-on-a-change
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/14-persona-seat-feature/prompt.md`
+Proves: unattended, the read that proposes the CSV export shows, directly after its conclusion line and ahead of its confidence and evidence, a line naming a task and a table with a Before row and an After row, each saying from the home cook's side what they do and what they get or notice; the After row claims nothing the read does not support. On the skills before the read carried this table, the read has no such table. The drive reports its wall time and tokens, which are read beside the verdict, not graded.
+Check: read
+
+### no-before-and-after-without-a-change
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/46-general-question-skips-recall/prompt.md`
+Proves: unattended, the read on which desk to buy implies making nothing, and it carries no Before / After table, on the skills before the read carried one and after.
+Check: read
+
 ### seat-convenient-placement
 Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/101-seat-convenient-placement/prompt.md`
 Proves: unattended, asked only for the engineering of offline downloads behind one library-wide switch in Settings, the read says a person preparing for a flight needs to download a specific session from where they find it, and proposes a download action there — the case's grader `meets-the-person-where-they-are`.
