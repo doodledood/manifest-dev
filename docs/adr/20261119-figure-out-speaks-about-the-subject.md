@@ -152,6 +152,15 @@ six of the seven attended existing cases, against none on the merge base; the on
 its notes file in reply to the prompt's line saying where notes should go, and that was the only
 reply of the nine to name it.
 
+Four further wordings were driven on the four cases, two drives each: naming the narration shapes a
+run still wrote ("Here is what I found", "the question below", an agenda line), banning a "My
+guess:" label, reading any claim about the person's world as the run's own unless told or read, and
+having the guess rest only on what the message already showed. They raised
+`speaks-about-the-subject` to as much as 7 of 8 drives and left `tells-checked-from-guessed` at 1 to
+3 of 8. In every one of them the blind comparison judged `119`'s thinking worse on both pairs: its
+replies dropped hazards the merge base raised, such as a re-run of the send script mailing a second
+binding notice. None of them is kept; the text above is `57fd046d`'s turn wording.
+
 The keep rule set in the eval README before the first drive was not met (see *Outcome of these
 rules* there).
 
