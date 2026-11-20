@@ -6,7 +6,7 @@ dry-run: honored
 ---
 # figure-out
 
-Presses on a topic with the user until both understand it, and ends with a named read: a conclusion, its confidence, the evidence, and what would overturn it. It changes nothing in the project except the docs it keeps current.
+Presses on a topic with the user until both understand it, and ends with a named read: a conclusion, its confidence, the evidence, and what would overturn it, with a Before / After table right under the conclusion when the read implies making something. It changes nothing in the project except the docs it keeps current.
 
 ## How a user reaches it
 
@@ -262,7 +262,7 @@ Check: read
 
 - The eval cases' `prompt.md` files open with the case's front matter; `scripts/drive-skill.sh` sends only the body below it.
 - A drive uses the general agent's actual host capabilities. If no question-selection tool is available, asks stay in plain text; record the capability used rather than assuming every drive is headless.
-- The reply ends at its one ask. A full read — conclusion, confidence, evidence, what would overturn it — needs the user's answers, which a one-prompt drive does not give; that path is the eval suite's. A prompt that passes `--autonomous`, as the decision cases' prompts do, is the exception: the session answers its own asks and ends at the read.
+- The reply ends at its one ask. A full read — conclusion, a before-and-after where it implies making something, confidence, evidence, what would overturn it — needs the user's answers, which a one-prompt drive does not give; that path is the eval suite's. A prompt that passes `--autonomous`, as the decision cases' prompts do, is the exception: the session answers its own asks and ends at the read.
 - Without the skill named in the prompt it may not fire; the eval README measures how often.
 - A user's agreement is not a go: it never edits code, so "it didn't implement" is the intended outcome, not a failure.
 - Docs mode writes into the project (glossary, records, surfaces line); the drive's scratch project absorbs it.

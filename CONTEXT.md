@@ -52,7 +52,7 @@ A per-domain hint file owned by a workflow: `figure-out` task files supply probi
 The compact set of load-bearing claims — each carrying provenance and epistemic status — that a figure-out Read rests on.
 
 **Read**:
-The deliverable of a figure-out session: a named conclusion carrying confidence, Evidence Ledger, and overturn conditions.
+The deliverable of a figure-out session: a named conclusion carrying confidence, Evidence Ledger, and overturn conditions — and, when it proposes making something, a before-and-after right under the conclusion: a task line and a Before and an After row saying, from the side of the person it is for, what they do and what they get or notice.
 _Avoid_: Conclusion, verdict, answer.
 
 **Parent-before-child Crux Priority**:

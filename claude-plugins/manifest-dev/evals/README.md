@@ -1,5 +1,11 @@
 # figure-out eval suite
 
+**Before-and-after change, 2026-11-20: every measurement remains stale.** A read that implies
+making something now shows, right after its conclusion line, a task line and a Before / After
+table from the side of the person the work is for. The `before-and-after-on-a-change` and
+`no-before-and-after-without-a-change` scenarios in `verification/recipes/figure-out.md` drive it;
+no suite has run for this change.
+
 **Standing-cost change, 2026-11-16: every measurement remains stale.** figure-out now presses
 the need of a stated requirement much of the build rests on, before designing any version of it;
 its pricing line counts what a part keeps costing once it exists as a cost that can move the
@@ -777,6 +783,7 @@ file. The row is never deleted while the probe stays.
 | `SKILL.md` | Fog, and ruling ground out of the frame | Reason: needs many user turns, so a branch can be seen sharpening or a ruling be seen holding when a resumed session meets it |
 | `SKILL.md` | Explore read-only; acts with durable outside state are offered | `18-read-only-experiment/state-labelhub--labelhub--driver-py`, `18-read-only-experiment/state-labelhub--labelhub--spooler-py`, `17-agreement-is-not-a-go/state-gatekeeper--app--consumer-py`; not graded: acts that leave state outside the session, which need an external-service stub |
 | `SKILL.md` | The person's seat and their uses | `14-persona-seat-feature/takes-the-persona-seat`, `14-persona-seat-feature/persona-from-north-star`, `15-persona-seat-doc/takes-the-readers-seat` |
+| `SKILL.md` | A before-and-after right after the conclusion of a read that implies making something | Reason: no case grades it yet; the figure-out recipe's `before-and-after-on-a-change` and `no-before-and-after-without-a-change` scenarios drive it |
 | `SKILL.md` | State what it will be and how it is checked | `21-how-it-gets-checked/settles-the-exercise`, `32-reads-the-verification-surface/plans-to-exercise-the-touched-entry`, `33-no-verification-surface/plans-a-way-to-check-it` |
 | `SKILL.md` | Offer a draft | `22-draft-before-feel/offers-a-draft-not-a-feeling`; not graded: variants that differ on an open experience choice, which `99` reaches only when its reply offers a draft; rendering beyond the draft offer, the draft's time bound and its exclusion from every check, which need opt-in to publishing and several turns |
 | `SKILL.md` | Re-derive a load-bearing read independently | `62-decision-rival-answers/checks-the-read-independently` |
