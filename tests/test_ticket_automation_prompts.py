@@ -3,6 +3,8 @@ from pathlib import Path
 
 import pytest
 
+from tests.prose import flat
+
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE_SKILLS = ROOT / "claude-plugins" / "manifest-dev" / "skills"
 DIST_SKILLS = ROOT / "dist" / "codex" / "plugins" / "manifest-dev" / "skills"
@@ -10,11 +12,6 @@ DIST_SKILLS = ROOT / "dist" / "codex" / "plugins" / "manifest-dev" / "skills"
 
 def skill_text(root: Path, name: str) -> str:
     return (root / name / "SKILL.md").read_text(encoding="utf-8")
-
-
-def flat(text: str) -> str:
-    """Collapse whitespace so a phrase assertion survives prose re-wrapping."""
-    return " ".join(text.split())
 
 
 def ticket_ref(root: Path, name: str) -> str:

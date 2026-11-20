@@ -13,6 +13,8 @@ from pathlib import Path
 
 import pytest
 
+from tests.prose import flat
+
 REFERENCES = (
     Path(__file__).resolve().parent.parent
     / "claude-plugins/manifest-dev/skills/setup-project/references"
@@ -39,7 +41,7 @@ ADOPTION = {
 
 
 def _text(path: Path) -> str:
-    return re.sub(r"\s+", " ", path.read_text(encoding="utf-8"))
+    return flat(path.read_text(encoding="utf-8"))
 
 
 @pytest.mark.parametrize(

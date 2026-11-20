@@ -12,6 +12,8 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
+from tests.prose import flat
+
 LOG = (
     Path(__file__).resolve().parent.parent
     / "claude-plugins"
@@ -24,7 +26,7 @@ LOG = (
 
 
 def test_log_and_models_paths_carry_an_id_beside_the_timestamp() -> None:
-    text = re.sub(r"\s+", " ", LOG.read_text(encoding="utf-8"))
+    text = flat(LOG.read_text(encoding="utf-8"))
     paths = re.findall(r"`~/\.manifest-dev/(?:logs|models)/[^`]*`", text)
     assert paths, f"{LOG.name} names no log or models path"
     for path in paths:

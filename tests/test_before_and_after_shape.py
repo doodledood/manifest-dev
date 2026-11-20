@@ -10,10 +10,11 @@ must reach the others.
 
 from __future__ import annotations
 
-import re
 from pathlib import Path
 
 import pytest
+
+from tests.prose import flat as _flat
 
 SKILLS = Path(__file__).resolve().parent.parent / "claude-plugins/manifest-dev/skills"
 RECORD = "docs/adr/20261120-a-read-and-a-plan-summary-show-a-before-and-after.md"
@@ -23,10 +24,6 @@ CARRIERS = (
     "define/SKILL.md",
     "define/tasks/PR_LIFECYCLE.md",
 )
-
-
-def _flat(text: str) -> str:
-    return re.sub(r"\s+", " ", text)
 
 
 @pytest.mark.parametrize("relative", CARRIERS)

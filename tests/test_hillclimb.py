@@ -7,8 +7,9 @@ default, or when the pieces that carry it stop pointing at each other.
 
 from __future__ import annotations
 
-import re
 from pathlib import Path
+
+from tests.prose import flat
 
 ROOT = Path(__file__).resolve().parent.parent
 CORE = ROOT / "claude-plugins/manifest-dev/skills"
@@ -20,7 +21,7 @@ CLIMB = DEFINE / "tasks/HILLCLIMB.md"
 
 
 def _text(path: Path) -> str:
-    return re.sub(r"\s+", " ", path.read_text(encoding="utf-8"))
+    return flat(path.read_text(encoding="utf-8"))
 
 
 # Holds docs/adr/20261106-hill-climbing-runs-through-figure-out-define-and-do.md and

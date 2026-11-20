@@ -18,6 +18,8 @@ from typing import Any
 import pytest
 import yaml
 
+from tests.prose import flat
+
 ROOT = Path(__file__).resolve().parent.parent
 EVALS = ROOT / "claude-plugins/manifest-dev/evals"
 SCHEMA = ROOT / "claude-plugins/manifest-dev/skills/define/references/SCHEMA.md"
@@ -220,7 +222,7 @@ def test_rubrics_quote_their_cases_current_request() -> None:
             continue
         quoted = text.split("\nThe request:\n", 1)[1]
         _, body = _frontmatter(grader.parent.parent / "prompt.md")
-        if " ".join(quoted.split()) != " ".join(body.split()):
+        if flat(quoted) != flat(body):
             stale.append(_case_id(grader.parent.parent))
     assert not stale, f"rubric request differs from prompt.md: {stale}"
 

@@ -13,6 +13,8 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
+from tests.prose import flat
+
 REFERENCES = (
     Path(__file__).resolve().parent.parent
     / "claude-plugins"
@@ -34,7 +36,7 @@ RECALL = (
 
 
 def test_recall_writes_no_record_under_no_docs_or_team() -> None:
-    text = re.sub(r"\s+", " ", RECALL.read_text(encoding="utf-8"))
+    text = flat(RECALL.read_text(encoding="utf-8"))
     assert "written on acceptance" in text, "recall no longer offers a captured record"
     rule = re.search(r"[^.]*`--no-docs`[^.]*\.", text)
     assert rule, f"{RECALL.name} must say what its capture does under `--no-docs`"
@@ -45,7 +47,7 @@ def test_recall_writes_no_record_under_no_docs_or_team() -> None:
 
 
 def test_autonomous_reopen_writes_no_record_under_no_docs_or_team() -> None:
-    text = re.sub(r"\s+", " ", AUTONOMOUS.read_text(encoding="utf-8"))
+    text = flat(AUTONOMOUS.read_text(encoding="utf-8"))
     assert (
         "self-accept the record offer" in text
     ), "autonomous no longer self-accepts a reopen"

@@ -34,6 +34,8 @@ import sys
 from pathlib import Path
 from typing import Any
 
+from tests.prose import flat
+
 ROOT = Path(__file__).parent.parent
 DIST = ROOT / "dist"
 SYNC_TOOLS = ROOT / ".claude" / "skills" / "sync-tools"
@@ -467,7 +469,7 @@ def test_do_completion_contract_requires_auditable_gate_ledger() -> None:
         "Read each claim and its Evidence from the Manifest by ID, never from a copy",
     )
     for path in do_files:
-        text = " ".join(path.read_text(encoding="utf-8").split())
+        text = flat(path.read_text(encoding="utf-8"))
         for phrase in required_do_phrases:
             assert phrase in text, f"{path}: missing {phrase!r}"
         assert "verify.instructions" not in text, path
@@ -485,7 +487,7 @@ def test_do_completion_contract_requires_auditable_gate_ledger() -> None:
         "holds on fresh evidence",
     )
     for path in done_files:
-        text = " ".join(path.read_text(encoding="utf-8").split())
+        text = flat(path.read_text(encoding="utf-8"))
         for phrase in required_done_phrases:
             assert phrase in text, f"{path}: missing {phrase!r}"
         # `/done` relays the selected reference's wording; it must not inline a
@@ -508,7 +510,7 @@ def test_do_completion_contract_requires_auditable_gate_ledger() -> None:
         "Surface it with the blocker evidence",
     )
     for path in escalate_files:
-        text = " ".join(path.read_text(encoding="utf-8").split())
+        text = flat(path.read_text(encoding="utf-8"))
         for phrase in required_escalate_phrases:
             assert phrase in text, f"{path}: missing {phrase!r}"
 
@@ -536,11 +538,11 @@ def test_executor_amendments_preserve_verification() -> None:
     base = ROOT / "claude-plugins/manifest-dev/skills"
     executor = (base / "do/SKILL.md").read_text(encoding="utf-8")
     # The amendment rules load from their own reference when a manifest path is passed.
-    builder = " ".join((base / "define/SKILL.md").read_text(encoding="utf-8").split())
+    builder = flat((base / "define/SKILL.md").read_text(encoding="utf-8"))
     assert "means amend: read `references/AMENDMENT.md`" in builder
     author = (base / "define/references/AMENDMENT.md").read_text(encoding="utf-8")
-    executor = " ".join(executor.split())
-    author = " ".join(author.split())
+    executor = flat(executor)
+    author = flat(author)
     assert "Invoke `define` with the Manifest path" in executor
     assert "Wait for active gate evaluations to finish before amending" in executor
     assert "discard that evaluation's verdicts" in executor
@@ -567,7 +569,7 @@ def test_manifest_schema_stays_topology_neutral() -> None:
     ]
     for path in do_files:
         assert path.stat().st_mode & 0o111 == 0, path
-        text = " ".join(path.read_text(encoding="utf-8").split())
+        text = flat(path.read_text(encoding="utf-8"))
         # A kind is declared, never inferred — that declaration is what decides
         # how the gate re-verifies.
         assert (
@@ -826,7 +828,7 @@ def test_a_projects_own_rule_keeps_unrelated_fixes_out() -> None:
         DIST / "codex/plugins/manifest-dev/skills",
     ):
         path = skills / "do/SKILL.md"
-        text = re.sub(r"\s+", " ", path.read_text(encoding="utf-8"))
+        text = flat(path.read_text(encoding="utf-8"))
         for clause in PROJECT_RULE_YIELD:
             assert clause in text, f"{path} lost: {clause!r}"
 
@@ -837,7 +839,7 @@ def test_fixing_what_the_work_meets_keeps_verification_converging() -> None:
         DIST / "codex/plugins/manifest-dev/skills",
     ):
         for name, clauses in CONVERGENCE.items():
-            text = re.sub(r"\s+", " ", (skills / name).read_text(encoding="utf-8"))
+            text = flat((skills / name).read_text(encoding="utf-8"))
             for clause in clauses:
                 assert clause in text, f"{skills / name} lost: {clause!r}"
 
@@ -953,7 +955,7 @@ def test_review_pr_manifest_mode_keeps_per_gate_results_without_forced_contexts(
     ]
     for path in references:
         text = path.read_text(encoding="utf-8")
-        compact = " ".join(text.split())
+        compact = flat(text)
         for clause in (
             "assess its Outcome and every current Acceptance Criterion and Global Invariant",
             "each retains its own verdict and evidence",
@@ -988,7 +990,7 @@ def test_auto_continues_past_each_child_skills_stop() -> None:
         ROOT / "claude-plugins/manifest-dev/skills",
         DIST / "codex/plugins/manifest-dev/skills",
     ):
-        auto = " ".join((root / "auto/SKILL.md").read_text(encoding="utf-8").split())
+        auto = flat((root / "auto/SKILL.md").read_text(encoding="utf-8"))
         child = " ".join(
             (root / "figure-out/references/autonomous.md")
             .read_text(encoding="utf-8")

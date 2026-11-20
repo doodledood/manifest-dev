@@ -17,6 +17,8 @@ import hashlib
 import re
 from pathlib import Path
 
+from tests.prose import flat
+
 REPO_ROOT = Path(__file__).resolve().parent.parent
 SKILLS = REPO_ROOT / "claude-plugins" / "manifest-dev" / "skills"
 SETUP = SKILLS / "setup-project" / "references"
@@ -70,9 +72,9 @@ def emitted_digest() -> str:
         digest.update(
             path.relative_to(SETUP.parent.parent).as_posix().encode("utf-8") + b"\n"
         )
-        digest.update(re.sub(r"\s+", " ", text).strip().encode("utf-8") + b"\n")
+        digest.update(flat(text).strip().encode("utf-8") + b"\n")
     digest.update(b"setup-project/references/PRINCIPLES_SKILLS.md#fit\n")
-    digest.update(re.sub(r"\s+", " ", fit_section()).strip().encode("utf-8") + b"\n")
+    digest.update(flat(fit_section()).strip().encode("utf-8") + b"\n")
     return digest.hexdigest()
 
 
@@ -337,8 +339,8 @@ def test_setup_project_follows_every_guide_from_the_recorded_version_on() -> Non
 # sentence, so a run following the v13 guide offered it nothing. The guide offers the
 # rule with the sentence, and the change file states the item standalone.
 def test_the_v14_draft_item_reaches_conventions_without_a_draft_rule() -> None:
-    guide = " ".join((UPGRADES / "v13-to-current.md").read_text().split())
+    guide = flat((UPGRADES / "v13-to-current.md").read_text())
     assert "Where the project's conventions have no draft rule" in guide
     assert "offer that rule with the sentence, as one item" in guide
-    change = " ".join((CHANGES_DIR / "v14.md").read_text().split())
+    change = flat((CHANGES_DIR / "v14.md").read_text())
     assert "The ADR conventions gain, or extend, their rule for drafts" in change
