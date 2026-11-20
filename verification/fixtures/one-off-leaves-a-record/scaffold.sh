@@ -42,7 +42,7 @@ if __name__'''))
 PY
 git commit -qam 'Add order_shipping_cents'
 first=$(git rev-parse --short HEAD)
-sed -i 's/if units > 50:/if units >= 50:/' shipping.py
+sed -i.bak 's/if units > 50:/if units >= 50:/' shipping.py && rm -f shipping.py.bak
 git commit -qam 'Ship free from 50 units'
 repair=$(git rev-parse --short HEAD)
 cat > execution-log.md <<LOG

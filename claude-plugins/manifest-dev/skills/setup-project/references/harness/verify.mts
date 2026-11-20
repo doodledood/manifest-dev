@@ -433,9 +433,9 @@ Adding a recipe: copy any file in {recipes}, keep the front matter keys (kind, c
 ask-first when it applies, dry-run: honored when its commands obey VERIFY_DRY_RUN=1), and give
 each scenario a \`### name\` heading with \`Run:\`, \`Proves:\` and, when the exit code cannot decide,
 \`Check: read\`: a run then passes on its exit code and its output still needs reading. A
-\`covers: .\` recipe runs for every change and covers no path in particular. A recipe also covers
-each repository path its scenarios' commands name as arguments, such as a fixture or prompt, so
-\`verify affected\` names it when one changes. \`verify check\` validates it.
+\`covers: .\` recipe runs for every change and covers no path in particular. Any other recipe also
+covers each repository path its scenarios' commands name as arguments, such as a fixture or
+prompt, so \`verify affected\` names it when one changes. \`verify check\` validates it.
 `;
 
 function cmdHelp(): number {
@@ -933,25 +933,58 @@ function isEvidencePath(path: string): boolean {
 /** A cover naming the whole tree (`.`): such a recipe runs for every change and covers no path. */
 const wholeTree = (cover: string): boolean => ["", "."].includes(cover.replace(/^(?:\.\/)+/, "").replace(/\/+$/, ""));
 
+/** A word with a slash in a scenario's command: what `verify check` and `verify affected` read as a path. */
+const PATH_WORD = /(?<![\w/.-])(?:[\w.-]+\/)+[\w.-]+/g;
+/** Programs that run the script named after them, so that script is started, not driven. */
+const INTERPRETERS = new Set(["bash", "bun", "deno", "node", "npx", "perl", "python", "python3", "ruby", "sh", "tsx", "uv", "zsh"]);
+const bare = (word: string): string => word.replace(/^['"]|['"]$/g, "").replace(/^(?:\.\/)+/, "");
+
+/** The paths a command names whose first directory exists here; an output directory a run creates does not. */
+function referencedPaths(command: string): string[] {
+  return [...command.matchAll(PATH_WORD)]
+    .map(([word]) => word)
+    .filter((word) => {
+      const top = join(ROOT, bare(word).split("/")[0] ?? "");
+      return existsSync(top) && statSync(top).isDirectory();
+    });
+}
+
+/** The programs a command starts: the first word of each part between `&&`, `||`, `;` and `|`, and the script an interpreter runs. */
+function startedPrograms(command: string): Set<string> {
+  const started = new Set<string>();
+  for (const part of command.split(/&&|\|\||;|\|/)) {
+    const words = part.trim().split(/\s+/).map(bare).filter((w) => w && !/^[A-Za-z_][A-Za-z0-9_]*=/.test(w));
+    const program = words[0];
+    if (!program) continue;
+    started.add(program);
+    if (INTERPRETERS.has(program.slice(program.lastIndexOf("/") + 1))) {
+      const script = words.slice(1).find((w) => !w.startsWith("-"));
+      if (script) started.add(script);
+    }
+  }
+  return started;
+}
+
 /**
  * The repository paths a scenario's command names as arguments — the fixture, prompt or input it
- * drives — so a change to one touches the recipe that runs it. The program the command starts is
+ * drives — so a change to one touches the recipe that runs it. A program the command starts is
  * not one: a runner many recipes share would otherwise touch them all.
  */
 function namedPaths(command: string): string[] {
-  const words = command.split(/\s+/).map((w) => w.replace(/^['"]|['"]$/g, "")).filter(Boolean);
-  const program = words.findIndex((w) => !/^[A-Za-z_][A-Za-z0-9_]*=/.test(w));
-  return words
-    .slice(program + 1)
-    .map((w) => w.slice(w.lastIndexOf("=") + 1).replace(/^(?:\.\/)+/, "").replace(/\/+$/, ""))
-    .filter((w) => w && !wholeTree(w) && !isAbsolute(w) && !w.split("/").includes("..") && existsSync(join(ROOT, w)));
+  const started = startedPrograms(command);
+  return referencedPaths(command)
+    .map((word) => bare(word).replace(/\/+$/, ""))
+    .filter((path) => !started.has(path) && existsSync(join(ROOT, path)));
 }
 
-/** True when the recipe covers the path; a whole-tree cover counts only when `whole` says so. */
+/**
+ * True when the recipe covers the path. A whole-tree recipe counts only when `whole` says so,
+ * for what its scenarios name as for its covers: it checks no path in particular.
+ */
 function covering(recipe: Recipe, path: string, whole: boolean): boolean {
   return (
     path === rel(recipe.path) ||
-    recipe.uses.some((u) => path === u || path.startsWith(`${u}/`)) ||
+    ((whole || !recipe.covers.some(wholeTree)) && recipe.uses.some((u) => path === u || path.startsWith(`${u}/`))) ||
     recipe.covers.some((c) => {
       if (wholeTree(c)) return whole;
       const cover = c.replace(/^(?:\.\/)+/, "").replace(/\/+$/, "");
@@ -1011,11 +1044,8 @@ function checkProblems(): string[] {
       if (!existsSync(join(ROOT, covered))) problems.push(`${file}: covers ${covered}, which does not exist`);
     }
     for (const scenario of recipe.scenarios) {
-      // A path counts as a reference when its first directory exists here; an output
-      // directory a run creates (artifacts/…) does not, and is left alone.
-      for (const [token] of scenario.run.matchAll(/(?<![\w/.-])(?:[\w.-]+\/)+[\w.-]+/g)) {
-        const top = join(ROOT, token.split("/")[0] ?? "");
-        if (existsSync(top) && statSync(top).isDirectory() && !existsSync(join(ROOT, token))) {
+      for (const token of referencedPaths(scenario.run)) {
+        if (!existsSync(join(ROOT, bare(token)))) {
           problems.push(`${file}: scenario ${scenario.name} names ${token}, which does not exist`);
         }
       }

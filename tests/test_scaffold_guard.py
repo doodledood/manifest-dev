@@ -29,7 +29,8 @@ SCRIPTS = sorted(
     for p in VERIFICATION.rglob("*.sh")
     if p != GUARD
     and p.relative_to(VERIFICATION).parts[0] != "models"
-    and "project" not in p.relative_to(VERIFICATION).parts[2:-1]
+    and p.relative_to(VERIFICATION).parts[:1] + p.relative_to(VERIFICATION).parts[2:3]
+    != ("fixtures", "project")
 )
 
 
