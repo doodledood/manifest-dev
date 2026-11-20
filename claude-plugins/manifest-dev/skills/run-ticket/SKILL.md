@@ -89,7 +89,8 @@ An earlier approval applies only to its recorded artifact/version, not a materia
 
 **A Question Ticket** commissions inquiry. Invoke `figure-out` with its question, evidence,
 completion terms and applicable authority, using `--autonomous` for unattended inquiry. Return
-the Read — the conclusion, evidence, confidence and overturn conditions — to this same Ticket.
+the Read — the conclusion, evidence, confidence and overturn conditions, and its before-and-after
+where it implies making something — to this same Ticket.
 Do not invoke `auto`, `define` or `do` merely because the answer proposes implementation. If a
 retained decision blocks the inquiry, use this Ticket's escalation path. Otherwise finish its
 answer as described below. Preserve inquiry progress in the attempt record so a later attempt

@@ -1,5 +1,10 @@
 # define eval suite
 
+**Before-and-after change, 2026-11-20: every measurement remains stale.** The plain-language
+digest now shows the pain and the intended result as a task line and a Before / After table. The
+`digest-before-and-after` scenario in `verification/recipes/define.md` drives it; no suite has run
+for this change.
+
 **Review-gate form change, 2026-11-17: every measurement remains stale.** A review gate's Evidence
 now states whether it looks once or looks again, and a look-again gate takes one fresh
 defect-finder look where the Manifest names no later review. The `review-gate-ends` scenarios in
@@ -595,8 +600,9 @@ Freeze the full split before inspecting outputs, and let the analyzer read only 
   such as a requirement no gate checks, stays with the judge, and its FAIL is read against the
   Manifest before anything is done about it.
 - **One turn of the interview.** The suite measures unattended encoding, plus one interactive
-  turn after approval (`d16`). Interview order, re-asking settled ground, and the digest's form
-  need a scripted second turn the harness does not run, so they are out of scope.
+  turn after approval (`d16`). Interview order and re-asking settled ground need a scripted second
+  turn the harness does not run, so they are out of scope. The digest's form comes in one turn, but
+  no case grades it; the define recipe's `digest-before-and-after` scenario drives it.
 - **Taste loading is supplied.** `d17` supplies preferences in `append_system_prompt` and seeds
   `preferences.md`; final-state checks cover edits through any tool, not host memory discovery.
 - **Not covered, by choice.** Babysit mode needs a GitHub stand-in, and multi-repo Manifests need

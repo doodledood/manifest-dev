@@ -12,6 +12,8 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
+from tests.prose import flat as _flat
+
 CHECK_PR = (
     Path(__file__).resolve().parent.parent
     / "claude-plugins/manifest-dev/skills/check-pr/SKILL.md"
@@ -23,10 +25,6 @@ TASK_FILE = (
 RECORD = "docs/adr/20261021-check-pr-review-feedback-is-one-inbox.md"
 REPLY_TOKENS = ("`reply <thread-id>`", "`reply-and-resolve <thread-id>`")
 FORBIDDEN_TOKENS = ("`comment <", "`reply-comment", "`reply <comment", "`reply <review")
-
-
-def _flat(text: str) -> str:
-    return re.sub(r"\s+", " ", text)
 
 
 def skill() -> str:

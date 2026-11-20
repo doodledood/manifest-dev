@@ -8,10 +8,11 @@ Holds the decision in docs/adr/20261015-the-verification-harness-is-optional.md.
 
 from __future__ import annotations
 
-import re
 from pathlib import Path
 
 import pytest
+
+from tests.prose import flat
 
 SKILLS = Path(__file__).resolve().parent.parent / "claude-plugins/manifest-dev/skills"
 
@@ -72,7 +73,7 @@ UNCONDITIONAL = (
 
 
 def _text(path: str) -> str:
-    return re.sub(r"\s+", " ", (SKILLS / path).read_text(encoding="utf-8"))
+    return flat((SKILLS / path).read_text(encoding="utf-8"))
 
 
 @pytest.mark.parametrize(("path", "clauses"), CONDITIONS.items())
@@ -96,7 +97,7 @@ def test_no_skill_builds_a_harness_unconditionally(phrase: str) -> None:
     hits = [
         str(p.relative_to(SKILLS))
         for p in SKILLS.rglob("*.md")
-        if phrase in re.sub(r"\s+", " ", p.read_text(encoding="utf-8"))
+        if phrase in flat(p.read_text(encoding="utf-8"))
     ]
     assert (
         not hits

@@ -1610,9 +1610,12 @@ def test_second_occurrence_fixture_plants_a_default_encoding_the_c_locale_catche
         "second-occurrence-is-a-class",
         "do-second-occurrence-is-a-class.md",
     )
-    check = lambda: subprocess.run(  # noqa: E731
-        ["./check.sh"], cwd=project, text=True, capture_output=True
-    )
+
+    def check() -> subprocess.CompletedProcess[str]:
+        return subprocess.run(
+            ["./check.sh"], cwd=project, text=True, capture_output=True
+        )
+
     assert check().returncode == 0
     assert "One-off:" in (project / "pulls/7.md").read_text()
     subprocess.run(

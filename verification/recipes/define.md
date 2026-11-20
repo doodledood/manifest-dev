@@ -26,6 +26,11 @@ Run: `scripts/drive-skill.sh define claude-plugins/manifest-dev/evals/define/d01
 Proves: the drive's summary lists `manifest.md` among the files written in the scratch project, since the prompt asks for `./manifest.md`, and the reply hands it over with `Manifest complete: <path>`; the three-layer plan comes back re-cut into slices. Every gate in the Manifest ends with `Judgment gate.` or `Deterministic gate.` and the ceiling invariant is present verbatim.
 Check: read
 
+### digest-before-and-after
+Run: `scripts/drive-skill.sh define claude-plugins/manifest-dev/evals/define/d01-layer-cut/prompt.md`
+Proves: the plain-language digest shows, in the part the person confirms or vetoes, a line naming a task and a table with a Before row (today's pain: agents retype the same filters all day) and an After row (what they do and notice with saved searches), each from the support agent's side, and the After row claims nothing the plan does not support. The drive's wall time, and the tokens where the host reports them, are read beside the verdict, not graded. The same command with `DRIVE_PLUGINS_AT=0fb9ba0`, the skills before the digest carried this table, gives a digest with no such table.
+Check: read
+
 ### project-rule-over-default
 Run: `scripts/drive-skill.sh define claude-plugins/manifest-dev/evals/define/d21-user-rule-over-default/prompt.md --scaffold claude-plugins/manifest-dev/evals/define/d21-user-rule-over-default`
 Proves: the Manifest checks the fix only through `checks/`, keeps test files out, and records the overridden regression-test Default.

@@ -10,10 +10,11 @@ conventions `/do` keeps.
 
 from __future__ import annotations
 
-import re
 from pathlib import Path
 
 import pytest
+
+from tests.prose import flat
 
 SKILLS = Path(__file__).resolve().parent.parent / "claude-plugins/manifest-dev/skills"
 
@@ -38,6 +39,6 @@ COPIES = {
 
 @pytest.mark.parametrize(("path", "gates"), COPIES.items())
 def test_each_skill_states_the_same_project_definition(path: str, gates: bool) -> None:
-    text = re.sub(r"\s+", " ", (SKILLS / path).read_text(encoding="utf-8"))
+    text = flat((SKILLS / path).read_text(encoding="utf-8"))
     for clause in SHARED + ((ONE_OFF,) if gates else ()):
         assert clause in text, f"{path} lacks the shared project clause: {clause!r}"

@@ -25,7 +25,7 @@ What each source owes:
 - **A read:** its conclusion, intended result, settled requirements and proposed assessment,
   preserving which are hard and which are working. Distinguish an excluded investigation branch
   from an authorized exclusion of later work; carry only the latter as a delivery limit.
-  Evidence, rival explanations, overturn conditions and unaccepted offers are grounds, not requirements.
+  Evidence, rival explanations, overturn conditions, unaccepted offers and an example its before-and-after marks as illustrative are grounds, not requirements.
 - **Any other source:** its settled decisions. Suggestions still under discussion owe nothing.
 
 **Test for gaps before listing.** The sources must settle four things:

@@ -16,6 +16,8 @@ from pathlib import Path
 
 import pytest
 
+from tests.prose import flat as _normalize
+
 REPO_ROOT = Path(__file__).resolve().parent.parent
 PLUGINS = REPO_ROOT / "claude-plugins"
 SKILLS = "claude-plugins/manifest-dev/skills"
@@ -52,10 +54,6 @@ BLOCKS: dict[str, tuple[str, str, frozenset[str]]] = {
         ),
     ),
 }
-
-
-def _normalize(text: str) -> str:
-    return " ".join(text.split())
 
 
 def _shipped() -> dict[str, str]:

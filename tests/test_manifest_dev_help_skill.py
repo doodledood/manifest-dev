@@ -12,6 +12,7 @@ import hashlib
 import re
 from pathlib import Path
 
+from tests.prose import flat
 from tests.test_entry_points import user_invocable
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -70,7 +71,7 @@ def context_entries() -> dict[str, str]:
     entries = {}
     for match in CONTEXT_TERM.finditer(language):
         rest = language[match.end() :].lstrip("\n").split("\n\n", 1)[0]
-        entries[match.group(1)] = " ".join(rest.split())
+        entries[match.group(1)] = flat(rest)
     return entries
 
 

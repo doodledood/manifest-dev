@@ -14,6 +14,8 @@ Holds the decision in docs/adr/20261019-a-model-checks-the-ticket-protocol-again
 import re
 from pathlib import Path
 
+from tests.prose import flat as _normalize
+
 ROOT = Path(__file__).resolve().parents[1]
 MODEL_DIR = ROOT / "verification" / "models" / "ticket-protocol"
 MODEL = MODEL_DIR / "TicketProtocol.tla"
@@ -22,10 +24,6 @@ SKILLS = ROOT / "claude-plugins" / "manifest-dev" / "skills"
 QUOTE = re.compile(r'^\s*\\\* Quote (?P<path>\S+): "(?P<text>.+)"\s*$')
 MARK = re.compile(r"^\s*\\\* (Quote \S+:|World:|Pre-fix:)")
 DEFINITION = re.compile(r"^(?P<name>[A-Z][A-Za-z]*)(\([^)]*\))?\s*==")
-
-
-def _normalize(text: str) -> str:
-    return " ".join(text.split())
 
 
 def _model_lines() -> list[str]:

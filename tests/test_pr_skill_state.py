@@ -9,6 +9,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from tests.prose import flat
+
 ROOT = Path(__file__).resolve().parents[1]
 TOOLS = "manifest-dev-tools/skills"
 
@@ -21,7 +23,7 @@ def _copies(rel: str) -> list[Path]:
 
 
 def _text(path: Path) -> str:
-    return " ".join(path.read_text(encoding="utf-8").split())
+    return flat(path.read_text(encoding="utf-8"))
 
 
 def test_babysit_resumes_the_manifest_its_journal_recorded() -> None:

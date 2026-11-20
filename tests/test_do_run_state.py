@@ -9,8 +9,9 @@ the clause ships the hole again under the same skill name.
 
 from __future__ import annotations
 
-import re
 from pathlib import Path
+
+from tests.prose import flat_file
 
 ROOT = Path(__file__).resolve().parent.parent
 SOURCE = ROOT / "claude-plugins/manifest-dev/skills"
@@ -22,7 +23,7 @@ def flat(relative: str) -> list[tuple[Path, str]]:
     copies = []
     for base in (SOURCE, CODEX):
         path = base / relative
-        copies.append((path, re.sub(r"\s+", " ", path.read_text(encoding="utf-8"))))
+        copies.append((path, flat_file(path)))
     return copies
 
 

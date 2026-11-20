@@ -7,10 +7,11 @@ Also holds 20261105-repairs-track-the-accepted-promise,
 20261117-a-review-gate-states-how-it-ends.
 """
 
-import re
 from pathlib import Path
 
 import pytest
+
+from tests.prose import flat
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -118,7 +119,7 @@ def test_nit_classification_does_not_encode_caller_optionality(
         ("review-design", "SKILL.md"),
     ]:
         text = skill(plugins, name, reference)
-        normalized = " ".join(text.lower().split())
+        normalized = flat(text.lower())
         assert "polish or a nit of any kind" in normalized
         assert "optional polish" not in normalized
         assert "style, naming, structure, or otherwise" in normalized
@@ -127,7 +128,7 @@ def test_nit_classification_does_not_encode_caller_optionality(
     docs = skill(plugins, "review-writing", "references/DOCS-STYLE-REFERENCE.md")
     low_row = next(line for line in docs.splitlines() if line.startswith("| **LOW**"))
     assert "serial commas" in low_row
-    executor = " ".join(skill(plugins, "do").split())
+    executor = flat(skill(plugins, "do"))
     assert "Manifest's chosen severities, categories and acceptance" in executor
     assert "before applying that policy" in executor
     assert "Shared review gates pass" not in executor
@@ -153,14 +154,14 @@ def test_mechanical_failure_cannot_disappear_as_an_intent_mismatch(
 
 
 def test_caller_owns_gate_and_handling_without_changing_severity(plugins: Path) -> None:
-    reviewer = " ".join(skill(plugins, "review-code").split())
+    reviewer = flat(skill(plugins, "review-code"))
     assert "Choosing to address a Low does not raise its severity" in reviewer
     assert (
         "Report classifications without a verdict when no gate is requested" in reviewer
     )
     assert "If a verdict is requested without an acceptance policy" in reviewer
     assert "Every dimension uses the same threshold" not in reviewer
-    builder = " ".join(skill(plugins, "define").split())
+    builder = flat(skill(plugins, "define"))
     assert "The skill owns classification; the Manifest owns what fails" in builder
     coding = skill(plugins, "define", "tasks/CODING.md")
     assert "Preserve a deliberately required review policy with its source" in coding
@@ -169,9 +170,7 @@ def test_caller_owns_gate_and_handling_without_changing_severity(plugins: Path) 
     for task in ("PROMPTING", "DOCUMENT", "WRITING", "UI"):
         guidance = skill(plugins, "define", f"tasks/{task}.md")
         assert "deliberately required policy" in guidance
-        assert "rather than being copied into the gate" not in " ".join(
-            guidance.split()
-        )
+        assert "rather than being copied into the gate" not in flat(guidance)
     holistic = (
         plugins / "manifest-dev-tools/skills/review-pr-holistic/SKILL.md"
     ).read_text()
@@ -182,7 +181,7 @@ def test_caller_owns_gate_and_handling_without_changing_severity(plugins: Path) 
 def test_findings_are_adjudicated_without_losing_real_obligations(
     plugins: Path,
 ) -> None:
-    executor = " ".join(skill(plugins, "do").split())
+    executor = flat(skill(plugins, "do"))
     for boundary in (
         "material uncertainty and necessary missing evidence remain unresolved",
         "absence of a criterion is not a dismissal",
@@ -192,15 +191,13 @@ def test_findings_are_adjudicated_without_losing_real_obligations(
         "the bounded mandatory build work above is settled",
     ):
         assert boundary in executor, boundary
-    proof = " ".join(skill(plugins, "do", "references/VERIFICATION.md").split())
+    proof = flat(skill(plugins, "do", "references/VERIFICATION.md"))
     assert "passing exit code cannot establish a claim" in proof
     assert "a gigantic repair does not turn missing proof into debt" in proof
 
 
 def test_recovery_and_exports_keep_acceptance_meaning(plugins: Path) -> None:
-    recovery = " ".join(
-        skill(plugins, "ticket-up", "references/AUTOMATED_EXECUTION.md").split()
-    )
+    recovery = flat(skill(plugins, "ticket-up", "references/AUTOMATED_EXECUTION.md"))
     assert "new session alone does not stale evidence" in recovery
     assert "current claims and the actual subject" in recovery
     assert "bounded mandatory work must all be settled before done" in recovery
@@ -212,17 +209,17 @@ def test_recovery_and_exports_keep_acceptance_meaning(plugins: Path) -> None:
     assert "unsettled mandatory work prevents landing" in landing
     assert "relaunches the existing Ticket's run" in landing
     tools = plugins / "manifest-dev-tools/skills"
-    handoff = " ".join((tools / "handoff/SKILL.md").read_text().split())
+    handoff = flat((tools / "handoff/SKILL.md").read_text())
     assert "when the receiving session can access them" in handoff
     assert "essential contract and continuation state" in handoff
-    review = " ".join((tools / "review-pr/SKILL.md").read_text().split())
+    review = flat((tools / "review-pr/SKILL.md").read_text())
     assert "a publication filter alone cannot clear a failure" in review
     assert "A finding omitted from publication" in review
 
 
 def test_amendment_repairs_the_fault_in_claim_or_evidence(plugins: Path) -> None:
-    builder = " ".join(skill(plugins, "define").split())
-    amendment = " ".join(skill(plugins, "define", "references/AMENDMENT.md").split())
+    builder = flat(skill(plugins, "define"))
+    amendment = flat(skill(plugins, "define", "references/AMENDMENT.md"))
     assert "means amend: read `references/AMENDMENT.md`" in builder
     assert (
         "inadequate evidence method or an evaluation that missed evidence" in amendment
@@ -295,6 +292,6 @@ REVIEW_GATE_ENDS = {
 def test_a_review_gate_states_how_it_ends(plugins: Path) -> None:
     for name, clauses in REVIEW_GATE_ENDS.items():
         skill_name, _, file = name.partition("/")
-        text = re.sub(r"\s+", " ", skill(plugins, skill_name, file))
+        text = flat(skill(plugins, skill_name, file))
         for clause in clauses:
             assert clause in text, f"{plugins}/{name} lost: {clause!r}"
