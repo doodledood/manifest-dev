@@ -1,7 +1,7 @@
 ---
 kind: skill
 covers: claude-plugins/manifest-dev/skills/do
-ask-first: starts an agent session per scenario, which uses model quota
+ask-first: starts a fresh agent per scenario, which uses model quota
 dry-run: honored
 ---
 # do

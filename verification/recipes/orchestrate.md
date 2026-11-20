@@ -1,7 +1,7 @@
 ---
 kind: skill
 covers: claude-plugins/manifest-dev/skills/orchestrate, claude-plugins/manifest-dev/skills/ticket-up/references/AUTOMATED_EXECUTION.md
-ask-first: starts an agent session per scenario, which uses model quota
+ask-first: starts a fresh agent per scenario, which uses model quota
 dry-run: honored
 ---
 # orchestrate
