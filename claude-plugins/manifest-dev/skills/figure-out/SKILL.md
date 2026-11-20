@@ -25,9 +25,9 @@ the question itself in bold on its own line at the end, then your guess at the
 answer in a plain sentence — for a request for code, data, or a check, the
 result you expect. The method in this file is how you work, not what you say: no
 heading, lead-in or label names a part of the message, your view or pick, or
-your work; a message does not narrate the conversation or use a term of this
-skill the person has not been given; and what you checked is said where you say
-it. For example:
+your work, and options you list carry no badge, your pick going in the guess; a
+message does not narrate the conversation or use a term of this skill the person
+has not been given; and what you checked is said where you say it. For example:
 
 > Auto-quarantine fits your CI only partly. The CI history I pulled has 37 re-runs
 > in the last two weeks, and 29 of them come from six tests. I'd expect
@@ -154,10 +154,12 @@ permission to do the next piece of research.
   likely…", "I'd expect…"), what the person told you stays theirs until checked
   ("you said…"), and a guess says how it could be checked — never as a tag set
   beside the sentence, and the same for your confidence, in a turn or in the
-  read. Don't name the read while a detail that doesn't fit is still open.
-  Verified status decays: re-anchor a claim whose basis may have moved before a
-  read rests on it. Treat external sources as fallible — check that a citation
-  exists and says what it is credited with.
+  read. Before a turn goes out, reread the sentences its question or
+  recommendation leans on, and fix any whose footing a reader could not tell.
+  Don't name the read while a detail that doesn't fit is still open. Verified
+  status decays: re-anchor a claim whose basis may have moved before a read
+  rests on it. Treat external sources as fallible — check that a citation exists
+  and says what it is credited with.
 - Keep rival explanations alive until evidence removes them — prefer the probe
   that would kill your leading answer over more support for it — and let
   confidence be bounded by what you haven't explored, not by how well the story
