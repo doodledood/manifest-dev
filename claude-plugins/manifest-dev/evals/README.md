@@ -1,11 +1,17 @@
 # figure-out eval suite
 
+**Before-and-after change, 2026-11-20: every measurement remains stale.** A read that implies
+making something now shows, right after its conclusion line, a task line and a Before / After
+table from the side of the person the work is for. The `before-and-after-on-a-change` and
+`no-before-and-after-without-a-change` scenarios in `verification/recipes/figure-out.md` drive it;
+no suite has run for this change.
+
 **Turn-voice change, 2026-11-19: every measurement remains stale.** figure-out's turn paragraph, its
 claim-standing bullet and the log reference's path line changed: a turn speaks about the person's
 subject with no label for its own parts or method, says each claim's footing in plain words, and
 shows the log path only when asked; a fact the person cannot supply is weighed by what rides on it.
 Cases `116` to `119` were added and nine cases whose graders judge the turn became recipe scenarios.
-Their native drives, on the merge base and on the shipped text, `57fd046d`,, are summarized in
+Their native drives, on the merge base and on the shipped text, `57fd046d`, are summarized in
 `docs/adr/20261119-figure-out-speaks-about-the-subject.md`; no suite has run for this change.
 
 **Standing-cost change, 2026-11-16: every measurement remains stale.** figure-out now presses
@@ -254,7 +260,7 @@ base model already covers; such a case leaves only through its probe's *Coverage
 | `46-general-question-skips-recall` | autonomous, repository, plugin arm only | Open no earlier session log for a general question the repository's history cannot bear on | tuning |
 | `48-reuse-and-shallow-layer` | autonomous, repository | Before any code, reuse the utilities the codebase already has and question a proposed class that would only forward to them | tuning |
 | `52-projectless-chat-offers-no-surfaces` | autonomous, not a project, plugin arm only | For a one-off script in a folder that is not a project, say how it behaves and how to check it, offering no setup, harness, decision record, glossary or North Star | tuning |
-| `53-update-offer-from-v17` | docs, repository, plugin arm only | Offer only the v18 change: the architecture starter line on widening before adding a concept, and the stricter fit of starter lines | tuning |
+| `53-update-offer-from-v18` | docs, repository, plugin arm only | Offer only the v19 change: the verification-tool update that makes `verify affected` count the fixtures and prompts a recipe's scenarios name | tuning |
 | `54-touched-recipe-not-fit` | autonomous, repository | A change touching a feature whose recipe cannot be relied on — started by hand on a fixed port, its last failure unexplained — makes repairing that recipe part of the work | tuning |
 | `55-own-check-not-fit` | autonomous, repository | With no harness, a touched test of the project's own that passes whatever the output is gets repaired in its own form as part of the work, seen failing on a scratch break before it counts, and no harness is built | tuning |
 | `56-order-dependent-design` | autonomous | Model a design whose correctness depends on the order of events before building it, and pick a check that can reach the breaking interleaving | tuning |
@@ -829,6 +835,7 @@ file. The row is never deleted while the probe stays.
 | `SKILL.md` | Fog, and ruling ground out of the frame | Reason: needs many user turns, so a branch can be seen sharpening or a ruling be seen holding when a resumed session meets it |
 | `SKILL.md` | Explore read-only; acts with durable outside state are offered | `18-read-only-experiment/state-labelhub--labelhub--driver-py`, `18-read-only-experiment/state-labelhub--labelhub--spooler-py`, `17-agreement-is-not-a-go/state-gatekeeper--app--consumer-py`; not graded: acts that leave state outside the session, which need an external-service stub |
 | `SKILL.md` | The person's seat and their uses | `14-persona-seat-feature/takes-the-persona-seat`, `14-persona-seat-feature/persona-from-north-star`, `15-persona-seat-doc/takes-the-readers-seat` |
+| `SKILL.md` | A before-and-after right after the conclusion of a read that implies making something | Reason: no case grades it yet; the figure-out recipe's `before-and-after-on-a-change` and `no-before-and-after-without-a-change` scenarios drive it |
 | `SKILL.md` | State what it will be and how it is checked | `21-how-it-gets-checked/settles-the-exercise`, `32-reads-the-verification-surface/plans-to-exercise-the-touched-entry`, `33-no-verification-surface/plans-a-way-to-check-it` |
 | `SKILL.md` | Offer a draft | `22-draft-before-feel/offers-a-draft-not-a-feeling`; not graded: variants that differ on an open experience choice, which `99` reaches only when its reply offers a draft; rendering beyond the draft offer, the draft's time bound and its exclusion from every check, which need opt-in to publishing and several turns |
 | `SKILL.md` | Re-derive a load-bearing read independently | `62-decision-rival-answers/checks-the-read-independently` |
@@ -976,7 +983,7 @@ file. The row is never deleted while the probe stays.
 | `references/LOG.md` | (whole file) | `01-root-press/log-written`, `118-not-sure-a-shape-holds/gives-the-log-path` (drives only), and every `speaks-about-the-subject` grader for the path kept out of replies unasked; not graded: log safety and resuming from the log, which have shown no failure and sit outside what a grader reads |
 | `references/RECALL.md` | (whole file) | `43-recalls-earlier-work/carries-the-earlier-ruling-as-a-lead`, `44-debt-on-the-path/offers-the-on-path-debt`, `46-general-question-skips-recall/no-recall-for-a-general-question`, `59-reverted-fix/names-the-reverted-fix` |
 | `references/TASTE.md` | (whole file) | `27-taste-offers/offers-entry-for-the-stated-preference`, `27-taste-offers/offers-entry-for-the-reversal`, `28-universal-not-taste/no-offer-for-a-universal-rule`, `29-ratified-entry-lands/entry-inside-taste-section`, `105-taste-yardstick-offered/offers-the-yardstick` (drives only), `107-steer-without-reason/reads-the-reason` (drives only) |
-| `references/WITH_DOCS.md` | (whole file) | `23-term-and-record/term-captured`, `23-term-and-record/record-written`, `24-ruled-position-holds/position-text-unchanged`, `30-update-offer-for-older-setup/offers-only-whats-new`, `36-marks-drift-it-wont-fix/export-entry-marked-stale`, `45-current-setup-offers-nothing/offers-no-setup-update`, `53-update-offer-from-v17/offers-only-whats-new-since-v17`, `84-chosen-option-goes-to-a-record/ruling-recorded`, `84-chosen-option-goes-to-a-record/north-star-unchanged`, `85-evidence-against-a-bet/bet-challenged`, `85-evidence-against-a-bet/bet-text-kept` |
+| `references/WITH_DOCS.md` | (whole file) | `23-term-and-record/term-captured`, `23-term-and-record/record-written`, `24-ruled-position-holds/position-text-unchanged`, `30-update-offer-for-older-setup/offers-only-whats-new`, `36-marks-drift-it-wont-fix/export-entry-marked-stale`, `45-current-setup-offers-nothing/offers-no-setup-update`, `53-update-offer-from-v18/offers-only-whats-new-since-v18`, `84-chosen-option-goes-to-a-record/ruling-recorded`, `84-chosen-option-goes-to-a-record/north-star-unchanged`, `85-evidence-against-a-bet/bet-challenged`, `85-evidence-against-a-bet/bet-text-kept` |
 | `references/ADR_FORMAT.md` | (whole file) | `23-term-and-record/old-record-restatused`, `23-term-and-record/index-rebuilt`, `24-ruled-position-holds/unattended-record-marked`, `23-term-and-record/record-carries-enforced-by` |
 | `references/DRAFT.md` | (whole file) | Reason: making a draft after the offer is accepted (iterating it, switching between variants, the hand-off to the design skill) needs opt-in to publishing and several turns, which no case reaches |
 | `references/autonomous.md` | (whole file) | `25-users-call-and-taste/flags-the-users-calls`, `25-users-call-and-taste/no-taste-offer`, `24-ruled-position-holds/unattended-record-marked`; not graded: never self-accepting an offer that hands off to setup-project or ticket-up, or that workflow's inner owner-judgment offers, which needs those skills reachable from the session |
@@ -1189,7 +1196,7 @@ Plugin arm only:
 | 45-current-setup-offers-nothing | tuning | 1.00 |
 | 46-general-question-skips-recall | tuning | 1.00 |
 | 52-projectless-chat-offers-no-surfaces | tuning | 0.86 |
-| 53-update-offer-from-v17 (historical measurement: v9 fixture; v18 update not measured) | tuning | 0.00 |
+| 53-update-offer-from-v18 (historical measurement: v9 fixture; v19 update not measured) | tuning | 0.00 |
 
 Mean 0.76 over the 9 cases.
 

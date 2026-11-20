@@ -19,6 +19,8 @@ import itertools
 from collections.abc import Callable
 from pathlib import Path
 
+from tests.prose import flat
+
 ROOT = Path(__file__).resolve().parents[1]
 SKILLS = ROOT / "claude-plugins" / "manifest-dev" / "skills"
 ORCHESTRATE = SKILLS / "orchestrate" / "SKILL.md"
@@ -170,10 +172,6 @@ def states() -> list[State]:
         for values in itertools.product(*DOMAIN.values())
     )
     return [s for s in every if consistent(s)]
-
-
-def flat(text: str) -> str:
-    return " ".join(text.split())
 
 
 def test_each_category_transcribes_sentences_that_still_stand() -> None:

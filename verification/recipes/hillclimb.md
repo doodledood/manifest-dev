@@ -1,7 +1,7 @@
 ---
 kind: skill
 covers: claude-plugins/manifest-dev-tools/skills/hillclimb, claude-plugins/manifest-dev/skills/define/tasks/HILLCLIMB.md, claude-plugins/manifest-dev/skills/figure-out/tasks/HILLCLIMB.md, verification/fixtures/climb-number, verification/fixtures/climb-at-best, verification/fixtures/climb-noisy-measure, verification/fixtures/climb-signup-page, verification/fixtures/climb-signup-results, verification/fixtures/climb-copy, verification/fixtures/climb-short-text, verification/fixtures/climb-slow-sim
-ask-first: starts an agent session per scenario that runs a whole climb, which uses model quota
+ask-first: starts a fresh agent per scenario that runs a whole climb, which uses model quota
 dry-run: honored
 ---
 # hillclimb

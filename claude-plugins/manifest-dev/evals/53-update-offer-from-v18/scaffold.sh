@@ -8,7 +8,7 @@ Command-line tool that tracks books a reading club has borrowed.
 
 ## Project surfaces
 
-<!-- setup-project surfaces v17 -->
+<!-- setup-project surfaces v18 -->
 
 This project keeps its direction, vocabulary, and decision memory in the repo. Read
 `NORTH_STAR.md` and `CONTEXT.md` at the start of every session.
@@ -54,6 +54,7 @@ yes, after sharpening an existing line is ruled out.
 
 - Each fact has one authoritative home, and any other copy is derived from that home — two copies can drift apart without a sound, and only one of them ever gets checked. Yields when measured cost demands a stored copy, which is then a cache verified against its home, or when the copies are supposed to evolve separately.
 - A new need is met by extending what already does that job, and a new standing mechanism — a service, a scheduled job, a dependency, a vendor, stored state — is added only once an actual failure, abuse or bill exposes a gap no existing part can fill without changing its meaning, and then the narrowest one that closes it, so long as it does not make a path the project has named harder — each added mechanism is state to keep right, a cost paid again and again, and another thing every person has to learn. Yields for a mechanism a law or a contract requires before any gap shows.
+- Widen what exists before adding a concept. When a need is more of what the system already takes (a second one of an input it takes once, another value of a setting), let the existing input, setting or contract take it — an input that takes one id can take a list, and keeps its meaning when no reader relies on there being one; where others read that contract, an optional field added to it is that widening — and add a new concept (a setting, a service, a term readers must learn, or an option or field elsewhere holding what an existing input already takes) only when no existing one can take the need without changing what it means; to find the existing one, name the need by the values it carries (ids, revisions, names) rather than by the name the change gives it, and check what each entry point that serves the need already takes — every concept is carried from then on by each caller, reader, guard and document, and what sits beside an owner is invisible to everything already keyed on that owner. Yields when nothing existing takes that kind of value, or when another of these principles directs the new concept (a path the project has named, one caller's own layer) and the change names that principle; otherwise the change names the existing one and says why widening it could not serve, and neither a reason given against another alternative nor one the reviewer supplies shows that.
 - A mechanism is shaped for where the project has said it is heading — a written plan, an open ticket, a second user that exists now — and no change makes that path harder, while nothing is built for cases nobody has raised — a shape that fits only its first user gets reopened once the planned case arrives, and generality no one requested is weight every later change must carry. Yields when the shape for the stated path costs clearly more now than moving to it later would.
 - A decision that belongs to one caller lives with that caller, not in the path all callers share — when another caller later wants something else, it can have it without disturbing the rest. Holds without a yield; mechanics all callers need in the same way, such as retries or tracing, are no one caller's decision.
 - Checking and building the project each work as a single command in the repository, alike on any machine and without depending on any particular service — when the only route runs through a service that is down, everyone stops. Yields for a check that needs a paid or shared resource nobody approved for local runs; then that check is named as running elsewhere.
@@ -325,7 +326,7 @@ d=.runs/$VERIFY_RUN_ID; test -f "$d/pid" || { echo "no instance for run $VERIFY_
 kill "$(cat "$d/pid")" && rm -f "$d/pid"
 EOF
 chmod +x scripts/serve.sh scripts/stop.sh
-cat > scripts/verify <<'VERIFY_TOOL_V17_EOF'
+cat > scripts/verify <<'VERIFY_TOOL_V18_EOF'
 #!/bin/sh
 # Starts this project's verification tool, verify.mts beside this file: TypeScript that Node
 # 22.18 or newer (23.6 or newer on Node 23) runs directly. `verify --help` says everything else.
@@ -338,9 +339,9 @@ if [ "$major" -lt 22 ] || { [ "$major" -eq 22 ] && [ "$minor" -lt 18 ]; } || { [
   exit 3
 fi
 exec node "$(dirname "$0")/verify.mts" "$@"
-VERIFY_TOOL_V17_EOF
+VERIFY_TOOL_V18_EOF
 chmod +x scripts/verify
-cat > scripts/verify.mts <<'VERIFY_TOOL_V17_EOF'
+cat > scripts/verify.mts <<'VERIFY_TOOL_V18_EOF'
 // verify — this project's one verification harness.
 //
 // Run `verify --help` for everything: what can be checked, how, which checks a change touches,
@@ -1456,7 +1457,7 @@ main(process.argv.slice(2)).then(
     process.exitCode = 1;
   },
 );
-VERIFY_TOOL_V17_EOF
+VERIFY_TOOL_V18_EOF
 cat > verification/harness.md <<'EOF'
 ---
 ask-first: ask

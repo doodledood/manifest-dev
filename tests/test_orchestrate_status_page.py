@@ -16,6 +16,8 @@ from typing import Any
 
 import pytest
 
+from tests.prose import flat
+
 ROOT = Path(__file__).resolve().parents[1]
 SKILL = ROOT / "claude-plugins" / "manifest-dev" / "skills" / "orchestrate"
 TEMPLATE = SKILL / "assets" / "status-page.html"
@@ -339,10 +341,10 @@ def test_a_persons_pause_stops_the_repair_ticket_on_the_page() -> None:
     assert row, "STATUS_PAGE.md no longer documents `repair`"
     assert "row *Launch a repair Ticket*, lets it through" in row.group(1)
     assert "Otherwise it stops like the rest, so leave it out" in row.group(1)
-    automation = " ".join(
-        (SKILL.parent / "ticket-up" / "references" / "AUTOMATED_EXECUTION.md")
-        .read_text(encoding="utf-8")
-        .split()
+    automation = flat(
+        (
+            SKILL.parent / "ticket-up" / "references" / "AUTOMATED_EXECUTION.md"
+        ).read_text(encoding="utf-8")
     )
     assert (
         "| **Launch a repair Ticket** | Paused only by orchestrator's pauses, each for a "

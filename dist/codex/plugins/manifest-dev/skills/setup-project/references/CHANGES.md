@@ -23,3 +23,4 @@ says how an update reads and offers them, and when it records the newest.
 - v16 — `changes/v16.md`: overlapping drives publish evidence one at a time and report stale publishing holds.
 - v17 — `changes/v17.md`: setup offers starter principles — a shipped set of general lines per area — as the principles skills for the areas a project works in, honed by its history and fitted to the skills it has.
 - v18 — `changes/v18.md`: an architecture starter line on widening an existing input before adding a concept; a starter line counts as held only where one line states all of it, and skills fitted earlier are offered, once, the lines they carry only in part.
+- v19 — `changes/v19.md`: `verify affected` names the recipe whose scenarios drive a changed fixture or prompt.

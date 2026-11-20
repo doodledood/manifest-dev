@@ -11,10 +11,11 @@ drop it.
 
 from __future__ import annotations
 
-import re
 from pathlib import Path
 
 import pytest
+
+from tests.prose import flat as _flat
 
 TASK_FILE = (
     Path(__file__).resolve().parent.parent
@@ -22,10 +23,6 @@ TASK_FILE = (
 )
 TITLE = "#### AC-N.M — The pull request shows the change working"
 RECORD = "docs/adr/20261018-every-pull-request-shows-the-change-working.md"
-
-
-def _flat(text: str) -> str:
-    return re.sub(r"\s+", " ", text)
 
 
 def proof_gate() -> str:

@@ -2145,6 +2145,58 @@ def test_a_changed_recipe_counts_as_touching_itself(tmp_path: Path) -> None:
     assert "no recipe covers" not in result.stdout
 
 
+def test_a_path_a_scenario_command_names_touches_its_recipe(tmp_path: Path) -> None:
+    # A scenario drives a fixture and a prompt that sit outside the recipe's covers: a change to
+    # either must name the recipe, while the runner the command starts, shared by many recipes,
+    # names none of them.
+    env = _affected_project(tmp_path)
+    for path in (
+        "fixtures/case/data.txt",
+        "prompts/case.md",
+        "tools/drive.sh",
+        "tools/run.mjs",
+        "site/page.md",
+    ):
+        (tmp_path / path).parent.mkdir(parents=True, exist_ok=True)
+        (tmp_path / path).write_text(f"{path}\n", encoding="utf-8")
+    # `site` is a directory named only as a bare word; `tools/run.mjs` is started through an
+    # interpreter after `&&`: neither is something the scenario drives.
+    (tmp_path / "verification" / "recipes" / "idle.md").write_text(
+        "---\nkind: feature\ncovers: lib\n---\n# idle\n\n## Scenarios\n\n"
+        "### once\nRun: `MODE=x tools/drive.sh ./prompts/case.md --scaffold=fixtures/case/ --flag gone/path`\n\n"
+        "### twice\nRun: `tools/drive.sh 'read the site alone' && node --quiet tools/run.mjs site`\n",
+        encoding="utf-8",
+    )
+    _git(tmp_path, "add", "-A")
+    _git(tmp_path, "commit", "-q", "-m", "fixture")
+    for path in ("fixtures/case/data.txt", "prompts/case.md"):
+        (tmp_path / path).write_text("edited\n", encoding="utf-8")
+        result = run_verify("affected", "HEAD", env=env)
+        assert "  idle  feature" in result.stdout, result.stdout
+        assert "no recipe covers" not in result.stdout, result.stdout
+        _git(tmp_path, "checkout", "-q", "--", path)
+    for path in ("tools/drive.sh", "tools/run.mjs", "site/page.md"):
+        (tmp_path / path).write_text("edited\n", encoding="utf-8")
+        result = run_verify("affected", "HEAD", env=env)
+        assert "  idle  feature" not in result.stdout, result.stdout
+        assert f"  {path}" in result.stdout, result.stdout
+        _git(tmp_path, "checkout", "-q", "--", path)
+    # A whole-tree recipe checks no path in particular, so a path its scenario names stays
+    # uncovered unless another recipe covers it.
+    (tmp_path / "verification" / "recipes" / "idle.md").write_text(
+        "---\nkind: suite\ncovers: .\n---\n# idle\n\n## Scenarios\n\n"
+        "### once\nRun: `tools/drive.sh prompts/case.md`\n",
+        encoding="utf-8",
+    )
+    _git(tmp_path, "commit", "-qam", "whole tree")
+    (tmp_path / "prompts/case.md").write_text("edited\n", encoding="utf-8")
+    result = run_verify("affected", "HEAD", env=env)
+    assert "  idle  suite  (the whole tree)" in result.stdout, result.stdout
+    assert (
+        "  prompts/case.md" in result.stdout.split("no recipe covers:")[1]
+    ), result.stdout
+
+
 def test_affected_without_a_base_compares_with_where_the_branch_left_the_default(
     tmp_path: Path,
 ) -> None:

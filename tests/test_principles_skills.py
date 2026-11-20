@@ -15,6 +15,8 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
+from tests.prose import flat
+
 ROOT = Path(__file__).resolve().parent.parent
 SKILLS = ROOT / "claude-plugins" / "manifest-dev" / "skills"
 METHOD = SKILLS / "setup-project" / "references" / "PRINCIPLES_SKILLS.md"
@@ -142,7 +144,7 @@ def test_a_principle_holds_unless_the_person_chose_the_departure() -> None:
         SKILLS / "figure-out" / "SKILL.md",
         SKILLS / "define" / "SKILL.md",
     ):
-        text = " ".join(path.read_text(encoding="utf-8").split())
+        text = flat(path.read_text(encoding="utf-8"))
         where = path.relative_to(ROOT)
         assert "the principle holds unless the" in text, where
         assert "chose the departure" in text, where
@@ -182,7 +184,7 @@ REVIEW_RULE = re.compile(
 def review_rule(path: Path) -> str:
     match = REVIEW_RULE.search(path.read_text(encoding="utf-8"))
     assert match, f"{path.relative_to(ROOT)} lost the review rule for principles skills"
-    return " ".join(match.group(0).split())
+    return flat(match.group(0))
 
 
 def test_review_code_carries_the_review_rule_word_for_word() -> None:
@@ -214,7 +216,7 @@ def test_review_code_carries_the_review_rule_word_for_word() -> None:
     assert (
         review_rule(REVIEW_CODE_RULE) == method
     ), "review-code carries a review rule that differs from the method's"
-    own = " ".join(REVIEW_CODE_RULE.read_text(encoding="utf-8").split())
+    own = flat(REVIEW_CODE_RULE.read_text(encoding="utf-8"))
     assert (
         "the dimension that owns a principle's call reports a departure from it, and "
         "`context-file-adherence` covers every principle" in own
@@ -226,14 +228,14 @@ def test_review_code_carries_the_review_rule_word_for_word() -> None:
     assert len(OWNING_DIMENSIONS) == 11, "review-code's dimension table was not read"
     for name in OWNING_DIMENSIONS:
         reference = SKILLS / "review-code" / "references" / f"{name}.md"
-        assert pointer in " ".join(
-            reference.read_text(encoding="utf-8").split()
+        assert pointer in flat(
+            reference.read_text(encoding="utf-8")
         ), f"{name} no longer reports a departure from a principle bearing on its own calls"
     assert (
         "Whichever dimension reports an unchosen departure, it is a broken binding requirement: High"
         in own
     ), "review-code no longer grades an unchosen departure the same in every dimension"
-    body = " ".join(REVIEW_CODE.read_text(encoding="utf-8").split())
+    body = flat(REVIEW_CODE.read_text(encoding="utf-8"))
     assert (
         "also load `references/PROJECT_PRINCIPLES.md` and follow it" in body
     ), "review-code's body no longer loads its review rule for principles skills"

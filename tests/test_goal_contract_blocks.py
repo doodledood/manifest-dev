@@ -42,6 +42,8 @@ import re
 from pathlib import Path
 from typing import Literal
 
+from tests.prose import flat as normalized
+
 ROOT = Path(__file__).parent.parent
 SEARCH_ROOTS = (ROOT / "claude-plugins", ROOT / "dist")
 TEMPLATE_PLUGIN = "PLUGIN_TEMPLATE"
@@ -179,10 +181,6 @@ def dist_copies(skill: str) -> list[Path]:
 
 def rel(path: Path) -> str:
     return str(path.relative_to(ROOT))
-
-
-def normalized(text: str) -> str:
-    return " ".join(text.split())
 
 
 # Holds the decision in docs/adr/20260828-continuation-goals-emit-verbatim-from-one-block.md.

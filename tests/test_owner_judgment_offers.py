@@ -6,8 +6,9 @@ docs/adr/20261024-absence-is-not-acceptance-of-optional-authority-offers.md.
 
 from __future__ import annotations
 
-import re
 from pathlib import Path
+
+from tests.prose import flat_file as _flat
 
 SKILLS = (
     Path(__file__).resolve().parent.parent
@@ -18,10 +19,6 @@ SKILLS = (
 SETUP = SKILLS / "setup-project" / "SKILL.md"
 UPDATE = SKILLS / "setup-project" / "references" / "UPDATE.md"
 AUTONOMOUS = SKILLS / "figure-out" / "references" / "autonomous.md"
-
-
-def _flat(path: Path) -> str:
-    return re.sub(r"\s+", " ", path.read_text(encoding="utf-8"))
 
 
 def test_setup_treats_absence_as_not_an_answer() -> None:

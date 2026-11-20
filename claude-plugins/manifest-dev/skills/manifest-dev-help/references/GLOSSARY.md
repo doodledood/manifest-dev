@@ -228,10 +228,12 @@ conversation. manifest-dev starts a separate Agent only through your host.
 ## The investigation of a problem
 
 ### Read
-<!-- context: 3c7c72e9ab33 -->
+<!-- context: 125589fcfffa -->
 A Read is the result of a `/figure-out` session. It is a conclusion with a name, a confidence, the
 evidence that it rests on, and what would change it. It exists so that you know how much to trust
-the conclusion, not only what it is.
+the conclusion, not only what it is. A Read that implies making something also shows, under the
+conclusion, a line that names a task, a Before row and an After row. Each row tells what the person
+who uses it does and gets. Thus you can see what the change means before work starts.
 
 ### Evidence Ledger
 <!-- context: dee726286415 -->

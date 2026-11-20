@@ -1554,3 +1554,126 @@ def test_claude_fallback_requires_an_explicit_same_host_grant(
     assert "approval" in result.stderr or "same harness" in result.stderr
     assert calls(tmp_path) == []
     assert not (tmp_path / "store").exists()
+
+
+# The harvest scenarios of verification/recipes/do.md: each Proves line rests on a planted trap,
+# which these pin so an edit to a fixture cannot break one unseen until a paid drive.
+
+
+def _unittest(project: Path, **env: str) -> subprocess.CompletedProcess[str]:
+    return subprocess.run(
+        ["python3", "-B", "-m", "unittest", "-q"],
+        cwd=project,
+        text=True,
+        capture_output=True,
+        env={**os.environ, **env},
+    )
+
+
+def _at(project: Path, message: str) -> str:
+    return subprocess.check_output(
+        ["git", "log", "--format=%H", "-1", f"--grep=^{message}$"],
+        cwd=project,
+        text=True,
+    ).strip()
+
+
+def test_self_repair_fixture_plants_a_float_the_fixture_tests_miss_in_apply_discount(
+    tmp_path: Path, toolbox: Path
+) -> None:
+    project = convergence_project(
+        tmp_path, toolbox, "self-repair-harvested", "do-self-repair-harvested.md"
+    )
+    assert _unittest(project).returncode == 0
+    subprocess.run(
+        ["git", "checkout", "-q", _at(project, "Add add_tax")], cwd=project, check=True
+    )
+    first = _unittest(project)
+    assert first.returncode != 0 and "1078.92 != 1079" in first.stderr, first.stderr
+    subprocess.run(["git", "checkout", "-q", "-"], cwd=project, check=True)
+    money = project / "money.py"
+    money.write_text(
+        money.read_text().replace(
+            "cents * (100 - percent) // 100", "cents * (100 - percent) / 100"
+        )
+    )
+    assert "/ 100" in money.read_text()
+    assert _unittest(project).returncode == 0
+
+
+def test_second_occurrence_fixture_plants_a_default_encoding_the_c_locale_catches(
+    tmp_path: Path, toolbox: Path
+) -> None:
+    project = convergence_project(
+        tmp_path,
+        toolbox,
+        "second-occurrence-is-a-class",
+        "do-second-occurrence-is-a-class.md",
+    )
+
+    def check() -> subprocess.CompletedProcess[str]:
+        return subprocess.run(
+            ["./check.sh"], cwd=project, text=True, capture_output=True
+        )
+
+    assert check().returncode == 0
+    assert "One-off:" in (project / "pulls/7.md").read_text()
+    subprocess.run(
+        ["git", "checkout", "-q", _at(project, "Add export_customers")],
+        cwd=project,
+        check=True,
+    )
+    assert check().returncode != 0
+    subprocess.run(["git", "checkout", "-q", "-"], cwd=project, check=True)
+    importer = project / "importer.py"
+    importer.write_text(importer.read_text().replace(', encoding="utf-8")', ")"))
+    assert "encoding" not in importer.read_text()
+    assert check().returncode == 0
+
+
+def test_one_off_fixture_plants_a_threshold_its_own_test_already_holds(
+    tmp_path: Path, toolbox: Path
+) -> None:
+    project = convergence_project(
+        tmp_path, toolbox, "one-off-leaves-a-record", "do-one-off-leaves-a-record.md"
+    )
+    assert _unittest(project).returncode == 0
+    subprocess.run(
+        ["git", "checkout", "-q", _at(project, "Add order_shipping_cents")],
+        cwd=project,
+        check=True,
+    )
+    first = _unittest(project)
+    assert first.returncode != 0 and "855 != 0" in first.stderr, first.stderr
+    assert "grams" in (project / "pulls/3.md").read_text()
+
+
+def test_environment_fact_fixture_hides_stock_db_and_calls_the_sqlite3_command(
+    tmp_path: Path, toolbox: Path
+) -> None:
+    project = convergence_project(
+        tmp_path, toolbox, "environment-fact-lands", "do-environment-fact-lands.md"
+    )
+    by_hand = subprocess.run(
+        ["python3", "-B", "report.py", "all"],
+        cwd=project,
+        text=True,
+        capture_output=True,
+        env={k: v for k, v in os.environ.items() if k != "STOCK_DB"},
+    )
+    assert by_hand.returncode != 0 and "KeyError: 'STOCK_DB'" in by_hand.stderr
+    assert any(
+        line.split()[:1] == ["sqlite3"]
+        for line in (project / "check.sh").read_text().splitlines()
+    )
+    assert "STOCK_DB" not in (project / "README.md").read_text()
+
+
+def test_quiet_run_fixture_leaves_slugify_to_build(
+    tmp_path: Path, toolbox: Path
+) -> None:
+    project = convergence_project(
+        tmp_path, toolbox, "quiet-run-adds-nothing", "do-quiet-run-adds-nothing.md"
+    )
+    assert "def slugify" not in (project / "text.py").read_text()
+    assert _unittest(project).returncode == 0

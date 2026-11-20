@@ -1,12 +1,12 @@
 ---
 kind: skill
 covers: claude-plugins/manifest-dev/skills/figure-out
-ask-first: starts an agent session per scenario, which uses model quota
+ask-first: starts a fresh agent per scenario, which uses model quota
 dry-run: honored
 ---
 # figure-out
 
-Presses on a topic with the user until both understand it, and ends with a named read: a conclusion, its confidence, the evidence, and what would overturn it. It changes nothing in the project except the docs it keeps current.
+Presses on a topic with the user until both understand it, and ends with a named read: a conclusion, its confidence, the evidence, and what would overturn it, with a Before / After table right under the conclusion when the read implies making something. It changes nothing in the project except the docs it keeps current.
 
 ## How a user reaches it
 
@@ -29,8 +29,8 @@ Proves: the reply says the setup is current, lists nothing the project lacks, do
 Check: read
 
 ### one-version-behind
-Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/53-update-offer-from-v17/prompt.md --scaffold claude-plugins/manifest-dev/evals/53-update-offer-from-v17`
-Proves: the reply offers only what the version after the recorded one adds — the architecture starter line on widening an existing input before adding a concept, and the stricter fit of starter lines to principles skills the project keeps (it keeps none) — and offers nothing from the recorded version or earlier as new.
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/53-update-offer-from-v18/prompt.md --scaffold claude-plugins/manifest-dev/evals/53-update-offer-from-v18`
+Proves: the reply offers only what the version after the recorded one adds — the verification-tool update that makes `verify affected` count the fixtures and prompts a recipe's scenarios name, for this project, which keeps the harness — and offers nothing from the recorded version or earlier as new.
 Check: read
 
 ### principle-steered-against
@@ -136,6 +136,16 @@ Check: read
 ### persona-seat-feature
 Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/14-persona-seat-feature/prompt.md`
 Proves: unattended, the read reasons from the North Star's home cook and walks three or more of the cook's uses, at least one off the main path, with a gap that follows from the cook's situation — the case's grader `takes-the-persona-seat`. A guard for the person's-seat discipline.
+Check: read
+
+### before-and-after-on-a-change
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/14-persona-seat-feature/prompt.md`
+Proves: unattended, the read that proposes the CSV export shows, directly after its conclusion line and ahead of its confidence and evidence, a line naming a task and a table with a Before row and an After row, each saying from the home cook's side what they do and what they get or notice; the After row claims nothing the read does not support. The drive's wall time, and the tokens where the host reports them, are read beside the verdict, not graded. The same command with `DRIVE_PLUGINS_AT=0fb9ba0`, the skills before the read carried this table, gives a read with no such table.
+Check: read
+
+### no-before-and-after-without-a-change
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/46-general-question-skips-recall/prompt.md`
+Proves: unattended, the read on which desk to buy implies making nothing, and it carries no Before / After table.
 Check: read
 
 ### seat-convenient-placement
@@ -317,7 +327,7 @@ Check: read
 
 - The eval cases' `prompt.md` files open with the case's front matter; `scripts/drive-skill.sh` sends only the body below it.
 - A drive uses the general agent's actual host capabilities. If no question-selection tool is available, asks stay in plain text; record the capability used rather than assuming every drive is headless.
-- The reply ends at its one ask. A full read — conclusion, confidence, evidence, what would overturn it — needs the user's answers, which a one-prompt drive does not give; that path is the eval suite's. A prompt that passes `--autonomous`, as the decision cases' prompts do, is the exception: the session answers its own asks and ends at the read.
+- The reply ends at its one ask. A full read — conclusion, a before-and-after where it implies making something, confidence, evidence, what would overturn it — needs the user's answers, which a one-prompt drive does not give; that path is the eval suite's. A prompt that passes `--autonomous`, as the decision cases' prompts do, is the exception: the session answers its own asks and ends at the read.
 - Without the skill named in the prompt it may not fire; the eval README measures how often.
 - A user's agreement is not a go: it never edits code, so "it didn't implement" is the intended outcome, not a failure.
 - Docs mode writes into the project (glossary, records, surfaces line); the drive's scratch project absorbs it.

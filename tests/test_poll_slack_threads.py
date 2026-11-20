@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
-import re
 from pathlib import Path
+
+from tests.prose import flat
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 COPIES = (
@@ -18,7 +19,7 @@ COPIES = (
 # A thread whose first message shows no reply after its cursor is skipped, cursor unchanged.
 def test_a_passed_thread_with_no_new_reply_is_not_read() -> None:
     for path in COPIES:
-        text = re.sub(r"\s+", " ", path.read_text(encoding="utf-8"))
+        text = flat(path.read_text(encoding="utf-8"))
         assert "and each thread the caller passed after its own cursor" in text, path
         assert (
             "where it shows no reply after the thread's cursor, skip reading that thread and"

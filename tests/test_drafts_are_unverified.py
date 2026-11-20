@@ -15,8 +15,9 @@ rule, so dropping it fails here before it ships.
 
 from __future__ import annotations
 
-import re
 from pathlib import Path
+
+from tests.prose import flat_file as _flat
 
 SKILLS = (
     Path(__file__).resolve().parent.parent
@@ -31,10 +32,6 @@ DEFINE = SKILLS / "define" / "SKILL.md"
 TASTE = SKILLS / "figure-out" / "references" / "TASTE.md"
 DO = SKILLS / "do" / "SKILL.md"
 HARVEST = SKILLS / "do" / "references" / "HARVEST.md"
-
-
-def _flat(path: Path) -> str:
-    return re.sub(r"\s+", " ", path.read_text(encoding="utf-8"))
 
 
 def _bullet(text: str, opening: str) -> str:

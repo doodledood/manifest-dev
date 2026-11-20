@@ -203,6 +203,7 @@ Ratified steering preferences for this repo. Each states the preference, why it 
 
 - **Default manifests here to no `check-pr` lifecycle gate.** Pull requests in this repo run no CI and have a single maintainer as the only reviewer, so CI, review-thread and mergeability criteria spend verification effort on nothing. The gate that the pull request shows the change working still applies: the maintainer reads it before merging. Include the lifecycle gate once a pull request carries required status checks, or a reviewer whose approval gates the merge.
 - **Prototype renderings ship as Artifacts where the harness offers them.** When a session renders a disposable draft for reaction — figure-out's prototyping, or any render-to-react flow — publish it as an Artifact page rather than loose .md/.html files: in remote and web sessions loose files are hard to open, and a page the user can actually look at is the whole point of rendering. Yield to a plain file when the session has no Artifact capability, or when the user asks for the file itself.
+- **Every change to this repository ships through a pull request, opened without asking.** The maintainer reads each change there before merging, so asking whether to open one spends a turn on a settled answer. Yield when the user says to push the branch only, or when the work changes no file in the repository.
 
 ## Coding Conventions
 
