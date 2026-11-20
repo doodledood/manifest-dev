@@ -26,7 +26,7 @@ When resuming an existing log, read enough of it to recover open threads, fog, a
 
 ## Entry Shape
 
-Use Markdown. Keep entries concise and factual; do not copy the transcript. Entries serialize what the investigation already carries — belief-register state and ledger claims with the provenance and epistemic status the skill's discipline assigns them — so the line of reasoning survives context loss. The log records that discipline's output; it does not redefine it.
+Use Markdown. Keep entries concise and factual; do not copy the transcript. Entries serialize what the investigation already carries — the leading read, its evidence and open threads, with each claim's verified, inferred or assumed standing — so the line of reasoning survives context loss. The log records that discipline's output; it does not redefine it.
 
 Recommended shape:
 
