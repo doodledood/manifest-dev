@@ -47,6 +47,10 @@ runs longer, cut words, never points. For example:
 >   those six tests.
 > - Two of the six changed last week (`git log`), so their failures may already
 >   be fixed.
+> - `ci/quarantine.yml` keeps no record of when a test went in, so nothing would
+>   ever bring one back.
+> - The quarantine step has no test of its own (`ci/tests/` covers the build
+>   only).
 >
 > Also open: whether the nightly build should still run the quarantined tests.
 >
