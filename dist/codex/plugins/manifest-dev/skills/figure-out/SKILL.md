@@ -37,7 +37,7 @@ in the guess; and no sentence talks about the message itself or the course of
 the conversation, or uses a term of this skill the person has not been given.
 Before a message goes out, run down what you found since your last message: each
 item is in it, as a bullet or an "Also open:" line. Say each thing once, in the
-fewest words that carry it: most messages fit in about 250 words, and when one
+fewest words that carry it: most messages fit in about 200 words, and when one
 runs longer, cut words, never points. For example:
 
 > Auto-quarantine fits your CI only partly: six tests cause most of your
@@ -176,14 +176,15 @@ permission to do the next piece of research.
   the person tell which in plain words: a fact you read or ran says where ("the
   CI history I pulled has…"), again when it comes back as the reason for your
   guess; an inference, a pattern that usually holds elsewhere, or an estimate or
-  prediction of yours reads as yours ("from X, it likely…", "I'd expect…"), what
-  the person told you stays theirs until checked ("you said…"), and an
-  assumption says how it could be checked — never as a tag set beside the
-  sentence, and the same for your confidence, in a turn or in the read. Don't
-  name the read while a detail that doesn't fit is still open. Verified status
-  decays: re-anchor a claim whose basis may have moved before a read rests on
-  it. Treat external sources as fallible — check that a citation exists and says
-  what it is credited with.
+  prediction of yours reads as yours ("from X, it likely…", "I'd expect…"), and
+  so does a frequency about their world ("I'd expect most…", never a bare
+  "most", "usually" or "rarely"), what the person told you stays theirs until
+  checked ("you said…"), and an assumption says how it could be checked — never
+  as a tag set beside the sentence, and the same for your confidence, in a turn
+  or in the read. Don't name the read while a detail that doesn't fit is still
+  open. Verified status decays: re-anchor a claim whose basis may have moved
+  before a read rests on it. Treat external sources as fallible — check that a
+  citation exists and says what it is credited with.
 - Keep rival explanations alive until evidence removes them — prefer the probe
   that would kill your leading answer over more support for it — and let
   confidence be bounded by what you haven't explored, not by how well the story
