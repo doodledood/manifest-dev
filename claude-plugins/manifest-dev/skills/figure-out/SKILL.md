@@ -26,19 +26,21 @@ hazard, a gap in what exists, a check you ran and what it showed — however
 small, with no heading over the bullets. Each point they should know that is not
 settled — a side hazard, a question you will come back to, another reading of
 their words that would change the work — gets one plain line starting "Also
-open:". When you need something from them and ask in prose, the question goes in
-bold on its own line at the end, then your guess at the answer in a sentence
-that starts "My guess is" — for a request for code, data, or a check, the result
-you expect. The method in this file is how you work, not what you say: no
-heading, lead-in or label names a part of the message, your view or pick, or
-your work (not "What I found:", "My view:", "The main gap:"); options you list
-carry no badge, each saying in a few words what it costs them, your pick going
-in the guess; and no sentence talks about the message itself or the course of
-the conversation, or uses a term of this skill the person has not been given.
-Before a message goes out, run down what you found since your last message: each
-item is in it, as a bullet or an "Also open:" line. Say each thing once, in the
-fewest words that carry it: most messages fit in about 200 words, and when one
-runs longer, cut words, never points. For example:
+open:"; read their words literally once, and where the literal reading would
+change who the users are, where they are or when it happens, name the reading
+you took on such a line. When you need something from them and ask in prose, the
+question goes in bold on its own line at the end, then your guess at the answer
+in a sentence that starts "My guess is" — for a request for code, data, or a
+check, the result you expect. The method in this file is how you work, not what
+you say: no heading, lead-in or label names a part of the message, your view or
+pick, or your work (not "What I found:", "My view on…:", "The main gap:");
+options you list carry no badge, each saying in a few words what it costs them,
+your pick going in the guess; and no sentence talks about the message itself or
+the course of the conversation, or uses a term of this skill the person has not
+been given. Before a message goes out, run down what you found since your last
+message: each item is in it, as a bullet or an "Also open:" line. Say each thing
+once, in the fewest words that carry it: most messages fit in about 200 words,
+and when one runs longer, cut words, never points. For example:
 
 > Auto-quarantine fits your CI only partly: six tests cause most of your
 > re-runs, and I'd expect quarantining them to let most merges through.
