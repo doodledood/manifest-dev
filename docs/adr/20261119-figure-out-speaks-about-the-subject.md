@@ -76,8 +76,10 @@ the plan):
   point not settled (a side hazard, a question for later, another reading of their words) as one
   plain line starting "Also open:"; and, for a prose ask, the question in bold on its own line and
   a sentence starting "My guess is". Before a message goes out, the run goes through what it found
-  since its last message and carries each item. A message aims at about 150 words: cut words, not
-  points. A short example shows the shape, an "Also open" reading line included.
+  since its last message and carries each item, and reads the person's words literally once,
+  naming the reading it took where the literal one would change who the users are, where they
+  are or when it happens. Most messages fit in about 200 words: cut words, never points. A short
+  example shows the shape, with small findings among its bullets and an "Also open" reading line.
 - The method is how the run works, not what it says. No heading, lead-in or label names a part of
   the message, the run's view or its work ("What I found:", "My view:", "The main gap:"); options
   carry no badge and say what each costs; through a host's question tool, the guess goes in the
@@ -186,6 +188,10 @@ the owner named for `116`). Six rounds of wording followed, two drives per case 
 | `48019f07` | 8 of 8 | 6 of 8 | 7 of 8 | 4 of 8 | 263 |
 | `4101f917` | 8 of 8 | 4 of 8 | 7 of 8 | 3 of 8 | 264 |
 | `2e0061c0` | 8 of 8 | 5 of 8 | 8 of 8 | 3 of 8 | 291 |
+| `da21bd83` (aim ~250 words) | 7 of 8 | 3 of 8 | 6 of 8 | 4 of 8 | 360 |
+| `182a130a` (example with small findings) | 7 of 8 | 7 of 8 | 7 of 8 | 2 of 8 | 375 |
+| `566050e6` (aim ~200; frequencies as estimates) | 7 of 8 | 6 of 8 | 7 of 8 | 4 of 8 | 339 |
+| `21ae59c0` (literal reading) | 6 of 8 | 6 of 8 | 5 of 8 | 4 of 8 | 322 |
 
 The blind thinking reader, measured against itself first, called one side worse in 13 of 24
 judgments of two runs of the same text; under the rule set for it (worse in at least two of three
@@ -193,8 +199,11 @@ judgments on both pairs) it judged no case worse on `48019f07` or `2e0061c0`. Si
 kept on `117` and `118` in most drives; `116` and `119` each dropped one small point on most
 drives (the other reading of "go home", what an offer costs; the re-run hazard, the test gap).
 A copy-edit of the merge base's complete replies into this shape, every point kept, came to about
-350 words per reply, so on these cases about 250 words and every point kept pull against each
-other. Two `116` replies also stated a wrong design claim the blind reader did not catch: booking
+350 words per reply; the owner then moved the length target to about 350 words. Over the last
+four rounds side issues were kept on 4 of 8 drives of `116`, 7 of 8 of `117`, 8 of 8 of `118` and
+3 of 8 of `119`, each miss one small point, and which case missed moved from round to round; a
+stable judge (three standard judgments agreed on every reply) rules out grading noise. On
+`21ae59c0` the blind thinking reader judged no case worse on both pairs. Two `116` replies also stated a wrong design claim the blind reader did not catch: booking
 from the waitlist only until 12 hours before class does not spare a member the fee, because the
 code charges by the time of the cancellation.
 
