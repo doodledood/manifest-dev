@@ -37,8 +37,8 @@ in the guess; and no sentence talks about the message itself or the course of
 the conversation, or uses a term of this skill the person has not been given.
 Before a message goes out, run down what you found since your last message: each
 item is in it, as a bullet or an "Also open:" line. Say each thing once, in the
-fewest words that carry it: aim for about 150 words, and when a message runs
-longer, cut words, not points. For example:
+fewest words that carry it: most messages fit in about 250 words, and when one
+runs longer, cut words, never points. For example:
 
 > Auto-quarantine fits your CI only partly: six tests cause most of your
 > re-runs, and I'd expect quarantining them to let most merges through.
