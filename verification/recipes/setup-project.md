@@ -19,8 +19,8 @@ Installs a project's surfaces — North Star, glossary, ADR conventions, a verif
 ## Scenarios
 
 ### update-one-behind
-Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-update-one-behind.md --scaffold claude-plugins/manifest-dev/evals/53-update-offer-from-v18 --max-turns 80`
-Proves: on a project recording the surfaces version one behind the newest, it follows that version's upgrade guide: it offers what the newest version gives, marked as new, and records the newest version once each offer has an answer. Nothing from that version or earlier is offered as new, and no record, North Star position or code is rewritten.
+Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-update-one-behind.md --scaffold claude-plugins/manifest-dev/evals/53-update-offer-from-v19 --max-turns 80`
+Proves: on a project recording the surfaces version one behind the newest, whose design principles skill holds the starter design lines as they stood at that version, it follows that version's upgrade guide: it offers what the newest version gives, marked as new — the design line on a surface saying what each thing is through its form before a sentence does, as a line the skill lacks, and each of the four reworded design lines as a sharpening of the line the skill holds — writes each only on the scripted yes, and records the newest version once each offer has an answer. Nothing from that version or earlier is offered as new, and no record, North Star position or code is rewritten.
 Check: read
 
 ### principles-from-v14

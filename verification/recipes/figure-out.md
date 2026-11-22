@@ -29,8 +29,8 @@ Proves: the reply says the setup is current, lists nothing the project lacks, do
 Check: read
 
 ### one-version-behind
-Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/53-update-offer-from-v18/prompt.md --scaffold claude-plugins/manifest-dev/evals/53-update-offer-from-v18`
-Proves: the reply offers only what the version after the recorded one adds — the verification-tool update that makes `verify affected` count the fixtures and prompts a recipe's scenarios name, for this project, which keeps the harness — and offers nothing from the recorded version or earlier as new.
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/53-update-offer-from-v19/prompt.md --scaffold claude-plugins/manifest-dev/evals/53-update-offer-from-v19`
+Proves: the reply offers only what the version after the recorded one adds — the design starter line on a surface saying what each thing is through its form before a sentence does, and the four reworded design lines, for this project, whose design principles skill holds the lines as they stood at the recorded version — and offers nothing from the recorded version or earlier as new.
 Check: read
 
 ### principle-steered-against

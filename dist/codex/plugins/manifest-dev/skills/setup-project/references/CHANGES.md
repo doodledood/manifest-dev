@@ -24,3 +24,4 @@ says how an update reads and offers them, and when it records the newest.
 - v17 — `changes/v17.md`: setup offers starter principles — a shipped set of general lines per area — as the principles skills for the areas a project works in, honed by its history and fitted to the skills it has.
 - v18 — `changes/v18.md`: an architecture starter line on widening an existing input before adding a concept; a starter line counts as held only where one line states all of it, and skills fitted earlier are offered, once, the lines they carry only in part.
 - v19 — `changes/v19.md`: `verify affected` names the recipe whose scenarios drive a changed fixture or prompt.
+- v20 — `changes/v20.md`: a design starter line on a surface saying what each thing is through its form before a sentence does, and four design lines reworded so that none asks for a sentence.

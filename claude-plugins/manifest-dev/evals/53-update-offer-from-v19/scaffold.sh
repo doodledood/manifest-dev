@@ -8,7 +8,7 @@ Command-line tool that tracks books a reading club has borrowed.
 
 ## Project surfaces
 
-<!-- setup-project surfaces v18 -->
+<!-- setup-project surfaces v19 -->
 
 This project keeps its direction, vocabulary, and decision memory in the repo. Read
 `NORTH_STAR.md` and `CONTEXT.md` at the start of every session.
@@ -35,6 +35,7 @@ This project keeps its direction, vocabulary, and decision memory in the repo. R
   repository: run those only when a person runs them or has agreed. `scripts/verify --help` gives
   the rest.
 - **Architecture work** — load the `architecture-principles` skill (`.claude/skills/architecture-principles/SKILL.md`) before planning, designing, building or reviewing it.
+- **Design work** — load the `design-principles` skill (`.claude/skills/design-principles/SKILL.md`) before planning, designing, building or reviewing it.
 
 ## Before merging
 
@@ -61,6 +62,33 @@ yes, after sharpening an existing line is ruled out.
 - Shared logic works only from what it is handed, the clock included, and hands back what it makes, while effects happen at the entry point that asked for them — such code behaves identically in tests and replays, where an effect would fire for no one. Yields where the effect is itself the behavior being shared.
 
 Before calling architecture work done, check it against these principles from a fresh start — a new
+session, or a reviewer who did not do the work. Fix what departs unless the person chose the
+departure, and check again only after a fix, until a check finds none. Name each departure kept,
+with the principle and why.
+EOF
+mkdir -p .claude/skills/design-principles
+cat > .claude/skills/design-principles/SKILL.md <<'EOF'
+---
+name: design-principles
+description: 'Design principles for Shelfnote: how its people want design work done, and why. Use before planning, designing, building or reviewing design work in this project.'
+---
+
+Edit rule: each line is a principle with its reason and when it yields. Decisions go to the
+decision records, rules a check can hold go to the check, and a line is added only on a person's
+yes, after sharpening an existing line is ruled out.
+
+- Before a surface is designed or judged, who it serves, the situation they are in and the few questions they bring are written down, most pressing first, where the work shows them — the change, its ticket or its draft — and the surface is judged against that note — a surface made before anyone wrote down its person's questions ends up answering its maker's. Yields for a change that does not alter what the surface answers.
+- Each screen is led by one thing — what its person came for, or what the project wants from them where that serves the same moment — and where two things compete at the same weight, one is chosen to lead — with no clear place to look first, a person takes in neither. Yields when the screen exists to compare two equal things side by side.
+- Each element on a surface stays only for what it does for its person or for what the project wants from them at that moment; anything that serves neither comes off, or moves below what they came for — what is merely present crowds the person and reads as pushing them. Yields for what law, a contract or the person's safety requires to be shown.
+- The purpose of a surface is visible before anything is pressed, and whatever the person will ask next about what is in front of them is answered right there; pressing reveals detail, not the purpose itself — someone who scrolls by a collapsed section goes away without the thing they came for. Yields when the point is too large for the space and a summary stands in for it.
+- Nothing a person does or meets passes without an answer: each press is done, visibly under way, or declined with its reason, and a state that is empty, loading, failed, out of date or partly saved says so, and why, where it appears — not as blank space, a lone dash or zero, or a control that has vanished — a result that shows nothing looks broken, and a zero asserts something. Holds without a yield.
+- On one screen and those next to it, each quantity is counted one way, and every figure states its unit and what it counts — a person faced with two answers spends their attention working out which to believe. Yields when two figures really measure different things; each then gets a label of its own.
+- The point of a section is drawn — a figure, a comparison, something to try — before it is written out, so the section is grasped at a glance — people scan, and long paragraphs get skipped. Yields when the drawing itself needs careful study to understand.
+- A surface that needs an interaction the product already handles well — or that the best products of its kind do — starts from that version and is raised to its level — people compare new work with the best they have used, and a second version drifts from the first. Yields where the new surface's purpose needs the interaction to differ; then the difference is named.
+- A surface people use to get something done aims to be correct and calm, with nothing added to pull them back to it — they came to finish a task and leave. Yields when people leave a task they need unfinished; then what brings them back to that task is designed.
+- A surface is designed and checked against the worst real content it will hold — long, empty, numerous, translated, missing — rather than a tidy sample, and that check is shown with the change — real content is what breaks a layout. Yields where the content is fixed and known in full.
+
+Before calling design work done, check it against these principles from a fresh start — a new
 session, or a reviewer who did not do the work. Fix what departs unless the person chose the
 departure, and check again only after a fix, until a check finds none. Name each departure kept,
 with the principle and why.
@@ -326,7 +354,7 @@ d=.runs/$VERIFY_RUN_ID; test -f "$d/pid" || { echo "no instance for run $VERIFY_
 kill "$(cat "$d/pid")" && rm -f "$d/pid"
 EOF
 chmod +x scripts/serve.sh scripts/stop.sh
-cat > scripts/verify <<'VERIFY_TOOL_V18_EOF'
+cat > scripts/verify <<'VERIFY_TOOL_V19_EOF'
 #!/bin/sh
 # Starts this project's verification tool, verify.mts beside this file: TypeScript that Node
 # 22.18 or newer (23.6 or newer on Node 23) runs directly. `verify --help` says everything else.
@@ -339,9 +367,9 @@ if [ "$major" -lt 22 ] || { [ "$major" -eq 22 ] && [ "$minor" -lt 18 ]; } || { [
   exit 3
 fi
 exec node "$(dirname "$0")/verify.mts" "$@"
-VERIFY_TOOL_V18_EOF
+VERIFY_TOOL_V19_EOF
 chmod +x scripts/verify
-cat > scripts/verify.mts <<'VERIFY_TOOL_V18_EOF'
+cat > scripts/verify.mts <<'VERIFY_TOOL_V19_EOF'
 // verify — this project's one verification harness.
 //
 // Run `verify --help` for everything: what can be checked, how, which checks a change touches,
@@ -425,6 +453,7 @@ interface Recipe {
   path: string;
   kind: string;
   covers: string[];
+  uses: string[]; // repository paths its scenarios' commands name as arguments, such as fixtures
   askFirst: string; // the reason, or "" for a recipe that runs freely
   dryRun: boolean; // its commands honor VERIFY_DRY_RUN=1
   scenarios: Scenario[];
@@ -515,6 +544,7 @@ function parseRecipe(path: string): Recipe {
     path,
     kind: meta.kind,
     covers: (meta.covers ?? "").split(",").map((c) => c.trim()).filter(Boolean),
+    uses: [...new Set(scenarios.flatMap((s) => namedPaths(s.run)))],
     askFirst: meta["ask-first"] ?? "",
     dryRun: meta["dry-run"] === "honored",
     scenarios,
@@ -775,8 +805,9 @@ Adding a recipe: copy any file in {recipes}, keep the front matter keys (kind, c
 ask-first when it applies, dry-run: honored when its commands obey VERIFY_DRY_RUN=1), and give
 each scenario a \`### name\` heading with \`Run:\`, \`Proves:\` and, when the exit code cannot decide,
 \`Check: read\`: a run then passes on its exit code and its output still needs reading. A
-\`covers: .\` recipe runs for every change and covers no path in particular. \`verify check\`
-validates it.
+\`covers: .\` recipe runs for every change and covers no path in particular. Any other recipe also
+covers each repository path its scenarios' commands name as arguments, such as a fixture or
+prompt, so \`verify affected\` names it when one changes. \`verify check\` validates it.
 `;
 
 function cmdHelp(): number {
@@ -1274,10 +1305,58 @@ function isEvidencePath(path: string): boolean {
 /** A cover naming the whole tree (`.`): such a recipe runs for every change and covers no path. */
 const wholeTree = (cover: string): boolean => ["", "."].includes(cover.replace(/^(?:\.\/)+/, "").replace(/\/+$/, ""));
 
-/** True when the recipe covers the path; a whole-tree cover counts only when `whole` says so. */
+/** A word with a slash in a scenario's command: what `verify check` and `verify affected` read as a path. */
+const PATH_WORD = /(?<![\w/.-])(?:[\w.-]+\/)+[\w.-]+/g;
+/** Programs that run the script named after them, so that script is started, not driven. */
+const INTERPRETERS = new Set(["bash", "bun", "deno", "node", "npx", "perl", "python", "python3", "ruby", "sh", "tsx", "uv", "zsh"]);
+const bare = (word: string): string => word.replace(/^['"]|['"]$/g, "").replace(/^(?:\.\/)+/, "");
+
+/** The paths a command names whose first directory exists here; an output directory a run creates does not. */
+function referencedPaths(command: string): string[] {
+  return [...command.matchAll(PATH_WORD)]
+    .map(([word]) => word)
+    .filter((word) => {
+      const top = join(ROOT, bare(word).split("/")[0] ?? "");
+      return existsSync(top) && statSync(top).isDirectory();
+    });
+}
+
+/** The programs a command starts: the first word of each part between `&&`, `||`, `;` and `|`, and the script an interpreter runs. */
+function startedPrograms(command: string): Set<string> {
+  const started = new Set<string>();
+  for (const part of command.split(/&&|\|\||;|\|/)) {
+    const words = part.trim().split(/\s+/).map(bare).filter((w) => w && !/^[A-Za-z_][A-Za-z0-9_]*=/.test(w));
+    const program = words[0];
+    if (!program) continue;
+    started.add(program);
+    if (INTERPRETERS.has(program.slice(program.lastIndexOf("/") + 1))) {
+      const script = words.slice(1).find((w) => !w.startsWith("-"));
+      if (script) started.add(script);
+    }
+  }
+  return started;
+}
+
+/**
+ * The repository paths a scenario's command names as arguments — the fixture, prompt or input it
+ * drives — so a change to one touches the recipe that runs it. A program the command starts is
+ * not one: a runner many recipes share would otherwise touch them all.
+ */
+function namedPaths(command: string): string[] {
+  const started = startedPrograms(command);
+  return referencedPaths(command)
+    .map((word) => bare(word).replace(/\/+$/, ""))
+    .filter((path) => !started.has(path) && existsSync(join(ROOT, path)));
+}
+
+/**
+ * True when the recipe covers the path. A whole-tree recipe counts only when `whole` says so,
+ * for what its scenarios name as for its covers: it checks no path in particular.
+ */
 function covering(recipe: Recipe, path: string, whole: boolean): boolean {
   return (
     path === rel(recipe.path) ||
+    ((whole || !recipe.covers.some(wholeTree)) && recipe.uses.some((u) => path === u || path.startsWith(`${u}/`))) ||
     recipe.covers.some((c) => {
       if (wholeTree(c)) return whole;
       const cover = c.replace(/^(?:\.\/)+/, "").replace(/\/+$/, "");
@@ -1337,11 +1416,8 @@ function checkProblems(): string[] {
       if (!existsSync(join(ROOT, covered))) problems.push(`${file}: covers ${covered}, which does not exist`);
     }
     for (const scenario of recipe.scenarios) {
-      // A path counts as a reference when its first directory exists here; an output
-      // directory a run creates (artifacts/…) does not, and is left alone.
-      for (const [token] of scenario.run.matchAll(/(?<![\w/.-])(?:[\w.-]+\/)+[\w.-]+/g)) {
-        const top = join(ROOT, token.split("/")[0] ?? "");
-        if (existsSync(top) && statSync(top).isDirectory() && !existsSync(join(ROOT, token))) {
+      for (const token of referencedPaths(scenario.run)) {
+        if (!existsSync(join(ROOT, bare(token)))) {
           problems.push(`${file}: scenario ${scenario.name} names ${token}, which does not exist`);
         }
       }
@@ -1457,7 +1533,7 @@ main(process.argv.slice(2)).then(
     process.exitCode = 1;
   },
 );
-VERIFY_TOOL_V18_EOF
+VERIFY_TOOL_V19_EOF
 cat > verification/harness.md <<'EOF'
 ---
 ask-first: ask
