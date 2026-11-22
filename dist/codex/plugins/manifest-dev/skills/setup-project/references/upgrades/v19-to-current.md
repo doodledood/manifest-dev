@@ -1,7 +1,7 @@
 # Upgrading a project from v19: what v20 gives it
 
-For each principles skill the project keeps that covers design, whose set changed in v20, fit the
-starter design set again as `../PRINCIPLES_SKILLS.md` → *With skills already in place* says. Offer
+For each principles skill the project keeps that covers design (the design set changed in v20), fit
+the design starter set again as `../PRINCIPLES_SKILLS.md` → *With skills already in place* says. Offer
 the new line, on a surface saying what each thing is through its form before a sentence does, as a
 line the skill lacks. Offer each of the four reworded lines as a sharpening of the skill's line
 nearest it, where that line does not already state the rewording whole: the line on what stays on

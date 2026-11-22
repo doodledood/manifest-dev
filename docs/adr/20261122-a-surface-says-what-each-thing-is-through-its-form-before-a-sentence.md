@@ -1,4 +1,4 @@
-# ADR: The design starter set asks a surface to say what each thing is through its form before a sentence, and the design review stays as it is
+# ADR: The design starter set asks a surface to say what each thing is through its form before a sentence does, and `review-design` stays as it is
 
 ## Status
 Accepted
@@ -8,13 +8,13 @@ Project context
 
 ## Decided by
 An agent in an unattended run, with no review, under the user's delegation to carry this change
-through and merge it. The user ruled that the rule is added to the starter design set, that the
-design review restates no design principle, and that the reviewer's text changes only if a drive
-shows the unchanged reviewer missing the case. The wording of the line and of the four reworded
-lines is the agent's.
+through and merge it. The user ruled that the rule is added to the design starter set, that
+`review-design` restates no design principle, and that its text changes only if a drive shows the
+unchanged skill missing the case. The wording of the line and of the four reworded lines is the
+agent's.
 
 ## Context
-A project that had taken the starter design set built screens with too much text on them, and
+A project that had taken the design starter set built screens with too much text on them, and
 review rounds made the screens worse. A finding of the kind "people will not understand this" was
 answered by adding a sentence about the thing, and the next round found the screen crowded. Four
 lines of the set leaned the same way: an element stayed "for what it does", whatever the person
@@ -22,12 +22,12 @@ would ask next was "answered right there", a state said so "and why", and every 
 its unit. Each can be met by a label or a mark, and each reads as a call for a sentence. No line
 said that an explaining sentence is a cost.
 
-The design review was a second place the rule could live. The `design` skill, which the review
+`review-design` was a second place the rule could live. The `design` skill, which it
 reads as guidance, already names "Prose, including instructions, where a visual, a single line or
 the design itself would carry the point" among the defaults to avoid.
 
 ## Decision
-- The starter design set gains a line with no `Only where` condition: a surface says what each
+- The design starter set gains a line with no `Only where` condition: a surface says what each
   thing is through its form — a label on the thing, a mark, an order, a position — before a
   sentence does. A sentence about the surface itself, saying what a thing on it is or how to use
   it, stays only where no label, mark, order or position could carry what it says. A finding that
@@ -43,7 +43,7 @@ the design itself would carry the point" among the defaults to avoid.
 - The change ships as surfaces v20. A project whose design principles skill holds the earlier
   wording is offered the new line as one it lacks and each reworded line as a sharpening of the
   skill's line nearest it.
-- `review-design` does not change. Driven on its merge-base text, it already counted explaining
+- `review-design` does not change. Driven on its text before this change, it already counted explaining
   sentences as a cost and asked for labels and marks, on a first case and on a harder one. The
   rule therefore has one home, the starter set and the principles skills that take it, and a
   project with no design principles is reviewed under the standards the reviewer already holds.
@@ -56,9 +56,9 @@ the design itself would carry the point" among the defaults to avoid.
   point before writing it out, applies only where a surface presents data, and the rule holds for
   every surface. A reviewer also gives each line one verdict, so a clause inside a long line is
   applied to a side point.
-- **State the rule in the design review as well**: two homes for one rule drift apart, and the
+- **State the rule in `review-design` as well**: two homes for one rule drift apart, and the
   drives showed the reviewer already holding it.
-- **Have the review read the starter design set where a project has no design principles**: this
+- **Have `review-design` read the design starter set where a project has no design principles**: this
   was to be built only if a drive showed the unchanged reviewer missing the case. Neither drive
   did.
 
@@ -71,15 +71,22 @@ the design itself would carry the point" among the defaults to avoid.
   finding is answered with a sentence.
 - Text a person needs is named in the line's own yield, so the rule does not read as "less text".
 
+### Negative
+- The set is one line longer, and a project fitted before v20 is asked about five design lines
+  again.
+- A project that never ran setup gets the rule only through the `design` skill's shorter wording.
+- The line asks for a judgment — whether something on the surface could carry what a sentence
+  says — that no check holds.
+
 ### Evidence and its limits
 Each scenario below ran once per arm, by a fresh agent in the session that made the change, so
 each result is one sample.
 
-- `review-design explained` and `reading`, on the reviewer's merge-base text: both passed. The
+- `review-design explained` and `reading`, on the reviewer's text before this change: both passed. The
   reviewer counted the added explaining sentences as a cost and asked for labels and marks, and it
   did not ask to cut text the person came to read.
 - `review-design explained-retested`, a harder case where a re-test claims the earlier findings
-  are closed: passed on the merge-base text. That result is why the reviewer does not change.
+  are closed: passed on that same text. That result is why the reviewer does not change.
 - `setup-project design-set-repair`, with the set before this change and with it: both arms
   passed. Each run repaired all six findings with words on the thing and added no explaining
   sentence. This case therefore does not show the new line changing a repair.
@@ -89,13 +96,6 @@ each result is one sample.
 None of these reproduces the failure that prompted the change: sentences added one review round
 at a time, where each sentence closes a finding. That loop runs over many rounds, and no scenario
 drives it.
-
-### Negative
-- The set is one line longer, and a project fitted before v20 is asked about five design lines
-  again.
-- A project that never ran setup gets the rule only through the `design` skill's shorter wording.
-- The line asks for a judgment — whether something on the surface could carry what a sentence
-  says — that no check holds.
 
 ## Enforced by
 partly — `tests/test_setup_project_versions.py` digests the starter sets, so a change to the line
