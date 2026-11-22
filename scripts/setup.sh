@@ -18,21 +18,6 @@ cd "$REPO_ROOT"
 
 info "Setting up manifest-dev development environment..."
 
-# Check Python version (>= 3.10)
-info "Checking Python version..."
-if ! command -v python3 &> /dev/null; then
-    error "Python 3 is not installed. Please install Python 3.10 or later."
-fi
-
-PYTHON_VERSION=$(python3 -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')
-PYTHON_MAJOR=$(echo "$PYTHON_VERSION" | cut -d. -f1)
-PYTHON_MINOR=$(echo "$PYTHON_VERSION" | cut -d. -f2)
-
-if [ "$PYTHON_MAJOR" -lt 3 ] || { [ "$PYTHON_MAJOR" -eq 3 ] && [ "$PYTHON_MINOR" -lt 10 ]; }; then
-    error "Python 3.10 or later is required. Found: Python $PYTHON_VERSION"
-fi
-info "Found Python $PYTHON_VERSION"
-
 # Check/install uv
 info "Checking for uv..."
 if ! command -v uv &> /dev/null; then
@@ -52,15 +37,19 @@ else
     info "uv found: $(uv --version)"
 fi
 
-# Create virtual environment (skip if exists)
+# Create the virtual environment on Python 3.10 or later. uv picks an installed interpreter that
+# fits or fetches one, so the machine's own python3 may be older than that.
 if [ -d ".venv" ]; then
     info "Virtual environment already exists, skipping creation"
 else
     info "Creating virtual environment..."
-    uv venv
+    uv venv --python '>=3.10' || error "uv found no Python 3.10 or later and could not fetch one. Install one, then re-run this script."
 fi
+if ! .venv/bin/python -c 'import sys; sys.exit(sys.version_info < (3, 10))'; then
+    error "Python 3.10 or later is required, and .venv holds $(.venv/bin/python --version 2>&1). Remove .venv, then re-run this script."
+fi
+info "Using $(.venv/bin/python --version)"
 
-# Install dev dependencies into the venv
 info "Installing dev dependencies..."
 uv pip install --python .venv/bin/python ruff black mypy pytest pytest-xdist pyyaml
 
