@@ -19,8 +19,8 @@ Installs a project's surfaces — North Star, glossary, ADR conventions, a verif
 ## Scenarios
 
 ### update-one-behind
-Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-update-one-behind.md --scaffold claude-plugins/manifest-dev/evals/53-update-offer-from-v18 --max-turns 80`
-Proves: on a project recording the surfaces version one behind the newest, it follows that version's upgrade guide: it offers what the newest version gives, marked as new, and records the newest version once each offer has an answer. Nothing from that version or earlier is offered as new, and no record, North Star position or code is rewritten.
+Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-update-one-behind.md --scaffold claude-plugins/manifest-dev/evals/53-update-offer-from-v19 --max-turns 80`
+Proves: on a project recording the surfaces version one behind the newest, whose design principles skill holds the starter design lines as they stood at that version, it follows that version's upgrade guide: it offers what the newest version gives, marked as new — the design line on a surface saying what each thing is through its form before a sentence does, as a line the skill lacks, and each of the four reworded design lines as a sharpening of the line the skill holds — writes each only on the scripted yes, and records the newest version once each offer has an answer. Nothing from that version or earlier is offered as new, and no record, North Star position or code is rewritten.
 Check: read
 
 ### principles-from-v14
@@ -66,6 +66,11 @@ Check: read
 ### working-practice-in-use
 Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-working-practice-in-use.md --scaffold verification/scaffolds/starter-working-practice --no-plugins --max-turns 40`
 Proves: an agent with none of this repository's plugins, asked for a small change in a project that accepted the working-practice starter set, reads `.claude/skills/working-practice-principles/SKILL.md` before its first edit. Graded on the host's record of the session's tool calls. PASS when it does.
+Check: read
+
+### design-set-repair
+Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-design-set-repair.md --scaffold verification/scaffolds/design-set-repair --no-plugins --max-turns 60`
+Proves: an agent with none of this repository's plugins, in a project whose `design-principles` skill is the design starter set, is asked to repair six hallway-test findings, each saying that volunteers did not understand something on a sign-up page. Graders, applied to the page the run left, as loaded, and with one row's sign-up control pressed, and to its diff against the scaffold's commit, never to the run's account of itself: (1) each of the six findings is resolved: what the finding's note says, or words that answer the same question, can be read on the page — on the thing, beside it, or in a key of marks on the same screen; (2) the repair adds no explaining sentence — a sentence whose job is to say what something on the page is or how to use it — that a label, a mark, an order or a position on that page could carry. All six can be carried that way, so any added explaining sentence fails (2). Words that state a row's own state or name a control are labels, whatever their grammar; a sentence about a mark, a letter or a control is an explaining sentence. A key of marks, each paired with a word or two, is form; a key written as a sentence is an explaining sentence. PASS when both hold. The result counts only for a run whose session record shows it read the scratch project's `.claude/skills/design-principles/SKILL.md` before its first edit to the page and loaded no skill of that name from anywhere else; any other run is a harness fault, driven again. With `STARTER_SETS_AT` set to a revision before the starter line about a surface saying what each thing is through its form, the changed set's effect on the repair is the difference between the two pages.
 Check: read
 
 ### widen-plan
@@ -129,6 +134,7 @@ Check: read
 - It never overwrites a project-owned copy: differences are offered, not applied.
 - It writes scenarios only as far as existing commands reach; drive work beyond that comes from the change that needs it.
 - `this-repository` copies the last commit, not the working tree: commit before driving it.
-- Each prompt file except the two `setup-project-*-repository.md` ones starts `/manifest-dev:setup-project`, followed by whether the user accepts every item.
+- Each prompt file starts `/manifest-dev:setup-project`, followed by whether the user accepts every item, except the two `setup-project-*-repository.md` ones and those of the scenarios run with `--no-plugins`, which hand the agent a task and no skill.
+- The `design-set-repair` scaffold stops unless `DESIGN_TOOLS_PLAYWRIGHT` names a `playwright` or `playwright-core` module directory, which it links into the scratch project's `node_modules` so the agent can render the page it repairs.
 - `tests/test_setup_project_versions.py` (a change to an emitted file ships a new version) and `tests/test_project_conventions_forks.py` (this repo's copies match the defaults) also check it; behavior cases `30`, `45` and `53` cover figure-out's offer of it (all `unmeasured`). The eval suites cover `figure-out` and `define` only, so setup-project's own runs are checked here: the v1, v3 and app scaffolds live under `verification/scaffolds/`.
 - Not yet driven: the description phrases, figure-out's offer.
