@@ -1,0 +1,1 @@
+We ran a hallway test of `pages/shifts.html` with eight volunteers. `docs/hallway-test.md` lists what they did not understand. Repair the page so that a volunteer who sees it for the first time understands each of those things, and report what you changed.
