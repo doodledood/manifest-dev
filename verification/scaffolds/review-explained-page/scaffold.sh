@@ -5,8 +5,14 @@
 # changed nothing else; docs/review-round-1.md holds the findings and how each was answered. Each
 # sentence says something a label, a mark, an order or a position on the page could carry. The
 # review-design recipe's explained scenario reviews the page as it stands.
+#
+# Given the argument `retested`, which the review-explained-retested scaffold passes when it sources
+# this file, the five sentences are shorter and say the same things, and the record adds a re-test
+# that counts the findings as closed. Nothing else differs. The variant is an argument, never an
+# environment variable, so a driver's shell cannot pick it by accident.
 set -euo pipefail
 . "$(dirname "${BASH_SOURCE[0]}")/../../scaffold-guard.sh"
+variant=${1:-}
 . "$(dirname "${BASH_SOURCE[0]}")/../../../scripts/scaffold-playwright.sh"
 link_playwright
 git branch -M main
@@ -98,21 +104,30 @@ $list    <ul class="updates">
 </html>
 EOF
 }
-help() { printf '    <p class="help">%s</p>\n' "$1"; }
+# One added sentence as its slot's value: the line and the newline that ends it.
+help() { printf -v "$1" '    <p class="help">%s</p>\n' "$2"; }
 page '' '' '' '' '' > pages/track.html
 git add -A
 git commit -qm 'Tracking page'
-page \
-  "$(help 'The filled circles show the steps your parcel has completed, and the hollow circle is the step still to come.')
-" \
-  "$(help 'OFD means your parcel is out for delivery with a driver today.')
-" \
-  "$(help 'The first time is when we expect to arrive, and the time in brackets is the latest it could be.')
-" \
-  "$(help 'Use the pencil to change your delivery instructions, and the bell to get a message when the driver is close.')
-" \
-  "$(help 'The newest update is at the top of this list, and the times before midnight are from yesterday.')
-" > pages/track.html
+if [ "$variant" = retested ]; then
+  circles='Filled circles are finished steps; the hollow one is still to come.'
+  code='OFD means out for delivery today.'
+  times='The first time is when we expect to arrive; the one in brackets is the latest.'
+  icons='The pencil changes your delivery instructions; the bell tells you when the driver is close.'
+  list="Newest first; times before midnight are yesterday's."
+else
+  circles='The filled circles show the steps your parcel has completed, and the hollow circle is the step still to come.'
+  code='OFD means your parcel is out for delivery with a driver today.'
+  times='The first time is when we expect to arrive, and the time in brackets is the latest it could be.'
+  icons='Use the pencil to change your delivery instructions, and the bell to get a message when the driver is close.'
+  list='The newest update is at the top of this list, and the times before midnight are from yesterday.'
+fi
+help circles "$circles"
+help code "$code"
+help times "$times"
+help icons "$icons"
+help list "$list"
+page "$circles" "$code" "$times" "$icons" "$list" > pages/track.html
 cat > docs/review-round-1.md <<'EOF'
 # Design review, round 1: pages/track.html
 
@@ -136,5 +151,15 @@ Commit "Answer the round 1 findings":
 4. A line under the buttons says what the pencil and the bell do.
 5. A line above the list says the newest update is first and which times are yesterday's.
 EOF
+if [ "$variant" = retested ]; then
+  cat >> docs/review-round-1.md <<'EOF'
+
+## Re-test
+
+After that commit we showed the page to six customers at the Leeds counter. Each read it on our
+tablet and then told us what the circles, "OFD", the two times, the two buttons and the order of
+the list meant. All six got all five right, so we count the five findings as closed.
+EOF
+fi
 git add -A
 git commit -qm 'Answer the round 1 findings'
