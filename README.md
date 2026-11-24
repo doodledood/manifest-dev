@@ -114,13 +114,14 @@ Each plugin's README lists what it ships.
 
 ## Other CLIs
 
-The Claude Code plugins are the source, and the same skill text serves every host: OpenCode, Pi and Cursor read it from the source tree, and Codex installs a generated copy under `dist/`.
+The Claude Code plugins are the source, and the same skill text serves every host: Antigravity, OpenCode, Pi and Cursor read it from the source tree, and Codex installs a generated copy under `dist/`.
 
 | CLI | Install |
 |-----|---------|
 | Claude Code | `/plugin marketplace add doodledood/manifest-dev`, then `/plugin install manifest-dev@manifest-dev` — [above](#install) |
 | Codex CLI | `codex plugin marketplace add doodledood/manifest-dev` — [details](dist/codex/README.md) |
 | Pi | `pi install git:github.com/doodledood/manifest-dev@main` — [details](dist/pi/README.md) |
+| Antigravity | install both local plugin folders — [details](dist/antigravity/README.md) |
 | OpenCode | clone, then add one path to your config — [details](dist/opencode/README.md) |
 | Cursor, Grok Bot | copy the two plugin folders into `~/.cursor/plugins/local`; from the Cursor Marketplace, and so in Grok Bot, once it is listed — [details](dist/cursor/README.md) |
 

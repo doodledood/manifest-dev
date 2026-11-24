@@ -4,7 +4,8 @@
 Codex installs a plugin into its own cache, so its plugin directories must be
 self-contained: ``dist/codex/plugins/<plugin>/skills`` is a byte-identical copy of
 ``claude-plugins/<plugin>/skills``. OpenCode and Pi read the source tree directly and
-need no copy. Everything else under ``dist/`` (plugin manifests, the OpenCode plugin
+need no copy. Antigravity reads both source plugin roots and only needs
+generated metadata. Everything else under ``dist/`` (plugin manifests, the OpenCode plugin
 entry, the Pi prompt aliases, the READMEs) is hand-maintained.
 
 It also copies the verification tool setup-project ships (``references/harness/verify`` and
@@ -19,6 +20,7 @@ from __future__ import annotations
 
 import argparse
 import filecmp
+import json
 import re
 import shutil
 import sys
@@ -28,8 +30,37 @@ ROOT = Path(__file__).resolve().parent.parent
 PLUGINS = ("manifest-dev", "manifest-dev-tools")
 
 
+def plugin_root(plugin: str) -> Path:
+    return ROOT / "claude-plugins" / plugin
+
+
 def source_dir(plugin: str) -> Path:
-    return ROOT / "claude-plugins" / plugin / "skills"
+    return plugin_root(plugin) / "skills"
+
+
+def antigravity_manifests() -> dict[Path, str]:
+    """Derive native manifests without copying skills or publisher contact data."""
+    descriptions = {
+        "manifest-dev": "Investigate a problem, write down what done means, and deliver it with fresh evidence.",
+        "manifest-dev-tools": "Review pull requests and prompts, hand off work, and learn a codebase.",
+    }
+    wanted: dict[Path, str] = {}
+    for plugin in PLUGINS:
+        root = plugin_root(plugin)
+        source = json.loads(
+            (root / ".claude-plugin/plugin.json").read_text(encoding="utf-8")
+        )
+        manifest = {
+            "$schema": "https://antigravity.google/schemas/v1/plugin.json",
+            "name": source["name"],
+            "displayName": plugin.replace("-", " ").title(),
+            "version": source["version"],
+            "description": descriptions[plugin],
+        }
+        wanted[root / ".antigravity-plugin/plugin.json"] = (
+            json.dumps(manifest, indent=2) + "\n"
+        )
+    return wanted
 
 
 HARNESS = ROOT / "claude-plugins/manifest-dev/skills/setup-project/references/harness"
@@ -90,6 +121,11 @@ def regenerate() -> None:
             shutil.rmtree(dst)
         shutil.copytree(src, dst, symlinks=False)
         print(f"copied {src.relative_to(ROOT)} -> {dst.relative_to(ROOT)}")
+    for path, text in antigravity_manifests().items():
+        if current(path) != text:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(text, encoding="utf-8")
+            print(f"generated {path.relative_to(ROOT)}")
     for path, text in tool_copies().items():
         if current(path) != text:
             path.write_text(text, encoding="utf-8")
@@ -113,12 +149,17 @@ def check() -> int:
         for path, text in tool_copies().items()
         if current(path) != text
     ]
+    drift.extend(
+        f"{path.relative_to(ROOT)}: missing or differs from generated Antigravity metadata"
+        for path, text in antigravity_manifests().items()
+        if current(path) != text
+    )
     if drift:
         print("copies are out of date; run scripts/sync_dist.py:", file=sys.stderr)
         for line in drift:
             print(f"  {line}", file=sys.stderr)
         return 1
-    print("dist/codex and the tool copies match source")
+    print("dist/codex, Antigravity manifests and tool copies match source")
     return 0
 
 

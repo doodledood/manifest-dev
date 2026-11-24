@@ -1,6 +1,6 @@
 ---
 name: sync-tools
-description: 'Regenerate the Codex distribution copy of the plugin skills, and the copies of the shipped verify tool, and check them for drift. Run after changing anything under claude-plugins/*/skills. OpenCode, Pi and Cursor read the source tree directly and need no sync.'
+description: 'Regenerate the Codex distribution copy of the plugin skills, the Antigravity plugin manifests, and the copies of the shipped verify tool, and check them for drift. Run after changing anything under claude-plugins/*/skills. OpenCode, Pi and Cursor read the source tree directly and need no sync.'
 user-invocable: true
 metadata:
   internal: true
@@ -8,16 +8,16 @@ metadata:
 
 # /sync-tools — distribution sync
 
-Every host reads the same skill files. The Claude Code plugins under `claude-plugins/` are the source; OpenCode (`dist/opencode/plugin/index.js`), Pi (repo-root `package.json`, `pi.skills`) and Cursor (`claude-plugins/*/.cursor-plugin/plugin.json`, whose plugin root is the source plugin directory) point straight at `claude-plugins/*/skills`. Only Codex needs a copy, because it installs a plugin into its own cache, and that copy is generated:
+Every host reads the same skill files. The Claude Code plugins under `claude-plugins/` are the source; OpenCode (`dist/opencode/plugin/index.js`), Pi (repo-root `package.json`, `pi.skills`) and Cursor (`claude-plugins/*/.cursor-plugin/plugin.json`, whose plugin root is the source plugin directory) point straight at `claude-plugins/*/skills`. Antigravity reads those same plugin roots using the generated `.antigravity-plugin/plugin.json` manifests. Only Codex needs a skill copy, because it installs a plugin into its own cache, and that copy is generated:
 
 ```bash
-python3 scripts/sync_dist.py          # regenerate dist/codex/plugins/*/skills byte-identically from source
+python3 scripts/sync_dist.py          # regenerate the Codex skill copies, Antigravity manifests and verify tool copies
 python3 scripts/sync_dist.py --check  # exit 1 on any drift (tests/test_dist_skill_references.py runs this)
 ```
 
 The same commands copy the verification tool setup-project ships (`setup-project/references/harness/verify` and `verify.mts`) to `scripts/` and into the eval scaffolds that embed it, and check those copies too.
 
-Run the first command after any change under `claude-plugins/*/skills`, then commit the regenerated tree with the change. There is no per-host rewrite: shipped skill text names no host primitive (`tests/test_skill_frontmatter.py` enforces that), so a copy is a copy.
+Run the first command after any change under `claude-plugins/*/skills` or to a source plugin version, then commit the regenerated tree with the change. There is no per-host rewrite: shipped skill text names no host primitive (`tests/test_skill_frontmatter.py` enforces that), so a copy is a copy.
 
 ## Hand-maintained packaging files
 
@@ -31,6 +31,6 @@ These are not generated. Edit them when what they describe changes:
 | `dist/opencode/AGENTS.md` | OpenCode instructions file the plugin registers |
 | `dist/pi/prompts/*.md` | Pi prompt-template aliases (`/do`, `/auto`, `/babysit-pr`) |
 | `claude-plugins/*/.cursor-plugin/plugin.json`, `.cursor-plugin/marketplace.json` | Cursor plugin manifests and marketplace; `version` must equal the source plugin's |
-| `dist/codex/README.md`, `dist/opencode/README.md`, `dist/pi/README.md`, `dist/cursor/README.md` | Per-host install and update instructions |
+| `dist/codex/README.md`, `dist/opencode/README.md`, `dist/pi/README.md`, `dist/cursor/README.md`, `dist/antigravity/README.md` | Per-host install and update instructions |
 
 Version bumps follow the repo's Versioning rules; this skill does not bump anything.
