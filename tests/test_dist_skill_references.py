@@ -142,6 +142,24 @@ def test_codex_plugins_carry_their_skill_split() -> None:
             ).is_file()
 
 
+def test_antigravity_discovers_both_source_plugins() -> None:
+    for plugin, expected in (
+        ("manifest-dev", CORE_SKILLS),
+        ("manifest-dev-tools", TOOLS_SKILLS),
+    ):
+        root = ROOT / "claude-plugins" / plugin
+        native = json.loads((root / ".antigravity-plugin/plugin.json").read_text())
+        source = json.loads((root / ".claude-plugin/plugin.json").read_text())
+        assert native["$schema"] == "https://antigravity.google/schemas/v1/plugin.json"
+        assert native["name"] == source["name"] == plugin
+        assert native["version"] == source["version"]
+        # Antigravity's default discovery keeps each plugin rooted beside its skills.
+        assert "skills" not in native
+        assert set(expected) == {
+            path.parent.name for path in (root / "skills").glob("*/SKILL.md")
+        }
+
+
 def test_codex_plugin_versions_match_sources() -> None:
     for plugin in ("manifest-dev", "manifest-dev-tools"):
         source = json.loads(
