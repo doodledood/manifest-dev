@@ -104,16 +104,25 @@ def test_how_a_round_tries_changes_follows_the_cost_of_measuring() -> None:
     try_changes = _bullet(
         CLIMB, "Defaults", "Try changes the way the cost of measuring allows"
     )
-    assert "each round tries three candidates, at least one bold" in try_changes
-    assert "each round makes one change aimed at a diagnosed cause" in try_changes
-    assert _gate_row("Measure shown good")
+    assert (
+        "When measuring is cheap, each round tries three candidates, at least one bold"
+        in try_changes
+    )
+    assert (
+        "when it is costly, each round makes one change aimed at a diagnosed cause"
+        in try_changes
+    )
+    measure = _gate_row("Measure shown good")
+    assert "held fixed until the final comparison" in measure
+    assert "stops the climb before round 1" in measure
     assert (
         "A cheap stand-in for a slow measure screens versions only after it catches"
         in _gate_row("Confirmed gains")
     )
     one_primary = _bullet(CLIMB, "Defaults", "One primary, the rest guards")
     assert "Never invent weights" in one_primary
-    assert _bullet(CLIMB, "Defaults", "A behavior goal climbs offline first")
+    behavior = _bullet(CLIMB, "Defaults", "A behavior goal climbs offline first")
+    assert "start no such test unless the requester asks" in behavior
 
 
 # Holds docs/adr/20261106-a-climb-stops-on-patience-and-a-rerun-continues-its-record.md.
@@ -142,7 +151,8 @@ def test_stop_rule_defaults_and_rerun_continue_the_record() -> None:
 def test_a_climb_pushes_only_when_asked_and_its_numbers_are_defaults() -> None:
     push = _bullet(CLIMB, "Defaults", "Push only when asked")
     assert "carries no pull-request gate otherwise" in push
-    assert _bullet(CLIMB, "Defaults", "Every number here is a default")
+    every_number = _bullet(CLIMB, "Defaults", "Every number here is a default")
+    assert "The requester's words replace any of them" in every_number
     assert "can relax it" in _gate_row("No win by misleading")
     assert "A thorough climb settles with an attended requester" in flat_file(CLIMB)
     assert "asks at the end whether to push" in flat_file(COMMAND)
@@ -160,7 +170,77 @@ def test_the_judge_is_proven_sees_no_examples_and_ships_no_reference() -> None:
         "ties identical versions and keeps its verdict when the two swap places"
         in measure
     )
-    assert _bullet(CLIMB, "Defaults", "Extra judge guards stay off until needed")
+    extra_guards = _bullet(
+        CLIMB, "Defaults", "Extra judge guards stay off until needed"
+    )
+    assert (
+        "turned on only where the judge's proof shows the failure each prevents"
+        in extra_guards
+    )
     assert not (
         DEFINE / "tasks/references"
     ).exists(), "a define judge reference returned"
+
+
+# Holds docs/adr/20261126-climb-proposals-target-highest-value-gap-and-switch-approach-on-stall.md
+# and its amendments to the 2026-11-06 and 2026-11-07 climb records.
+def test_proposals_target_highest_value_gap_and_switch_approach_on_stall() -> None:
+    stop_rule = _gate_row("Stop rule")
+    assert (
+        "with the raw evidence of why each lost rather than only its score, "
+        "and of where the current best still falls short of the goal" in stop_rule
+    )
+    assert "in real use" not in stop_rule
+    assert (
+        "Each measured candidate (bold ones included) is chosen for high signal and value "
+        "— big enough to matter if it wins and informative if it loses — "
+        "aimed at what still holds the result back most rather than minor polish"
+        in stop_rule
+    )
+    assert (
+        "when earlier attempts leave that gap in place, a thorough or costly climb "
+        "challenges its diagnosis or tries a different approach instead of repeating "
+        "variations of the same one" in stop_rule
+    )
+    assert (
+        "a limit the requester set is reached, or the record shows no distinct "
+        "authorized route remains" in stop_rule
+    )
+    assert (
+        "The last round before stopping includes a bold attempt "
+        "(when a thorough climb stops on flat rounds, one testing a different approach "
+        "or diagnosis), unless the record shows no distinct authorized route remains"
+        in stop_rule
+    )
+    next_round = _bullet(PROBES, "Blind-spot probes", "What the next round sees")
+    assert (
+        "raw evidence of where the current best still falls short of the goal "
+        "and why the last versions lost" in next_round
+    )
+    assert "in real use" not in next_round
+    assert (
+        "target what holds the result back most and tell when its diagnosis is wrong"
+        in next_round
+    )
+    afford = _bullet(PROBES, "Blind-spot probes", "What a round can afford")
+    assert (
+        "Whatever a round costs, what makes each measured candidate (bold ones included) "
+        "high-value enough to earn a measurement rather than minor polish" in afford
+    )
+    assert (
+        "which distinct approaches are authorized if earlier attempts leave what holds "
+        "the result back most in place" in afford
+    )
+    assert "in real use" not in afford
+    try_changes = _bullet(
+        CLIMB, "Defaults", "Try changes the way the cost of measuring allows"
+    ).lower()
+    for duplicated in (
+        "high signal",
+        "minor polish",
+        "different approach",
+        "holds the result back",
+    ):
+        assert (
+            duplicated not in try_changes
+        ), f"Try changes duplicates Stop rule clause {duplicated!r}"

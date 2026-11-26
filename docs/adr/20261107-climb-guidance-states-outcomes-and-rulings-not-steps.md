@@ -1,7 +1,7 @@
 # ADR: Climb guidance states outcomes and rulings, not steps
 
 ## Status
-Accepted
+Accepted; amended by 20261126-climb-proposals-target-highest-value-gap-and-switch-approach-on-stall: targeting what still holds the result back most returns as an outcome in the stop rule without restoring procedural steps
 
 ## Area
 Task guidance
@@ -45,7 +45,7 @@ A rule restated in the command also reaches only runs that start there. A climb 
 - Research nudges for choosing a judge's form no longer reach the run.
 
 ## Enforced by
-partly — `tests/test_hillclimb.py` (`test_command_routes_and_restates_no_climb_rule` and `test_the_judge_is_proven_sees_no_examples_and_ships_no_reference`) fails when the command restates a climb rule or loses its routing, or when a judge reference returns or the judge's proof and example ban leave the task file. Whether a line states an outcome rather than a step stays judgment, read with the `review-prompt` skill.
+partly — `tests/test_hillclimb.py` (`test_command_routes_and_restates_no_climb_rule`, `test_the_judge_is_proven_sees_no_examples_and_ships_no_reference`, and `test_proposals_target_highest_value_gap_and_switch_approach_on_stall`) fails when the command restates a climb rule or loses its routing, when a judge reference returns or the judge's proof and example ban leave the task file, or when the outcome-level proposal and approach-switch clauses leave the task files. Whether a line states an outcome rather than a step stays judgment, read with the `review-prompt` skill.
 
 ## Revisit when
 A `hillclimb` recipe drive or a climb's report shows a run missing an outcome its gates state, where the cut procedure would have prevented it; read in the recipe's drive evidence.
