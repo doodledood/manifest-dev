@@ -1,7 +1,7 @@
 # ADR: A hill-climb stops after rounds with no confirmed gain, and a re-run continues its record
 
 ## Status
-Accepted; narrowed by 20261107-climb-guidance-states-outcomes-and-rulings-not-steps: the record's line format and 50-line roll-up are retired; a re-run proposes nothing the record rejected
+Accepted; narrowed by 20261107-climb-guidance-states-outcomes-and-rulings-not-steps: the record's line format and 50-line roll-up are retired; a re-run proposes nothing the record rejected; amended by 20261126-climb-proposals-target-highest-value-gap-and-switch-approach-on-stall: the stop rule also requires raw evidence of where the current best still falls short of the goal, concrete high-signal candidate selection, challenging a stuck diagnosis or approach in thorough or costly climbs, an exhaustion exit in the loop stop condition, and a flat-round thorough last-round bold attempt testing a different approach or diagnosis unless no distinct authorized route remains
 
 ## Area
 Task guidance
@@ -49,7 +49,7 @@ A climb also ends without proof that its result works in use; only use can show 
 - Rolling older rounds into one line each can lose detail on why an early candidate lost.
 
 ## Enforced by
-`tests/test_hillclimb.py` (`test_stop_rule_defaults_and_rerun_continue_the_record`) fails when the define task file drops the stop defaults, the bold attempt before stopping, the re-run's continuation of the record or keeping the original when nothing beats it. Whether a climb kept its record faithfully stays judgment, read in the `hillclimb` recipe's `rerun` and `already-at-best` scenarios.
+partly — `tests/test_hillclimb.py` (`test_stop_rule_defaults_and_rerun_continue_the_record` and `test_proposals_target_highest_value_gap_and_switch_approach_on_stall`) fails when the define task file drops the stop defaults, the bold attempt and approach-switch/plateau-exit clauses before stopping, raw current-best evidence, the re-run's continuation of the record or keeping the original when nothing beats it. Whether a climb kept its record faithfully stays judgment, read in the `hillclimb` recipe's `rerun` and `already-at-best` scenarios.
 
 ## Revisit when
 Re-runs of finished climbs keep finding confirmed gains that the first run stopped short of, or climbs run many rounds past their last gain; read in the climbs' reports and execution logs.

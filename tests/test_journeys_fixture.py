@@ -24,8 +24,11 @@ from pathlib import Path
 
 import pytest
 
+from tests.node import real_node
+
 REPO_ROOT = Path(__file__).resolve().parent.parent
 FIXTURE = REPO_ROOT / "verification" / "fixtures" / "journeys-app"
+NODE = real_node()
 
 
 def _free_port() -> int:
@@ -56,7 +59,7 @@ class App:
 def _start(directory: Path) -> Iterator[App]:
     port = _free_port()
     proc = subprocess.Popen(
-        [shutil.which("node") or "node", "server.js"],
+        [NODE or "node", "server.js"],
         cwd=directory,
         env={"PATH": "/usr/bin:/bin:/usr/local/bin", "PORT": str(port)},
         stdout=subprocess.DEVNULL,
@@ -98,7 +101,7 @@ def seeded(tmp_path: Path) -> Iterator[App]:
     yield from _start(directory)
 
 
-pytestmark = pytest.mark.skipif(shutil.which("node") is None, reason="needs node")
+pytestmark = pytest.mark.skipif(NODE is None, reason="needs node")
 
 
 def _signed_out_arrival(app: App) -> str:

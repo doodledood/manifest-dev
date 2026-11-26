@@ -2,6 +2,6 @@
   "$schema": "https://antigravity.google/schemas/v1/plugin.json",
   "name": "manifest-dev",
   "displayName": "Manifest Dev",
-  "version": "15.16.0",
+  "version": "15.16.1",
   "description": "Investigate a problem, write down what done means, and deliver it with fresh evidence."
 }

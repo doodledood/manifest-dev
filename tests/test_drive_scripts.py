@@ -27,6 +27,8 @@ from typing import TypedDict, TypeVar
 
 import pytest
 
+from tests.node import real_node
+
 T = TypeVar("T")
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -128,16 +130,15 @@ def toolbox(tmp_path_factory: pytest.TempPathFactory) -> Path:
         if not os.path.isdir(directory):
             continue
         for entry in os.scandir(directory):
-            if entry.name in {"docker", "colima", "podman", "claude"}:
+            if entry.name in {"docker", "colima", "podman", "claude", "node"}:
                 continue
             target = box / entry.name
             if not target.exists() and os.access(entry.path, os.X_OK):
                 target.symlink_to(entry.path)
     # The eval inventory compiles patterns with the same JS RegExp language as Claude.
-    if not (box / "node").exists():
-        node = shutil.which("node")
-        assert node, "scripts/setup.sh requires Node"
-        (box / "node").symlink_to(node)
+    node = real_node()
+    assert node, "scripts/setup.sh requires Node"
+    (box / "node").symlink_to(node)
     return box
 
 
