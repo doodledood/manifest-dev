@@ -6,7 +6,7 @@ until rounds bring no confirmed gain. Composes onto `MEASURE.md` and onto the ar
 file, whose gates become floors every kept version holds.
 
 A climb is **quick** by default and **thorough** when the requester asks or the stakes show: a
-long or unattended run, a worse result that is costly once the artifact is in use — judged by what
+long run or one that keeps running unattended, a worse result that is costly once the artifact is in use — judged by what
 it is for, not by how easily its commits revert — or objectives that pull against each other.
 Running unattended does not by itself make a climb thorough. The Manifest's Initial Approach opens
 with one line saying which and why, how rounds try changes, and how the climb measures. A thorough
