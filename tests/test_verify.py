@@ -21,6 +21,8 @@ from pathlib import Path
 
 import pytest
 
+from tests.node import real_node
+
 REPO_ROOT = Path(__file__).resolve().parent.parent
 VERIFY = REPO_ROOT / "scripts" / "verify"
 SHIPPED_HARNESS = (
@@ -30,7 +32,7 @@ SHIPPED_HARNESS = (
 )
 # The tool is TypeScript that Node runs directly; `verify` is the shell entry that starts it.
 TOOL_FILES = ("verify", "verify.mts")
-NODE = shutil.which("node")
+NODE = real_node()
 RECIPES = REPO_ROOT / "verification" / "recipes"
 
 INVOCABLE_FALSE = re.compile(r"^user-invocable:\s*false\s*$", re.MULTILINE)
